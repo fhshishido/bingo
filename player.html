@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v4.0 — 2026-05-13 -->
+<!-- IBBI Bingo Player v4.1 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -211,7 +211,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar →</button>
         </div>
       </div>
-      <div class="vtag">v4.0</div>
+      <div class="vtag">v4.1</div>
     </div>
   </div>
 </div>
@@ -251,7 +251,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       </div>
     </div>
   </div>
-  <div class="vtag">v4.0</div>
+  <div class="vtag">v4.1</div>
 </div>
 ```
 
@@ -266,7 +266,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">—</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v4.0</span>
+    <span class="p-vtag">v4.1</span>
     <span class="conn off" id="pConn">⬤</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -491,6 +491,8 @@ function friendlyAuthError(code){
 }
 
 // ── INIT GAME ────────────────────────────────────────
+let _pendingToast = null; // toast to show after next renderCartela
+
 async function initGame(){
   const snap=await get(fb(`bingo/eventos/${evId}`));
   const ev=snap.val();
@@ -499,7 +501,7 @@ async function initGame(){
   $('gameEvNome').textContent=ev.nome;
   $('gameUserName').textContent=userProfile?.apelido||userProfile?.nome||currentUser.email;
   showView('vJogo');
-  renderBody();
+  renderBody(); // renders shell with empty cartela slots — listener fills it
 
   // Listen evento
   onValue(fb(`bingo/eventos/${evId}`),snap2=>{
@@ -510,14 +512,22 @@ async function initGame(){
     renderPremio(); renderBall(); renderHist(); checkAutoBatida();
   });
 
-  // Listen cartelas do user
+  // Listen cartelas do user — first fire populates cartelas[]
+  let firstFire=true;
   onValue(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),snap2=>{
     const data=snap2.val();
     if(data?.cartelas){
-      const novo=Object.entries(data.cartelas).map(([fbId,c])=>({fbId,...c})).sort((a,b)=>a.criadaEm-b.criadaEm);
-      if(cartelaIdx>=novo.length) cartelaIdx=Math.max(0,novo.length-1);
+      const novo=Object.entries(data.cartelas)
+        .map(([fbId,c])=>({fbId,...c}))
+        .sort((a,b)=>a.criadaEm-b.criadaEm);
+      // preserve current index unless out of bounds
+      if(firstFire){ cartelaIdx=0; }
+      else if(cartelaIdx>=novo.length){ cartelaIdx=Math.max(0,novo.length-1); }
       cartelas=novo;
     }
+    firstFire=false;
+
+    // batida status
     const bs=data?.batidaStatus;
     const el=$('batidaStatusEl');
     if(el){
@@ -528,8 +538,14 @@ async function initGame(){
         setTimeout(()=>{if($('batidaStatusEl')){$('batidaStatusEl').style.display='none';update(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),{batidaStatus:null});}},4000);}
       else{el.style.display='none';}
     }
-    if(!cartelas.length){ const c=novaCartela(); cartelas=[c]; cartelaIdx=0; saveAllCartelas(); }
+
+    // create first cartela if none exists
+    if(!cartelas.length){ const c=novaCartela(); cartelas=[c]; cartelaIdx=0; saveAllCartelas(); return; }
+
     renderCartela(); renderHist(); checkAutoBatida();
+
+    // show pending toast after render
+    if(_pendingToast){ showToast(_pendingToast); _pendingToast=null; }
   });
 }
 
@@ -589,15 +605,18 @@ function renderBody(){
 
   $('btnPrev').addEventListener('click',()=>{ if(cartelaIdx>0){cartelaIdx--;renderCartela();renderHist();} });
   $('btnNext').addEventListener('click',()=>{ if(cartelaIdx<cartelas.length-1){cartelaIdx++;renderCartela();renderHist();} });
-  $('btnNovaC').addEventListener('click',()=>{ const c=novaCartela(); cartelas.push(c); cartelaIdx=cartelas.length-1; saveAllCartelas(); renderCartela(); renderHist(); showToast('✅ Cartela criada!'); });
+  $('btnNovaC').addEventListener('click',()=>{
+    const c=novaCartela(); cartelas.push(c); cartelaIdx=cartelas.length-1;
+    _pendingToast='✅ Cartela criada!';
+    saveAllCartelas(); // Firebase listener will re-render and show toast
+  });
   $('btnDelC').addEventListener('click',()=>{ const c=cartelas[cartelaIdx]; if(!c)return; $('mDelTxt').textContent=`Excluir a cartela ${c.id}? Não pode ser desfeito.`; openM('mDelCartela'); });
   $('togFree').addEventListener('change',()=>{ if(cartelas[cartelaIdx]){cartelas[cartelaIdx].freeCenter=$('togFree').checked;saveAllCartelas();renderCartela();} });
   $('togAuto').addEventListener('change',()=>{ if(cartelas[cartelaIdx]){cartelas[cartelaIdx].autoMarcar=$('togAuto').checked;saveAllCartelas();} });
   $('btnBingo').addEventListener('click',onBingoClick);
   $('pLastBall').addEventListener('click',onTapLastBall);
   $('btnSair').addEventListener('click',async()=>{ await signOut(auth); });
-
-  renderPremio(); renderBall(); renderCartela(); renderHist();
+  // cartelas loaded by Firebase listener — no need to render here
 }
 
 function showToast(msg){

@@ -1,1415 +1,781 @@
-<!-- index.html | v.31 | 2026-05-12 -->
-
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Marcador Dominó">
-<meta name="theme-color" content="#0a0a0f">
-<link rel="manifest" href="manifest-marcador.json">
-<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAEOUlEQVR42u3dPW7bQBgEUNVu0rjyAXKAtFHpU+Q4OV1uky6tDAVwESCIHJkmv9l5BKa1sct5oviz1OkUsj08fLpITk425RZIlF5gUHqpxmCnSiUEO1EqIdhpUgnBTpJaCHaM1CKwQ6QSgZ0gtRBMvNQiMOFSi8BESy0CEyy1CEysVCMwqVILwIRKLQITKbUITKBUIzB5UgvAxEk1ApMmtQBMmFQjMFlSC8BESTWCxEGdvzz+kP2zHABllwYUcQBuTfrT0+eL7J9UDFEAlD0bRQyA6eVXrlwIEQgUX5ogRABQoLUQjAWg/FKNQPmlEcEoAL73Ox8A4ODyf/3+a/kSHj1GAAYBuJbhVlYo/KQxAjCg/G8pRTqEyWOcgqASwD3FSEMwfYwAHATgPcVIQZAwRgAAAGAKgJYT4C2KMR1ByhhHnQj79Aeg+igAAAAAAAAAAL7/JyNIGyMAjgCOAAAAAAAAAAAAgHIAAEDhXdKt/2YKcABKAXz0/wAAgJFPSu75/xK+3gEwfCHMlE/lVdc8ADBgKeSUrzxH42teGlkNYI/1stO+k0+5igVAwatQGi69AgAAAAAAAAAAAAAAAAA9j2ADAIAjAAAAAAAAAAAAAAAAAABQ9zIuAAAAAAAAml/ICwAA9a9kBwAAP8oBAAB+lgkAAAQAAAQAAAQAAAQAAAQAAAQAAAAAAAAAAAAAAAAAAAAApQAAAAEAAAEAAAEAAAEAAAEAAAEAAAEAAAEAAAEAAAEAAAFgCQDn87eLFAUAAAAAAAAAAAAAAACUAgBXgcRVIAAEAAAEAAAEAAAEAAAEAAAEAAAEAAAEAAAEAAAEAAAEAAAEAAAEAAAEAADuyM/n5+WLN2WMAAwAcC3DraxQ+IljBOBAAG8pRTqE6WME4CAA9xQjDUHCGAE4AMB7ipGCIGWMAAAAAAD7AdiiGNMRJI0RAAAAAAAAAAAAAAAAUooxFUHaGAFwBHAEAAAAAAAAAAAAlAMAANwldScYAOUAAABPg3oaFADrAawHAMCKMCvCALAm2JpgAMRbIQAQAAAQAAAQAABwEuwkGACXQV0GBcCNMDfCAPAohEchAPAwnIfhAAAAAAAsiLEgBgAAAAAAAAAAAACAcQD2QODFWLPGOKX8vwFcN2+HcwSofCvc6wYAAAAAAAAAAAAAAATuBPecAAMAAACDAExG4GnQbcoPQOBNMesB1vr0Hwlg4tOhVoStWf4/ADQjsCZY+ccC8LaIdd7+AAAIij8ZQAICELKKH1X+qQD+hgCKmWVPKH8kgP/BIMcmoUOnf20JA4BC2T+k/KkARDYDAIFUlx8AqQcAgVSXHwCpBwCBVJcfAKkHAIFUlx8CqS8/BFJffgCkHgAEUl1+CKS+/BBIffkhkPryQyD15QdB6osPgSg/BKL8IIjigyCKD4IoPgii+DCI0sMgSg+Jck/dXgA5vtdztEgTxAAAAABJRU5ErkJggg==">
-<title>Marcador Dominó</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bingo Sorteador</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #0a0a0f; --surface: #12121a; --surface2: #1a1a26;
-  --azul: #3b82f6; --azul-glow: rgba(59,130,246,0.35);
-  --vermelho: #ef4444; --verm-glow: rgba(239,68,68,0.35);
-  --ouro: #f59e0b; --texto: #e8e8f0; --muted: #6b6b80; --radius: 20px;
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--texto); min-height: 100vh; overflow-x: hidden; position: relative; -webkit-text-size-adjust: 100%; padding-top: 80px; }
-button { cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
-body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 0; opacity: 0.5; }
-body::after { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
+  :root {
+    --bg: #0d0d1a;
+    --panel: #13132a;
+    --panel2: #1a1a35;
+    --accent: #f0c040;
+    --accent2: #e05c5c;
+    --green: #3dd68c;
+    --blue: #4fa3e0;
+    --text: #e8e8f5;
+    --muted: #6666aa;
+    --border: #2a2a55;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    padding: 0 0 40px 0;
+  }
 
-/* ── TELA DE MESAS ── */
-#tela-mesas { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; padding: 100px 16px 30px; min-height: 100vh; }
-.logo-wrap { text-align: center; margin-bottom: 32px; }
-.logo-title { font-family: ‘Bebas Neue’, sans-serif; font-size: clamp(32px, 10vw, 52px); letter-spacing: 8px; color: #e8e8f0; }
-.logo-sub { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
-.domino-icon { display: inline-flex; gap: 4px; align-items: center; margin-bottom: 8px; }
-.tile { width: 22px; height: 38px; background: var(--surface2); border-radius: 4px; border: 1.5px solid rgba(255,255,255,0.12); display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 4px 3px; gap: 2px; }
-.pip-row { display: flex; gap: 3px; }
-.pip { width: 4px; height: 4px; border-radius: 50%; background: white; }
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #1a1050 0%, #0d0d1a 100%);
+    border-bottom: 2px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-shadow: 0 0 20px rgba(240,192,64,0.4);
+    line-height: 1;
+  }
+  .logo span { color: var(--accent2); }
+  .event-area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 200px;
+    max-width: 400px;
+  }
+  .event-area input {
+    background: var(--panel2);
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .event-area input:focus { border-color: var(--accent); }
+  .mode-toggle {
+    display: flex;
+    background: var(--panel2);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .mode-toggle button {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.85rem;
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mode-toggle button.active {
+    background: var(--accent);
+    color: #000;
+  }
 
-.mesas-lista { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-.mesa-card { background: var(--surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; transition: all 0.2s; cursor: pointer; }
-.mesa-card:active { transform: scale(0.98); }
-.mesa-card:hover { border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.05); }
-.mesa-num { font-family: ‘Bebas Neue’, sans-serif; font-size: 28px; color: var(--ouro); line-height: 1; min-width: 60px; }
-.mesa-info { flex: 1; }
-.mesa-nome { font-family: ‘Bebas Neue’, sans-serif; font-size: 18px; letter-spacing: 1px; color: white; }
-.mesa-obs { font-size: 12px; color: var(--muted); margin-top: 2px; }
-.mesa-vitorias { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
-.mesa-vit-item { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); }
-.mesa-vit-num { font-family: ‘Bebas Neue’, sans-serif; font-size: 18px; color: var(--ouro); line-height: 1; }
-.mesa-vit-sep { font-size: 11px; color: rgba(255,255,255,0.2); }
-.mesa-data { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 4px; letter-spacing: 0.5px; }
-.mesa-placar { font-family: ‘Bebas Neue’, sans-serif; font-size: 16px; color: var(--muted); letter-spacing: 1px; }
-.btn-excluir { width: 34px; height: 34px; border-radius: 8px; border: 1px solid rgba(239,68,68,0.3); background: transparent; color: var(--vermelho); font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
-.btn-excluir:active { background: rgba(239,68,68,0.15); }
+  /* MAIN LAYOUT */
+  .main {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 16px;
+    max-width: 1100px;
+    margin: 16px auto;
+    padding: 0 14px;
+  }
+  @media (max-width: 780px) {
+    .main { grid-template-columns: 1fr; }
+  }
 
-.btn-nova-mesa { width: 100%; max-width: 420px; font-family: ‘Bebas Neue’, sans-serif; font-size: 20px; letter-spacing: 2px; padding: 16px; border-radius: 16px; border: 2px dashed rgba(245,158,11,0.4); background: rgba(245,158,11,0.06); color: var(--ouro); transition: all 0.2s; }
-.btn-nova-mesa:active { background: rgba(245,158,11,0.12); }
-.btn-help-mesas { width: 100%; max-width: 420px; font-family: ‘DM Sans’, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 12px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.1); background: transparent; color: var(--muted); margin-top: 10px; transition: all 0.2s; }
-.btn-help-mesas:active { color: white; border-color: rgba(255,255,255,0.3); }
+  /* BALL DISPLAY */
+  .ball-section {
+    background: var(--panel);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .current-ball-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .current-label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .current-ball {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fffbe0, var(--accent) 60%, #b8860b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.2rem;
+    color: #1a1000;
+    box-shadow: 0 0 30px rgba(240,192,64,0.5), 0 4px 16px rgba(0,0,0,0.5);
+    transition: transform 0.15s;
+    cursor: default;
+    user-select: none;
+  }
+  .current-ball.pop {
+    animation: ballpop 0.35s cubic-bezier(.2,1.6,.4,1) both;
+  }
+  @keyframes ballpop {
+    0% { transform: scale(0.5); opacity:0; }
+    100% { transform: scale(1); opacity:1; }
+  }
+  .current-ball.empty {
+    background: radial-gradient(circle at 35% 35%, #2a2a45, #1a1a35);
+    color: var(--muted);
+    font-size: 1.5rem;
+    box-shadow: none;
+  }
 
-.empty-state { text-align: center; padding: 30px 20px; color: var(--muted); }
-.empty-state .empty-icon { margin-bottom: 16px; }
-.empty-state p { font-size: 14px; line-height: 1.6; }
+  /* CONTROLS */
+  .controls {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .btn {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn:active { transform: scale(0.96); }
+  .btn-primary {
+    background: var(--accent);
+    color: #1a1000;
+    font-size: 1.05rem;
+    padding: 12px 28px;
+    box-shadow: 0 4px 16px rgba(240,192,64,0.3);
+  }
+  .btn-primary:hover { background: #ffd060; box-shadow: 0 4px 24px rgba(240,192,64,0.5); }
+  .btn-primary:disabled { background: var(--muted); color: var(--panel); cursor: not-allowed; box-shadow: none; }
+  .btn-secondary {
+    background: var(--panel2);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-danger {
+    background: rgba(224,92,92,0.15);
+    color: var(--accent2);
+    border: 1.5px solid rgba(224,92,92,0.3);
+  }
+  .btn-danger:hover { background: rgba(224,92,92,0.3); }
+  .btn-voice {
+    background: var(--panel2);
+    color: var(--blue);
+    border: 1.5px solid var(--blue);
+    font-size: 0.85rem;
+    padding: 7px 14px;
+  }
+  .btn-voice.active { background: rgba(79,163,224,0.2); }
 
-/* ── MODAL CRIAR MESA ── */
-.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 400; align-items: flex-start; justify-content: center; padding: 90px 20px 20px; overflow-y: auto; }
-.modal-overlay.show { display: flex; }
-.modal-box { background: var(--surface); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 24px; width: 100%; max-width: 340px; animation: slideUp 0.3s ease; }
-@keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-.modal-title { font-family: ‘Bebas Neue’, sans-serif; font-size: 22px; letter-spacing: 2px; color: white; margin-bottom: 20px; }
-.field-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; display: block; }
-.field-input { width: 100%; background: var(--surface2); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 10px; color: var(--texto); font-family: ‘DM Sans’, sans-serif; font-size: 15px; padding: 10px 12px; outline: none; transition: border-color 0.2s; margin-bottom: 14px; }
-.field-input:focus { border-color: var(--ouro); }
-.field-input.num { font-family: ‘Bebas Neue’, sans-serif; font-size: 22px; letter-spacing: 2px; color: var(--ouro); }
-.modal-btns { display: flex; gap: 10px; margin-top: 6px; }
-.btn-cancelar { flex: 1; font-family: ‘DM Sans’, sans-serif; font-weight: 700; font-size: 14px; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15); background: transparent; color: var(--muted); }
-.btn-confirmar { flex: 1; font-family: ‘DM Sans’, sans-serif; font-weight: 700; font-size: 14px; padding: 12px; border-radius: 10px; border: none; background: var(--ouro); color: #000; }
-.btn-confirmar:active { opacity: 0.85; }
-.field-error { font-size: 12px; color: var(--vermelho); margin-top: -10px; margin-bottom: 10px; display: none; }
-.field-error.show { display: block; }
+  /* LAST DRAWN */
+  .history-strip-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    align-self: flex-start;
+  }
+  .history-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    width: 100%;
+    max-height: 110px;
+    overflow-y: auto;
+  }
+  .history-strip::-webkit-scrollbar { width: 4px; }
+  .history-strip::-webkit-scrollbar-track { background: transparent; }
+  .history-strip::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  .mini-ball {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    color: #1a1000;
+    background: radial-gradient(circle at 35% 35%, #fffbe0, var(--accent) 60%, #b8860b);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    flex-shrink: 0;
+  }
+  .mini-ball:first-child {
+    background: radial-gradient(circle at 35% 35%, #b0ffdc, var(--green) 60%, #1a7040);
+    animation: pulse-green 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse-green {
+    0%,100% { box-shadow: 0 0 8px rgba(61,214,140,0.6); }
+    50% { box-shadow: 0 0 22px rgba(61,214,140,1), 0 0 6px rgba(61,214,140,0.4); }
+  }
 
-/* ── STATUS FIREBASE ── */
-#safe-area { position: fixed; top: 0; left: 0; right: 0; height: 44px; z-index: 999; background: var(--bg); }
-#topo-bar { position: fixed; top: 44px; left: 0; right: 0; height: 36px; z-index: 999; background: rgba(10,10,15,0.92); border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; padding: 0 14px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-#versao { font-family: ‘Bebas Neue’, sans-serif; font-size: 13px; letter-spacing: 2px; color: rgba(255,255,255,0.35); flex-shrink: 0; }
-#topo-titulo { font-family: ‘Bebas Neue’, sans-serif; font-size: clamp(16px,5vw,22px); letter-spacing: 4px; color: #e8e8f0; flex: 1; text-align: center; }
-#fb-status { font-size: 11px; font-weight: 700; letter-spacing: 1px; padding: 3px 10px; border-radius: 99px; background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--muted); transition: all 0.3s; flex-shrink: 0; }
-#fb-status.ok { color: #4ade80; border-color: #4ade80; }
-#fb-status.err { color: #f87171; border-color: #f87171; }
-#mesa-bar { position: fixed; top: 80px; left: 0; right: 0; height: 36px; z-index: 998; background: rgba(10,10,15,0.85); border-bottom: 1px solid rgba(255,255,255,0.05); display: none; align-items: center; justify-content: space-between; padding: 0 10px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-#btn-voltar-bar { font-family: ‘DM Sans’, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 3px 10px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #e8e8f0; flex-shrink: 0; }
-#mesa-bar-txt { font-size: 14px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--ouro); background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); border-radius: 99px; padding: 4px 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 65%; }
-#btn-ajuda-bar { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.15); background: var(--surface2); color: var(--muted); font-family: ‘Bebas Neue’, sans-serif; font-size: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  /* GRID PANEL */
+  .grid-panel {
+    background: var(--panel);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+  }
+  .grid-title {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .number-grid {
+    display: grid;
+    gap: 4px;
+  }
+  .grid-75 { grid-template-columns: repeat(15, 1fr); }
+  .grid-90 { grid-template-columns: repeat(10, 1fr); }
+  .num-cell {
+    aspect-ratio: 1;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.95rem;
+    color: var(--muted);
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    transition: all 0.3s;
+    cursor: default;
+    user-select: none;
+  }
+  .num-cell.drawn {
+    background: var(--accent);
+    color: #1a1000;
+    border-color: var(--accent);
+    box-shadow: 0 0 8px rgba(240,192,64,0.3);
+  }
+  .num-cell.drawn.latest {
+    background: radial-gradient(circle at 35% 35%, #b0ffdc, var(--green) 60%, #1a7040);
+    color: #fff;
+    border-color: var(--green);
+    animation: pulse-green 1.5s ease-in-out infinite;
+  }
 
-/* ── TELA DO JOGO ── */
-#tela-jogo { display: none; padding-top: 70px; }
-.game-header { display: none; }
-.game-header-title { display: none; }
-.btn-voltar { display: none; }
-.nav-row { position: relative; z-index: 10; display: flex; align-items: center; justify-content: center; gap: 10px; margin: 6px 12px 4px; }
-.nav-meta { display: flex; align-items: center; gap: 8px; justify-content: center; }
-.meta-label { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
-.meta-input { font-family: ‘Bebas Neue’, sans-serif; font-size: 26px; letter-spacing: 2px; width: 90px; text-align: center; background: var(--surface2); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 10px; color: var(--ouro); padding: 4px 8px; outline: none; transition: border-color 0.2s; }
-.meta-input:focus { border-color: var(--ouro); }
-.btn-ajuda { width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.15); background: var(--surface2); color: var(--muted); font-family: ‘Bebas Neue’, sans-serif; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
-.btn-ajuda:active { border-color: var(--ouro); color: var(--ouro); }
-.mesa-badge { position: relative; z-index: 10; text-align: center; margin-bottom: 4px; }
-.mesa-badge span { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--ouro); background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); border-radius: 99px; padding: 3px 12px; }
+  /* SIDEBAR */
+  .sidebar { display: flex; flex-direction: column; gap: 14px; }
+  .sidebar-card {
+    background: var(--panel);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+  }
+  .sidebar-card h3 {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .stat-box {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+  }
+  .stat-box .val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-box .lbl {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .voice-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .voice-row label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+  .toggle-switch {
+    position: relative;
+    width: 40px;
+    height: 22px;
+  }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: var(--panel2);
+    border: 1.5px solid var(--border);
+    border-radius: 22px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .toggle-slider:before {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: var(--muted);
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: 0.2s;
+  }
+  .toggle-switch input:checked + .toggle-slider { background: rgba(79,163,224,0.2); border-color: var(--blue); }
+  .toggle-switch input:checked + .toggle-slider:before { background: var(--blue); transform: translateX(18px); }
 
-/* meta-wrap removido — integrado ao nav-row */
-.meta-label { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
-.meta-input { font-family: ‘Bebas Neue’, sans-serif; font-size: 26px; letter-spacing: 2px; width: 90px; text-align: center; background: var(--surface2); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 10px; color: var(--ouro); padding: 4px 8px; outline: none; transition: border-color 0.2s; }
-.meta-input:focus { border-color: var(--ouro); }
+  /* FULL HISTORY LOG */
+  .history-log {
+    max-height: 200px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .history-log::-webkit-scrollbar { width: 4px; }
+  .history-log::-webkit-scrollbar-track { background: transparent; }
+  .history-log::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  .log-entry {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 8px;
+    background: var(--panel2);
+    border-radius: 6px;
+    font-size: 0.82rem;
+  }
+  .log-entry .log-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    color: var(--accent);
+    width: 30px;
+    text-align: center;
+  }
+  .log-entry .log-time { color: var(--muted); font-size: 0.72rem; margin-left: auto; }
 
-.progress-wrap { position: relative; z-index: 10; margin: 0 12px 16px; height: 6px; background: var(--surface2); border-radius: 99px; overflow: visible; display: flex; gap: 2px; }
-.progress-a, .progress-b { height: 100%; border-radius: 99px; transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; }
-.progress-a { background: linear-gradient(90deg, #1d4ed8, var(--azul)); }
-.progress-b { background: linear-gradient(90deg, #b91c1c, var(--vermelho)); }
+  /* FINISHED BANNER */
+  .finished-banner {
+    display: none;
+    background: linear-gradient(135deg, #1a4a2a, #0d1a0d);
+    border: 2px solid var(--green);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: center;
+    animation: fadeIn 0.5s ease;
+  }
+  .finished-banner.show { display: block; }
+  .finished-banner h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: var(--green);
+    letter-spacing: 2px;
+  }
+  .finished-banner p { color: var(--text); font-size: 0.85rem; margin-top: 4px; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-.container { position: relative; z-index: 10; display: flex; padding: 0 12px; }
-.time { flex: 1; background: var(--surface); border-radius: var(--radius); padding: 18px 12px 16px; text-align: center; position: relative; overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid rgba(255,255,255,0.06); }
-.time::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: var(--radius) var(--radius) 0 0; transition: opacity 0.3s; }
-.timeA::before { background: linear-gradient(90deg, #1d4ed8, var(--azul), #60a5fa); }
-.timeB::before { background: linear-gradient(90deg, #b91c1c, var(--vermelho), #f87171); }
-.time::after { content: ''; position: absolute; width: 120px; height: 120px; border-radius: 50%; top: -20px; opacity: 0.12; filter: blur(40px); pointer-events: none; transition: opacity 0.4s; }
-.timeA::after { background: var(--azul); left: -20px; }
-.timeB::after { background: var(--vermelho); right: -20px; }
-.timeA { margin-right: 5px; }
-.timeB { margin-left: 5px; }
-.time.lider::after { opacity: 0.3; }
-.time.lider { transform: translateY(-3px); box-shadow: 0 0 24px rgba(34,197,94,0.5), 0 0 48px rgba(34,197,94,0.25); border-color: rgba(34,197,94,0.4); animation: pulsoVerde 1.6s ease-in-out infinite; }
-@keyframes pulsoVerde { 0%,100% { box-shadow: 0 0 18px rgba(34,197,94,0.4), 0 0 40px rgba(34,197,94,0.2); } 50% { box-shadow: 0 0 36px rgba(34,197,94,0.75), 0 0 70px rgba(34,197,94,0.4); } }
-.time.lider::before { background: linear-gradient(90deg, #15803d, #22c55e, #86efac) !important; }
-.nome { font-family: ‘Bebas Neue’, sans-serif; font-size: clamp(18px, 5vw, 22px); letter-spacing: 3px; border: none; background: transparent; color: white; text-align: center; width: 100%; outline: none; border-bottom: 1px solid transparent; padding-bottom: 2px; transition: border-color 0.2s; }
-.nome:focus { border-bottom-color: rgba(255,255,255,0.2); }
-.pontos-wrap { position: relative; margin: 10px 0 8px; }
-.pontos { font-family: ‘Bebas Neue’, sans-serif; font-size: clamp(72px, 20vw, 100px); line-height: 1; letter-spacing: -2px; display: block; }
-.timeA .pontos { color: #93c5fd; }
-.timeB .pontos { color: #fca5a5; }
-.pontos.bump { animation: bump 0.25s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
-@keyframes bump { 0% { transform: scale(1); } 40% { transform: scale(1.12); } 70% { transform: scale(0.95); } 100% { transform: scale(1); } }
-.time.venceu .pontos { color: var(--ouro) !important; -webkit-text-fill-color: var(--ouro) !important; animation: shimmer-border 1s ease-in-out infinite; }
-@keyframes shimmer-border { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
-
-.historico-wrap { margin: 0 0 12px; background: rgba(255,255,255,0.04); border-radius: 12px; padding: 7px 8px 6px; min-height: 34px; }
-.historico-label { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; text-align: left; }
-.historico-lista { display: flex; gap: 5px; flex-wrap: nowrap; overflow: hidden; min-height: 22px; }
-.hist-item { font-family: ‘Bebas Neue’, sans-serif; font-size: 14px; letter-spacing: 0.5px; padding: 2px 7px; border-radius: 99px; white-space: nowrap; animation: fadeSlide 0.3s cubic-bezier(0.34, 1.4, 0.64, 1); }
-@keyframes fadeSlide { from { transform: translateY(-8px) scale(0.8); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
-.hist-item:nth-child(1) { opacity: 1; } .hist-item:nth-child(2) { opacity: 0.85; } .hist-item:nth-child(3) { opacity: 0.70; } .hist-item:nth-child(4) { opacity: 0.55; } .hist-item:nth-child(5) { opacity: 0.40; }
-.timeA .hist-item.pos { background: rgba(59,130,246,0.25); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
-.timeA .hist-item.neg { background: rgba(239,68,68,0.18); color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
-.timeB .hist-item.pos { background: rgba(239,68,68,0.22); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
-.timeB .hist-item.neg { background: rgba(59,130,246,0.18); color: #93c5fd; border: 1px solid rgba(59,130,246,0.25); }
-
-.vitorias-wrap { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 0 10px; background: rgba(255,255,255,0.05); border-radius: 12px; padding: 8px 10px; }
-.vitorias-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); flex: 1; text-align: left; }
-.vitorias-num { font-family: ‘Bebas Neue’, sans-serif; font-size: 32px; line-height: 1; color: var(--ouro); min-width: 28px; text-align: center; }
-.btn-v { font-family: ‘Bebas Neue’, sans-serif; font-size: 16px; width: 38px; height: 30px; border-radius: 8px; border: none; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; transition: transform 0.12s; }
-.btn-v:active { transform: scale(0.88); }
-.btn-v-plus { background: #16a34a; }
-.btn-v-minus { background: #6b7280; }
-
-.botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
-.btn { font-family: ‘Bebas Neue’, sans-serif; font-size: 20px; letter-spacing: 1px; padding: 12px 6px; border-radius: 12px; border: none; color: white; cursor: pointer; position: relative; overflow: hidden; transition: transform 0.12s, box-shadow 0.2s; }
-.btn::after { content: ‘’; position: absolute; inset: 0; background: rgba(255,255,255,0); transition: background 0.15s; border-radius: inherit; }
-.btn:active { transform: scale(0.90); }
-.btn:active::after { background: rgba(255,255,255,0.15); }
-.btn5 { background: linear-gradient(135deg, #15803d, #22c55e); }
-.btn10 { background: linear-gradient(135deg, #0e7490, #06b6d4); }
-.btn20 { background: linear-gradient(135deg, #7e22ce, #a855f7); }
-.btn25 { background: linear-gradient(135deg, #b45309, #f59e0b); }
-.btnNeg { background: linear-gradient(135deg, #c2410c, #f97316); padding: 10px; font-size: 18px; }
-
-.bottom { position: relative; z-index: 10; text-align: center; margin: 18px 0 24px; }
-.btn-reset { font-family: ‘DM Sans’, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 9px 22px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.15); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.2s; }
-.btn-reset:hover { color: white; border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.05); }
-
-/* Painel QR Code */
-.qr-toggle { display: block; width: 100%; max-width: 300px; margin: 10px auto 0; font-family: ‘DM Sans’, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 7px 16px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.08); background: transparent; color: rgba(255,255,255,0.2); cursor: pointer; transition: all 0.2s; }
-.qr-toggle:active { color: rgba(255,255,255,0.5); border-color: rgba(255,255,255,0.2); }
-#painel-qr { display: none; margin: 12px 12px 0; background: var(--surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 20px; }
-#painel-qr.aberto { display: block; animation: slideUp 0.3s ease; }
-.qr-titulo { font-family: ‘Bebas Neue’, sans-serif; font-size: 18px; letter-spacing: 2px; color: white; margin-bottom: 4px; }
-.qr-sub { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
-.qr-field-wrap { display: flex; gap: 8px; margin-bottom: 16px; }
-.qr-input { flex: 1; background: var(--surface2); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 10px; color: var(--texto); font-family: ‘DM Sans’, sans-serif; font-size: 13px; padding: 9px 12px; outline: none; transition: border-color 0.2s; }
-.qr-input:focus { border-color: var(--ouro); }
-.qr-salvar { font-family: ‘DM Sans’, sans-serif; font-weight: 700; font-size: 13px; padding: 9px 16px; border-radius: 10px; border: none; background: var(--ouro); color: #000; cursor: pointer; flex-shrink: 0; transition: opacity 0.2s; }
-.qr-salvar:active { opacity: 0.8; }
-#qr-canvas-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-#qr-canvas-wrap canvas { border-radius: 12px; }
-.qr-link-txt { font-size: 11px; color: var(--muted); word-break: break-all; text-align: center; max-width: 260px; }
-.qr-vazio { font-size: 13px; color: var(--muted); text-align: center; padding: 20px 0; }
-
-.toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--ouro); color: #000; font-family: ‘Bebas Neue’, sans-serif; font-size: 22px; letter-spacing: 2px; padding: 12px 28px; border-radius: 99px; z-index: 100; opacity: 0; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); white-space: nowrap; pointer-events: none; }
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-/* Tutorial */
-.modal-tutorial { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 300; align-items: flex-start; justify-content: center; padding: 90px 20px 20px; overflow-y: auto; }
-.modal-tutorial-content { background: var(--surface); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; max-width: 400px; width: 100%; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s ease; }
-.modal-tutorial-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--surface); border-radius: 20px 20px 0 0; z-index: 10; }
-.modal-tutorial-title { font-family: ‘Bebas Neue’, sans-serif; font-size: 24px; letter-spacing: 2px; color: white; }
-.btn-fechar-tutorial { width: 32px; height: 32px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: transparent; color: var(--muted); font-size: 18px; display: flex; align-items: center; justify-content: center; }
-.modal-tutorial-body { padding: 20px; }
-.tutorial-section { margin-bottom: 20px; padding: 15px; background: var(--surface2); border-radius: 12px; border-left: 3px solid var(--ouro); }
-.tutorial-section.destaque { background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05)); border: 2px solid var(--ouro); border-left: 3px solid var(--ouro); }
-.tutorial-section h3 { font-family: ‘Bebas Neue’, sans-serif; font-size: 16px; letter-spacing: 1px; color: var(--ouro); margin-bottom: 8px; }
-.tutorial-section.destaque h3 { font-size: 18px; }
-.tutorial-section p, .tutorial-section li { font-size: 13px; line-height: 1.6; color: var(--texto); }
-.tutorial-section ul { margin-left: 16px; margin-top: 8px; }
-.tutorial-section li { margin-bottom: 4px; }
-.tutorial-dica { margin-top: 20px; padding: 12px; background: rgba(245,158,11,0.1); border: 1px solid var(--ouro); border-radius: 10px; text-align: center; font-size: 12px; color: var(--ouro); font-style: italic; }
-.modal-tutorial-content::-webkit-scrollbar { width: 6px; }
-.modal-tutorial-content::-webkit-scrollbar-track { background: var(--surface2); }
-.modal-tutorial-content::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 3px; }
-
-/* Toggle senha de acesso */
-.toggle-wrap { display: flex; align-items: center; justify-content: space-between; background: var(--surface2); border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; }
-.toggle-label { font-size: 13px; font-weight: 600; color: var(--texto); }
-.toggle-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-.toggle-btn { width: 44px; height: 24px; border-radius: 99px; border: none; background: var(--surface); position: relative; cursor: pointer; transition: background 0.3s; flex-shrink: 0; }
-.toggle-btn.on { background: var(--ouro); }
-.toggle-btn::after { content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: white; top: 3px; left: 3px; transition: left 0.3s; }
-.toggle-btn.on::after { left: 23px; }
-#campo-senha-acesso { display: none; }
-
-/* ── HISTÓRICO DE PARTIDAS ── */
-#modal-historico-partidas { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 500; align-items: flex-start; justify-content: center; padding: 80px 16px 20px; overflow-y: auto; }
-#modal-historico-partidas.show { display: flex; }
-.hist-partidas-box { background: var(--surface); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; width: 100%; max-width: 420px; animation: slideUp 0.3s ease; }
-.hist-partidas-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
-.hist-partidas-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; color: white; }
-.btn-fechar-hist { width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15); background: transparent; color: var(--muted); font-size: 16px; display: flex; align-items: center; justify-content: center; }
-.hist-partidas-lista { display: flex; flex-direction: column; gap: 10px; max-height: 65vh; overflow-y: auto; }
-.hist-partida-card { background: var(--surface2); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 14px 16px; }
-.hist-partida-data { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
-.hist-partida-placar { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.hist-partida-time { flex: 1; text-align: center; }
-.hist-partida-nome { font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; color: rgba(255,255,255,0.6); margin-bottom: 2px; }
-.hist-partida-nome.vencedor { color: var(--ouro); font-size: 20px; }
-.hist-partida-pts { font-family: 'Bebas Neue', sans-serif; line-height: 1; color: rgba(255,255,255,0.5); }
-.hist-partida-pts.vencedor { color: var(--ouro); font-size: 52px; }
-.hist-partida-pts:not(.vencedor) { font-size: 36px; }
-.hist-partida-nome:not(.vencedor) { font-size: 15px; }
-.hist-partida-sep { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: rgba(255,255,255,0.2); flex-shrink: 0; }
-.hist-partida-trofeu { font-size: 22px; display: block; margin-bottom: 2px; }
-.hist-vazio { text-align: center; padding: 30px 16px; color: var(--muted); font-size: 14px; }
-.btn-limpar-hist { width: 100%; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 10px; border-radius: 10px; border: 1px solid rgba(239,68,68,0.2); background: transparent; color: rgba(239,68,68,0.5); margin-top: 14px; cursor: pointer; transition: all 0.2s; }
-.btn-limpar-hist:active { border-color: var(--vermelho); color: var(--vermelho); background: rgba(239,68,68,0.08); }
-.hist-partidas-lista::-webkit-scrollbar { width: 4px; }
-.hist-partidas-lista::-webkit-scrollbar-track { background: transparent; }
-.hist-partidas-lista::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 2px; }
-
-#creditos-ibbi { position: fixed; bottom: 7px; right: 12px; z-index: 50; display: flex; align-items: center; gap: 6px; opacity: 0.45; transition: opacity 0.3s; pointer-events: none; }
-#creditos-ibbi img { width: 22px; height: 22px; border-radius: 5px; object-fit: cover; }
-#creditos-ibbi span { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #e8e8f0; font-family: 'DM Sans', sans-serif; }
-/* ── Modal Seletor de Voz ── */
-#modal-voz.show { display: flex; }
-.voz-lista { display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; margin-bottom: 16px; }
-.voz-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 12px; border: 1.5px solid rgba(255,255,255,0.1); background: var(--surface2); cursor: pointer; transition: all 0.2s; }
-.voz-item:active, .voz-item.selecionada { border-color: var(--ouro); background: rgba(245,158,11,0.1); }
-.voz-item-nome { flex: 1; font-size: 13px; font-weight: 600; color: var(--texto); }
-.voz-item-lang { font-size: 10px; letter-spacing: 1px; color: var(--muted); }
-.voz-item-play { width: 30px; height: 30px; border-radius: 50%; border: none; background: rgba(245,158,11,0.2); color: var(--ouro); font-size: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.voz-vazia { font-size: 13px; color: var(--muted); text-align: center; padding: 20px 0; }
-
+  .conn-status {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid;
+  }
+  .conn-status.online { color: var(--green); border-color: var(--green); background: rgba(61,214,140,0.1); }
+  .conn-status.offline { color: var(--accent2); border-color: var(--accent2); background: rgba(224,92,92,0.1); }
 </style>
-
 </head>
 <body>
 
-<div id="safe-area"></div>
-<div id="topo-bar">
-  <span id="versao">v.31</span>
-  <span id="topo-titulo">Marcador Dominó</span>
-  <div id="fb-status">conectando</div>
-</div>
-<div id="mesa-bar">
-  <button id="btn-voltar-bar" onclick="voltarMesas()">← Voltar</button>
-  <span id="mesa-bar-txt"></span>
-  <span style="width:28px;flex-shrink:0;"></span>
-</div>
+<header>
+  <div class="logo">B<span>I</span>NGO</div>
+  <div class="event-area">
+    <input type="text" id="eventName" placeholder="Nome do evento..." maxlength="60">
+  </div>
+  <div class="mode-toggle">
+    <button id="btn75" onclick="setMode(75)">75</button>
+    <button id="btn90" onclick="setMode(90)" class="active">90</button>
+  </div>
+  <span class="conn-status offline" id="connStatus">⬤ offline</span>
+</header>
 
-<!-- ══════════════ TELA DE MESAS ══════════════ -->
+<div class="main">
+  <!-- LEFT: grid + controls -->
+  <div style="display:flex;flex-direction:column;gap:14px;">
 
-<div id="tela-mesas">
-  <div class="logo-wrap">
-    <div class="domino-icon">
-      <div class="tile">
-        <div class="pip-row"><div class="pip"></div><div class="pip"></div></div>
-        <div style="width:100%;height:1px;background:rgba(255,255,255,0.2)"></div>
-        <div class="pip-row"><div class="pip"></div><div class="pip"></div></div>
+    <!-- Current ball + controls -->
+    <div class="ball-section">
+      <div class="current-ball-wrap">
+        <div class="current-label">Próxima pedra</div>
+        <div class="current-ball empty" id="currentBall">–</div>
       </div>
-      <div class="tile">
-        <div class="pip-row"><div class="pip"></div></div>
-        <div style="width:100%;height:1px;background:rgba(255,255,255,0.2)"></div>
-        <div class="pip-row"><div class="pip"></div><div class="pip"></div></div>
+      <div class="controls">
+        <button class="btn btn-primary" id="drawBtn" onclick="drawNext()">🎱 Sortear</button>
+        <button class="btn btn-secondary" id="repeatBtn" onclick="repeatVoice()" style="display:none;">🔊 Repetir</button>
+        <button class="btn btn-danger" onclick="confirmReset()">↺ Zerar</button>
       </div>
+      <div class="finished-banner" id="finishedBanner">
+        <h2>🎉 Todas as pedras sorteadas!</h2>
+        <p id="finishedCount"></p>
+      </div>
+      <div class="history-strip-label">Últimas pedras sorteadas</div>
+      <div class="history-strip" id="historyStrip"></div>
     </div>
-    <div class="logo-title">Marcador Dominó</div>
-    <div class="logo-sub">Selecione ou crie uma mesa</div>
+
+    <!-- Number grid -->
+    <div class="grid-panel">
+      <div class="grid-title" id="gridTitle">Tabela de Números — 90 pedras</div>
+      <div class="number-grid grid-90" id="numberGrid"></div>
+    </div>
+
   </div>
 
-  <div class="mesas-lista" id="mesas-lista">
-    <div class="empty-state">
-      <div class="empty-icon">
-        <svg width="64" height="104" viewBox="0 0 64 104" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="2" y="2" width="60" height="100" rx="8" stroke="rgba(255,255,255,0.2)" stroke-width="2" fill="rgba(255,255,255,0.04)"/>
-          <line x1="2" y1="52" x2="62" y2="52" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-          <circle cx="32" cy="27" r="5" fill="rgba(255,255,255,0.25)"/>
-          <circle cx="18" cy="68" r="5" fill="rgba(255,255,255,0.25)"/>
-          <circle cx="46" cy="68" r="5" fill="rgba(255,255,255,0.25)"/>
-          <circle cx="18" cy="84" r="5" fill="rgba(255,255,255,0.25)"/>
-          <circle cx="46" cy="84" r="5" fill="rgba(255,255,255,0.25)"/>
-        </svg>
-      </div>
-      <p>Nenhuma mesa criada ainda.<br>Crie a primeira mesa abaixo!</p>
-    </div>
-  </div>
+  <!-- RIGHT: sidebar -->
+  <div class="sidebar">
 
-<button class="btn-nova-mesa" onclick="abrirModalCriar()">+ Nova Mesa</button>
-<button onclick="abrirModalVoz()" style="width:100%;max-width:420px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:12px;border-radius:99px;border:1px solid rgba(245,158,11,0.3);background:rgba(245,158,11,0.06);color:var(--ouro);margin-top:10px;cursor:pointer;">🎙️ Escolher Voz</button>
-<button class="btn-help-mesas" onclick="abrirHelpMesas()">❓ Como funciona</button>
-
-</div>
-
-<!-- Modal help tela de mesas -->
-
-<div id="modal-help-mesas" class="modal-overlay">
-  <div class="modal-box" style="max-width:380px;">
-    <div class="modal-title">❓ Como funciona</div>
-    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
-      <div class="tutorial-section">
-        <h3>🁣 O QUE É UMA MESA</h3>
-        <p>Cada partida de dominó é uma Mesa. Várias mesas podem existir ao mesmo tempo — cada uma com seu próprio placar independente.</p>
-      </div>
-      <div class="tutorial-section">
-        <h3>➕ CRIANDO UMA MESA</h3>
-        <ul>
-          <li>O número é sugerido automaticamente mas pode ser alterado</li>
-          <li>A observação é opcional — use para identificar a partida (ex: "Quintal", "Torneio")</li>
-          <li>A senha é criada por você na hora — guarde bem!</li>
-        </ul>
-      </div>
-      <div class="tutorial-section destaque">
-        <h3>🔑 SENHA</h3>
-        <p>A senha serve <strong>somente para excluir a mesa</strong>. Apenas quem criou a mesa conhece a senha. Sem a senha, ninguém consegue excluir.</p>
-      </div>
-      <div class="tutorial-section">
-        <h3>🗑 EXCLUINDO UMA MESA</h3>
-        <p>Toque no <strong>✕</strong> ao lado da mesa e confirme com a senha. Sem a senha correta, a exclusão é bloqueada.</p>
-      </div>
-      <div class="tutorial-section">
-        <h3>📺 DISPLAY (TV)</h3>
-        <p>Abra o <strong>display.html</strong> na TV ou outro dispositivo. Ele mostra o placar em tempo real da mesa selecionada — sem botões, só visualização.</p>
-      </div>
-      <div class="tutorial-section">
-        <h3>🎙️ VOZ</h3>
-        <p>Toque em <strong>🎙️ Escolher Voz</strong> para selecionar a voz do narrador. Cada dispositivo tem vozes diferentes — toque em ▶ para testar antes de confirmar. A escolha fica salva automaticamente.</p>
+    <!-- Stats -->
+    <div class="sidebar-card">
+      <h3>📊 Estatísticas</h3>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="val" id="statDrawn">0</div><div class="lbl">Sorteadas</div></div>
+        <div class="stat-box"><div class="val" id="statLeft">90</div><div class="lbl">Restantes</div></div>
+        <div class="stat-box"><div class="val" id="statPct">0%</div><div class="lbl">Progresso</div></div>
+        <div class="stat-box"><div class="val" id="statLast">–</div><div class="lbl">Última</div></div>
       </div>
     </div>
-    <button class="btn-confirmar" style="width:100%;" onclick="fecharHelpMesas()">Entendi</button>
-  </div>
-</div>
 
-<!-- ══════════════ TELA DO JOGO ══════════════ -->
-
-<div id="tela-jogo">
-  <div class="game-header">
-    <button class="btn-voltar" onclick="voltarMesas()">←</button>
-    <div class="game-header-title">Marcador Dominó</div>
-  </div>
-
-  <div class="nav-row" style="justify-content:space-between;padding:0 12px;">
-    <button class="btn-ajuda" onclick="abrirModalVoz()" title="Escolher voz" style="font-size:20px;">🎙</button>
-    <div class="nav-meta">
-      <span class="meta-label">Meta</span>
-      <input class="meta-input" type="number" id="meta" value="200">
-    </div>
-    <button class="btn-ajuda" onclick="abrirTutorial()">?</button>
-  </div>
-
-  <div class="progress-wrap">
-    <div class="progress-a" id="progA" style="width:0%"></div>
-    <div class="progress-b" id="progB" style="width:0%"></div>
-  </div>
-
-  <div class="container"><div class="time timeA" id="timeA">
-      <input class="nome" value="Equipe A" id="nomeA">
-      <div class="pontos-wrap"><span class="pontos" id="pA">0</span></div>
-      <div class="historico-wrap">
-        <div class="historico-label">Últimos lances</div>
-        <div class="historico-lista" id="histA"></div>
+    <!-- Voice -->
+    <div class="sidebar-card">
+      <h3>🔊 Voz</h3>
+      <div class="voice-row">
+        <label>
+          <span>Ativar voz</span>
+        </label>
+        <label class="toggle-switch">
+          <input type="checkbox" id="voiceToggle" checked onchange="toggleVoice()">
+          <span class="toggle-slider"></span>
+        </label>
       </div>
-      <div class="vitorias-wrap">
-        <span class="vitorias-label">Vitórias</span>
-        <button class="btn-v btn-v-minus" onclick="addVit('A',-1)">−</button>
-        <span class="vitorias-num" id="vA">0</span>
-        <button class="btn-v btn-v-plus" onclick="addVit('A',1)">+</button>
+      <div style="margin-top:10px;">
+        <label style="font-size:0.8rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Velocidade</label>
+        <input type="range" id="voiceRate" min="0.5" max="1.5" step="0.1" value="0.9" style="width:100%;accent-color:var(--blue);">
       </div>
-      <div class="botoes">
-        <button class="btn btn5"   onclick="add('A',5)">+5</button>
-        <button class="btn btn10"  onclick="add('A',10)">+10</button>
-        <button class="btn btn25"  onclick="add('A',15)">+15</button>
-        <button class="btn btn20"  onclick="add('A',20)">+20</button>
-        <button class="btn btnNeg" onclick="add('A',-5)">−5</button>
-        <button class="btn btnNeg" onclick="add('A',-10)">−10</button>
+      <div style="margin-top:8px;">
+        <label style="font-size:0.8rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Voz</label>
+        <select id="voiceSelect" style="width:100%;background:var(--panel2);color:var(--text);border:1.5px solid var(--border);border-radius:6px;padding:5px 8px;font-family:'Nunito',sans-serif;font-size:0.82rem;outline:none;"></select>
       </div>
-    </div><div class="time timeB" id="timeB">
-      <input class="nome" value="Equipe B" id="nomeB">
-      <div class="pontos-wrap"><span class="pontos" id="pB">0</span></div>
-      <div class="historico-wrap">
-        <div class="historico-label">Últimos lances</div>
-        <div class="historico-lista" id="histB"></div>
-      </div>
-      <div class="vitorias-wrap">
-        <span class="vitorias-label">Vitórias</span>
-        <button class="btn-v btn-v-minus" onclick="addVit('B',-1)">−</button>
-        <span class="vitorias-num" id="vB">0</span>
-        <button class="btn-v btn-v-plus" onclick="addVit('B',1)">+</button>
-      </div>
-      <div class="botoes">
-        <button class="btn btn5"   onclick="add('B',5)">+5</button>
-        <button class="btn btn10"  onclick="add('B',10)">+10</button>
-        <button class="btn btn25"  onclick="add('B',15)">+15</button>
-        <button class="btn btn20"  onclick="add('B',20)">+20</button>
-        <button class="btn btnNeg" onclick="add('B',-5)">−5</button>
-        <button class="btn btnNeg" onclick="add('B',-10)">−10</button>
-      </div>
-    </div></div>
-
-  <div class="bottom">
-    <button class="btn-reset" onclick="resetar()">↺ Fim de Jogo</button>
-    <button class="btn-reset" onclick="resetarVitorias()" style="margin-left:8px;">↺ Zerar Vitórias</button>
-    <button class="btn-reset" onclick="abrirHistoricoPartidas()" style="margin-left:8px;">📜 Histórico</button>
-    <button class="qr-toggle" onclick="toggleQR()">▼ QR Code do Display</button>
-  </div>
-
-  <div id="painel-qr">
-    <div class="qr-titulo">📱 QR Code do Display</div>
-    <div class="qr-sub">Cole o link do display para gerar o QR Code.</div>
-    <div class="qr-field-wrap">
-      <input class="qr-input" type="url" id="qr-url-input" placeholder="https://seusite.com/display.html">
-      <button class="qr-salvar" onclick="salvarQR()">Salvar</button>
     </div>
-    <div id="qr-canvas-wrap">
-      <div class="qr-vazio">Nenhum link salvo ainda.</div>
+
+    <!-- History log -->
+    <div class="sidebar-card">
+      <h3>📋 Histórico completo</h3>
+      <div class="history-log" id="historyLog"></div>
     </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<!-- Modal Histórico de Partidas -->
-<div id="modal-historico-partidas" onclick="if(event.target===this)fecharHistoricoPartidas()">
-  <div class="hist-partidas-box">
-    <div class="hist-partidas-header">
-      <div class="hist-partidas-title">📜 Histórico de Partidas</div>
-      <button class="btn-fechar-hist" onclick="fecharHistoricoPartidas()">✕</button>
-    </div>
-    <div class="hist-partidas-lista" id="hist-partidas-lista"></div>
-    <button class="btn-limpar-hist" onclick="limparHistoricoPartidas()">🗑 Limpar histórico</button>
-  </div>
-</div>
-
-<!-- Modal reset placar -->
-
-<div id="modal" class="modal-overlay">
-  <div class="modal-box">
-    <div class="modal-title">Fim de jogo?</div>
-    <p style="font-size:13px; color:var(--muted); margin-bottom:22px;">O placar e o histórico serão zerados.</p>
-    <div class="modal-btns">
-      <button class="btn-cancelar" onclick="cancelarReset()">Cancelar</button>
-      <button class="btn-confirmar" onclick="confirmarReset()">Resetar</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal reset vitórias -->
-
-<div id="modalVitorias" class="modal-overlay">
-  <div class="modal-box">
-    <div class="modal-title">Zerar vitórias?</div>
-    <p style="font-size:13px; color:var(--muted); margin-bottom:22px;">O contador de vitórias será zerado.</p>
-    <div class="modal-btns">
-      <button class="btn-cancelar" onclick="cancelarResetVitorias()">Cancelar</button>
-      <button class="btn-confirmar" onclick="confirmarResetVitorias()">Resetar</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal criar mesa -->
-
-<div id="modal-criar" class="modal-overlay">
-  <div class="modal-box">
-    <div class="modal-title">🎲 Nova Mesa</div>
-    <label class="field-label">Número da Mesa</label>
-    <input class="field-input num" type="number" id="input-num-mesa" min="1" placeholder="1">
-    <div class="field-error" id="erro-num">Este número já está em uso.</div>
-    <label class="field-label">Observação (opcional)</label>
-    <input class="field-input" type="text" id="input-obs-mesa" placeholder="Ex: Torneio de sábado" maxlength="40">
-    <div class="toggle-wrap">
-      <div>
-        <div class="toggle-label">🔒 Proteger acesso à mesa</div>
-        <div class="toggle-sub">Pedir senha ao abrir a mesa</div>
-      </div>
-      <button type="button" class="toggle-btn" id="toggle-senha-acesso" onclick="toggleSenhaAcesso()"></button>
-    </div>
-    <div id="campo-senha-acesso">
-      <label class="field-label">Senha de acesso</label>
-      <input class="field-input" type="password" id="input-senha-acesso" placeholder="Senha para entrar na mesa" maxlength="20">
-      <div class="field-error" id="erro-senha-acesso">Senha de acesso obrigatória.</div>
-    </div>
-    <label class="field-label">Senha para excluir</label>
-    <input class="field-input" type="password" id="input-senha-mesa" placeholder="Crie uma senha" maxlength="20">
-    <div class="field-error" id="erro-senha">Senha obrigatória.</div>
-    <div class="modal-btns">
-      <button class="btn-cancelar" onclick="fecharModalCriar()">Cancelar</button>
-      <button class="btn-confirmar" onclick="confirmarCriarMesa()">Criar Mesa</button>
-    </div>
-  </div>
-</div>
-
-
-<!-- Modal senha de acesso à mesa -->
-<div id="modal-acesso" class="modal-overlay">
-  <div class="modal-box">
-    <div class="modal-title" id="acesso-titulo">🔒 Mesa protegida</div>
-    <p style="font-size:13px; color:var(--muted); margin-bottom:16px;">Esta mesa requer senha para entrar.</p>
-    <label class="field-label">Senha de acesso</label>
-    <input class="field-input" type="password" id="input-senha-acessar" placeholder="Digite a senha">
-    <div class="field-error" id="erro-acessar">Senha incorreta.</div>
-    <div class="modal-btns" style="margin-top:6px;">
-      <button class="btn-cancelar" onclick="fecharModalAcesso()">Cancelar</button>
-      <button class="btn-confirmar" onclick="confirmarAcesso()">Entrar</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal excluir mesa -->
-
-<div id="modal-excluir" class="modal-overlay">
-  <div class="modal-box">
-    <div class="modal-title" id="excluir-titulo">Excluir Mesa 1?</div>
-    <p style="font-size:13px; color:var(--muted); margin-bottom:16px;">Digite a senha para confirmar a exclusão.</p>
-    <label class="field-label">Senha</label>
-    <input class="field-input" type="password" id="input-senha-excluir" placeholder="Senha da mesa">
-    <div class="field-error" id="erro-excluir">Senha incorreta.</div>
-    <div class="modal-btns">
-      <button class="btn-cancelar" onclick="fecharModalExcluir()">Cancelar</button>
-      <button class="btn-confirmar" style="background:var(--vermelho); color:white;" onclick="confirmarExcluir()">Excluir</button>
-    </div>
-  </div>
-</div>
-
-
-<!-- Modal Seletor de Voz -->
-<div id="modal-voz" class="modal-overlay">
-  <div class="modal-box" style="max-width:380px;">
-    <div class="modal-title">🎙️ Escolher Voz</div>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">Toque em ▶ para testar cada voz. Toque na linha para selecionar.</p>
-    <div class="voz-lista" id="voz-lista"></div>
-    <div class="modal-btns">
-      <button class="btn-cancelar" onclick="fecharModalVoz()">Cancelar</button>
-      <button class="btn-confirmar" onclick="confirmarVoz()">Confirmar</button>
-    </div>
-  </div>
-</div>
-
-<!-- Tutorial -->
-
-<div id="modalTutorial" class="modal-tutorial" onclick="fecharTutorialOutside(event)">
-  <div class="modal-tutorial-content" onclick="event.stopPropagation()">
-    <div class="modal-tutorial-header">
-      <div class="modal-tutorial-title">❓ COMO USAR</div>
-      <button class="btn-fechar-tutorial" onclick="fecharTutorial()">✕</button>
-    </div>
-    <div class="modal-tutorial-body">
-
-```
-  <div class="tutorial-section destaque">
-    <h3>🎲 MESAS</h3>
-    <p><strong>Cada jogo é uma Mesa.</strong> Crie uma mesa com número, observação opcional e senha.</p>
-    <ul>
-      <li>O número é sugerido automaticamente mas pode ser alterado</li>
-      <li>A senha só é usada para excluir a mesa</li>
-      <li>Vários jogos podem acontecer ao mesmo tempo em mesas diferentes</li>
-      <li>O Display entra na mesma mesa para espelhar o placar na TV</li>
-    </ul>
-  </div>
-
-  <div class="tutorial-section">
-    <h3>🎙️ VOZ</h3>
-    <p>Toque em <strong>🎙</strong> (ao lado da meta) para escolher a voz do narrador. Cada dispositivo tem vozes diferentes instaladas — toque em ▶ para testar antes de confirmar. A escolha fica salva.</p>
-  </div>
-
-  <div class="tutorial-section destaque">
-    <h3>⭐ SOMA AUTOMÁTICA</h3>
-    <p><strong>Pressione várias teclas SEGUIDAS e elas SOMAM automaticamente!</strong></p>
-    <p style="margin-top:8px; color:var(--ouro);">Ex: +10 → +5 → +5 = <strong>+20</strong> (anunciado de uma vez)</p>
-    <p style="margin-top:8px; font-size:12px; color:var(--muted);">O sistema aguarda 600ms após o último toque para confirmar o total.</p>
-  </div>
-
-  <div class="tutorial-section">
-    <h3>🎯 1. Meta e Progresso</h3>
-    <ul><li>Defina a meta de pontos (padrão: 200)</li><li>Barra mostra progresso das duas equipes</li></ul>
-  </div>
-
-  <div class="tutorial-section">
-    <h3>👥 2. Equipes</h3>
-    <ul><li>Toque no nome para editar</li><li>Líder ganha destaque verde pulsante</li></ul>
-  </div>
-
-  <div class="tutorial-section">
-    <h3>🔘 3. Pontuação</h3>
-    <ul>
-      <li><strong>+5, +10, +15, +20</strong> — adicionar pontos</li>
-      <li><strong>-5, -10</strong> — subtrair pontos</li>
-      <li>Toque em sequência para somar!</li>
-    </ul>
-  </div>
-
-  <div class="tutorial-section">
-    <h3>📜 4. Histórico</h3>
-    <ul><li>Mostra os últimos 5 lances</li><li>Fade gradual nos registros antigos</li></ul>
-  </div>
-
-  <div class="tutorial-section">
-    <h3>🏆 5. Vitórias</h3>
-    <ul><li>Ajuste manual com [-] e [+]</li><li>Automático ao clicar em Fim de Jogo com equipe na meta</li></ul>
-  </div>
-
-  <div class="tutorial-section">
-    <h3>🔄 6. Fim de Jogo e Vitórias</h3>
-    <ul>
-      <li><strong>↺ Fim de Jogo</strong>: Zera pontos e histórico. Se uma equipe atingiu a meta, ganha +1 vitória automaticamente</li>
-      <li><strong>↺ Zerar Vitórias</strong>: Zera o contador de vitórias</li>
-      <li>Voz anuncia "Partida iniciada" e o placar de vitórias</li>
-    </ul>
-  </div>
-
-  <div class="tutorial-dica">
-    💡 Voltando para Mesas o jogo continua salvo.<br>Basta entrar na mesma mesa novamente.
-  </div>
-</div>
-```
 
   </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/nosleep/0.12.0/NoSleep.min.js"></script>
-
-<script>
-firebase.initializeApp({
-  apiKey:            "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
-  authDomain:        "domino-fa285.firebaseapp.com",
-  databaseURL:       "https://domino-fa285-default-rtdb.firebaseio.com",
-  projectId:         "domino-fa285",
-  storageBucket:     "domino-fa285.firebasestorage.app",
+const firebaseConfig = {
+  apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
+  authDomain: "domino-fa285.firebaseapp.com",
+  databaseURL: "https://domino-fa285-default-rtdb.firebaseio.com",
+  projectId: "domino-fa285",
+  storageBucket: "domino-fa285.firebasestorage.app",
   messagingSenderId: "462709449311",
-  appId:             "1:462709449311:web:569624eeac6fc57c0631ea"
+  appId: "1:462709449311:web:569624eeac6fc57c0631ea",
+  measurementId: "G-SRLYK0BVCQ"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const bingoRef = ref(db, 'bingo/estado');
+
+// ── STATE ──────────────────────────────────────────────
+let state = {
+  mode: 90,
+  eventName: '',
+  drawn: [],       // ordered list of drawn numbers
+  lastDrawn: null
+};
+
+let voiceEnabled = true;
+let voices = [];
+let lastSpoken = '';
+
+// ── VOICE SETUP ────────────────────────────────────────
+function loadVoices() {
+  voices = window.speechSynthesis.getVoices().filter(v => v.lang.startsWith('pt'));
+  if (!voices.length) voices = window.speechSynthesis.getVoices();
+  const sel = document.getElementById('voiceSelect');
+  sel.innerHTML = '';
+  voices.forEach((v, i) => {
+    const o = document.createElement('option');
+    o.value = i;
+    o.textContent = v.name + (v.lang ? ` (${v.lang})` : '');
+    sel.appendChild(o);
+  });
+}
+window.speechSynthesis.onvoiceschanged = loadVoices;
+loadVoices();
+
+window.toggleVoice = function() {
+  voiceEnabled = document.getElementById('voiceToggle').checked;
+  document.getElementById('repeatBtn').style.display = voiceEnabled && state.drawn.length ? 'flex' : 'none';
+};
+
+function speak(text) {
+  if (!voiceEnabled) return;
+  lastSpoken = text;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  const sel = document.getElementById('voiceSelect');
+  const rate = parseFloat(document.getElementById('voiceRate').value);
+  u.rate = rate;
+  if (voices[sel.value]) u.voice = voices[sel.value];
+  u.lang = 'pt-BR';
+  window.speechSynthesis.speak(u);
+}
+
+window.repeatVoice = function() {
+  if (lastSpoken) speak(lastSpoken);
+};
+
+// ── FIREBASE SYNC ──────────────────────────────────────
+function saveState() {
+  set(bingoRef, {
+    mode: state.mode,
+    eventName: state.eventName,
+    drawn: state.drawn,
+    lastDrawn: state.lastDrawn,
+    updatedAt: Date.now()
+  }).catch(console.error);
+}
+
+onValue(bingoRef, snap => {
+  document.getElementById('connStatus').textContent = '⬤ online';
+  document.getElementById('connStatus').className = 'conn-status online';
+  const data = snap.val();
+  if (data) {
+    state.mode = data.mode || 90;
+    state.eventName = data.eventName || '';
+    state.drawn = data.drawn || [];
+    state.lastDrawn = data.lastDrawn || null;
+    renderAll(false);
+  }
+}, err => {
+  document.getElementById('connStatus').textContent = '⬤ offline';
+  document.getElementById('connStatus').className = 'conn-status offline';
 });
 
-const noSleep = new NoSleep();
-let noSleepAtivo = false;
+// ── RENDER ─────────────────────────────────────────────
+function renderAll(animated) {
+  // event name
+  const inp = document.getElementById('eventName');
+  if (document.activeElement !== inp) inp.value = state.eventName;
 
-const db = firebase.database();
-const salasRef  = db.ref('domino/salas');
-const configRef = db.ref('domino/config');
+  // mode buttons
+  document.getElementById('btn75').classList.toggle('active', state.mode === 75);
+  document.getElementById('btn90').classList.toggle('active', state.mode === 90);
+  document.getElementById('gridTitle').textContent = `Tabela de Números — ${state.mode} pedras`;
 
-// ── QR Code ──
-let qrInstance = null;
+  // grid
+  buildGrid();
 
-function toggleQR() {
-  const painel = document.getElementById('painel-qr');
-  const btn    = document.querySelector('.qr-toggle');
-  const aberto = painel.classList.toggle('aberto');
-  btn.textContent = aberto ? '▲ QR Code do Display' : '▼ QR Code do Display';
-}
-
-function gerarQR(url) {
-  const wrap = document.getElementById('qr-canvas-wrap');
-  wrap.innerHTML = '';
-  if (!url) {
-    wrap.innerHTML = '<div class="qr-vazio">Nenhum link salvo ainda.</div>';
-    return;
+  // current ball
+  const cb = document.getElementById('currentBall');
+  if (state.lastDrawn) {
+    cb.textContent = state.lastDrawn;
+    cb.classList.remove('empty');
+    if (animated) { cb.classList.remove('pop'); void cb.offsetWidth; cb.classList.add('pop'); }
+  } else {
+    cb.textContent = '–';
+    cb.classList.add('empty');
+    cb.classList.remove('pop');
   }
-  try {
-    qrInstance = new QRCode(wrap, {
-      text:          url,
-      width:         220,
-      height:        220,
-      colorDark:     '#000000',
-      colorLight:    '#ffffff',
-      correctLevel:  QRCode.CorrectLevel.M
-    });
-    const txt = document.createElement('div');
-    txt.className = 'qr-link-txt';
-    txt.textContent = url;
-    wrap.appendChild(txt);
-  } catch(e) {
-    wrap.innerHTML = '<div class="qr-vazio">Erro ao gerar QR Code.</div>';
-  }
-}
 
-function salvarQR() {
-  const url = document.getElementById('qr-url-input').value.trim();
-  if (!url) { showToast('⚠️ Digite o link primeiro'); return; }
-  configRef.update({ urlDisplay: url }).then(() => {
-    showToast('✓ Link salvo!');
-    gerarQR(url);
-  }).catch(() => {
-    showToast('⚠️ Erro ao salvar');
+  // draw button
+  document.getElementById('drawBtn').disabled = state.drawn.length >= state.mode;
+
+  // repeat button
+  document.getElementById('repeatBtn').style.display = voiceEnabled && state.drawn.length ? 'flex' : 'none';
+
+  // stats
+  const drawn = state.drawn.length;
+  const left = state.mode - drawn;
+  document.getElementById('statDrawn').textContent = drawn;
+  document.getElementById('statLeft').textContent = left;
+  document.getElementById('statPct').textContent = Math.round(drawn / state.mode * 100) + '%';
+  document.getElementById('statLast').textContent = state.lastDrawn || '–';
+
+  // history strip (last 20, newest first)
+  const strip = document.getElementById('historyStrip');
+  strip.innerHTML = '';
+  const recent = [...state.drawn].reverse().slice(0, 20);
+  recent.forEach((n, i) => {
+    const d = document.createElement('div');
+    d.className = 'mini-ball';
+    d.textContent = n;
+    strip.appendChild(d);
   });
+
+  // history log
+  const log = document.getElementById('historyLog');
+  log.innerHTML = '';
+  [...state.drawn].reverse().forEach((n, i) => {
+    const e = document.createElement('div');
+    e.className = 'log-entry';
+    e.innerHTML = `<span class="log-num">${n}</span><span>${i === 0 ? '🟢 Última' : `#${state.drawn.length - i}°`}</span>`;
+    log.appendChild(e);
+  });
+
+  // finished banner
+  const banner = document.getElementById('finishedBanner');
+  if (state.drawn.length >= state.mode) {
+    banner.classList.add('show');
+    document.getElementById('finishedCount').textContent = `Todas as ${state.mode} pedras foram sorteadas!`;
+  } else {
+    banner.classList.remove('show');
+  }
 }
 
-// Carregar config ao iniciar
-configRef.once('value', snap => {
-  const cfg = snap.val();
-  if (cfg && cfg.urlDisplay) {
-    document.getElementById('qr-url-input').value = cfg.urlDisplay;
-    gerarQR(cfg.urlDisplay);
+function buildGrid() {
+  const grid = document.getElementById('numberGrid');
+  grid.className = 'number-grid ' + (state.mode === 75 ? 'grid-75' : 'grid-90');
+  grid.innerHTML = '';
+  const drawnSet = new Set(state.drawn);
+  for (let i = 1; i <= state.mode; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'num-cell';
+    cell.id = 'cell-' + i;
+    cell.textContent = i;
+    if (drawnSet.has(i)) {
+      cell.classList.add('drawn');
+      if (i === state.lastDrawn) cell.classList.add('latest');
+    }
+    grid.appendChild(cell);
   }
+}
+
+// ── ACTIONS ────────────────────────────────────────────
+window.setMode = function(m) {
+  if (state.drawn.length > 0) {
+    if (!confirm(`Trocar para ${m} pedras vai zerar o sorteio atual. Confirmar?`)) return;
+  }
+  state.mode = m;
+  state.drawn = [];
+  state.lastDrawn = null;
+  saveState();
+  renderAll(false);
+};
+
+window.drawNext = function() {
+  if (state.drawn.length >= state.mode) return;
+  const all = [];
+  for (let i = 1; i <= state.mode; i++) all.push(i);
+  const remaining = all.filter(n => !state.drawn.includes(n));
+  if (!remaining.length) return;
+  const n = remaining[Math.floor(Math.random() * remaining.length)];
+  state.drawn.push(n);
+  state.lastDrawn = n;
+  saveState();
+  renderAll(true);
+  if (voiceEnabled) speak(`Número ${n}`);
+  // scroll last drawn into view
+  setTimeout(() => {
+    const cell = document.getElementById('cell-' + n);
+    if (cell) cell.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 100);
+};
+
+window.confirmReset = function() {
+  if (!confirm('Zerar o sorteio atual? Isso não pode ser desfeito.')) return;
+  state.drawn = [];
+  state.lastDrawn = null;
+  lastSpoken = '';
+  saveState();
+  renderAll(false);
+};
+
+// event name save
+document.getElementById('eventName').addEventListener('input', function() {
+  state.eventName = this.value;
 });
-const fbStatus = document.getElementById('fb-status');
-
-db.ref('.info/connected').on('value', s => {
-  fbStatus.textContent = s.val() ? 'online' : 'offline';
-  fbStatus.className   = s.val() ? 'ok' : 'err';
+document.getElementById('eventName').addEventListener('blur', function() {
+  state.eventName = this.value;
+  saveState();
 });
 
-// ── estado global ──
-let todasMesas    = {};
-let mesaAtualKey  = null;
-let jogoRef       = null;
-let jogoListener  = null;
-let mesaExcluirKey = null;
-let _ignorarUpdate = false;
-
-let pontos    = { A: 0, B: 0 };
-let vitorias  = { A: 0, B: 0 };
-let historico = { A: [], B: [] };
-let pendingSpeech = { A: 0, B: 0 };
-let speechTimeout = { A: null, B: null };
-let pendingHist   = { A: 0, B: 0 };
-let histTimeout   = { A: null, B: null };
-
-// ── Carregar mesas ──
-salasRef.on('value', snap => {
-  todasMesas = snap.val() || {};
-  renderMesas();
-});
-
-function formatarData(ts) {
-  if (!ts) return '';
-  const d = new Date(ts);
-  const dia  = String(d.getDate()).padStart(2,'0');
-  const mes  = String(d.getMonth()+1).padStart(2,'0');
-  const ano  = d.getFullYear();
-  const hora = String(d.getHours()).padStart(2,'0');
-  const min  = String(d.getMinutes()).padStart(2,'0');
-  return dia + '/' + mes + '/' + ano + ' ' + hora + ':' + min;
-}
-
-function renderMesas() {
-  const lista = document.getElementById('mesas-lista');
-  const keys  = Object.keys(todasMesas).sort((a,b) => todasMesas[a].numero - todasMesas[b].numero);
-
-  if (keys.length === 0) {
-    lista.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg width="64" height="104" viewBox="0 0 64 104" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="60" height="100" rx="8" stroke="rgba(255,255,255,0.2)" stroke-width="2" fill="rgba(255,255,255,0.04)"/><line x1="2" y1="52" x2="62" y2="52" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/><circle cx="32" cy="27" r="5" fill="rgba(255,255,255,0.25)"/><circle cx="18" cy="68" r="5" fill="rgba(255,255,255,0.25)"/><circle cx="46" cy="68" r="5" fill="rgba(255,255,255,0.25)"/><circle cx="18" cy="84" r="5" fill="rgba(255,255,255,0.25)"/><circle cx="46" cy="84" r="5" fill="rgba(255,255,255,0.25)"/></svg></div><p>Nenhuma mesa criada ainda.<br>Crie a primeira mesa abaixo!</p></div>';
-    return;
-  }
-
-  lista.innerHTML = '';
-  keys.forEach(key => {
-    const m = todasMesas[key];
-    const j = m.jogo || {};
-    const pA = (j.pontos ? j.pontos.A || 0 : 0);
-    const pB = (j.pontos ? j.pontos.B || 0 : 0);
-    const vA = (j.vitorias ? j.vitorias.A || 0 : 0);
-    const vB = (j.vitorias ? j.vitorias.B || 0 : 0);
-    const nA = j.nomeA || 'Equipe A';
-    const nB = j.nomeB || 'Equipe B';
-    const dataStr = formatarData(m.criadoEm);
-
-    const card = document.createElement('div');
-    card.className = 'mesa-card';
-
-    const numDiv = document.createElement('div');
-    numDiv.className = 'mesa-num';
-    numDiv.innerHTML = 'Mesa<br>' + m.numero;
-
-    const infoDiv = document.createElement('div');
-    infoDiv.className = 'mesa-info';
-
-    const nomeDiv = document.createElement('div');
-    nomeDiv.className = 'mesa-nome';
-    nomeDiv.textContent = m.obs ? m.obs : '—';
-
-    const obsDiv = document.createElement('div');
-    obsDiv.className = 'mesa-obs';
-    obsDiv.textContent = nA + ' ' + pA + ' x ' + pB + ' ' + nB;
-
-    // Vitórias com troféu apenas para quem está ganhando
-    const vitDiv = document.createElement('div');
-    vitDiv.className = 'mesa-vitorias';
-    const trofA = vA > vB ? '🏆 ' : '';
-    const trofB = vB > vA ? '🏆 ' : '';
-    if (vA > 0 || vB > 0) {
-      vitDiv.innerHTML = '<span class="mesa-vit-item">' + trofA + nA + ' <span class="mesa-vit-num">' + vA + '</span></span><span class="mesa-vit-sep">|</span><span class="mesa-vit-item">' + trofB + nB + ' <span class="mesa-vit-num">' + vB + '</span></span>';
-    }
-
-    // Data de criação
-    const dataDiv = document.createElement('div');
-    dataDiv.className = 'mesa-data';
-    if (dataStr) dataDiv.textContent = 'Criada em ' + dataStr;
-
-    infoDiv.appendChild(nomeDiv);
-    infoDiv.appendChild(obsDiv);
-    if (vA > 0 || vB > 0) infoDiv.appendChild(vitDiv);
-    if (dataStr) infoDiv.appendChild(dataDiv);
-
-    const btnExcluir = document.createElement('button');
-    btnExcluir.className = 'btn-excluir';
-    btnExcluir.textContent = '✕';
-    btnExcluir.onclick = function(e) { pedirExcluir(e, key); };
-
-    card.appendChild(numDiv);
-    card.appendChild(infoDiv);
-    card.appendChild(btnExcluir);
-    card.addEventListener('click', function() {
-      const m = todasMesas[key];
-      if (document.getElementById('modal-acesso').classList.contains('show')) return;
-      if (m.senhaAcesso) {
-        abrirModalAcesso(key);
-      } else {
-        entrarMesa(key);
-      }
-    });
-    lista.appendChild(card);
-  });
-}
-
-// ── Próximo número disponível ──
-function proximoNumero() {
-  const nums = Object.values(todasMesas).map(m => m.numero);
-  let n = 1;
-  while (nums.includes(n)) n++;
-  return n;
-}
-
-// ── Abrir modal criar ──
-function abrirModalCriar() {
-  document.getElementById('input-num-mesa').value   = proximoNumero();
-  document.getElementById('input-obs-mesa').value   = '';
-  document.getElementById('input-senha-mesa').value = '';
-  document.getElementById('input-senha-acesso').value = '';
-  document.getElementById('campo-senha-acesso').style.display = 'none';
-  document.getElementById('toggle-senha-acesso').classList.remove('on');
-  document.getElementById('erro-senha-acesso').classList.remove('show');
-  document.getElementById('erro-num').classList.remove('show');
-  document.getElementById('erro-senha').classList.remove('show');
-  document.getElementById('modal-criar').classList.add('show');
-}
-function fecharModalCriar() {
-  document.getElementById('modal-criar').classList.remove('show');
-}
-
-function confirmarCriarMesa() {
-  const num   = parseInt(document.getElementById('input-num-mesa').value);
-  const obs   = document.getElementById('input-obs-mesa').value.trim();
-  const senha = document.getElementById('input-senha-mesa').value.trim();
-  const temSenhaAcesso = document.getElementById('toggle-senha-acesso').classList.contains('on');
-  const senhaAcesso = temSenhaAcesso ? document.getElementById('input-senha-acesso').value.trim() : '';
-
-  let ok = true;
-  // validar número duplicado
-  const nums = Object.values(todasMesas).map(m => m.numero);
-  if (!num || nums.includes(num)) {
-    document.getElementById('erro-num').classList.add('show');
-    ok = false;
-  } else {
-    document.getElementById('erro-num').classList.remove('show');
-  }
-  if (!senha) {
-    document.getElementById('erro-senha').classList.add('show');
-    ok = false;
-  } else {
-    document.getElementById('erro-senha').classList.remove('show');
-  }
-  if (temSenhaAcesso && !senhaAcesso) {
-    document.getElementById('erro-senha-acesso').classList.add('show');
-    ok = false;
-  } else {
-    document.getElementById('erro-senha-acesso').classList.remove('show');
-  }
-  if (!ok) return;
-
-  const key = 'mesa_' + num;
-  salasRef.child(key).set({
-    numero: num,
-    obs:    obs,
-    senha:  senha,
-    senhaAcesso: senhaAcesso,
-    criadoEm: Date.now(),
-    jogo: {
-      pontos:   { A: 0, B: 0 },
-      vitorias: { A: 0, B: 0 },
-      historico:{ A: [], B: [] },
-      meta:  200,
-      nomeA: 'Equipe A',
-      nomeB: 'Equipe B',
-      ts: Date.now()
-    }
-  }).then(() => {
-    fecharModalCriar();
-    entrarMesa(key);
-  });
-}
-
-// ── Excluir mesa ──
-function pedirExcluir(event, key) {
-  event.stopPropagation();
-  mesaExcluirKey = key;
-  const m = todasMesas[key];
-  document.getElementById('excluir-titulo').textContent = 'Excluir Mesa ' + m.numero + '?';
-  document.getElementById('input-senha-excluir').value = '';
-  document.getElementById('erro-excluir').classList.remove('show');
-  document.getElementById('modal-excluir').classList.add('show');
-}
-function fecharModalExcluir() {
-  document.getElementById('modal-excluir').classList.remove('show');
-  mesaExcluirKey = null;
-}
-function confirmarExcluir() {
-  const senha = document.getElementById('input-senha-excluir').value.trim();
-  const m = todasMesas[mesaExcluirKey];
-  if (senha !== m.senha) {
-    document.getElementById('erro-excluir').classList.add('show');
-    return;
-  }
-  salasRef.child(mesaExcluirKey).remove();
-  fecharModalExcluir();
-  showToast('Mesa excluída');
-}
-
-// ── Entrar na mesa ──
-function entrarMesa(key) {
-  mesaAtualKey = key;
-  const m = todasMesas[key];
-
-  // desanexar listener anterior
-  if (jogoRef && jogoListener) jogoRef.off('value', jogoListener);
-  jogoRef = salasRef.child(key + '/jogo');
-
-  const nomeMesa = 'Mesa ' + m.numero + (m.obs ? ', ' + m.obs : '');
-  document.getElementById('mesa-bar-txt').textContent   = 'Mesa ' + m.numero + (m.obs ? ' — ' + m.obs : '');
-  document.getElementById('mesa-bar').style.display     = 'flex';
-  document.getElementById('tela-mesas').style.display = 'none';
-  document.getElementById('tela-jogo').style.display  = 'block';
-
-  // Falar nome da mesa
-  try {
-    const voz = getVozAtual();
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(nomeMesa);
-    if (voz) u.voice = voz; u.lang = voz ? voz.lang : 'pt-BR'; u.rate = 1.0;
-    window.speechSynthesis.speak(u);
-  } catch(e) {}
-
-  jogoListener = jogoRef.on('value', snap => {
-    if (_ignorarUpdate) { _ignorarUpdate = false; return; }
-    const d = snap.val();
-    if (!d) return;
-    pontos    = d.pontos    || { A: 0, B: 0 };
-    vitorias  = d.vitorias  || { A: 0, B: 0 };
-    historico = d.historico || { A: [], B: [] };
-    document.getElementById('meta').value  = d.meta  || 200;
-    document.getElementById('nomeA').value = d.nomeA || 'Equipe A';
-    document.getElementById('nomeB').value = d.nomeB || 'Equipe B';
-    document.getElementById('vA').textContent = vitorias.A;
-    document.getElementById('vB').textContent = vitorias.B;
-    renderHistorico('A'); renderHistorico('B');
-    atualizar();
-  });
-
-  // sincronizar nomes e meta
-  document.getElementById('nomeA').oninput = salvar;
-  document.getElementById('nomeB').oninput = salvar;
-  document.getElementById('meta').oninput  = salvar;
-}
-
-function voltarMesas() {
-  if (jogoRef && jogoListener) jogoRef.off('value', jogoListener);
-  document.getElementById('mesa-bar').style.display     = 'none';
-  document.getElementById('tela-jogo').style.display  = 'none';
-  document.getElementById('tela-mesas').style.display = 'flex';
-  mesaAtualKey = null;
-}
-
-// ── Salvar ──
-function salvar() {
-  if (!jogoRef) return;
-  _ignorarUpdate = true;
-  jogoRef.set({
-    pontos, vitorias, historico,
-    meta:  parseInt(document.getElementById('meta').value) || 200,
-    nomeA: document.getElementById('nomeA').value || 'Equipe A',
-    nomeB: document.getElementById('nomeB').value || 'Equipe B',
-    ts: Date.now()
-  }).catch(() => {});
-}
-
-// ── Tutorial ──
-function abrirTutorial() { document.getElementById('modalTutorial').style.display = 'flex'; document.body.style.overflow = 'hidden'; }
-function fecharTutorial() { document.getElementById('modalTutorial').style.display = 'none'; document.body.style.overflow = ''; }
-function fecharTutorialOutside(e) { if (e.target === document.getElementById('modalTutorial')) fecharTutorial(); }
-function abrirHelpMesas() { document.getElementById('modal-help-mesas').classList.add('show'); }
-function fecharHelpMesas() { document.getElementById('modal-help-mesas').classList.remove('show'); }
-
-// ── Histórico ──
-function renderHistorico(time) {
-  const c = document.getElementById('hist' + time);
-  c.innerHTML = '';
-  (historico[time] || []).forEach(v => {
-    const s = document.createElement('span');
-    s.className   = 'hist-item ' + (v >= 0 ? 'pos' : 'neg');
-    s.textContent = (v > 0 ? '+' : '') + v;
-    c.appendChild(s);
-  });
-}
-function limparHistorico() { historico = { A: [], B: [] }; renderHistorico('A'); renderHistorico('B'); }
-
-// ── Vitórias ──
-function addVit(time, val) {
-  vitorias[time] = Math.max(0, vitorias[time] + val);
-  document.getElementById('v' + time).textContent = vitorias[time];
-  falarVitória(time, vitorias[time]);
-  salvar();
-}
-function falarVitória(time, total) {
-  try {
-    const nome = document.getElementById('nome' + time).value || 'Equipe ' + time;
-    const voz = getVozAtual();
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(nome + ', ' + total + ' vitória' + (total !== 1 ? 's' : ''));
-    if (voz) u.voice = voz; u.lang = voz ? voz.lang : 'pt-BR'; u.rate = 1.1; window.speechSynthesis.speak(u);
-  } catch(e) {}
-}
-function resetarVitorias() { document.getElementById('modalVitorias').classList.add('show'); }
-function confirmarResetVitorias() {
-  document.getElementById('modalVitorias').classList.remove('show');
-  falarVencedor();
-  vitorias = { A: 0, B: 0 };
-  document.getElementById('vA').textContent = 0;
-  document.getElementById('vB').textContent = 0;
-  salvar();
-}
-function cancelarResetVitorias() { document.getElementById('modalVitorias').classList.remove('show'); }
-
-// ── Speech ──
-function falar(valor, time) {
-  try {
-    pendingSpeech[time] += valor;
-    if (speechTimeout[time]) clearTimeout(speechTimeout[time]);
-    speechTimeout[time] = setTimeout(() => {
-      const total = pendingSpeech[time]; pendingSpeech[time] = 0;
-      if (total === 0) return;
-      const nome = document.getElementById('nome' + time).value || 'Equipe ' + time;
-      const voz = getVozAtual();
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(total > 0 ? nome + ', mais ' + total : nome + ', menos ' + Math.abs(total));
-      if (voz) u.voice = voz; u.lang = voz ? voz.lang : 'pt-BR'; u.rate = 1.1; window.speechSynthesis.speak(u);
-    }, 600);
-  } catch(e) {}
-}
-function falarPartidaIniciada() {
-  try { const voz=getVozAtual(); window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance('Partida iniciada'); if(voz) u.voice = voz; u.lang = voz ? voz.lang:'pt-BR'; u.rate=1.1; window.speechSynthesis.speak(u); } catch(e) {}
-}
-function falarPlacarVitorias() {
-  try {
-    const vA=vitorias.A, vB=vitorias.B;
-    const nA=document.getElementById('nomeA').value||'Equipe A', nB=document.getElementById('nomeB').value||'Equipe B';
-    let t = vA===0&&vB===0 ? 'Placar de vitórias zerado' : vA===vB ? 'Empate. '+vA+' a '+vB : vA>vB ? 'Vitórias. '+nA+' '+vA+', '+nB+' '+vB : 'Vitórias. '+nB+' '+vB+', '+nA+' '+vA;
-    const voz=getVozAtual(); window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); if(voz) u.voice = voz; u.lang = voz ? voz.lang:'pt-BR'; u.rate=1.05; window.speechSynthesis.speak(u);
-  } catch(e) {}
-}
-function falarVencedor() {
-  try {
-    const vA=vitorias.A, vB=vitorias.B;
-    const nA=document.getElementById('nomeA').value||'Equipe A', nB=document.getElementById('nomeB').value||'Equipe B';
-    let t = vA===0&&vB===0?'Nenhuma vitória':vA===vB?'Empate':vA>vB?nA+' venceu':nB+' venceu';
-    const voz=getVozAtual(); window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); if(voz) u.voice = voz; u.lang = voz ? voz.lang:'pt-BR'; u.rate=1.05; window.speechSynthesis.speak(u);
-  } catch(e) {}
-}
-
-// ── Toast / Bump ──
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2200);
-}
-function bumpEl(id) { const el=document.getElementById(id); el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
-
-// ── Atualizar UI ──
-function atualizar() {
-  const meta = parseInt(document.getElementById('meta').value) || 200;
-  document.getElementById('pA').textContent = pontos.A;
-  document.getElementById('pB').textContent = pontos.B;
-  const tA=document.getElementById('timeA'), tB=document.getElementById('timeB');
-  tA.classList.remove('lider','venceu'); tB.classList.remove('lider','venceu');
-  if (pontos.A > pontos.B) tA.classList.add('lider');
-  else if (pontos.B > pontos.A) tB.classList.add('lider');
-  const tot = pontos.A + pontos.B;
-  document.getElementById('progA').style.width = tot > 0 ? (pontos.A/(meta*2)*100).toFixed(1)+'%' : '0%';
-  document.getElementById('progB').style.width = tot > 0 ? (pontos.B/(meta*2)*100).toFixed(1)+'%' : '0%';
-  const nA=document.getElementById('nomeA').value||'Equipe A', nB=document.getElementById('nomeB').value||'Equipe B';
-  if (pontos.A >= meta) { tA.classList.add('lider'); showToast('🏆 ' + nA + ' vencendo!'); }
-  if (pontos.B >= meta) { tB.classList.add('lider'); showToast('🏆 ' + nB + ' vencendo!'); }
-}
-
-// ── Reset ──
-function resetar() { document.getElementById('modal').classList.add('show'); }
-function cancelarReset() { document.getElementById('modal').classList.remove('show'); }
-function confirmarReset() {
-  document.getElementById('modal').classList.remove('show');
-  const meta = parseInt(document.getElementById('meta').value) || 200;
-  const nA = document.getElementById('nomeA').value || 'Equipe A';
-  const nB = document.getElementById('nomeB').value || 'Equipe B';
-  const pA = pontos.A, pB = pontos.B;
-
-  // Determinar vencedor e adicionar vitória
-  let vencedor = null;
-  if (pontos.A >= meta || pontos.B >= meta) {
-    if (pontos.A > pontos.B)      { vitorias.A++; document.getElementById('vA').textContent = vitorias.A; vencedor = 'A'; }
-    else if (pontos.B > pontos.A) { vitorias.B++; document.getElementById('vB').textContent = vitorias.B; vencedor = 'B'; }
-  } else {
-    // Mesmo sem meta, registrar quem estava na frente
-    if (pA > pB) vencedor = 'A';
-    else if (pB > pA) vencedor = 'B';
-  }
-
-  // Gravar no histórico de partidas (Firebase)
-  if (mesaAtualKey && jogoRef) {
-    const entrada = {
-      ts: Date.now(),
-      nomeA: nA, nomeB: nB,
-      pontosA: pA, pontosB: pB,
-      vencedor: vencedor
-    };
-    const histRef = salasRef.child(mesaAtualKey + '/historicoPartidas');
-    histRef.push(entrada).catch(() => {});
-  }
-
-  pontos = { A: 0, B: 0 };
-  limparHistorico();
-  document.getElementById('timeA').classList.remove('venceu','lider');
-  document.getElementById('timeB').classList.remove('venceu','lider');
-  atualizar(); salvar();
-  falarPartidaIniciada();
-  setTimeout(() => falarPlacarVitorias(), 1200);
-}
-
-// ── Histórico de Partidas ──
-let histPartidasListener = null;
-let histPartidasRef = null;
-
-function abrirHistoricoPartidas() {
-  if (!mesaAtualKey) return;
-  const lista = document.getElementById('hist-partidas-lista');
-  lista.innerHTML = '<div class="hist-vazio">Carregando...</div>';
-  document.getElementById('modal-historico-partidas').classList.add('show');
-
-  histPartidasRef = salasRef.child(mesaAtualKey + '/historicoPartidas');
-  histPartidasRef.orderByChild('ts').once('value', snap => {
-    const dados = snap.val();
-    lista.innerHTML = '';
-    if (!dados) {
-      lista.innerHTML = '<div class="hist-vazio">Nenhuma partida registrada ainda.<br>As partidas aparecem aqui ao clicar em "Fim de Jogo".</div>';
-      return;
-    }
-    const entradas = Object.values(dados).sort((a, b) => b.ts - a.ts);
-    entradas.forEach(e => {
-      const card = document.createElement('div');
-      card.className = 'hist-partida-card';
-
-      const d = new Date(e.ts);
-      const data = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-      const hora = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-
-      const vencA = e.vencedor === 'A';
-      const vencB = e.vencedor === 'B';
-      const trofA = vencA ? '<span class="hist-partida-trofeu">🏆</span>' : '';
-      const trofB = vencB ? '<span class="hist-partida-trofeu">🏆</span>' : '';
-
-      card.innerHTML = `
-        <div class="hist-partida-data">${data} às ${hora}</div>
-        <div class="hist-partida-placar">
-          <div class="hist-partida-time">
-            ${trofA}
-            <div class="hist-partida-nome ${vencA ? 'vencedor' : ''}">${e.nomeA}</div>
-            <div class="hist-partida-pts ${vencA ? 'vencedor' : ''}">${e.pontosA}</div>
-          </div>
-          <div class="hist-partida-sep">×</div>
-          <div class="hist-partida-time">
-            ${trofB}
-            <div class="hist-partida-nome ${vencB ? 'vencedor' : ''}">${e.nomeB}</div>
-            <div class="hist-partida-pts ${vencB ? 'vencedor' : ''}">${e.pontosB}</div>
-          </div>
-        </div>`;
-      lista.appendChild(card);
-    });
-  });
-}
-
-function fecharHistoricoPartidas() {
-  document.getElementById('modal-historico-partidas').classList.remove('show');
-}
-
-function limparHistoricoPartidas() {
-  if (!mesaAtualKey) return;
-  if (!confirm('Limpar todo o histórico de partidas desta mesa?')) return;
-  salasRef.child(mesaAtualKey + '/historicoPartidas').remove().then(() => {
-    document.getElementById('hist-partidas-lista').innerHTML = '<div class="hist-vazio">Histórico limpo.</div>';
-    showToast('Histórico limpo');
-  }).catch(() => showToast('⚠️ Erro ao limpar'));
-}
-
-// ── Add pontos ──
-function add(time, valor) {
-  // Ativar NoSleep no primeiro toque
-  if (!noSleepAtivo) { try { noSleep.enable(); noSleepAtivo = true; } catch(e) {} }
-  if (valor < 0 && pontos[time] + valor < 0) {
-    showToast('⚠️ Saldo insuficiente!');
-    try { const voz=getVozAtual(); window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance('Saldo insuficiente'); if(voz) u.voice=voz; u.lang=voz?voz.lang:'pt-BR'; u.rate=1.1; window.speechSynthesis.speak(u); } catch(e) {}
-    return;
-  }
-  pontos[time] = Math.max(0, pontos[time] + valor);
-  pendingHist[time] += valor;
-  if (histTimeout[time]) clearTimeout(histTimeout[time]);
-  histTimeout[time] = setTimeout(() => {
-    const total = pendingHist[time]; pendingHist[time] = 0;
-    historico[time].unshift(total);
-    if (historico[time].length > 5) historico[time].pop();
-    renderHistorico(time); salvar();
-  }, 600);
-  bumpEl('p' + time);
-  falar(valor, time);
-  atualizar();
-  salvar();
-}
-
-const PAGINA_KEY = 'marcador';
-
-// ── Toggle senha de acesso ──
-function toggleSenhaAcesso() {
-  const btn = document.getElementById('toggle-senha-acesso');
-  const campo = document.getElementById('campo-senha-acesso');
-  btn.classList.toggle('on');
-  campo.style.display = btn.classList.contains('on') ? 'block' : 'none';
-}
-
-// ── Modal acesso à mesa ──
-let mesaAcessarKey = null;
-
-function abrirModalAcesso(key) {
-  mesaAcessarKey = key;
-  const m = todasMesas[key];
-  document.getElementById('acesso-titulo').textContent = '🔒 Mesa ' + m.numero + (m.obs ? ' — ' + m.obs : '');
-  document.getElementById('input-senha-acessar').value = '';
-  document.getElementById('erro-acessar').classList.remove('show');
-  document.getElementById('modal-acesso').classList.add('show');
-  setTimeout(() => document.getElementById('input-senha-acessar').focus(), 300);
-}
-
-function fecharModalAcesso() {
-  document.getElementById('modal-acesso').classList.remove('show');
-  mesaAcessarKey = null;
-}
-
-function confirmarAcesso() {
-  const senha = document.getElementById('input-senha-acessar').value.trim();
-  const m = todasMesas[mesaAcessarKey];
-  if (senha !== m.senhaAcesso) {
-    document.getElementById('erro-acessar').classList.add('show');
-    return;
-  }
-  const key = mesaAcessarKey;
-  document.getElementById('modal-acesso').classList.remove('show');
-  mesaAcessarKey = null;
-  setTimeout(() => entrarMesa(key), 50);
-}
-
-// ── Voz selecionada ──
-let vozTemp = null;
-let vozCache = null; // cache da voz carregada
-
-function carregarVozes() {
-  return new Promise(resolve => {
-    const vozes = window.speechSynthesis.getVoices();
-    if (vozes.length > 0) { resolve(vozes); return; }
-    window.speechSynthesis.onvoiceschanged = () => resolve(window.speechSynthesis.getVoices());
-    setTimeout(() => resolve(window.speechSynthesis.getVoices()), 1000);
-  });
-}
-
-// Pré-carrega e cacheia a voz escolhida
-function atualizarCacheVoz() {
-  const salva = localStorage.getItem('vozNome_marcador');
-  if (!salva) { vozCache = null; return; }
-  carregarVozes().then(vozes => {
-    vozCache = vozes.find(v => v.name === salva) || null;
-  });
-}
-atualizarCacheVoz(); // roda ao carregar a página
-
-function abrirModalVoz() {
-  document.getElementById('modal-voz').classList.add('show');
-  carregarVozes().then(vozes => {
-    const lista = document.getElementById('voz-lista');
-    lista.innerHTML = '';
-    const vPT = vozes.filter(v => v.lang.startsWith('pt'));
-    const arr = vPT.length > 0 ? vPT : vozes;
-    if (arr.length === 0) {
-      lista.innerHTML = '<div class="voz-vazia">Nenhuma voz disponível neste dispositivo.</div>';
-      return;
-    }
-    const salva = localStorage.getItem('vozNome_marcador');
-    arr.forEach(voz => {
-      const item = document.createElement('div');
-      item.className = 'voz-item' + (voz.name === salva ? ' selecionada' : '');
-      const btnPlay = document.createElement('button');
-      btnPlay.className = 'voz-item-play';
-      btnPlay.textContent = '▶';
-      btnPlay.addEventListener('click', (e) => { e.stopPropagation(); testarVoz(voz.name); });
-      const infoDiv = document.createElement('div');
-      infoDiv.style.flex = '1';
-      infoDiv.innerHTML = '<div class="voz-item-nome">' + voz.name + '</div><div class="voz-item-lang">' + voz.lang + '</div>';
-      item.appendChild(infoDiv);
-      item.appendChild(btnPlay);
-      item.addEventListener('click', () => {
-        document.querySelectorAll('.voz-item').forEach(i => i.classList.remove('selecionada'));
-        item.classList.add('selecionada');
-        vozTemp = voz.name;
-      });
-      if (voz.name === salva) vozTemp = voz.name;
-      lista.appendChild(item);
-    });
-  });
-}
-
-function testarVoz(nome) {
-  carregarVozes().then(vozes => {
-    const voz = vozes.find(v => v.name === nome);
-    if (!voz) return;
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance('Olá, sou sua voz no placar.');
-    u.voice = voz; u.lang = voz.lang; u.rate = 1.1;
-    window.speechSynthesis.speak(u);
-  });
-}
-
-function confirmarVoz() {
-  if (vozTemp) {
-    localStorage.setItem('vozNome_marcador', vozTemp);
-    atualizarCacheVoz(); // atualiza o cache imediatamente
-  }
-  fecharModalVoz();
-}
-
-function fecharModalVoz() {
-  document.getElementById('modal-voz').classList.remove('show');
-}
-
-function getVozAtual() {
-  return vozCache; // usa cache em vez de getVoices() síncrono
-}
-
-// ── Contador de Acessos (Firebase, cada abertura) ──
-(function() {
-  const paginaKey = typeof PAGINA_KEY !== 'undefined' ? PAGINA_KEY : 'marcador';
-  const totalRef = firebase.database().ref('domino/acessos/' + paginaKey + '/total');
-  totalRef.transaction(v => (v || 0) + 1, (err, committed, snap) => {
-    if (!err && committed && snap) {
-      const el = document.getElementById('contador-acessos');
-      if (el) el.textContent = snap.val() + ' acessos';
-    }
-  });
-})();
-
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
-
-(function() {
-  const v=document.createElement('video'); v.setAttribute('playsinline',''); v.setAttribute('muted',''); v.setAttribute('loop',''); v.style.display='none';
-  v.src='data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28ybXA0MQAAAAhmcmVlAAAC721kYXQAAAKuBgX//6rcRem95tlIt5Ys2CDZI+7veDI2NCAtIGNvcmUgMTUyIHIyODU0IGU5YTU5MDMgLSBILjI2NC9NUEVHLTQgQVZDIGNvZGVjIC0gQ29weWxlZnQgMjAwMy0yMDE3IC0gaHR0cDovL3d3dy52aWRlb2xhbi5vcmcveDI2NC5odG1sIC0gb3B0aW9uczogY2FiYWM9MSByZWY9MyBkZWJsb2NrPTE6MDowIGFuYWx5c2U9MHgzOjB4MTEzIG1lPWhleCBzdWJtZT03IHBzeT0xIHBzeV9yZD0xLjAwOjAuMDAgbWl4ZWRfcmVmPTEgbWVfcmFuZ2U9MTYgY2hyb21hX21lPTEgdHJlbGxpcz0xIDh4OGRjdD0xIGNxbT0wIGRlYWR6b25lPTIxLDExIGZhc3RfcHNraXA9MSBjaHJvbWFfcXBfb2Zmc2V0PS0yIHRocmVhZHM9NjEgbG9va2FoZWFkX3RocmVhZHM9MTAgc2xpY2VkX3RocmVhZHM9MCBucj0wIGRlY2ltYXRlPTEgaW50ZXJsYWNlZD0wIGJsdXJheV9jb21wYXQ9MCBjb25zdHJhaW5lZF9pbnRyYT0wIGJmcmFtZXM9MyBiX3B5cmFtaWQ9MiByZW9yZGVyPTEgZHVwbGljYXRlX2NudF9wYXNzPTEgZGlyZWN0PTEgd2VpZ2h0Yj0xIG9wZW5fZ29wPTAgd2VpZ2h0cD0yIGtleWludD0yNTAga2V5aW50X21pbj0yNSBzY2VuZWN1dD00MCBpbnRyYV9yZWZyZXNoPTAgcmNfbG9va2FoZWFkPTQwIHJjPWNyZiBtYnRyZWU9MSBjcmY9MjMuMCBxY29tcD0wLjYwIHFwbWluPTAgcXBtYXg9NjkgcXBzdGVwPTQgaXBfcmF0aW89MS40MCBhcT0xOjEuMDAAgAAAAEZliIQAF//+7gA3bRt2ACRRzGorWEAAAAMAAAMAAAMAAANgRMIhNiNXkLYOhAAAAwAAHAOoqMfMAAAAwACGKk+A4AAAAwAAAwCOgAAABBliIQAF//+8mwB2b24AJFHMai';
-  document.body.appendChild(v); v.play().catch(()=>{});
-})();
+// init
+renderAll(false);
 </script>
-
-<div id="creditos-ibbi">
-  <img src="data:image/jpeg;base64,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" alt="IBBI">
-  <span>Instituto Brasileiro de Biotecnologia e Inovação</span>
-  <span id="contador-acessos" style="margin-left:6px;opacity:0.7;"></span>
-</div>
-
 </body>
 </html>

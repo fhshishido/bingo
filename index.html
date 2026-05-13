@@ -1,3 +1,4 @@
+<!-- IBBI Bingo v2.4 — 2026-05-13 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -212,7 +213,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3);">v2.3</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3);">v2.4</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -429,7 +430,7 @@ function speak(t) {
 $('btnRep').addEventListener('click', () => { if(lastSpoken) speak(lastSpoken); });
 
 // ── FIREBASE LISTENER ─────────────────────────────────
-onValue(fbPath('bingo2/eventos'), snap => { eventos = snap.val() || {}; renderEv(); });
+onValue(fbPath('bingo/eventos'), snap => { eventos = snap.val() || {}; renderEv(); });
 
 // ═════════════════════════════════════════════════════
 //  SCREEN 1 — EVENTOS
@@ -486,7 +487,7 @@ function startDel(id) {
     openM('mSX'); setTimeout(()=>$('mSXinp').focus(),80);
   } else { if(confirm(`Excluir "${ev.nome}"? Irreversível.`)) delEvent(id); }
 }
-function delEvent(id) { remove(fbPath(`bingo2/eventos/${id}`)).catch(console.error); }
+function delEvent(id) { remove(fbPath(`bingo/eventos/${id}`)).catch(console.error); }
 
 // ── NOVO EVENTO ───────────────────────────────────────
 $('btnNovoEv').addEventListener('click', () => {
@@ -525,7 +526,7 @@ $('btnCreateEv').addEventListener('click', () => {
   const id = genId();
   const premios = {};
   valid.forEach(p => { premios[genId()] = {...p, ganhador:null, ganhoEm:null}; });
-  set(fbPath(`bingo2/eventos/${id}`), {
+  set(fbPath(`bingo/eventos/${id}`), {
     nome, mode, senhaEntrar:se||null, senhaExcluir:sx||null,
     criadoEm:Date.now(), encerradoEm:null, status:'ativo', drawn:[], lastDrawn:null, premios
   }).then(()=>closeM('mNewEv')).catch(e=>{ console.error(e); alert('Erro: '+e.message); });
@@ -673,7 +674,7 @@ $('btnEnc').addEventListener('click', () => {
 
 function saveEv() {
   if(!evId||!evData) return;
-  set(fbPath(`bingo2/eventos/${evId}`),evData).catch(console.error);
+  set(fbPath(`bingo/eventos/${evId}`),evData).catch(console.error);
   eventos[evId]=JSON.parse(JSON.stringify(evData));
   renderEv();
 }

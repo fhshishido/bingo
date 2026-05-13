@@ -1,11 +1,11 @@
-<!-- IBBI Bingo Player v3.0 — 2026-05-13 -->
+<!-- IBBI Bingo Player v3.3 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>IBBI Bingo — Minha Cartela</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -20,62 +20,86 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:5px}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 
 /* BUTTONS */
-.btn{border:none;border-radius:var(–rsm);padding:9px 18px;font-family:‘Barlow’,sans-serif;font-weight:800;font-size:.9rem;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
-.btn:active{transform:scale(.96)}
-.btn-acc{background:linear-gradient(135deg,var(–accent),#0090c8);color:#fff;box-shadow:0 4px 16px rgba(0,184,240,.28)}
-.btn-acc:hover{filter:brightness(1.12)}
+.btn{border:none;border-radius:var(–rsm);padding:9px 18px;font-family:‘Barlow’,sans-serif;font-weight:800;font-size:.9rem;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:active{transform:scale(.95)}
+.btn-acc{background:linear-gradient(135deg,var(–accent),#0090c8);color:#fff;box-shadow:0 4px 14px rgba(0,184,240,.28)}
+.btn-acc:hover{filter:brightness(1.1)}
 .btn-ghost{background:var(–surface2);color:var(–text2);border:1.5px solid var(–border)}
 .btn-ghost:hover{border-color:var(–accent);color:var(–accent)}
 .btn-red{background:rgba(240,96,96,.1);color:var(–red);border:1.5px solid rgba(240,96,96,.3)}
+.btn-red:hover{background:rgba(240,96,96,.22)}
 .btn-sm{padding:6px 12px;font-size:.78rem}
+.btn-icon{padding:6px 10px;font-size:1rem}
+
+/* CONN */
 .conn{font-size:.7rem;font-weight:700;padding:4px 10px;border-radius:20px;border:1px solid;white-space:nowrap}
 .conn.on{color:var(–green);border-color:var(–green);background:rgba(0,223,168,.1)}
 .conn.off{color:var(–red);border-color:var(–red);background:rgba(240,96,96,.1)}
+
+/* CARD */
 .card{background:var(–surface);border:1.5px solid var(–border);border-radius:var(–radius);padding:12px}
 .card h3{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(–text3);text-transform:uppercase;margin-bottom:10px}
-.sec-lbl{font-size:.66rem;font-weight:800;letter-spacing:2px;color:var(–text3);text-transform:uppercase}
+.sec-lbl{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(–text3);text-transform:uppercase}
 
 /* MODAL */
-.mbk{display:none;position:fixed;inset:0;background:rgba(0,0,2,.92);backdrop-filter:blur(5px);z-index:1000;align-items:center;justify-content:center;padding:16px}
+.mbk{display:none;position:fixed;inset:0;background:rgba(0,0,2,.92);backdrop-filter:blur(6px);z-index:1000;align-items:center;justify-content:center;padding:16px}
 .mbk.open{display:flex}
-.modal{background:var(–surface);border:1.5px solid var(–border2);border-radius:var(–radius);width:100%;max-width:360px;padding:22px;animation:mIn .22s cubic-bezier(.2,1.4,.4,1) both}
-@keyframes mIn{from{transform:scale(.9);opacity:0}}
-.modal h2{font-family:‘Bebas Neue’,sans-serif;font-size:1.5rem;letter-spacing:2px;color:var(–accent);margin-bottom:14px}
+.modal{background:var(–surface);border:1.5px solid var(–border2);border-radius:var(–radius);width:100%;max-width:380px;padding:22px;animation:mIn .22s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes mIn{from{transform:scale(.88);opacity:0}}
+.modal h2{font-family:‘Bebas Neue’,sans-serif;font-size:1.5rem;letter-spacing:2px;color:var(–accent);margin-bottom:4px}
+.modal-sub{font-size:.8rem;color:var(–text2);margin-bottom:16px}
 .mfoot{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
 .fg{margin-bottom:12px}
 .fg label{display:block;font-size:.7rem;font-weight:800;letter-spacing:1.5px;color:var(–text2);text-transform:uppercase;margin-bottom:5px}
-.fg input{width:100%;background:var(–surface2);border:1.5px solid var(–border2);color:var(–text);border-radius:var(–rsm);padding:9px 12px;font-family:‘Barlow’,sans-serif;font-size:.95rem;font-weight:600;outline:none;transition:border-color .2s}
-.fg input:focus{border-color:var(–accent)}
-.fg input::placeholder{color:var(–text3)}
+.inp{width:100%;background:var(–surface2);border:1.5px solid var(–border2);color:var(–text);border-radius:var(–rsm);padding:10px 12px;font-family:‘Barlow’,sans-serif;font-size:.95rem;font-weight:600;outline:none;transition:border-color .2s}
+.inp:focus{border-color:var(–accent)}
+.inp::placeholder{color:var(–text3)}
+.err-msg{color:var(–red);font-size:.8rem;font-weight:700;margin-top:6px;display:none}
 
 /* HEADER */
-.p-head{background:rgba(4,4,6,.97);border-bottom:1.5px solid var(–border);padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.p-head{background:rgba(4,4,6,.97);border-bottom:1.5px solid var(–border);padding:10px 14px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
 .p-logo{font-family:‘Bebas Neue’,sans-serif;font-size:1.4rem;letter-spacing:3px;color:var(–accent);line-height:1}
 .p-logo span{color:var(–accent2)}
-.p-evname{font-size:.75rem;font-weight:700;color:var(–text2);margin-left:2px}
 .ibbi-badge{background:linear-gradient(135deg,var(–accent),var(–accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase}
-.vtag{font-size:.6rem;font-weight:700;color:var(–text3);margin-left:auto}
+.p-evname{font-size:.72rem;font-weight:700;color:var(–text2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-nick{font-size:.72rem;font-weight:800;color:var(–accent2);white-space:nowrap}
+.vtag{font-size:.58rem;font-weight:700;color:var(–text3)}
 
-/* BODY */
+/* SCREENS */
+.view{display:none;min-height:calc(100vh - 52px)}
+.view.active{display:block}
+
+/* ── ENTRADA ── */
+#vEntrada{background:radial-gradient(ellipse at 50% 0%,#0a1e35 0%,var(–bg) 70%);display:flex;align-items:center;justify-content:center;padding:20px}
+.entrada-box{width:100%;max-width:360px}
+.entrada-logo{font-family:‘Bebas Neue’,sans-serif;font-size:4rem;letter-spacing:6px;color:var(–accent);text-shadow:0 0 40px rgba(0,184,240,.4);text-align:center;line-height:1}
+.entrada-logo span{color:var(–accent2)}
+.entrada-ev{text-align:center;font-size:.8rem;font-weight:700;color:var(–text2);margin-bottom:24px;margin-top:4px}
+.entrada-card{background:var(–surface);border:1.5px solid var(–border2);border-radius:var(–radius);padding:22px}
+.entrada-card h2{font-family:‘Bebas Neue’,sans-serif;font-size:1.4rem;letter-spacing:2px;color:var(–accent);margin-bottom:4px}
+.entrada-card p{font-size:.8rem;color:var(–text2);margin-bottom:18px}
+.nick-hint{font-size:.72rem;color:var(–text3);margin-top:4px}
+
+/* ── JOGO ── */
+#vJogo{background:radial-gradient(ellipse at 50% 0%,#0a1525 0%,var(–bg) 65%)}
 .p-body{padding:10px 12px 60px;display:flex;flex-direction:column;gap:10px;max-width:480px;margin:0 auto;width:100%}
 
-/* NOT FOUND */
-.not-found{text-align:center;padding:60px 20px;color:var(–text3)}
-.not-found .nf-icon{font-size:3rem;margin-bottom:12px}
-.not-found p{font-size:.9rem;font-weight:600}
+/* PREMIO INFO */
+.premio-info{background:var(–surface);border:1.5px solid var(–border);border-radius:var(–rsm);padding:8px 14px}
+.pi-nome{font-size:.92rem;font-weight:800;color:var(–text)}
+.pi-regra{font-size:.72rem;color:var(–accent);font-weight:700;margin-top:2px}
+.pi-empty{font-size:.82rem;color:var(–text3);font-weight:600}
 
 /* LAST BALL */
-.p-last-ball{display:flex;flex-direction:column;align-items:center;gap:8px;background:var(–surface);border:1.5px solid var(–border);border-radius:var(–radius);padding:16px;cursor:pointer;transition:all .2s}
-.p-last-ball:active{transform:scale(.98)}
+.p-last-ball{display:flex;flex-direction:column;align-items:center;gap:8px;background:var(–surface);border:1.5px solid var(–border);border-radius:var(–radius);padding:16px;cursor:pointer;transition:border-color .3s,box-shadow .3s}
 .plb-hint{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(–text3);text-transform:uppercase}
 .plb-tap{font-size:.72rem;color:var(–text2);margin-top:2px}
-.p-last-ball.pulse-ball{animation:pball .6s ease}
-@keyframes pball{0%{border-color:var(–border)}50%{border-color:var(–accent);box-shadow:0 0 20px rgba(0,184,240,.3)}100%{border-color:var(–border)}}
-.pbig{width:96px;height:96px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:‘Bebas Neue’,sans-serif;line-height:1;user-select:none;transition:background .3s}
-.pbig .pbl{font-size:1.1rem;opacity:.75}.pbig .pbn{font-size:2.8rem}
+.p-last-ball.new-ball{border-color:var(–accent);box-shadow:0 0 20px rgba(0,184,240,.2)}
+.pbig{width:96px;height:96px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:‘Bebas Neue’,sans-serif;line-height:1;user-select:none;transition:all .3s}
+.pbig .pbl{font-size:1.1rem;opacity:.8}.pbig .pbn{font-size:2.8rem}
 .pbig.lB{background:radial-gradient(circle at 32% 30%,#d8f6ff,#00b8f0 55%,#005a80);color:#000;box-shadow:0 0 24px rgba(0,184,240,.5)}
 .pbig.lI{background:radial-gradient(circle at 32% 30%,#ccfff0,#00dfa8 55%,#005040);color:#000;box-shadow:0 0 24px rgba(0,223,168,.5)}
 .pbig.lN{background:radial-gradient(circle at 32% 30%,#fffbe0,#f5c800 55%,#806000);color:#000;box-shadow:0 0 24px rgba(245,200,0,.5)}
@@ -83,15 +107,16 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .pbig.lO{background:radial-gradient(circle at 32% 30%,#f8d8ff,#c850ff 55%,#600080);color:#000;box-shadow:0 0 24px rgba(200,80,255,.5)}
 .pbig.empty-ball{background:var(–surface2);color:var(–text3);box-shadow:none}
 .pbig.pop{animation:bpop .35s cubic-bezier(.15,1.6,.35,1) both}
-@keyframes bpop{from{transform:scale(.45);opacity:0}}
+@keyframes bpop{from{transform:scale(.4);opacity:0}}
 
 /* CARTELA NAV */
-.cartela-nav{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.cartela-nav{display:flex;align-items:center;gap:6px}
 .cn-info{text-align:center;flex:1}
 .cn-id{font-family:‘Bebas Neue’,sans-serif;font-size:1.1rem;color:var(–accent);letter-spacing:1px}
 .cn-pg{font-size:.7rem;color:var(–text3);font-weight:700;margin-top:1px}
+.cn-toast{font-size:.72rem;color:var(–green);font-weight:700;height:14px;text-align:center;margin-top:2px}
 
-/* CARTELA 5x5 */
+/* CARTELA */
 .cartela-wrap{background:var(–surface);border:1.5px solid var(–border);border-radius:var(–radius);overflow:hidden}
 .cartela-hdr{display:grid;grid-template-columns:repeat(5,1fr)}
 .ch-cell{font-family:‘Bebas Neue’,sans-serif;font-size:1.7rem;text-align:center;padding:8px 4px;line-height:1}
@@ -101,24 +126,24 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .ch-cell.lG{background:rgba(255,140,0,.2);color:#ff8c00}
 .ch-cell.lO{background:rgba(200,80,255,.2);color:#c850ff}
 .cartela-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:6px}
-.c-cell{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:‘Bebas Neue’,sans-serif;font-size:1.35rem;cursor:pointer;transition:all .2s;border:1.5px solid var(–border);background:var(–surface2);user-select:none}
-.c-cell.empty-cell{color:var(–text3);font-size:.85rem;border-style:dashed}
-.c-cell.free-cell{background:var(–surface3);color:var(–text2);font-size:.9rem;cursor:default;border-color:var(–border2)}
-.c-cell.filled-B{color:#00b8f0;border-color:rgba(0,184,240,.35);background:rgba(0,184,240,.06)}
-.c-cell.filled-I{color:#00dfa8;border-color:rgba(0,223,168,.35);background:rgba(0,223,168,.06)}
-.c-cell.filled-N{color:#f5c800;border-color:rgba(245,200,0,.35);background:rgba(245,200,0,.06)}
-.c-cell.filled-G{color:#ff8c00;border-color:rgba(255,140,0,.35);background:rgba(255,140,0,.06)}
-.c-cell.filled-O{color:#c850ff;border-color:rgba(200,80,255,.35);background:rgba(200,80,255,.06)}
+.c-cell{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:‘Bebas Neue’,sans-serif;font-size:1.3rem;cursor:pointer;transition:all .2s;border:1.5px solid var(–border);background:var(–surface2);user-select:none}
+.c-cell.empty-cell{color:var(–text3);font-size:.85rem;border-style:dashed;border-color:var(–border2)}
+.c-cell.free-cell{background:var(–surface3);color:var(–text2);font-size:.9rem;cursor:default}
+.c-cell.filled-B{color:#00b8f0;border-color:rgba(0,184,240,.4);background:rgba(0,184,240,.07)}
+.c-cell.filled-I{color:#00dfa8;border-color:rgba(0,223,168,.4);background:rgba(0,223,168,.07)}
+.c-cell.filled-N{color:#f5c800;border-color:rgba(245,200,0,.4);background:rgba(245,200,0,.07)}
+.c-cell.filled-G{color:#ff8c00;border-color:rgba(255,140,0,.4);background:rgba(255,140,0,.07)}
+.c-cell.filled-O{color:#c850ff;border-color:rgba(200,80,255,.4);background:rgba(200,80,255,.07)}
 .c-cell.marked-B{background:#00b8f0;color:#000;border-color:#00b8f0}
 .c-cell.marked-I{background:#00dfa8;color:#000;border-color:#00dfa8}
 .c-cell.marked-N{background:#f5c800;color:#000;border-color:#f5c800}
 .c-cell.marked-G{background:#ff8c00;color:#000;border-color:#ff8c00}
 .c-cell.marked-O{background:#c850ff;color:#000;border-color:#c850ff}
-.c-cell.just-marked{animation:cellpop .4s cubic-bezier(.15,1.6,.35,1) both}
-@keyframes cellpop{from{transform:scale(.6);opacity:.5}}
+.c-cell.just-marked{animation:cellpop .35s cubic-bezier(.15,1.6,.35,1) both}
+@keyframes cellpop{from{transform:scale(.55)}}
 
-/* CARTELA OPTS */
-.cartela-opts{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:0 2px}
+/* OPTS */
+.cartela-opts{display:flex;flex-wrap:wrap;gap:10px;padding:0 2px}
 .tog-row{display:flex;align-items:center;gap:7px;font-size:.82rem;font-weight:700;color:var(–text2);cursor:pointer;user-select:none}
 .tog{position:relative;width:38px;height:20px;flex-shrink:0}
 .tog input{opacity:0;width:0;height:0}
@@ -127,23 +152,23 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .tog input:checked+.tog-sl{background:rgba(0,184,240,.18);border-color:var(–blue)}
 .tog input:checked+.tog-sl::before{background:var(–blue);transform:translateX(18px)}
 
-/* BINGO BUTTON */
+/* BINGO BTN */
 .bingo-btn{width:100%;padding:18px;font-family:‘Bebas Neue’,sans-serif;font-size:2.2rem;letter-spacing:4px;border:none;border-radius:var(–radius);cursor:pointer;transition:all .2s;background:linear-gradient(135deg,#f5c800,#ff8c00);color:#000;box-shadow:0 4px 20px rgba(245,200,0,.3)}
-.bingo-btn:hover{filter:brightness(1.1)}
+.bingo-btn:hover{filter:brightness(1.08)}
 .bingo-btn.pulsing{animation:bpulse 1s ease-in-out infinite}
 @keyframes bpulse{0%,100%{box-shadow:0 4px 20px rgba(245,200,0,.3)}50%{box-shadow:0 0 50px rgba(245,200,0,.9),0 0 100px rgba(245,200,0,.2)}}
 
 /* BATIDA STATUS */
 .batida-status{text-align:center;padding:12px 16px;border-radius:var(–rsm);font-weight:800;font-size:.88rem;display:none}
-.batida-status.pendente{display:block;background:rgba(245,200,0,.1);color:var(–cN);border:1px solid rgba(245,200,0,.3)}
-.batida-status.rejeitada{display:block;background:rgba(240,96,96,.1);color:var(–red);border:1px solid rgba(240,96,96,.3);animation:shake .4s ease}
-.batida-status.confirmada{display:block;background:rgba(0,223,168,.1);color:var(–green);border:1px solid rgba(0,223,168,.3)}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.bs-pend{display:block;background:rgba(245,200,0,.1);color:var(–cN);border:1px solid rgba(245,200,0,.3)}
+.bs-conf{display:block;background:rgba(0,223,168,.1);color:var(–green);border:1px solid rgba(0,223,168,.3)}
+.bs-rej{display:block;background:rgba(240,96,96,.1);color:var(–red);border:1px solid rgba(240,96,96,.3);animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 
 /* HISTORY */
 .p-hist-title{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(–text3);text-transform:uppercase}
 .p-hist-strip{display:flex;flex-wrap:wrap;gap:5px}
-.ph-ball{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:‘Bebas Neue’,sans-serif;line-height:1;cursor:pointer;box-shadow:0 2px 5px rgba(0,0,0,.4);transition:transform .15s}
+.ph-ball{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:‘Bebas Neue’,sans-serif;line-height:1;cursor:pointer;transition:transform .15s,opacity .15s;box-shadow:0 2px 5px rgba(0,0,0,.4)}
 .ph-ball:active{transform:scale(.88)}
 .ph-ball .phl{font-size:.48rem;opacity:.75}.ph-ball .phn{font-size:.92rem}
 .ph-ball.lB{background:radial-gradient(circle at 32% 30%,#d8f6ff,#00b8f0 55%,#005a80);color:#000}
@@ -152,27 +177,67 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .ph-ball.lG{background:radial-gradient(circle at 32% 30%,#fff0d8,#ff8c00 55%,#804000);color:#000}
 .ph-ball.lO{background:radial-gradient(circle at 32% 30%,#f8d8ff,#c850ff 55%,#600080);color:#000}
 .ph-ball.in-cartela{box-shadow:0 0 0 2.5px #fff,0 0 0 4.5px var(–green)}
-.ph-ball.already-marked{opacity:.45;cursor:default}
+.ph-ball.marked{opacity:.4;cursor:default}
 
-/* PREMIO INFO */
-.premio-info{background:var(–surface);border:1px solid var(–border);border-radius:var(–rsm);padding:8px 12px;font-size:.8rem;color:var(–text2)}
-.premio-info strong{color:var(–text);font-weight:800}
-.premio-regra{font-size:.7rem;color:var(–accent);font-weight:700;margin-top:2px}
+/* NOT FOUND */
+.not-found{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;text-align:center;padding:30px;color:var(–text3)}
+.nf-icon{font-size:3.5rem;margin-bottom:16px}
+.nf-title{font-family:‘Bebas Neue’,sans-serif;font-size:1.8rem;color:var(–text2);letter-spacing:2px;margin-bottom:8px}
+.nf-link{color:var(–accent);font-family:monospace;font-size:.82rem;margin-top:8px}
 </style>
 
 </head>
 <body>
 
-<div class="p-head">
+<!-- HEADER -->
+
+<div class="p-head" id="pHead" style="display:none">
   <div class="p-logo">B<span>I</span>NGO</div>
   <div class="ibbi-badge">IBBI</div>
-  <div class="p-evname" id="pEvName">Carregando...</div>
-  <span class="vtag">v3.0</span>
+  <div class="p-evname" id="pEvName">—</div>
+  <div class="p-nick" id="pNickDisplay"></div>
+  <span class="vtag">v3.3</span>
   <span class="conn off" id="pConn">⬤</span>
 </div>
 
-<div class="p-body" id="pBody">
-  <!-- preenchido pelo JS -->
+<!-- VIEW: ENTRADA -->
+
+<div class="view active" id="vEntrada">
+  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 50% 0%,#0a1e35 0%,var(--bg) 70%)">
+    <div style="width:100%;max-width:360px">
+      <div class="entrada-logo">B<span>I</span>NGO</div>
+      <div style="text-align:center;font-size:.8rem;font-weight:700;color:var(--text2);margin:6px 0 24px" id="entradaEvNome">Carregando evento...</div>
+      <div style="background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);padding:22px">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;color:var(--accent);margin-bottom:4px" id="entradaTitulo">Identificação</div>
+        <p style="font-size:.8rem;color:var(--text2);margin-bottom:18px" id="entradaDesc">Escolha um apelido para acompanhar suas cartelas.</p>
+        <div class="fg">
+          <label>Apelido *</label>
+          <input class="inp" type="text" id="inpNick" placeholder="Ex: joao123, maria_s" maxlength="30" autocomplete="off" autocapitalize="off">
+          <div class="nick-hint" style="font-size:.7rem;color:var(--text3);margin-top:4px">Sem espaços. Letras, números e _ permitidos.</div>
+        </div>
+        <div class="fg">
+          <label>Senha <span style="font-weight:400;color:var(--text3)">(opcional, mas recomendado)</span></label>
+          <input class="inp" type="password" id="inpSenha" placeholder="Crie uma senha para proteger" maxlength="30">
+        </div>
+        <div class="fg">
+          <label>Seu nome <span style="font-weight:400;color:var(--text3)">(opcional)</span></label>
+          <input class="inp" type="text" id="inpNome" placeholder="Como quer ser chamado" maxlength="40">
+        </div>
+        <div class="err-msg" id="entradaErr"></div>
+        <button class="btn btn-acc" id="btnEntrar" style="width:100%;margin-top:4px;padding:12px">Entrar →</button>
+        <div style="text-align:center;margin-top:12px">
+          <span style="font-size:.72rem;color:var(--text3)">Já tem apelido neste evento?</span>
+          <button class="btn btn-ghost btn-sm" id="btnTrocarUser" style="margin-top:6px;width:100%">🔄 Entrar com apelido existente</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW: JOGO -->
+
+<div class="view" id="vJogo">
+  <div class="p-body" id="pBody"></div>
 </div>
 
 <!-- MODAL: Adicionar número -->
@@ -182,8 +247,8 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <h2 id="mAddNumTitle">Adicionar?</h2>
     <p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mAddNumTxt"></p>
     <div class="mfoot">
-      <button class="btn btn-ghost" id="btnAddNumCancel">Cancelar</button>
-      <button class="btn btn-acc" id="btnAddNumOk">Adicionar</button>
+      <button class="btn btn-ghost" id="btnAddCancel">Cancelar</button>
+      <button class="btn btn-acc" id="btnAddOk">Adicionar</button>
     </div>
   </div>
 </div>
@@ -195,8 +260,21 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <h2>Remover?</h2>
     <p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mRemNumTxt"></p>
     <div class="mfoot">
-      <button class="btn btn-ghost" id="btnRemNumCancel">Cancelar</button>
-      <button class="btn btn-red" id="btnRemNumOk">Remover</button>
+      <button class="btn btn-ghost" id="btnRemCancel">Cancelar</button>
+      <button class="btn btn-red" id="btnRemOk">Remover</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Excluir cartela -->
+
+<div class="mbk" id="mDelCartela">
+  <div class="modal">
+    <h2>Excluir Cartela?</h2>
+    <p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mDelCartelaTxt"></p>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnDelCartelaCancel">Cancelar</button>
+      <button class="btn btn-red" id="btnDelCartelaOk">🗑️ Excluir</button>
     </div>
   </div>
 </div>
@@ -209,14 +287,32 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mBingoTxt"></p>
     <div class="mfoot">
       <button class="btn btn-ghost" id="btnBingoCancel">Cancelar</button>
-      <button class="btn" id="btnBingoOk" style="background:linear-gradient(135deg,#f5c800,#ff8c00);color:#000;font-weight:900">🎉 Confirmar BINGO!</button>
+      <button class="btn" id="btnBingoOk" style="background:linear-gradient(135deg,#f5c800,#ff8c00);color:#000;font-weight:900;font-family:'Barlow',sans-serif">🎉 Confirmar!</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Senha para entrar com apelido existente -->
+
+<div class="mbk" id="mSenhaExist">
+  <div class="modal">
+    <h2>🔒 Confirmação</h2>
+    <p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mSenhaExistTxt"></p>
+    <div class="fg">
+      <label>Senha</label>
+      <input class="inp" type="password" id="inpSenhaExist" placeholder="Digite sua senha...">
+    </div>
+    <div class="err-msg" id="senhaExistErr">Senha incorreta.</div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnSenhaExistCancel">Cancelar</button>
+      <button class="btn btn-acc" id="btnSenhaExistOk">Entrar</button>
     </div>
   </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, update, remove, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -236,260 +332,349 @@ const openM = id => $(id).classList.add('open');
 const closeM = id => $(id).classList.remove('open');
 const LETTERS = ['B','I','N','G','O'];
 function getLetter(n, mode){ return LETTERS[Math.min(Math.floor((n-1)/(mode/5)),4)]; }
+function showView(id){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); $(id).classList.add('active'); }
 
 // ── AUDIO ────────────────────────────────────────────
 const AC = new (window.AudioContext||window.webkitAudioContext)();
-function playTone(freq,dur,type='sine',vol=0.3){
+function tone(freq,dur,type='sine',vol=0.25){
   try{ const o=AC.createOscillator(),g=AC.createGain(); o.connect(g);g.connect(AC.destination); o.type=type;o.frequency.value=freq; g.gain.setValueAtTime(vol,AC.currentTime);g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+dur); o.start();o.stop(AC.currentTime+dur); }catch(e){}
 }
-function soundMark()  { playTone(880,.12,'sine',.18); }
-function soundNew()   { playTone(660,.15,'sine',.22); }
-function soundBingo() { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,.25,'triangle',.4),i*130)); }
-function soundReject(){ playTone(200,.5,'sawtooth',.3); }
-function soundConfirm(){ [523,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,.2,'sine',.35),i*140)); }
+const sndMark   = () => tone(880,.1,'sine',.15);
+const sndNew    = () => tone(660,.15,'sine',.2);
+const sndBingo  = () => [523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.25,'triangle',.4),i*130));
+const sndReject = () => tone(200,.5,'sawtooth',.3);
+const sndConfirm= () => [523,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.2,'sine',.35),i*140));
 
 // ── CONNECTIVITY ────────────────────────────────────
 onValue(fb('.info/connected'),s=>{
   const on=s.val(), d=$('pConn');
-  d.textContent=on?'⬤ online':'⬤ offline';
-  d.className='conn '+(on?'on':'off');
+  if(d){ d.textContent=on?'⬤ online':'⬤ offline'; d.className='conn '+(on?'on':'off'); }
 });
 
-// ── URL PARAMS ───────────────────────────────────────
+// ── URL ──────────────────────────────────────────────
 const params = new URLSearchParams(window.location.search);
 const evId = params.get('ev');
 
 if(!evId){
-  $('pBody').innerHTML='<div class="not-found"><div class="nf-icon">🔗</div><p>Link inválido.<br>Peça o link correto ao organizador.</p></div>';
+  document.body.innerHTML=`<div class="not-found"><div class="nf-icon">🎱</div><div class="nf-title">Link Inválido</div><p>Peça o link correto ao organizador do bingo.</p><div class="nf-link">player.html?ev=ID_DO_EVENTO</div></div>`;
+  throw new Error('No evId');
 }
 
-// ── PLAYER STATE ─────────────────────────────────────
+// ── STATE ─────────────────────────────────────────────
 let evData = null;
-let playerId = null, playerNome = '';
+let nick = '', playerNome = '';
 let cartelas = [], cartelaIdx = 0;
-let pendingAddNum = null, pendingRemCell = null;
-let prevLastDrawn = null;
+let pendingAdd = null, pendingRem = null;
+let evListener = null, playerListener = null;
+let toastTimer = null;
 
-function getPlayerId(){
-  let id = localStorage.getItem('bingo_player_id');
-  if(!id){ id='p_'+genId(); localStorage.setItem('bingo_player_id',id); }
-  return id;
-}
-function gerarCartelaId(mode){
-  return `${mode}-B${String(Math.floor(Math.random()*9000)+1000)}`;
-}
-function novaCartela(mode){
-  return {
-    id: gerarCartelaId(mode),
-    numeros: {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]},
-    marcados: [], freeCenter: false, autoMarcar: true, criadaEm: Date.now(),
-    fbId: genId()
-  };
-}
+// ── LOCAL STORAGE ─────────────────────────────────────
+const LS_KEY = `bingo_player_${evId}`;
+function loadLS(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)||'null'); }catch(e){return null;} }
+function saveLS(data){ localStorage.setItem(LS_KEY, JSON.stringify(data)); }
+function clearLS(){ localStorage.removeItem(LS_KEY); }
 
 // ── INIT ─────────────────────────────────────────────
-if(evId){
-  playerId = getPlayerId();
-  playerNome = localStorage.getItem('bingo_player_nome')||'';
+async function init(){
+  // Load event info for the entrada screen
+  const snap = await get(fb(`bingo/eventos/${evId}`));
+  const ev = snap.val();
+  if(!ev){ document.body.innerHTML=`<div class="not-found"><div class="nf-icon">🔍</div><div class="nf-title">Evento não encontrado</div><p>Este evento não existe ou foi excluído.</p></div>`; return; }
+  evData = ev;
+  $('entradaEvNome').textContent = ev.nome;
+  $('pEvName').textContent = ev.nome;
+
+  // Check localStorage
+  const ls = loadLS();
+  if(ls?.nick){
+    nick = ls.nick; playerNome = ls.nome||'';
+    await enterGame();
+  } else {
+    showEntrada(false);
+  }
+}
+
+function showEntrada(isTrocar){
+  $('pHead').style.display='none';
+  $('entradaTitulo').textContent = isTrocar ? 'Trocar Usuário' : 'Identificação';
+  $('entradaDesc').textContent = isTrocar
+    ? 'Digite o apelido que usou antes para recuperar suas cartelas.'
+    : 'Escolha um apelido para acompanhar suas cartelas.';
+  $('inpNick').value=''; $('inpSenha').value=''; $('inpNome').value='';
+  $('entradaErr').style.display='none';
+  showView('vEntrada');
+  setTimeout(()=>$('inpNick').focus(), 200);
+}
+
+$('btnTrocarUser').addEventListener('click',()=>{ clearLS(); showEntrada(true); });
+
+$('btnEntrar').addEventListener('click', onEntrar);
+$('inpSenha').addEventListener('keydown', e=>{ if(e.key==='Enter') onEntrar(); });
+$('inpNome').addEventListener('keydown', e=>{ if(e.key==='Enter') onEntrar(); });
+
+async function onEntrar(){
+  const rawNick = $('inpNick').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'');
+  const senha   = $('inpSenha').value.trim();
+  const nome    = $('inpNome').value.trim();
+  const errEl   = $('entradaErr');
+
+  if(!rawNick){ showErr(errEl,'Digite um apelido.'); return; }
+  if(rawNick.length < 2){ showErr(errEl,'Apelido muito curto (mín. 2 caracteres).'); return; }
+
+  $('btnEntrar').disabled=true; $('btnEntrar').textContent='Verificando...';
+
+  const snap = await get(fb(`bingo/eventos/${evId}/brincantes/${rawNick}`));
+  const existing = snap.val();
+
+  if(existing){
+    // apelido já existe — verificar senha
+    if(existing.senha && existing.senha !== senha){
+      $('btnEntrar').disabled=false; $('btnEntrar').textContent='Entrar →';
+      $('mSenhaExistTxt').textContent=`O apelido "${rawNick}" já existe neste evento. Digite a senha para acessar suas cartelas.`;
+      $('inpSenhaExist').value=''; $('senhaExistErr').style.display='none';
+      // store pending nick
+      pendingNickLogin = {rawNick, nome};
+      openM('mSenhaExist'); setTimeout(()=>$('inpSenhaExist').focus(),80);
+      return;
+    }
+    // senha ok or no senha — update nome if provided
+    if(nome) await update(fb(`bingo/eventos/${evId}/brincantes/${rawNick}`),{nome});
+  } else {
+    // novo brincante
+    await set(fb(`bingo/eventos/${evId}/brincantes/${rawNick}`),{
+      nome: nome||rawNick, senha: senha||null, criadoEm: Date.now(), cartelas:{}
+    });
+  }
+
+  nick = rawNick; playerNome = nome || existing?.nome || rawNick;
+  saveLS({nick, nome:playerNome});
+  $('btnEntrar').disabled=false; $('btnEntrar').textContent='Entrar →';
+  await enterGame();
+}
+
+function showErr(el, msg){ el.textContent=msg; el.style.display='block'; }
+
+// ── SENHA EXISTENTE MODAL ────────────────────────────
+let pendingNickLogin = null;
+$('btnSenhaExistCancel').addEventListener('click',()=>{ closeM('mSenhaExist'); pendingNickLogin=null; });
+$('btnSenhaExistOk').addEventListener('click', async ()=>{
+  const senha = $('inpSenhaExist').value.trim();
+  if(!pendingNickLogin)return;
+  const snap = await get(fb(`bingo/eventos/${evId}/brincantes/${pendingNickLogin.rawNick}`));
+  const existing = snap.val();
+  if(existing?.senha && existing.senha !== senha){
+    $('senhaExistErr').style.display='block'; return;
+  }
+  closeM('mSenhaExist');
+  nick = pendingNickLogin.rawNick;
+  playerNome = pendingNickLogin.nome || existing?.nome || nick;
+  if(pendingNickLogin.nome) update(fb(`bingo/eventos/${evId}/brincantes/${nick}`),{nome:playerNome});
+  saveLS({nick, nome:playerNome});
+  pendingNickLogin=null;
+  await enterGame();
+});
+$('inpSenhaExist').addEventListener('keydown',e=>{ if(e.key==='Enter') $('btnSenhaExistOk').click(); });
+
+// ── ENTER GAME ───────────────────────────────────────
+async function enterGame(){
+  $('pHead').style.display='flex';
+  $('pNickDisplay').textContent = nick;
+  showView('vJogo');
 
   // Listen evento
-  onValue(fb(`bingo/eventos/${evId}`), snap => {
-    const ev = snap.val();
-    if(!ev){ $('pEvName').textContent='Evento não encontrado'; return; }
-    const isNew = !evData;
+  onValue(fb(`bingo/eventos/${evId}`), snap=>{
+    const ev=snap.val(); if(!ev)return;
     const newBall = evData && ev.lastDrawn !== evData.lastDrawn;
-    evData = ev;
-    $('pEvName').textContent = ev.nome;
+    evData=ev;
     if(newBall) onNewBall();
-    renderAll();
+    renderPremio();
+    renderBall();
+    renderHist();
+    checkAutoBatida();
   });
 
   // Listen brincante
-  onValue(fb(`bingo/eventos/${evId}/brincantes/${playerId}`), snap => {
-    const data = snap.val();
-    if(data?.cartelas){
-      cartelas = Object.entries(data.cartelas)
+  onValue(fb(`bingo/eventos/${evId}/brincantes/${nick}`), snap=>{
+    const data=snap.val(); if(!data)return;
+    playerNome = data.nome||nick;
+    // rebuild cartelas preserving current index if possible
+    if(data.cartelas){
+      const newCartelas = Object.entries(data.cartelas)
         .map(([fbId,c])=>({fbId,...c}))
         .sort((a,b)=>a.criadaEm-b.criadaEm);
+      // preserve idx
+      if(newCartelas.length && cartelaIdx >= newCartelas.length) cartelaIdx=newCartelas.length-1;
+      cartelas=newCartelas;
     }
-    if(data?.nome) playerNome = data.nome;
+    if(!cartelas.length){ const c=novaCartela(); cartelas=[c]; cartelaIdx=0; saveAllCartelas(); }
     // batida status
-    const bs = data?.batidaStatus;
-    const el = $('batidaStatusEl');
+    const bs=data.batidaStatus;
+    const el=$('batidaStatusEl');
     if(el){
-      if(bs==='pendente'){ el.className='batida-status pendente'; el.textContent='⏳ Batida enviada — aguardando confirmação...'; }
-      else if(bs==='confirmada'){ el.className='batida-status confirmada'; el.textContent='🎉 BINGO CONFIRMADO! Parabéns!'; soundConfirm(); }
-      else if(bs==='rejeitada'){ el.className='batida-status rejeitada'; el.textContent='❌ Batida rejeitada — continue jogando!'; soundReject();
-        setTimeout(()=>{ el.style.display='none'; update(fb(`bingo/eventos/${evId}/brincantes/${playerId}`),{batidaStatus:null}); },4000);
-      }
-      else{ el.style.display='none'; }
-    }
-    if(!cartelas.length){
-      const c = novaCartela(evData?.mode||90);
-      cartelas = [c]; cartelaIdx = 0;
-      saveAllCartelas();
+      el.className='batida-status';
+      if(bs==='pendente'){el.className='batida-status bs-pend';el.textContent='⏳ Batida enviada — aguardando confirmação...';}
+      else if(bs==='confirmada'){el.className='batida-status bs-conf';el.textContent='🎉 BINGO CONFIRMADO! Parabéns!';sndConfirm();}
+      else if(bs==='rejeitada'){el.className='batida-status bs-rej';el.textContent='❌ Batida rejeitada — continue jogando!';sndReject();
+        setTimeout(()=>{el.style.display='none';update(fb(`bingo/eventos/${evId}/brincantes/${nick}`),{batidaStatus:null});},4000);}
+      else{el.style.display='none';}
     }
     renderCartela();
     renderHist();
     checkAutoBatida();
   });
+
+  renderBody();
 }
 
-// ── RENDER ALL ───────────────────────────────────────
-function renderAll(){
-  const body = $('pBody');
-  if(!evData){ body.innerHTML='<div class="not-found"><div class="nf-icon">🔍</div><p>Evento não encontrado.</p></div>'; return; }
+// ── CARTELA HELPERS ──────────────────────────────────
+function novaCartela(){
+  const mode=evData?.mode||90;
+  return { id:gerarCartelaId(mode), fbId:genId(),
+    numeros:{B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]},
+    marcados:[], freeCenter:false, autoMarcar:true, criadaEm:Date.now() };
+}
+function gerarCartelaId(mode){ return `${mode}-B${String(Math.floor(Math.random()*9000)+1000)}`; }
 
-  body.innerHTML = `
-    <!-- Nome -->
-    <div class="card" id="nameCard">
-      <h3>👤 Seu Nome</h3>
-      <div style="display:flex;gap:8px">
-        <input type="text" id="pNameInp" value="${esc(playerNome)}" placeholder="Digite seu nome (opcional)" maxlength="40"
-          style="flex:1;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:8px 12px;font-family:'Barlow',sans-serif;font-size:.9rem;font-weight:600;outline:none">
-        <button class="btn btn-acc btn-sm" id="btnSaveName">Salvar</button>
-      </div>
-    </div>
-    <!-- Prêmio atual -->
-    <div class="premio-info" id="premioInfo">
-      <strong id="premioNome">—</strong>
-      <div class="premio-regra" id="premioRegra"></div>
-    </div>
-    <!-- Última pedra -->
+function saveAllCartelas(){
+  if(!evId||!nick)return;
+  const obj={};
+  cartelas.forEach(c=>{ obj[c.fbId]={id:c.id,numeros:c.numeros,marcados:c.marcados||[],freeCenter:c.freeCenter||false,autoMarcar:c.autoMarcar!==false,criadaEm:c.criadaEm}; });
+  update(fb(`bingo/eventos/${evId}/brincantes/${nick}`),{cartelas:obj}).catch(console.error);
+}
+
+// ── RENDER BODY ──────────────────────────────────────
+function renderBody(){
+  $('pBody').innerHTML=`
+    <div class="premio-info" id="premioInfo"><div class="pi-empty">Carregando prêmio...</div></div>
     <div class="p-last-ball" id="pLastBall">
-      <div class="plb-hint">Última pedra sorteada — toque para adicionar</div>
-      <div class="pbig empty-ball" id="pBigBall">
-        <span class="pbl" id="pBallL"></span>
-        <span class="pbn" id="pBallN">—</span>
-      </div>
+      <div class="plb-hint">Última pedra — toque para adicionar à cartela</div>
+      <div class="pbig empty-ball" id="pBigBall"><span class="pbl" id="pBallL"></span><span class="pbn" id="pBallN">—</span></div>
       <div class="plb-tap" id="pBallHint">Aguardando sorteio...</div>
     </div>
-    <!-- Cartela nav -->
     <div class="cartela-nav">
-      <button class="btn btn-ghost btn-sm" id="btnPrev">←</button>
+      <button class="btn btn-ghost btn-icon" id="btnPrev">←</button>
       <div class="cn-info">
         <div class="cn-id" id="cnId">—</div>
         <div class="cn-pg" id="cnPg">Cartela 1 de 1</div>
+        <div class="cn-toast" id="cnToast"></div>
       </div>
-      <button class="btn btn-ghost btn-sm" id="btnNext">→</button>
+      <button class="btn btn-ghost btn-icon" id="btnNext">→</button>
       <button class="btn btn-acc btn-sm" id="btnNovaC">+ Nova</button>
+      <button class="btn btn-red btn-icon" id="btnDelC" title="Excluir cartela">🗑️</button>
     </div>
-    <!-- Cartela -->
     <div class="cartela-wrap">
       <div class="cartela-hdr" id="cartelaHdr"></div>
       <div class="cartela-grid" id="cartelaGrid"></div>
     </div>
-    <!-- Opts -->
     <div class="cartela-opts">
-      <label class="tog-row">
-        <label class="tog"><input type="checkbox" id="togFree"><span class="tog-sl"></span></label>
-        FREE CENTER (★ no centro)
-      </label>
-      <label class="tog-row">
-        <label class="tog"><input type="checkbox" id="togAuto" checked><span class="tog-sl"></span></label>
-        Marcar automático
-      </label>
+      <label class="tog-row"><label class="tog"><input type="checkbox" id="togFree"><span class="tog-sl"></span></label>FREE CENTER (★)</label>
+      <label class="tog-row"><label class="tog"><input type="checkbox" id="togAuto" checked><span class="tog-sl"></span></label>Marcar automático</label>
     </div>
-    <!-- Batida status -->
     <div class="batida-status" id="batidaStatusEl"></div>
-    <!-- BINGO -->
     <button class="bingo-btn" id="btnBingo">🎉 BINGO!</button>
-    <!-- Histórico -->
-    <div class="p-hist-title">Números sorteados — toque para adicionar à cartela</div>
+    <div class="p-hist-title">Números sorteados — toque para adicionar</div>
     <div class="p-hist-strip" id="pHistStrip"></div>
+    <div style="margin-top:10px;text-align:center">
+      <button class="btn btn-ghost btn-sm" id="btnSairUser">🔄 Trocar usuário</button>
+    </div>
   `;
 
-  // attach listeners
-  $('btnSaveName').addEventListener('click', saveName);
-  $('pNameInp').addEventListener('keydown', e=>{ if(e.key==='Enter') saveName(); });
-  $('pLastBall').addEventListener('click', onTapLastBall);
-  $('btnPrev').addEventListener('click', ()=>{ if(cartelaIdx>0){cartelaIdx--;renderCartela();renderHist();} });
-  $('btnNext').addEventListener('click', ()=>{ if(cartelaIdx<cartelas.length-1){cartelaIdx++;renderCartela();renderHist();} });
-  $('btnNovaC').addEventListener('click', ()=>{ const c=novaCartela(evData?.mode||90); cartelas.push(c); cartelaIdx=cartelas.length-1; saveAllCartelas(); renderCartela(); renderHist(); });
-  $('togFree').addEventListener('change', ()=>{ if(cartelas[cartelaIdx]){cartelas[cartelaIdx].freeCenter=$('togFree').checked; saveAllCartelas(); renderCartela();} });
-  $('togAuto').addEventListener('change', ()=>{ if(cartelas[cartelaIdx]){cartelas[cartelaIdx].autoMarcar=$('togAuto').checked; saveAllCartelas();} });
+  $('btnPrev').addEventListener('click',()=>{ if(cartelaIdx>0){cartelaIdx--;renderCartela();renderHist();} });
+  $('btnNext').addEventListener('click',()=>{ if(cartelaIdx<cartelas.length-1){cartelaIdx++;renderCartela();renderHist();} });
+  $('btnNovaC').addEventListener('click', criarNovaCartela);
+  $('btnDelC').addEventListener('click', confirmarExcluirCartela);
+  $('togFree').addEventListener('change',()=>{ if(cartelas[cartelaIdx]){cartelas[cartelaIdx].freeCenter=$('togFree').checked;saveAllCartelas();renderCartela();} });
+  $('togAuto').addEventListener('change',()=>{ if(cartelas[cartelaIdx]){cartelas[cartelaIdx].autoMarcar=$('togAuto').checked;saveAllCartelas();} });
   $('btnBingo').addEventListener('click', onBingoClick);
+  $('pLastBall').addEventListener('click', onTapLastBall);
+  $('btnSairUser').addEventListener('click',()=>{ clearLS(); location.reload(); });
 
-  renderPremio();
-  renderBall();
-  renderCartela();
-  renderHist();
+  renderPremio(); renderBall(); renderCartela(); renderHist();
 }
 
-function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-function saveName(){
-  const nome = $('pNameInp')?.value.trim()||'';
-  playerNome = nome;
-  localStorage.setItem('bingo_player_nome', nome);
-  if(evId&&playerId) update(fb(`bingo/eventos/${evId}/brincantes/${playerId}`),{nome}).catch(console.error);
-  const card=$('nameCard'); if(card){card.style.borderColor='var(--green)'; setTimeout(()=>card.style.borderColor='',1200);}
+function criarNovaCartela(){
+  const c=novaCartela(); cartelas.push(c); cartelaIdx=cartelas.length-1;
+  saveAllCartelas(); renderCartela(); renderHist();
+  showToast('✅ Cartela criada!');
 }
 
+function confirmarExcluirCartela(){
+  const c=cartelas[cartelaIdx]; if(!c)return;
+  $('mDelCartelaTxt').textContent=`Excluir a cartela ${c.id}? Esta ação não pode ser desfeita.`;
+  openM('mDelCartela');
+}
+
+$('btnDelCartelaCancel').addEventListener('click',()=>closeM('mDelCartela'));
+$('btnDelCartelaOk').addEventListener('click',()=>{
+  closeM('mDelCartela');
+  const c=cartelas[cartelaIdx]; if(!c)return;
+  cartelas.splice(cartelaIdx,1);
+  if(!cartelas.length){ const nc=novaCartela(); cartelas=[nc]; }
+  if(cartelaIdx>=cartelas.length) cartelaIdx=cartelas.length-1;
+  saveAllCartelas(); renderCartela(); renderHist();
+  showToast('🗑️ Cartela excluída');
+});
+
+function showToast(msg){
+  const el=$('cnToast'); if(!el)return;
+  el.textContent=msg;
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{ if($('cnToast')) $('cnToast').textContent=''; },2500);
+}
+
+// ── PREMIO ───────────────────────────────────────────
 function renderPremio(){
-  if(!evData?.premios)return;
-  const premioAtivo = getCurrentPremio();
-  const pn=$('premioNome'), pr=$('premioRegra');
-  if(!pn||!pr)return;
-  if(premioAtivo){
-    pn.textContent=`#${premioAtivo.ordem} — ${premioAtivo.nome}`;
-    pr.textContent=premioAtivo.regra==='cheia'?'🔲 Cartela Cheia':'➕ Linha / Coluna / Diagonal';
-  } else {
-    pn.textContent='Nenhum prêmio ativo'; pr.textContent='';
-  }
+  const el=$('premioInfo'); if(!el||!evData?.premios)return;
+  const p=getCurrentPremio();
+  if(p){ el.innerHTML=`<div class="pi-nome">#${p.ordem} — ${esc(p.nome)}</div><div class="pi-regra">${p.regra==='cheia'?'🔲 Cartela Cheia':'➕ Linha / Coluna / Diagonal'}</div>`; }
+  else { el.innerHTML='<div class="pi-empty">Nenhum prêmio ativo no momento</div>'; }
 }
 
 function getCurrentPremio(){
   if(!evData?.premios)return null;
-  return Object.values(evData.premios)
-    .sort((a,b)=>a.ordem-b.ordem)
-    .find(p=>!p.ganhadores?.length)||null;
+  return Object.values(evData.premios).sort((a,b)=>a.ordem-b.ordem).find(p=>!p.ganhadores?.length)||null;
 }
 
 // ── BALL ─────────────────────────────────────────────
 function renderBall(){
-  const ball=$('pBigBall'), hint=$('pBallHint'); if(!ball)return;
-  const n=evData?.lastDrawn, mode=evData?.mode||90;
+  const ball=$('pBigBall'),hint=$('pBallHint'); if(!ball)return;
+  const n=evData?.lastDrawn,mode=evData?.mode||90;
   if(n){
     const letter=getLetter(n,mode);
     $('pBallL').textContent=letter; $('pBallN').textContent=n;
     ball.className=`pbig l${letter}`;
-    if(hint) hint.textContent='Toque para adicionar à cartela ativa';
+    if(hint)hint.textContent='Toque para adicionar à cartela ativa';
   } else {
     $('pBallL').textContent=''; $('pBallN').textContent='—';
     ball.className='pbig empty-ball';
-    if(hint) hint.textContent='Aguardando sorteio...';
+    if(hint)hint.textContent='Aguardando sorteio...';
   }
 }
 
 function onNewBall(){
-  soundNew();
+  sndNew();
   const ball=$('pBigBall');
   if(ball){ball.classList.remove('pop');void ball.offsetWidth;ball.classList.add('pop');}
   const lb=$('pLastBall');
-  if(lb){lb.classList.add('pulse-ball');setTimeout(()=>lb.classList.remove('pulse-ball'),700);}
+  if(lb){lb.classList.add('new-ball');setTimeout(()=>lb.classList.remove('new-ball'),2000);}
+  const n=evData?.lastDrawn,mode=evData?.mode||90; if(!n)return;
   // auto mark
-  const n=evData?.lastDrawn, mode=evData?.mode||90;
-  if(!n)return;
   let changed=false;
   cartelas.forEach(c=>{
     if(!c.autoMarcar)return;
     const all=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
-    if(all.includes(n)&&!(c.marcados||[]).includes(n)){
-      c.marcados=c.marcados||[]; c.marcados.push(n); changed=true;
-      soundMark();
-    }
+    if(all.includes(n)&&!(c.marcados||[]).includes(n)){ c.marcados=c.marcados||[]; c.marcados.push(n); changed=true; sndMark(); }
   });
   if(changed){ saveAllCartelas(); renderCartela(); renderHist(); checkAutoBatida(); }
 }
 
 function onTapLastBall(){
-  const n=evData?.lastDrawn, mode=evData?.mode||90; if(!n)return;
+  const n=evData?.lastDrawn,mode=evData?.mode||90; if(!n)return;
   const letter=getLetter(n,mode);
   const c=cartelas[cartelaIdx]; if(!c)return;
-  const allNums=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
-  if(allNums.includes(n)){ return; } // already in cartela
-  pendingAddNum={n,letter};
+  const all=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
+  if(all.includes(n)){ showToast('Número já está na cartela'); return; }
+  pendingAdd={n,letter};
   $('mAddNumTitle').textContent=`Adicionar ${letter} ${n}?`;
   $('mAddNumTxt').textContent=`Adicionar o número ${n} (coluna ${letter}) à cartela ${c.id}?`;
   openM('mAddNum');
@@ -497,19 +682,14 @@ function onTapLastBall(){
 
 // ── CARTELA ───────────────────────────────────────────
 function renderCartela(){
-  const hdrEl=$('cartelaHdr'), gridEl=$('cartelaGrid'); if(!hdrEl||!gridEl)return;
+  const hdrEl=$('cartelaHdr'),gridEl=$('cartelaGrid'); if(!hdrEl||!gridEl)return;
   const c=cartelas[cartelaIdx]; if(!c)return;
-
   $('cnId').textContent=c.id;
   $('cnPg').textContent=`Cartela ${cartelaIdx+1} de ${cartelas.length}`;
-  if($('togFree')) $('togFree').checked=c.freeCenter||false;
-  if($('togAuto')) $('togAuto').checked=c.autoMarcar!==false;
-
-  // header
+  if($('togFree'))$('togFree').checked=c.freeCenter||false;
+  if($('togAuto'))$('togAuto').checked=c.autoMarcar!==false;
   hdrEl.innerHTML='';
   LETTERS.forEach(l=>{ const cell=document.createElement('div'); cell.className=`ch-cell l${l}`; cell.textContent=l; hdrEl.appendChild(cell); });
-
-  // grid
   gridEl.innerHTML='';
   const marcados=new Set(c.marcados||[]);
   for(let row=0;row<5;row++){
@@ -517,57 +697,46 @@ function renderCartela(){
       const isFree=c.freeCenter&&row===2&&col===2;
       const num=c.numeros[letter][row];
       const cell=document.createElement('div');
-      if(isFree){
-        cell.className='c-cell free-cell'; cell.textContent='★';
-      } else if(num===null||num===undefined){
-        cell.className='c-cell empty-cell'; cell.textContent='+';
-        cell.addEventListener('click',()=>onEmptyCell(letter,row));
-      } else {
-        const isMarked=marcados.has(num);
-        cell.className=`c-cell ${isMarked?'marked-'+letter:'filled-'+letter}`;
-        cell.textContent=num;
-        cell.addEventListener('click',()=>onFilledCell(num,letter,row));
-      }
+      if(isFree){ cell.className='c-cell free-cell'; cell.textContent='★'; }
+      else if(num===null||num===undefined){ cell.className='c-cell empty-cell'; cell.textContent='+'; cell.addEventListener('click',()=>onEmptyCell(letter,row)); }
+      else { const marked=marcados.has(num); cell.className=`c-cell ${marked?'marked-'+letter:'filled-'+letter}`; cell.textContent=num; cell.addEventListener('click',()=>onFilledCell(num,letter,row)); }
       gridEl.appendChild(cell);
     });
   }
 }
 
-function onEmptyCell(letter, row){
-  const n=evData?.lastDrawn, mode=evData?.mode||90; if(!n)return;
-  if(getLetter(n,mode)!==letter)return;
+function onEmptyCell(letter,row){
+  const n=evData?.lastDrawn,mode=evData?.mode||90; if(!n)return;
+  if(getLetter(n,mode)!==letter){ showToast(`Último número é ${getLetter(n,mode)} — não cabe em ${letter}`); return; }
   const c=cartelas[cartelaIdx]; if(!c)return;
   if(c.numeros[letter][row]!==null&&c.numeros[letter][row]!==undefined)return;
-  pendingAddNum={n,letter};
+  pendingAdd={n,letter};
   $('mAddNumTitle').textContent=`Adicionar ${letter} ${n}?`;
   $('mAddNumTxt').textContent=`Adicionar o número ${n} à coluna ${letter} da cartela ${c.id}?`;
   openM('mAddNum');
 }
 
-function onFilledCell(num, letter, row){
-  pendingRemCell={num,letter,row};
+function onFilledCell(num,letter,row){
+  pendingRem={num,letter,row};
   $('mRemNumTxt').textContent=`Remover o número ${num} (${letter}) da cartela?`;
   openM('mRemNum');
 }
 
-function addNumberToCartela(n, letter){
+function addNumberToCartela(n,letter){
   const c=cartelas[cartelaIdx]; if(!c)return;
   const all=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
-  if(all.includes(n))return;
+  if(all.includes(n)){ showToast('Já está na cartela'); return; }
   const maxSlots=c.freeCenter&&letter==='N'?4:5;
   const filled=c.numeros[letter].filter(v=>v!==null&&v!==undefined);
-  if(filled.length>=maxSlots)return;
+  if(filled.length>=maxSlots){ showToast(`Coluna ${letter} já está cheia`); return; }
   const newVals=[...filled,n].sort((a,b)=>a-b);
   while(newVals.length<5)newVals.push(null);
   c.numeros[letter]=newVals;
-  // auto-mark if already drawn
-  if(evData&&new Set(evData.drawn||[]).has(n)){
-    c.marcados=c.marcados||[]; if(!c.marcados.includes(n)) c.marcados.push(n);
-  }
-  saveAllCartelas(); renderCartela(); renderHist(); soundMark(); checkAutoBatida();
+  if(evData&&new Set(evData.drawn||[]).has(n)){ c.marcados=c.marcados||[]; if(!c.marcados.includes(n))c.marcados.push(n); }
+  saveAllCartelas(); renderCartela(); renderHist(); sndMark(); checkAutoBatida();
 }
 
-function removeFromCartela(num, letter, row){
+function removeFromCartela(num,letter,row){
   const c=cartelas[cartelaIdx]; if(!c)return;
   c.numeros[letter][row]=null;
   c.marcados=(c.marcados||[]).filter(m=>m!==num);
@@ -576,6 +745,12 @@ function removeFromCartela(num, letter, row){
   c.numeros[letter]=vals;
   saveAllCartelas(); renderCartela(); renderHist(); checkAutoBatida();
 }
+
+// MODAL LISTENERS
+$('btnAddCancel').addEventListener('click',()=>{ closeM('mAddNum'); pendingAdd=null; });
+$('btnAddOk').addEventListener('click',()=>{ if(pendingAdd)addNumberToCartela(pendingAdd.n,pendingAdd.letter); closeM('mAddNum'); pendingAdd=null; });
+$('btnRemCancel').addEventListener('click',()=>{ closeM('mRemNum'); pendingRem=null; });
+$('btnRemOk').addEventListener('click',()=>{ if(pendingRem)removeFromCartela(pendingRem.num,pendingRem.letter,pendingRem.row); closeM('mRemNum'); pendingRem=null; });
 
 // ── HISTORY ──────────────────────────────────────────
 function renderHist(){
@@ -586,17 +761,15 @@ function renderHist(){
   const mode=evData.mode||90;
   strip.innerHTML='';
   [...(evData.drawn||[])].reverse().forEach(n=>{
-    const letter=getLetter(n,mode);
-    const inC=cartelaNums.has(n), alreadyMarked=marcados.has(n);
+    const letter=getLetter(n,mode),inC=cartelaNums.has(n),isMarked=marcados.has(n);
     const ball=document.createElement('div');
-    ball.className=`ph-ball l${letter}${inC?' in-cartela':''}${alreadyMarked?' already-marked':''}`;
+    ball.className=`ph-ball l${letter}${inC?' in-cartela':''}${isMarked?' marked':''}`;
     ball.innerHTML=`<span class="phl">${letter}</span><span class="phn">${n}</span>`;
-    if(!alreadyMarked){
+    if(!isMarked){
       ball.addEventListener('click',()=>{
-        if(inC)return; // already in cartela, do nothing extra
-        pendingAddNum={n,letter};
+        pendingAdd={n,letter};
         $('mAddNumTitle').textContent=`Adicionar ${letter} ${n}?`;
-        $('mAddNumTxt').textContent=`Adicionar o número ${n} (coluna ${letter}) à cartela ${c?.id}? Números com borda branca já estão na cartela.`;
+        $('mAddNumTxt').textContent=`Adicionar o número ${n} (coluna ${letter}) à cartela ${c?.id}?`;
         openM('mAddNum');
       });
     }
@@ -607,96 +780,62 @@ function renderHist(){
 // ── BATIDA CHECK ─────────────────────────────────────
 function checkAutoBatida(){
   const c=cartelas[cartelaIdx]; if(!c)return;
-  const premioAtivo=getCurrentPremio(); if(!premioAtivo)return;
+  const p=getCurrentPremio(); if(!p)return;
   const allNums=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
-  const slots=c.freeCenter?24:25;
-  const cartelaCompleta=allNums.length>=slots;
-  if(!cartelaCompleta){ $('btnBingo')?.classList.remove('pulsing'); return; }
+  const cartelaCompleta=allNums.length>=(c.freeCenter?24:25);
+  const btn=$('btnBingo'); if(!btn)return;
+  if(!cartelaCompleta){ btn.classList.remove('pulsing'); return; }
   const marcados=new Set(c.marcados||[]);
-  let bateu=false;
-  if(premioAtivo.regra==='cheia'){
-    bateu=allNums.every(n=>marcados.has(n));
-  } else {
-    bateu=checkLinhaDiagonal(c,marcados);
-  }
-  const btn=$('btnBingo');
-  if(btn){ bateu ? btn.classList.add('pulsing') : btn.classList.remove('pulsing'); }
-  if(bateu) soundBingo();
+  let bateu = p.regra==='cheia' ? allNums.every(n=>marcados.has(n)) : checkLD(c,marcados);
+  bateu ? btn.classList.add('pulsing') : btn.classList.remove('pulsing');
+  if(bateu) sndBingo();
 }
 
-function checkLinhaDiagonal(c, marcados){
+function checkLD(c,marcados){
+  // rows
   for(let row=0;row<5;row++){
-    if(LETTERS.every((l,col)=>{
-      if(c.freeCenter&&row===2&&col===2)return true;
-      const n=c.numeros[l][row]; return n!==null&&n!==undefined&&marcados.has(n);
-    }))return true;
+    if(LETTERS.every((l,col)=>{ if(c.freeCenter&&row===2&&col===2)return true; const n=c.numeros[l][row]; return n!==null&&n!==undefined&&marcados.has(n); }))return true;
   }
+  // cols
   for(let col=0;col<5;col++){
-    const letter=LETTERS[col];
-    if(c.numeros[letter].every((n,row)=>{
-      if(c.freeCenter&&row===2&&col===2)return true;
-      return n!==null&&n!==undefined&&marcados.has(n);
-    }))return true;
+    const l=LETTERS[col];
+    if(c.numeros[l].every((n,row)=>{ if(c.freeCenter&&row===2&&col===2)return true; return n!==null&&n!==undefined&&marcados.has(n); }))return true;
   }
-  const d1=[[0,0],[1,1],[2,2],[3,3],[4,4]];
-  const d2=[[0,4],[1,3],[2,2],[3,1],[4,0]];
-  for(const diag of[d1,d2]){
-    if(diag.every(([row,col])=>{
-      if(c.freeCenter&&row===2&&col===2)return true;
-      const n=c.numeros[LETTERS[col]][row]; return n!==null&&n!==undefined&&marcados.has(n);
-    }))return true;
+  // diagonals
+  for(const diag of [[[0,0],[1,1],[2,2],[3,3],[4,4]],[[0,4],[1,3],[2,2],[3,1],[4,0]]]){
+    if(diag.every(([r,col])=>{ if(c.freeCenter&&r===2&&col===2)return true; const n=c.numeros[LETTERS[col]][r]; return n!==null&&n!==undefined&&marcados.has(n); }))return true;
   }
   return false;
 }
 
-// ── BINGO BUTTON ─────────────────────────────────────
+// ── BINGO ────────────────────────────────────────────
 function onBingoClick(){
   const c=cartelas[cartelaIdx]; if(!c)return;
-  const premioAtivo=getCurrentPremio();
-  $('mBingoTxt').textContent=`Declarar BINGO com a cartela ${c.id}${playerNome?' ('+playerNome+')':''}? O operador irá confirmar.`;
+  const p=getCurrentPremio();
+  $('mBingoTxt').textContent=`Declarar BINGO com a cartela ${c.id}${playerNome?' ('+playerNome+')':''}?\nO operador irá confirmar.`;
   openM('mBingo');
 }
-
 $('btnBingoCancel').addEventListener('click',()=>closeM('mBingo'));
 $('btnBingoOk').addEventListener('click',()=>{
   closeM('mBingo');
-  const c=cartelas[cartelaIdx]; if(!c||!evId||!playerId)return;
-  const premioAtivo=getCurrentPremio();
+  const c=cartelas[cartelaIdx]; if(!c||!evId||!nick)return;
+  const p=getCurrentPremio();
   const batidaId=genId();
   set(fb(`bingo/eventos/${evId}/batidas/${batidaId}`),{
-    playerId, playerNome:playerNome||'Anônimo',
-    cartelaId:c.id, premioId:premioAtivo?.id||null,
+    playerId:nick, playerNome:playerNome||nick,
+    cartelaId:c.id, premioId:p?.id||null,
     tipo:'manual', status:'pendente', timestamp:Date.now()
   });
-  update(fb(`bingo/eventos/${evId}/brincantes/${playerId}`),{batidaStatus:'pendente'});
+  update(fb(`bingo/eventos/${evId}/brincantes/${nick}`),{batidaStatus:'pendente'});
   const el=$('batidaStatusEl');
-  if(el){el.className='batida-status pendente';el.textContent='⏳ Batida enviada — aguardando confirmação...';}
+  if(el){el.className='batida-status bs-pend';el.textContent='⏳ Batida enviada — aguardando confirmação...';}
 });
 
-// ── MODAL LISTENERS ─────────────────────────────────
-$('btnAddNumCancel').addEventListener('click',()=>{closeM('mAddNum');pendingAddNum=null;});
-$('btnAddNumOk').addEventListener('click',()=>{
-  if(pendingAddNum){addNumberToCartela(pendingAddNum.n,pendingAddNum.letter);}
-  closeM('mAddNum'); pendingAddNum=null;
-});
-$('btnRemNumCancel').addEventListener('click',()=>{closeM('mRemNum');pendingRemCell=null;});
-$('btnRemNumOk').addEventListener('click',()=>{
-  if(pendingRemCell){removeFromCartela(pendingRemCell.num,pendingRemCell.letter,pendingRemCell.row);}
-  closeM('mRemNum'); pendingRemCell=null;
-});
+// ── UTILS ────────────────────────────────────────────
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// ── SAVE ─────────────────────────────────────────────
-function saveAllCartelas(){
-  if(!evId||!playerId)return;
-  const cartelasObj={};
-  cartelas.forEach(c=>{
-    const fbId=c.fbId||genId(); c.fbId=fbId;
-    cartelasObj[fbId]={id:c.id,numeros:c.numeros,marcados:c.marcados||[],freeCenter:c.freeCenter||false,autoMarcar:c.autoMarcar!==false,criadaEm:c.criadaEm};
-  });
-  update(fb(`bingo/eventos/${evId}/brincantes/${playerId}`),{
-    nome:playerNome||'Anônimo', cartelas:cartelasObj
-  }).catch(console.error);
-}
+// ── START ────────────────────────────────────────────
+init();
 </script>
 
 </body>

@@ -1,597 +1,702 @@
+<!-- IBBI Bingo Player v3.0 — 2026-05-13 -->
+
 <!DOCTYPE html>
 
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0a0a0f">
-<title>Placar Dominó</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IBBI Bingo — Minha Cartela</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #0a0a0f;
-  --surface: #12121a;
-  --surface2: #1a1a26;
-  --azul: #3b82f6;
-  --azul-glow: rgba(59,130,246,0.35);
-  --vermelho: #ef4444;
-  --verm-glow: rgba(239,68,68,0.35);
-  --ouro: #f59e0b;
-  --texto: #e8e8f0;
-  --muted: #6b6b80;
-  --radius: 20px;
+:root{
+  --bg:#060608;--surface:#0f0f14;--surface2:#161620;--surface3:#1e1e2a;
+  --border:#252535;--border2:#323248;
+  --accent:#00b8f0;--accent2:#00dfa8;
+  --red:#f06060;--green:#00dfa8;--blue:#00b8f0;
+  --text:#e4f2ff;--text2:#7090b0;--text3:#3a5068;
+  --radius:12px;--rsm:8px;
+  --cB:#00b8f0;--cI:#00dfa8;--cN:#f5c800;--cG:#ff8c00;--cO:#c850ff;
 }
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:5px}
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* BUTTONS */
+.btn{border:none;border-radius:var(–rsm);padding:9px 18px;font-family:‘Barlow’,sans-serif;font-weight:800;font-size:.9rem;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn:active{transform:scale(.96)}
+.btn-acc{background:linear-gradient(135deg,var(–accent),#0090c8);color:#fff;box-shadow:0 4px 16px rgba(0,184,240,.28)}
+.btn-acc:hover{filter:brightness(1.12)}
+.btn-ghost{background:var(–surface2);color:var(–text2);border:1.5px solid var(–border)}
+.btn-ghost:hover{border-color:var(–accent);color:var(–accent)}
+.btn-red{background:rgba(240,96,96,.1);color:var(–red);border:1.5px solid rgba(240,96,96,.3)}
+.btn-sm{padding:6px 12px;font-size:.78rem}
+.conn{font-size:.7rem;font-weight:700;padding:4px 10px;border-radius:20px;border:1px solid;white-space:nowrap}
+.conn.on{color:var(–green);border-color:var(–green);background:rgba(0,223,168,.1)}
+.conn.off{color:var(–red);border-color:var(–red);background:rgba(240,96,96,.1)}
+.card{background:var(–surface);border:1.5px solid var(–border);border-radius:var(–radius);padding:12px}
+.card h3{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(–text3);text-transform:uppercase;margin-bottom:10px}
+.sec-lbl{font-size:.66rem;font-weight:800;letter-spacing:2px;color:var(–text3);text-transform:uppercase}
 
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--texto);
-  min-height: 100vh;
-  overflow-x: hidden;
-  position: relative;
-  -webkit-text-size-adjust: 100%;
-}
+/* MODAL */
+.mbk{display:none;position:fixed;inset:0;background:rgba(0,0,2,.92);backdrop-filter:blur(5px);z-index:1000;align-items:center;justify-content:center;padding:16px}
+.mbk.open{display:flex}
+.modal{background:var(–surface);border:1.5px solid var(–border2);border-radius:var(–radius);width:100%;max-width:360px;padding:22px;animation:mIn .22s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes mIn{from{transform:scale(.9);opacity:0}}
+.modal h2{font-family:‘Bebas Neue’,sans-serif;font-size:1.5rem;letter-spacing:2px;color:var(–accent);margin-bottom:14px}
+.mfoot{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:.7rem;font-weight:800;letter-spacing:1.5px;color:var(–text2);text-transform:uppercase;margin-bottom:5px}
+.fg input{width:100%;background:var(–surface2);border:1.5px solid var(–border2);color:var(–text);border-radius:var(–rsm);padding:9px 12px;font-family:‘Barlow’,sans-serif;font-size:.95rem;font-weight:600;outline:none;transition:border-color .2s}
+.fg input:focus{border-color:var(–accent)}
+.fg input::placeholder{color:var(–text3)}
 
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events: none; z-index: 0; opacity: 0.5;
-}
+/* HEADER */
+.p-head{background:rgba(4,4,6,.97);border-bottom:1.5px solid var(–border);padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.p-logo{font-family:‘Bebas Neue’,sans-serif;font-size:1.4rem;letter-spacing:3px;color:var(–accent);line-height:1}
+.p-logo span{color:var(–accent2)}
+.p-evname{font-size:.75rem;font-weight:700;color:var(–text2);margin-left:2px}
+.ibbi-badge{background:linear-gradient(135deg,var(–accent),var(–accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase}
+.vtag{font-size:.6rem;font-weight:700;color:var(–text3);margin-left:auto}
 
-body::after {
-  content: '';
-  position: fixed; inset: 0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none; z-index: 0;
-}
+/* BODY */
+.p-body{padding:10px 12px 60px;display:flex;flex-direction:column;gap:10px;max-width:480px;margin:0 auto;width:100%}
 
-/* status */
-#fb-status {
-  position: fixed;
-  top: 10px; right: 12px;
-  z-index: 999;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  padding: 4px 10px;
-  border-radius: 99px;
-  background: rgba(0,0,0,0.5);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: var(--muted);
-  transition: all 0.3s;
-}
-#fb-status.ok  { color: #4ade80; border-color: #4ade80; }
-#fb-status.err { color: #f87171; border-color: #f87171; }
+/* NOT FOUND */
+.not-found{text-align:center;padding:60px 20px;color:var(–text3)}
+.not-found .nf-icon{font-size:3rem;margin-bottom:12px}
+.not-found p{font-size:.9rem;font-weight:600}
 
-/* badge AO VIVO */
-#badge-live {
-  position: fixed;
-  top: 10px; left: 12px;
-  z-index: 999;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  border-radius: 99px;
-  background: rgba(239,68,68,0.15);
-  border: 1px solid var(--vermelho);
-  color: var(--vermelho);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
+/* LAST BALL */
+.p-last-ball{display:flex;flex-direction:column;align-items:center;gap:8px;background:var(–surface);border:1.5px solid var(–border);border-radius:var(–radius);padding:16px;cursor:pointer;transition:all .2s}
+.p-last-ball:active{transform:scale(.98)}
+.plb-hint{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(–text3);text-transform:uppercase}
+.plb-tap{font-size:.72rem;color:var(–text2);margin-top:2px}
+.p-last-ball.pulse-ball{animation:pball .6s ease}
+@keyframes pball{0%{border-color:var(–border)}50%{border-color:var(–accent);box-shadow:0 0 20px rgba(0,184,240,.3)}100%{border-color:var(–border)}}
+.pbig{width:96px;height:96px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:‘Bebas Neue’,sans-serif;line-height:1;user-select:none;transition:background .3s}
+.pbig .pbl{font-size:1.1rem;opacity:.75}.pbig .pbn{font-size:2.8rem}
+.pbig.lB{background:radial-gradient(circle at 32% 30%,#d8f6ff,#00b8f0 55%,#005a80);color:#000;box-shadow:0 0 24px rgba(0,184,240,.5)}
+.pbig.lI{background:radial-gradient(circle at 32% 30%,#ccfff0,#00dfa8 55%,#005040);color:#000;box-shadow:0 0 24px rgba(0,223,168,.5)}
+.pbig.lN{background:radial-gradient(circle at 32% 30%,#fffbe0,#f5c800 55%,#806000);color:#000;box-shadow:0 0 24px rgba(245,200,0,.5)}
+.pbig.lG{background:radial-gradient(circle at 32% 30%,#fff0d8,#ff8c00 55%,#804000);color:#000;box-shadow:0 0 24px rgba(255,140,0,.5)}
+.pbig.lO{background:radial-gradient(circle at 32% 30%,#f8d8ff,#c850ff 55%,#600080);color:#000;box-shadow:0 0 24px rgba(200,80,255,.5)}
+.pbig.empty-ball{background:var(–surface2);color:var(–text3);box-shadow:none}
+.pbig.pop{animation:bpop .35s cubic-bezier(.15,1.6,.35,1) both}
+@keyframes bpop{from{transform:scale(.45);opacity:0}}
 
-#badge-live::before {
-  content: '';
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: var(--vermelho);
-  animation: pulse 1.4s ease-in-out infinite;
-}
+/* CARTELA NAV */
+.cartela-nav{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.cn-info{text-align:center;flex:1}
+.cn-id{font-family:‘Bebas Neue’,sans-serif;font-size:1.1rem;color:var(–accent);letter-spacing:1px}
+.cn-pg{font-size:.7rem;color:var(–text3);font-weight:700;margin-top:1px}
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.4; transform: scale(0.7); }
-}
+/* CARTELA 5x5 */
+.cartela-wrap{background:var(–surface);border:1.5px solid var(–border);border-radius:var(–radius);overflow:hidden}
+.cartela-hdr{display:grid;grid-template-columns:repeat(5,1fr)}
+.ch-cell{font-family:‘Bebas Neue’,sans-serif;font-size:1.7rem;text-align:center;padding:8px 4px;line-height:1}
+.ch-cell.lB{background:rgba(0,184,240,.2);color:#00b8f0}
+.ch-cell.lI{background:rgba(0,223,168,.2);color:#00dfa8}
+.ch-cell.lN{background:rgba(245,200,0,.2);color:#f5c800}
+.ch-cell.lG{background:rgba(255,140,0,.2);color:#ff8c00}
+.ch-cell.lO{background:rgba(200,80,255,.2);color:#c850ff}
+.cartela-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:6px}
+.c-cell{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:‘Bebas Neue’,sans-serif;font-size:1.35rem;cursor:pointer;transition:all .2s;border:1.5px solid var(–border);background:var(–surface2);user-select:none}
+.c-cell.empty-cell{color:var(–text3);font-size:.85rem;border-style:dashed}
+.c-cell.free-cell{background:var(–surface3);color:var(–text2);font-size:.9rem;cursor:default;border-color:var(–border2)}
+.c-cell.filled-B{color:#00b8f0;border-color:rgba(0,184,240,.35);background:rgba(0,184,240,.06)}
+.c-cell.filled-I{color:#00dfa8;border-color:rgba(0,223,168,.35);background:rgba(0,223,168,.06)}
+.c-cell.filled-N{color:#f5c800;border-color:rgba(245,200,0,.35);background:rgba(245,200,0,.06)}
+.c-cell.filled-G{color:#ff8c00;border-color:rgba(255,140,0,.35);background:rgba(255,140,0,.06)}
+.c-cell.filled-O{color:#c850ff;border-color:rgba(200,80,255,.35);background:rgba(200,80,255,.06)}
+.c-cell.marked-B{background:#00b8f0;color:#000;border-color:#00b8f0}
+.c-cell.marked-I{background:#00dfa8;color:#000;border-color:#00dfa8}
+.c-cell.marked-N{background:#f5c800;color:#000;border-color:#f5c800}
+.c-cell.marked-G{background:#ff8c00;color:#000;border-color:#ff8c00}
+.c-cell.marked-O{background:#c850ff;color:#000;border-color:#c850ff}
+.c-cell.just-marked{animation:cellpop .4s cubic-bezier(.15,1.6,.35,1) both}
+@keyframes cellpop{from{transform:scale(.6);opacity:.5}}
 
-header {
-  position: relative; z-index: 10;
-  text-align: center;
-  padding: 20px 16px 10px;
-}
+/* CARTELA OPTS */
+.cartela-opts{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:0 2px}
+.tog-row{display:flex;align-items:center;gap:7px;font-size:.82rem;font-weight:700;color:var(–text2);cursor:pointer;user-select:none}
+.tog{position:relative;width:38px;height:20px;flex-shrink:0}
+.tog input{opacity:0;width:0;height:0}
+.tog-sl{position:absolute;inset:0;border-radius:20px;cursor:pointer;background:var(–surface2);border:1.5px solid var(–border);transition:.2s}
+.tog-sl::before{content:’’;position:absolute;width:12px;height:12px;background:var(–text3);border-radius:50%;top:2px;left:2px;transition:.2s}
+.tog input:checked+.tog-sl{background:rgba(0,184,240,.18);border-color:var(–blue)}
+.tog input:checked+.tog-sl::before{background:var(–blue);transform:translateX(18px)}
 
-.header-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(28px, 8vw, 42px);
-  letter-spacing: 6px;
-  background: linear-gradient(135deg, #fff 30%, var(--muted));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+/* BINGO BUTTON */
+.bingo-btn{width:100%;padding:18px;font-family:‘Bebas Neue’,sans-serif;font-size:2.2rem;letter-spacing:4px;border:none;border-radius:var(–radius);cursor:pointer;transition:all .2s;background:linear-gradient(135deg,#f5c800,#ff8c00);color:#000;box-shadow:0 4px 20px rgba(245,200,0,.3)}
+.bingo-btn:hover{filter:brightness(1.1)}
+.bingo-btn.pulsing{animation:bpulse 1s ease-in-out infinite}
+@keyframes bpulse{0%,100%{box-shadow:0 4px 20px rgba(245,200,0,.3)}50%{box-shadow:0 0 50px rgba(245,200,0,.9),0 0 100px rgba(245,200,0,.2)}}
 
-.domino-icon {
-  display: inline-flex;
-  gap: 4px;
-  align-items: center;
-  margin-bottom: 6px;
-}
+/* BATIDA STATUS */
+.batida-status{text-align:center;padding:12px 16px;border-radius:var(–rsm);font-weight:800;font-size:.88rem;display:none}
+.batida-status.pendente{display:block;background:rgba(245,200,0,.1);color:var(–cN);border:1px solid rgba(245,200,0,.3)}
+.batida-status.rejeitada{display:block;background:rgba(240,96,96,.1);color:var(–red);border:1px solid rgba(240,96,96,.3);animation:shake .4s ease}
+.batida-status.confirmada{display:block;background:rgba(0,223,168,.1);color:var(–green);border:1px solid rgba(0,223,168,.3)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
-.tile {
-  width: 22px; height: 38px;
-  background: var(--surface2);
-  border-radius: 4px;
-  border: 1.5px solid rgba(255,255,255,0.12);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-around;
-  padding: 4px 3px;
-  gap: 2px;
-}
+/* HISTORY */
+.p-hist-title{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(–text3);text-transform:uppercase}
+.p-hist-strip{display:flex;flex-wrap:wrap;gap:5px}
+.ph-ball{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:‘Bebas Neue’,sans-serif;line-height:1;cursor:pointer;box-shadow:0 2px 5px rgba(0,0,0,.4);transition:transform .15s}
+.ph-ball:active{transform:scale(.88)}
+.ph-ball .phl{font-size:.48rem;opacity:.75}.ph-ball .phn{font-size:.92rem}
+.ph-ball.lB{background:radial-gradient(circle at 32% 30%,#d8f6ff,#00b8f0 55%,#005a80);color:#000}
+.ph-ball.lI{background:radial-gradient(circle at 32% 30%,#ccfff0,#00dfa8 55%,#005040);color:#000}
+.ph-ball.lN{background:radial-gradient(circle at 32% 30%,#fffbe0,#f5c800 55%,#806000);color:#000}
+.ph-ball.lG{background:radial-gradient(circle at 32% 30%,#fff0d8,#ff8c00 55%,#804000);color:#000}
+.ph-ball.lO{background:radial-gradient(circle at 32% 30%,#f8d8ff,#c850ff 55%,#600080);color:#000}
+.ph-ball.in-cartela{box-shadow:0 0 0 2.5px #fff,0 0 0 4.5px var(–green)}
+.ph-ball.already-marked{opacity:.45;cursor:default}
 
-.pip-row { display: flex; gap: 3px; }
-.pip { width: 4px; height: 4px; border-radius: 50%; background: white; }
-
-/* META */
-.meta-wrap {
-  position: relative; z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin: 8px auto 16px;
-}
-
-.meta-label {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.meta-val {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 26px;
-  letter-spacing: 2px;
-  color: var(--ouro);
-}
-
-/* PROGRESS */
-.progress-wrap {
-  position: relative; z-index: 10;
-  margin: 0 12px 18px;
-  height: 6px;
-  background: var(--surface2);
-  border-radius: 99px;
-  overflow: visible;
-  display: flex;
-  gap: 2px;
-}
-
-.progress-a, .progress-b {
-  height: 100%;
-  border-radius: 99px;
-  transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.progress-a { background: linear-gradient(90deg, #1d4ed8, var(--azul)); }
-.progress-b { background: linear-gradient(90deg, #b91c1c, var(--vermelho)); }
-
-.container {
-  position: relative; z-index: 10;
-  display: flex;
-  gap: 10px;
-  padding: 0 12px;
-}
-
-.time {
-  flex: 1;
-  background: var(--surface);
-  border-radius: var(--radius);
-  padding: 18px 12px 20px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: 1px solid rgba(255,255,255,0.06);
-}
-
-.time::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  border-radius: var(--radius) var(--radius) 0 0;
-}
-
-.timeA::before { background: linear-gradient(90deg, #1d4ed8, var(--azul), #60a5fa); }
-.timeB::before { background: linear-gradient(90deg, #b91c1c, var(--vermelho), #f87171); }
-
-.time::after {
-  content: '';
-  position: absolute;
-  width: 120px; height: 120px;
-  border-radius: 50%;
-  top: -40px;
-  opacity: 0.12;
-  filter: blur(40px);
-  pointer-events: none;
-  transition: opacity 0.4s;
-}
-
-.timeA::after { background: var(--azul); left: -20px; }
-.timeB::after { background: var(--vermelho); right: -20px; }
-
-.time.lider::after { opacity: 0.3; }
-.time.lider { transform: translateY(-3px); }
-.timeA.lider { box-shadow: 0 12px 40px var(--azul-glow); }
-.timeB.lider { box-shadow: 0 12px 40px var(--verm-glow); }
-
-.flag {
-  font-size: 20px;
-  height: 26px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 4px;
-}
-
-.nome-display {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(18px, 5vw, 22px);
-  letter-spacing: 3px;
-  color: white;
-  text-align: center;
-  width: 100%;
-  padding-bottom: 2px;
-}
-
-.pontos-wrap { position: relative; margin: 10px 0 14px; }
-
-.pontos {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(80px, 22vw, 110px);
-  line-height: 1;
-  letter-spacing: -2px;
-  display: block;
-  transition: transform 0.15s ease;
-}
-
-.timeA .pontos { color: #93c5fd; }
-.timeB .pontos { color: #fca5a5; }
-
-.pontos.bump {
-  animation: bump 0.25s cubic-bezier(0.36, 0.07, 0.19, 0.97);
-}
-
-@keyframes bump {
-  0%   { transform: scale(1); }
-  40%  { transform: scale(1.12); }
-  70%  { transform: scale(0.95); }
-  100% { transform: scale(1); }
-}
-
-.time.venceu .pontos {
-  background: linear-gradient(135deg, var(--ouro), #fde68a, var(--ouro));
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: shimmer 2s linear infinite;
-}
-
-@keyframes shimmer {
-  to { background-position: 200% center; }
-}
-
-.vitorias-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin: 0 0 6px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 12px;
-  padding: 8px 10px;
-}
-
-.vitorias-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--muted);
-  flex: 1;
-  text-align: left;
-}
-
-.vitorias-num {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 32px;
-  line-height: 1;
-  color: var(--ouro);
-  min-width: 28px;
-  text-align: center;
-}
-
-/* Toast */
-.toast {
-  position: fixed;
-  bottom: 30px; left: 50%;
-  transform: translateX(-50%) translateY(80px);
-  background: var(--ouro);
-  color: #000;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 22px;
-  letter-spacing: 2px;
-  padding: 12px 28px;
-  border-radius: 99px;
-  z-index: 100;
-  opacity: 0;
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  white-space: nowrap;
-  pointer-events: none;
-}
-
-.toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-/* Aviso de toque inicial (necessário para voz no iOS) */
-#tap-overlay {
-  position: fixed; inset: 0;
-  background: rgba(10,10,15,0.92);
-  z-index: 500;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  cursor: pointer;
-}
-
-#tap-overlay .tap-icon { font-size: 52px; }
-
-#tap-overlay .tap-text {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 28px;
-  letter-spacing: 4px;
-  color: var(--ouro);
-}
-
-#tap-overlay .tap-sub {
-  font-size: 13px;
-  color: var(--muted);
-  letter-spacing: 1px;
-}
+/* PREMIO INFO */
+.premio-info{background:var(–surface);border:1px solid var(–border);border-radius:var(–rsm);padding:8px 12px;font-size:.8rem;color:var(–text2)}
+.premio-info strong{color:var(–text);font-weight:800}
+.premio-regra{font-size:.7rem;color:var(–accent);font-weight:700;margin-top:2px}
 </style>
 
 </head>
 <body>
 
-<!-- Overlay obrigatório para liberar voz no iOS -->
-
-<div id="tap-overlay" onclick="liberarVoz()">
-  <div class="tap-icon">🎙️</div>
-  <div class="tap-text">Toque para começar</div>
-  <div class="tap-sub">Necessário para ativar o placar com voz</div>
+<div class="p-head">
+  <div class="p-logo">B<span>I</span>NGO</div>
+  <div class="ibbi-badge">IBBI</div>
+  <div class="p-evname" id="pEvName">Carregando...</div>
+  <span class="vtag">v3.0</span>
+  <span class="conn off" id="pConn">⬤</span>
 </div>
 
-<div id="badge-live">AO VIVO</div>
-<div id="fb-status">⬤ conectando</div>
-
-<header>
-  <div class="domino-icon">
-    <div class="tile">
-      <div class="pip-row"><div class="pip"></div><div class="pip"></div></div>
-      <div style="width:100%;height:1px;background:rgba(255,255,255,0.2)"></div>
-      <div class="pip-row"><div class="pip"></div><div class="pip"></div></div>
-    </div>
-    <div class="tile">
-      <div class="pip-row"><div class="pip"></div></div>
-      <div style="width:100%;height:1px;background:rgba(255,255,255,0.2)"></div>
-      <div class="pip-row"><div class="pip"></div><div class="pip"></div></div>
-    </div>
-  </div>
-  <div class="header-title">Placar Dominó</div>
-</header>
-
-<div class="meta-wrap">
-  <span class="meta-label">Meta</span>
-  <span class="meta-val" id="metaVal">200</span>
+<div class="p-body" id="pBody">
+  <!-- preenchido pelo JS -->
 </div>
 
-<div class="progress-wrap">
-  <div class="progress-a" id="progA" style="width:0%"></div>
-  <div class="progress-b" id="progB" style="width:0%"></div>
-</div>
+<!-- MODAL: Adicionar número -->
 
-<div class="container">
-  <div class="time timeA" id="timeA">
-    <div class="flag" id="flagA"></div>
-    <div class="nome-display" id="nomeA">Equipe A</div>
-    <div class="pontos-wrap">
-      <span class="pontos" id="pA">0</span>
-    </div>
-    <div class="vitorias-wrap">
-      <span class="vitorias-label">Vitórias</span>
-      <span class="vitorias-num" id="vA">0</span>
-    </div>
-  </div>
-
-  <div class="time timeB" id="timeB">
-    <div class="flag" id="flagB"></div>
-    <div class="nome-display" id="nomeB">Equipe B</div>
-    <div class="pontos-wrap">
-      <span class="pontos" id="pB">0</span>
-    </div>
-    <div class="vitorias-wrap">
-      <span class="vitorias-label">Vitórias</span>
-      <span class="vitorias-num" id="vB">0</span>
+<div class="mbk" id="mAddNum">
+  <div class="modal">
+    <h2 id="mAddNumTitle">Adicionar?</h2>
+    <p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mAddNumTxt"></p>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnAddNumCancel">Cancelar</button>
+      <button class="btn btn-acc" id="btnAddNumOk">Adicionar</button>
     </div>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<!-- MODAL: Remover número -->
 
-<!-- Firebase SDK -->
+<div class="mbk" id="mRemNum">
+  <div class="modal">
+    <h2>Remover?</h2>
+    <p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mRemNumTxt"></p>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnRemNumCancel">Cancelar</button>
+      <button class="btn btn-red" id="btnRemNumOk">Remover</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Confirmar BINGO -->
+
+<div class="mbk" id="mBingo">
+  <div class="modal">
+    <h2>🎉 Declarar BINGO?</h2>
+    <p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mBingoTxt"></p>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnBingoCancel">Cancelar</button>
+      <button class="btn" id="btnBingoOk" style="background:linear-gradient(135deg,#f5c800,#ff8c00);color:#000;font-weight:900">🎉 Confirmar BINGO!</button>
+    </div>
+  </div>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-// ============================================================
-// COLE AQUI AS MESMAS CREDENCIAIS DO FIREBASE
-// ============================================================
-const firebaseConfig = {
-  apiKey:            "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
-  authDomain:        "domino-fa285.firebaseapp.com",
-  databaseURL:       "https://domino-fa285-default-rtdb.firebaseio.com",
-  projectId:         "domino-fa285",
-  storageBucket:     "domino-fa285.firebasestorage.app",
+const db = getDatabase(initializeApp({
+  apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
+  authDomain: "domino-fa285.firebaseapp.com",
+  databaseURL: "https://domino-fa285-default-rtdb.firebaseio.com",
+  projectId: "domino-fa285",
+  storageBucket: "domino-fa285.firebasestorage.app",
   messagingSenderId: "462709449311",
-  appId:             "1:462709449311:web:569624eeac6fc57c0631ea"
-};
-// ============================================================
+  appId: "1:462709449311:web:569624eeac6fc57c0631ea"
+}));
+const fb = p => ref(db, p);
 
-const app = initializeApp(firebaseConfig);
-const db  = getDatabase(app);
-const jogoRef = ref(db, 'domino/jogo');
+// ── HELPERS ──────────────────────────────────────────
+const genId = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const $ = id => document.getElementById(id);
+const openM = id => $(id).classList.add('open');
+const closeM = id => $(id).classList.remove('open');
+const LETTERS = ['B','I','N','G','O'];
+function getLetter(n, mode){ return LETTERS[Math.min(Math.floor((n-1)/(mode/5)),4)]; }
 
-const fbStatus = document.getElementById('fb-status');
-
-let vozLiberada = false;
-let estadoAnterior = null;
-let primeiraLeitura = true;
-
-// Libera síntese de voz no iOS (exige gesto do usuário)
-window.liberarVoz = function() {
-  document.getElementById('tap-overlay').style.display = 'none';
-  vozLiberada = true;
-  // Dispara utterance silenciosa para destravar o engine no iOS
-  try {
-    const u = new SpeechSynthesisUtterance(' ');
-    u.volume = 0;
-    window.speechSynthesis.speak(u);
-  } catch(e) {}
-};
-
-function falar(texto) {
-  if (!vozLiberada || !window.speechSynthesis) return;
-  try {
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(texto);
-    u.lang = 'pt-BR';
-    window.speechSynthesis.speak(u);
-  } catch(e) {}
+// ── AUDIO ────────────────────────────────────────────
+const AC = new (window.AudioContext||window.webkitAudioContext)();
+function playTone(freq,dur,type='sine',vol=0.3){
+  try{ const o=AC.createOscillator(),g=AC.createGain(); o.connect(g);g.connect(AC.destination); o.type=type;o.frequency.value=freq; g.gain.setValueAtTime(vol,AC.currentTime);g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+dur); o.start();o.stop(AC.currentTime+dur); }catch(e){}
 }
+function soundMark()  { playTone(880,.12,'sine',.18); }
+function soundNew()   { playTone(660,.15,'sine',.22); }
+function soundBingo() { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,.25,'triangle',.4),i*130)); }
+function soundReject(){ playTone(200,.5,'sawtooth',.3); }
+function soundConfirm(){ [523,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,.2,'sine',.35),i*140)); }
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2200);
-}
-
-function bumpEl(id) {
-  const el = document.getElementById(id);
-  el.classList.remove('bump');
-  void el.offsetWidth;
-  el.classList.add('bump');
-}
-
-function aplicarEstado(d) {
-  const meta     = d.meta     || 200;
-  const pontos   = d.pontos   || { A: 0, B: 0 };
-  const vitorias = d.vitorias || { A: 0, B: 0 };
-  const nomeA    = d.nomeA    || 'Equipe A';
-  const nomeB    = d.nomeB    || 'Equipe B';
-
-  document.getElementById('metaVal').textContent = meta;
-  document.getElementById('nomeA').textContent   = nomeA;
-  document.getElementById('nomeB').textContent   = nomeB;
-  document.getElementById('vA').textContent      = vitorias.A;
-  document.getElementById('vB').textContent      = vitorias.B;
-
-  // Detectar mudança de pontos para voz + animação
-  if (estadoAnterior && !primeiraLeitura) {
-    const diffA = pontos.A - (estadoAnterior.pontos?.A || 0);
-    const diffB = pontos.B - (estadoAnterior.pontos?.B || 0);
-    const map = { 5:'cinco', 10:'dez', 20:'vinte', 30:'trinta', [-5]:'menos cinco', [-10]:'menos dez' };
-
-    if (diffA !== 0) {
-      bumpEl('pA');
-      const txt = map[diffA];
-      if (txt) falar(nomeA + ', ' + txt);
-    }
-    if (diffB !== 0) {
-      bumpEl('pB');
-      const txt = map[diffB];
-      if (txt) falar(nomeB + ', ' + txt);
-    }
-  }
-
-  document.getElementById('pA').textContent = pontos.A;
-  document.getElementById('pB').textContent = pontos.B;
-
-  // Líder
-  const timeA = document.getElementById('timeA');
-  const timeB = document.getElementById('timeB');
-  const flagA = document.getElementById('flagA');
-  const flagB = document.getElementById('flagB');
-
-  flagA.textContent = '';
-  flagB.textContent = '';
-  timeA.classList.remove('lider', 'venceu');
-  timeB.classList.remove('lider', 'venceu');
-
-  if (pontos.A > pontos.B)      { flagA.textContent = '🏁'; timeA.classList.add('lider'); }
-  else if (pontos.B > pontos.A) { flagB.textContent = '🏁'; timeB.classList.add('lider'); }
-
-  // Progress bars
-  const progA = document.getElementById('progA');
-  const progB = document.getElementById('progB');
-  const total = pontos.A + pontos.B;
-  if (total > 0) {
-    progA.style.width = (pontos.A / (meta * 2) * 100).toFixed(1) + '%';
-    progB.style.width = (pontos.B / (meta * 2) * 100).toFixed(1) + '%';
-  } else {
-    progA.style.width = '0%';
-    progB.style.width = '0%';
-  }
-
-  // Vitória
-  if (pontos.A >= meta) { timeA.classList.add('venceu'); showToast('🏆 ' + nomeA + ' venceu!'); }
-  if (pontos.B >= meta) { timeB.classList.add('venceu'); showToast('🏆 ' + nomeB + ' venceu!'); }
-
-  estadoAnterior = d;
-  primeiraLeitura = false;
-}
-
-// Ouvir Firebase em tempo real
-onValue(jogoRef, (snap) => {
-  const d = snap.val();
-  if (!d) return;
-  fbStatus.textContent = '⬤ online';
-  fbStatus.className = 'ok';
-  aplicarEstado(d);
-}, (err) => {
-  fbStatus.textContent = '⬤ offline';
-  fbStatus.className = 'err';
+// ── CONNECTIVITY ────────────────────────────────────
+onValue(fb('.info/connected'),s=>{
+  const on=s.val(), d=$('pConn');
+  d.textContent=on?'⬤ online':'⬤ offline';
+  d.className='conn '+(on?'on':'off');
 });
+
+// ── URL PARAMS ───────────────────────────────────────
+const params = new URLSearchParams(window.location.search);
+const evId = params.get('ev');
+
+if(!evId){
+  $('pBody').innerHTML='<div class="not-found"><div class="nf-icon">🔗</div><p>Link inválido.<br>Peça o link correto ao organizador.</p></div>';
+}
+
+// ── PLAYER STATE ─────────────────────────────────────
+let evData = null;
+let playerId = null, playerNome = '';
+let cartelas = [], cartelaIdx = 0;
+let pendingAddNum = null, pendingRemCell = null;
+let prevLastDrawn = null;
+
+function getPlayerId(){
+  let id = localStorage.getItem('bingo_player_id');
+  if(!id){ id='p_'+genId(); localStorage.setItem('bingo_player_id',id); }
+  return id;
+}
+function gerarCartelaId(mode){
+  return `${mode}-B${String(Math.floor(Math.random()*9000)+1000)}`;
+}
+function novaCartela(mode){
+  return {
+    id: gerarCartelaId(mode),
+    numeros: {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]},
+    marcados: [], freeCenter: false, autoMarcar: true, criadaEm: Date.now(),
+    fbId: genId()
+  };
+}
+
+// ── INIT ─────────────────────────────────────────────
+if(evId){
+  playerId = getPlayerId();
+  playerNome = localStorage.getItem('bingo_player_nome')||'';
+
+  // Listen evento
+  onValue(fb(`bingo/eventos/${evId}`), snap => {
+    const ev = snap.val();
+    if(!ev){ $('pEvName').textContent='Evento não encontrado'; return; }
+    const isNew = !evData;
+    const newBall = evData && ev.lastDrawn !== evData.lastDrawn;
+    evData = ev;
+    $('pEvName').textContent = ev.nome;
+    if(newBall) onNewBall();
+    renderAll();
+  });
+
+  // Listen brincante
+  onValue(fb(`bingo/eventos/${evId}/brincantes/${playerId}`), snap => {
+    const data = snap.val();
+    if(data?.cartelas){
+      cartelas = Object.entries(data.cartelas)
+        .map(([fbId,c])=>({fbId,...c}))
+        .sort((a,b)=>a.criadaEm-b.criadaEm);
+    }
+    if(data?.nome) playerNome = data.nome;
+    // batida status
+    const bs = data?.batidaStatus;
+    const el = $('batidaStatusEl');
+    if(el){
+      if(bs==='pendente'){ el.className='batida-status pendente'; el.textContent='⏳ Batida enviada — aguardando confirmação...'; }
+      else if(bs==='confirmada'){ el.className='batida-status confirmada'; el.textContent='🎉 BINGO CONFIRMADO! Parabéns!'; soundConfirm(); }
+      else if(bs==='rejeitada'){ el.className='batida-status rejeitada'; el.textContent='❌ Batida rejeitada — continue jogando!'; soundReject();
+        setTimeout(()=>{ el.style.display='none'; update(fb(`bingo/eventos/${evId}/brincantes/${playerId}`),{batidaStatus:null}); },4000);
+      }
+      else{ el.style.display='none'; }
+    }
+    if(!cartelas.length){
+      const c = novaCartela(evData?.mode||90);
+      cartelas = [c]; cartelaIdx = 0;
+      saveAllCartelas();
+    }
+    renderCartela();
+    renderHist();
+    checkAutoBatida();
+  });
+}
+
+// ── RENDER ALL ───────────────────────────────────────
+function renderAll(){
+  const body = $('pBody');
+  if(!evData){ body.innerHTML='<div class="not-found"><div class="nf-icon">🔍</div><p>Evento não encontrado.</p></div>'; return; }
+
+  body.innerHTML = `
+    <!-- Nome -->
+    <div class="card" id="nameCard">
+      <h3>👤 Seu Nome</h3>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="pNameInp" value="${esc(playerNome)}" placeholder="Digite seu nome (opcional)" maxlength="40"
+          style="flex:1;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:8px 12px;font-family:'Barlow',sans-serif;font-size:.9rem;font-weight:600;outline:none">
+        <button class="btn btn-acc btn-sm" id="btnSaveName">Salvar</button>
+      </div>
+    </div>
+    <!-- Prêmio atual -->
+    <div class="premio-info" id="premioInfo">
+      <strong id="premioNome">—</strong>
+      <div class="premio-regra" id="premioRegra"></div>
+    </div>
+    <!-- Última pedra -->
+    <div class="p-last-ball" id="pLastBall">
+      <div class="plb-hint">Última pedra sorteada — toque para adicionar</div>
+      <div class="pbig empty-ball" id="pBigBall">
+        <span class="pbl" id="pBallL"></span>
+        <span class="pbn" id="pBallN">—</span>
+      </div>
+      <div class="plb-tap" id="pBallHint">Aguardando sorteio...</div>
+    </div>
+    <!-- Cartela nav -->
+    <div class="cartela-nav">
+      <button class="btn btn-ghost btn-sm" id="btnPrev">←</button>
+      <div class="cn-info">
+        <div class="cn-id" id="cnId">—</div>
+        <div class="cn-pg" id="cnPg">Cartela 1 de 1</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="btnNext">→</button>
+      <button class="btn btn-acc btn-sm" id="btnNovaC">+ Nova</button>
+    </div>
+    <!-- Cartela -->
+    <div class="cartela-wrap">
+      <div class="cartela-hdr" id="cartelaHdr"></div>
+      <div class="cartela-grid" id="cartelaGrid"></div>
+    </div>
+    <!-- Opts -->
+    <div class="cartela-opts">
+      <label class="tog-row">
+        <label class="tog"><input type="checkbox" id="togFree"><span class="tog-sl"></span></label>
+        FREE CENTER (★ no centro)
+      </label>
+      <label class="tog-row">
+        <label class="tog"><input type="checkbox" id="togAuto" checked><span class="tog-sl"></span></label>
+        Marcar automático
+      </label>
+    </div>
+    <!-- Batida status -->
+    <div class="batida-status" id="batidaStatusEl"></div>
+    <!-- BINGO -->
+    <button class="bingo-btn" id="btnBingo">🎉 BINGO!</button>
+    <!-- Histórico -->
+    <div class="p-hist-title">Números sorteados — toque para adicionar à cartela</div>
+    <div class="p-hist-strip" id="pHistStrip"></div>
+  `;
+
+  // attach listeners
+  $('btnSaveName').addEventListener('click', saveName);
+  $('pNameInp').addEventListener('keydown', e=>{ if(e.key==='Enter') saveName(); });
+  $('pLastBall').addEventListener('click', onTapLastBall);
+  $('btnPrev').addEventListener('click', ()=>{ if(cartelaIdx>0){cartelaIdx--;renderCartela();renderHist();} });
+  $('btnNext').addEventListener('click', ()=>{ if(cartelaIdx<cartelas.length-1){cartelaIdx++;renderCartela();renderHist();} });
+  $('btnNovaC').addEventListener('click', ()=>{ const c=novaCartela(evData?.mode||90); cartelas.push(c); cartelaIdx=cartelas.length-1; saveAllCartelas(); renderCartela(); renderHist(); });
+  $('togFree').addEventListener('change', ()=>{ if(cartelas[cartelaIdx]){cartelas[cartelaIdx].freeCenter=$('togFree').checked; saveAllCartelas(); renderCartela();} });
+  $('togAuto').addEventListener('change', ()=>{ if(cartelas[cartelaIdx]){cartelas[cartelaIdx].autoMarcar=$('togAuto').checked; saveAllCartelas();} });
+  $('btnBingo').addEventListener('click', onBingoClick);
+
+  renderPremio();
+  renderBall();
+  renderCartela();
+  renderHist();
+}
+
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function saveName(){
+  const nome = $('pNameInp')?.value.trim()||'';
+  playerNome = nome;
+  localStorage.setItem('bingo_player_nome', nome);
+  if(evId&&playerId) update(fb(`bingo/eventos/${evId}/brincantes/${playerId}`),{nome}).catch(console.error);
+  const card=$('nameCard'); if(card){card.style.borderColor='var(--green)'; setTimeout(()=>card.style.borderColor='',1200);}
+}
+
+function renderPremio(){
+  if(!evData?.premios)return;
+  const premioAtivo = getCurrentPremio();
+  const pn=$('premioNome'), pr=$('premioRegra');
+  if(!pn||!pr)return;
+  if(premioAtivo){
+    pn.textContent=`#${premioAtivo.ordem} — ${premioAtivo.nome}`;
+    pr.textContent=premioAtivo.regra==='cheia'?'🔲 Cartela Cheia':'➕ Linha / Coluna / Diagonal';
+  } else {
+    pn.textContent='Nenhum prêmio ativo'; pr.textContent='';
+  }
+}
+
+function getCurrentPremio(){
+  if(!evData?.premios)return null;
+  return Object.values(evData.premios)
+    .sort((a,b)=>a.ordem-b.ordem)
+    .find(p=>!p.ganhadores?.length)||null;
+}
+
+// ── BALL ─────────────────────────────────────────────
+function renderBall(){
+  const ball=$('pBigBall'), hint=$('pBallHint'); if(!ball)return;
+  const n=evData?.lastDrawn, mode=evData?.mode||90;
+  if(n){
+    const letter=getLetter(n,mode);
+    $('pBallL').textContent=letter; $('pBallN').textContent=n;
+    ball.className=`pbig l${letter}`;
+    if(hint) hint.textContent='Toque para adicionar à cartela ativa';
+  } else {
+    $('pBallL').textContent=''; $('pBallN').textContent='—';
+    ball.className='pbig empty-ball';
+    if(hint) hint.textContent='Aguardando sorteio...';
+  }
+}
+
+function onNewBall(){
+  soundNew();
+  const ball=$('pBigBall');
+  if(ball){ball.classList.remove('pop');void ball.offsetWidth;ball.classList.add('pop');}
+  const lb=$('pLastBall');
+  if(lb){lb.classList.add('pulse-ball');setTimeout(()=>lb.classList.remove('pulse-ball'),700);}
+  // auto mark
+  const n=evData?.lastDrawn, mode=evData?.mode||90;
+  if(!n)return;
+  let changed=false;
+  cartelas.forEach(c=>{
+    if(!c.autoMarcar)return;
+    const all=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
+    if(all.includes(n)&&!(c.marcados||[]).includes(n)){
+      c.marcados=c.marcados||[]; c.marcados.push(n); changed=true;
+      soundMark();
+    }
+  });
+  if(changed){ saveAllCartelas(); renderCartela(); renderHist(); checkAutoBatida(); }
+}
+
+function onTapLastBall(){
+  const n=evData?.lastDrawn, mode=evData?.mode||90; if(!n)return;
+  const letter=getLetter(n,mode);
+  const c=cartelas[cartelaIdx]; if(!c)return;
+  const allNums=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
+  if(allNums.includes(n)){ return; } // already in cartela
+  pendingAddNum={n,letter};
+  $('mAddNumTitle').textContent=`Adicionar ${letter} ${n}?`;
+  $('mAddNumTxt').textContent=`Adicionar o número ${n} (coluna ${letter}) à cartela ${c.id}?`;
+  openM('mAddNum');
+}
+
+// ── CARTELA ───────────────────────────────────────────
+function renderCartela(){
+  const hdrEl=$('cartelaHdr'), gridEl=$('cartelaGrid'); if(!hdrEl||!gridEl)return;
+  const c=cartelas[cartelaIdx]; if(!c)return;
+
+  $('cnId').textContent=c.id;
+  $('cnPg').textContent=`Cartela ${cartelaIdx+1} de ${cartelas.length}`;
+  if($('togFree')) $('togFree').checked=c.freeCenter||false;
+  if($('togAuto')) $('togAuto').checked=c.autoMarcar!==false;
+
+  // header
+  hdrEl.innerHTML='';
+  LETTERS.forEach(l=>{ const cell=document.createElement('div'); cell.className=`ch-cell l${l}`; cell.textContent=l; hdrEl.appendChild(cell); });
+
+  // grid
+  gridEl.innerHTML='';
+  const marcados=new Set(c.marcados||[]);
+  for(let row=0;row<5;row++){
+    LETTERS.forEach((letter,col)=>{
+      const isFree=c.freeCenter&&row===2&&col===2;
+      const num=c.numeros[letter][row];
+      const cell=document.createElement('div');
+      if(isFree){
+        cell.className='c-cell free-cell'; cell.textContent='★';
+      } else if(num===null||num===undefined){
+        cell.className='c-cell empty-cell'; cell.textContent='+';
+        cell.addEventListener('click',()=>onEmptyCell(letter,row));
+      } else {
+        const isMarked=marcados.has(num);
+        cell.className=`c-cell ${isMarked?'marked-'+letter:'filled-'+letter}`;
+        cell.textContent=num;
+        cell.addEventListener('click',()=>onFilledCell(num,letter,row));
+      }
+      gridEl.appendChild(cell);
+    });
+  }
+}
+
+function onEmptyCell(letter, row){
+  const n=evData?.lastDrawn, mode=evData?.mode||90; if(!n)return;
+  if(getLetter(n,mode)!==letter)return;
+  const c=cartelas[cartelaIdx]; if(!c)return;
+  if(c.numeros[letter][row]!==null&&c.numeros[letter][row]!==undefined)return;
+  pendingAddNum={n,letter};
+  $('mAddNumTitle').textContent=`Adicionar ${letter} ${n}?`;
+  $('mAddNumTxt').textContent=`Adicionar o número ${n} à coluna ${letter} da cartela ${c.id}?`;
+  openM('mAddNum');
+}
+
+function onFilledCell(num, letter, row){
+  pendingRemCell={num,letter,row};
+  $('mRemNumTxt').textContent=`Remover o número ${num} (${letter}) da cartela?`;
+  openM('mRemNum');
+}
+
+function addNumberToCartela(n, letter){
+  const c=cartelas[cartelaIdx]; if(!c)return;
+  const all=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
+  if(all.includes(n))return;
+  const maxSlots=c.freeCenter&&letter==='N'?4:5;
+  const filled=c.numeros[letter].filter(v=>v!==null&&v!==undefined);
+  if(filled.length>=maxSlots)return;
+  const newVals=[...filled,n].sort((a,b)=>a-b);
+  while(newVals.length<5)newVals.push(null);
+  c.numeros[letter]=newVals;
+  // auto-mark if already drawn
+  if(evData&&new Set(evData.drawn||[]).has(n)){
+    c.marcados=c.marcados||[]; if(!c.marcados.includes(n)) c.marcados.push(n);
+  }
+  saveAllCartelas(); renderCartela(); renderHist(); soundMark(); checkAutoBatida();
+}
+
+function removeFromCartela(num, letter, row){
+  const c=cartelas[cartelaIdx]; if(!c)return;
+  c.numeros[letter][row]=null;
+  c.marcados=(c.marcados||[]).filter(m=>m!==num);
+  const vals=c.numeros[letter].filter(v=>v!==null&&v!==undefined).sort((a,b)=>a-b);
+  while(vals.length<5)vals.push(null);
+  c.numeros[letter]=vals;
+  saveAllCartelas(); renderCartela(); renderHist(); checkAutoBatida();
+}
+
+// ── HISTORY ──────────────────────────────────────────
+function renderHist(){
+  const strip=$('pHistStrip'); if(!strip||!evData)return;
+  const c=cartelas[cartelaIdx];
+  const cartelaNums=new Set(c?Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined):[]);
+  const marcados=new Set(c?.marcados||[]);
+  const mode=evData.mode||90;
+  strip.innerHTML='';
+  [...(evData.drawn||[])].reverse().forEach(n=>{
+    const letter=getLetter(n,mode);
+    const inC=cartelaNums.has(n), alreadyMarked=marcados.has(n);
+    const ball=document.createElement('div');
+    ball.className=`ph-ball l${letter}${inC?' in-cartela':''}${alreadyMarked?' already-marked':''}`;
+    ball.innerHTML=`<span class="phl">${letter}</span><span class="phn">${n}</span>`;
+    if(!alreadyMarked){
+      ball.addEventListener('click',()=>{
+        if(inC)return; // already in cartela, do nothing extra
+        pendingAddNum={n,letter};
+        $('mAddNumTitle').textContent=`Adicionar ${letter} ${n}?`;
+        $('mAddNumTxt').textContent=`Adicionar o número ${n} (coluna ${letter}) à cartela ${c?.id}? Números com borda branca já estão na cartela.`;
+        openM('mAddNum');
+      });
+    }
+    strip.appendChild(ball);
+  });
+}
+
+// ── BATIDA CHECK ─────────────────────────────────────
+function checkAutoBatida(){
+  const c=cartelas[cartelaIdx]; if(!c)return;
+  const premioAtivo=getCurrentPremio(); if(!premioAtivo)return;
+  const allNums=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
+  const slots=c.freeCenter?24:25;
+  const cartelaCompleta=allNums.length>=slots;
+  if(!cartelaCompleta){ $('btnBingo')?.classList.remove('pulsing'); return; }
+  const marcados=new Set(c.marcados||[]);
+  let bateu=false;
+  if(premioAtivo.regra==='cheia'){
+    bateu=allNums.every(n=>marcados.has(n));
+  } else {
+    bateu=checkLinhaDiagonal(c,marcados);
+  }
+  const btn=$('btnBingo');
+  if(btn){ bateu ? btn.classList.add('pulsing') : btn.classList.remove('pulsing'); }
+  if(bateu) soundBingo();
+}
+
+function checkLinhaDiagonal(c, marcados){
+  for(let row=0;row<5;row++){
+    if(LETTERS.every((l,col)=>{
+      if(c.freeCenter&&row===2&&col===2)return true;
+      const n=c.numeros[l][row]; return n!==null&&n!==undefined&&marcados.has(n);
+    }))return true;
+  }
+  for(let col=0;col<5;col++){
+    const letter=LETTERS[col];
+    if(c.numeros[letter].every((n,row)=>{
+      if(c.freeCenter&&row===2&&col===2)return true;
+      return n!==null&&n!==undefined&&marcados.has(n);
+    }))return true;
+  }
+  const d1=[[0,0],[1,1],[2,2],[3,3],[4,4]];
+  const d2=[[0,4],[1,3],[2,2],[3,1],[4,0]];
+  for(const diag of[d1,d2]){
+    if(diag.every(([row,col])=>{
+      if(c.freeCenter&&row===2&&col===2)return true;
+      const n=c.numeros[LETTERS[col]][row]; return n!==null&&n!==undefined&&marcados.has(n);
+    }))return true;
+  }
+  return false;
+}
+
+// ── BINGO BUTTON ─────────────────────────────────────
+function onBingoClick(){
+  const c=cartelas[cartelaIdx]; if(!c)return;
+  const premioAtivo=getCurrentPremio();
+  $('mBingoTxt').textContent=`Declarar BINGO com a cartela ${c.id}${playerNome?' ('+playerNome+')':''}? O operador irá confirmar.`;
+  openM('mBingo');
+}
+
+$('btnBingoCancel').addEventListener('click',()=>closeM('mBingo'));
+$('btnBingoOk').addEventListener('click',()=>{
+  closeM('mBingo');
+  const c=cartelas[cartelaIdx]; if(!c||!evId||!playerId)return;
+  const premioAtivo=getCurrentPremio();
+  const batidaId=genId();
+  set(fb(`bingo/eventos/${evId}/batidas/${batidaId}`),{
+    playerId, playerNome:playerNome||'Anônimo',
+    cartelaId:c.id, premioId:premioAtivo?.id||null,
+    tipo:'manual', status:'pendente', timestamp:Date.now()
+  });
+  update(fb(`bingo/eventos/${evId}/brincantes/${playerId}`),{batidaStatus:'pendente'});
+  const el=$('batidaStatusEl');
+  if(el){el.className='batida-status pendente';el.textContent='⏳ Batida enviada — aguardando confirmação...';}
+});
+
+// ── MODAL LISTENERS ─────────────────────────────────
+$('btnAddNumCancel').addEventListener('click',()=>{closeM('mAddNum');pendingAddNum=null;});
+$('btnAddNumOk').addEventListener('click',()=>{
+  if(pendingAddNum){addNumberToCartela(pendingAddNum.n,pendingAddNum.letter);}
+  closeM('mAddNum'); pendingAddNum=null;
+});
+$('btnRemNumCancel').addEventListener('click',()=>{closeM('mRemNum');pendingRemCell=null;});
+$('btnRemNumOk').addEventListener('click',()=>{
+  if(pendingRemCell){removeFromCartela(pendingRemCell.num,pendingRemCell.letter,pendingRemCell.row);}
+  closeM('mRemNum'); pendingRemCell=null;
+});
+
+// ── SAVE ─────────────────────────────────────────────
+function saveAllCartelas(){
+  if(!evId||!playerId)return;
+  const cartelasObj={};
+  cartelas.forEach(c=>{
+    const fbId=c.fbId||genId(); c.fbId=fbId;
+    cartelasObj[fbId]={id:c.id,numeros:c.numeros,marcados:c.marcados||[],freeCenter:c.freeCenter||false,autoMarcar:c.autoMarcar!==false,criadaEm:c.criadaEm};
+  });
+  update(fb(`bingo/eventos/${evId}/brincantes/${playerId}`),{
+    nome:playerNome||'Anônimo', cartelas:cartelasObj
+  }).catch(console.error);
+}
 </script>
 
 </body>

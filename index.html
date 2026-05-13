@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v2.4 — 2026-05-13 -->
+<!-- IBBI Bingo v2.5 — 2026-05-13 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -141,25 +141,65 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 
 .ball-area{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px}
 .ball-lbl{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase}
-.bigball{width:120px;height:120px;border-radius:50%;background:radial-gradient(circle at 32% 30%,#d8f6ff,var(--accent) 55%,#005a80);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:3.6rem;color:#000;box-shadow:0 0 40px rgba(0,184,240,.5),0 6px 20px rgba(0,0,0,.5);user-select:none}
-.bigball.empty{background:radial-gradient(circle at 32% 30%,#1c3352,var(--surface3));color:var(--text3);font-size:1.8rem;box-shadow:none}
+.bigball{width:130px;height:130px;border-radius:50%;background:radial-gradient(circle at 32% 30%,#d8f6ff,var(--accent) 55%,#005a80);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 40px rgba(0,184,240,.5),0 6px 20px rgba(0,0,0,.5);user-select:none;transition:background .3s}
+.bigball.empty{background:radial-gradient(circle at 32% 30%,#1c3352,var(--surface3));box-shadow:none}
+.bigball .ball-letter{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:#000;line-height:1;opacity:.75;letter-spacing:1px}
+.bigball .ball-number{font-family:'Bebas Neue',sans-serif;font-size:3.2rem;color:#000;line-height:1}
+.bigball.empty .ball-letter{display:none}
+.bigball.empty .ball-number{font-size:1.8rem;color:var(--text3)}
 .bigball.pop{animation:bpop .35s cubic-bezier(.15,1.6,.35,1) both}
 @keyframes bpop{from{transform:scale(.45);opacity:0}}
+/* per-letter ball colors */
+.bigball.lB{background:radial-gradient(circle at 32% 30%,#d8f6ff,#00b8f0 55%,#005a80);box-shadow:0 0 40px rgba(0,184,240,.6),0 6px 20px rgba(0,0,0,.5)}
+.bigball.lI{background:radial-gradient(circle at 32% 30%,#ccfff0,#00dfa8 55%,#005040);box-shadow:0 0 40px rgba(0,223,168,.6),0 6px 20px rgba(0,0,0,.5)}
+.bigball.lN{background:radial-gradient(circle at 32% 30%,#fffbe0,#f5c800 55%,#806000);box-shadow:0 0 40px rgba(245,200,0,.6),0 6px 20px rgba(0,0,0,.5)}
+.bigball.lG{background:radial-gradient(circle at 32% 30%,#fff0d8,#ff8c00 55%,#804000);box-shadow:0 0 40px rgba(255,140,0,.6),0 6px 20px rgba(0,0,0,.5)}
+.bigball.lO{background:radial-gradient(circle at 32% 30%,#f8d8ff,#c850ff 55%,#600080);box-shadow:0 0 40px rgba(200,80,255,.6),0 6px 20px rgba(0,0,0,.5)}
 .draw-ctrl{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 
 .hstrip{display:flex;flex-wrap:wrap;gap:5px;width:100%;max-height:88px;overflow-y:auto}
-.mball{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.05rem;background:radial-gradient(circle at 32% 30%,#d8f6ff,var(--accent) 55%,#005a80);color:#000;box-shadow:0 2px 5px rgba(0,0,0,.4)}
-.mball.latest{background:radial-gradient(circle at 32% 30%,#ccfff0,var(--green) 55%,#006050);color:#000;animation:pg 1.5s ease-in-out infinite}
-@keyframes pg{0%,100%{box-shadow:0 0 6px rgba(0,223,168,.5)}50%{box-shadow:0 0 20px rgba(0,223,168,1)}}
+.mball{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;box-shadow:0 2px 5px rgba(0,0,0,.4);line-height:1}
+.mball .ml{font-size:.5rem;opacity:.75}
+.mball .mn{font-size:.95rem}
+.mball.lB{background:radial-gradient(circle at 32% 30%,#d8f6ff,#00b8f0 55%,#005a80);color:#000}
+.mball.lI{background:radial-gradient(circle at 32% 30%,#ccfff0,#00dfa8 55%,#005040);color:#000}
+.mball.lN{background:radial-gradient(circle at 32% 30%,#fffbe0,#f5c800 55%,#806000);color:#000}
+.mball.lG{background:radial-gradient(circle at 32% 30%,#fff0d8,#ff8c00 55%,#804000);color:#000}
+.mball.lO{background:radial-gradient(circle at 32% 30%,#f8d8ff,#c850ff 55%,#600080);color:#000}
+.mball.latest{animation:pg 1.5s ease-in-out infinite}
+.mball.latest.lB{box-shadow:0 0 14px rgba(0,184,240,.9)}
+.mball.latest.lI{box-shadow:0 0 14px rgba(0,223,168,.9)}
+.mball.latest.lN{box-shadow:0 0 14px rgba(245,200,0,.9)}
+.mball.latest.lG{box-shadow:0 0 14px rgba(255,140,0,.9)}
+.mball.latest.lO{box-shadow:0 0 14px rgba(200,80,255,.9)}
+@keyframes pg{0%,100%{filter:brightness(1)}50%{filter:brightness(1.3)}}
 
 .grid-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:12px}
-.grid-title{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase;text-align:center;margin-bottom:8px}
-.ngrid{display:grid;gap:3px}
-.g75{grid-template-columns:repeat(15,1fr)}
-.g90{grid-template-columns:repeat(10,1fr)}
-.nc{aspect-ratio:1;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:clamp(.68rem,1.3vw,.94rem);color:var(--text3);background:var(--surface2);border:1px solid var(--border);transition:all .22s;user-select:none}
-.nc.drawn{background:var(--accent);color:#000;border-color:var(--accent)}
-.nc.latest{background:var(--green);color:#000;border-color:var(--green);font-size:clamp(.8rem,1.5vw,1.05rem);animation:pg 1.5s ease-in-out infinite}
+.grid-title{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase;text-align:center;margin-bottom:10px}
+/* 5-column BINGO group layout */
+.bingo-cols{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.bingo-col{}
+.bingo-col-hdr{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:2px;text-align:center;padding:4px 2px 6px;border-radius:6px 6px 0 0;font-weight:400;line-height:1}
+.bingo-col-hdr.lB{background:rgba(0,184,240,.18);color:#00b8f0}
+.bingo-col-hdr.lI{background:rgba(0,223,168,.18);color:#00dfa8}
+.bingo-col-hdr.lN{background:rgba(245,200,0,.18);color:#f5c800}
+.bingo-col-hdr.lG{background:rgba(255,140,0,.18);color:#ff8c00}
+.bingo-col-hdr.lO{background:rgba(200,80,255,.18);color:#c850ff}
+.bingo-col-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:2px}
+/* 90 mode: 18 numbers per col = 6 rows of 3 */
+/* 75 mode: 15 numbers per col = 5 rows of 3 */
+.nc{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:clamp(.7rem,1.1vw,.9rem);color:var(--text3);background:var(--surface2);border:1px solid var(--border);transition:all .22s;user-select:none}
+.nc.drawn-B{background:#00b8f0;color:#000;border-color:#00b8f0}
+.nc.drawn-I{background:#00dfa8;color:#000;border-color:#00dfa8}
+.nc.drawn-N{background:#f5c800;color:#000;border-color:#f5c800}
+.nc.drawn-G{background:#ff8c00;color:#000;border-color:#ff8c00}
+.nc.drawn-O{background:#c850ff;color:#000;border-color:#c850ff}
+.nc.latest{color:#000;font-size:clamp(.8rem,1.3vw,1rem);animation:pg 1.5s ease-in-out infinite}
+.nc.latest.drawn-B{box-shadow:0 0 10px rgba(0,184,240,.8)}
+.nc.latest.drawn-I{box-shadow:0 0 10px rgba(0,223,168,.8)}
+.nc.latest.drawn-N{box-shadow:0 0 10px rgba(245,200,0,.8)}
+.nc.latest.drawn-G{box-shadow:0 0 10px rgba(255,140,0,.8)}
+.nc.latest.drawn-O{box-shadow:0 0 10px rgba(200,80,255,.8)}
 
 .card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:12px}
 .card h3{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:10px}
@@ -183,7 +223,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 
 .hlog{display:flex;flex-direction:column;gap:4px;max-height:190px;overflow-y:auto}
 .lrow{display:flex;align-items:center;gap:7px;background:var(--surface2);border-radius:var(--rsm);padding:5px 8px;font-size:.78rem}
-.lnum{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--accent);width:26px;text-align:center}
+.lnum{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;width:46px;text-align:center}
+.lnum.lB{color:#00b8f0}.lnum.lI{color:#00dfa8}.lnum.lN{color:#f5c800}.lnum.lG{color:#ff8c00}.lnum.lO{color:#c850ff}
 .linfo{color:var(--text2);flex:1}
 .lseq{color:var(--text3);font-size:.68rem;margin-left:auto}
 
@@ -213,7 +254,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3);">v2.4</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3);">v2.5</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -254,7 +295,10 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       </div>
       <div class="ball-area">
         <div class="ball-lbl">Pedra sorteada</div>
-        <div class="bigball empty" id="bigball">—</div>
+        <div class="bigball empty" id="bigball">
+          <span class="ball-letter" id="ballLetter"></span>
+          <span class="ball-number" id="ballNumber">—</span>
+        </div>
         <div class="draw-ctrl">
           <button class="btn btn-acc" id="btnDraw" style="font-size:1rem;padding:12px 28px;">🎱 Sortear</button>
           <button class="btn btn-blue btn-sm" id="btnRep" style="display:none;">🔊 Repetir</button>
@@ -268,7 +312,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       </div>
       <div class="grid-wrap">
         <div class="grid-title" id="gridTitle">Tabela de Números</div>
-        <div class="ngrid g90" id="ngrid"></div>
+        <div class="bingo-cols" id="bingoGrid"></div>
       </div>
     </div>
     <div class="side-col">
@@ -428,6 +472,20 @@ function speak(t) {
   u.lang = 'pt-BR'; window.speechSynthesis.speak(u);
 }
 $('btnRep').addEventListener('click', () => { if(lastSpoken) speak(lastSpoken); });
+
+// ── BINGO LETTER HELPERS ─────────────────────────────
+const LETTERS = ['B','I','N','G','O'];
+const LETTER_IDX = {B:0,I:1,N:2,G:3,O:4};
+
+function getLetter(n, mode) {
+  const size = mode / 5; // 18 for 90, 15 for 75
+  const idx = Math.min(Math.floor((n-1)/size), 4);
+  return LETTERS[idx];
+}
+
+function ballLabel(n, mode) {
+  return getLetter(n, mode) + ' ' + n;
+}
 
 // ── FIREBASE LISTENER ─────────────────────────────────
 onValue(fbPath('bingo/eventos'), snap => { eventos = snap.val() || {}; renderEv(); });
@@ -607,42 +665,64 @@ function renderS(animated) {
   // ball
   const ball=$('bigball');
   if (ev.lastDrawn) {
-    ball.textContent=ev.lastDrawn; ball.classList.remove('empty');
+    const letter = getLetter(ev.lastDrawn, ev.mode);
+    $('ballLetter').textContent = letter;
+    $('ballNumber').textContent = ev.lastDrawn;
+    ball.className = 'bigball l'+letter;
     if(animated){ball.classList.remove('pop');void ball.offsetWidth;ball.classList.add('pop');}
-  } else { ball.textContent='—'; ball.classList.add('empty'); ball.classList.remove('pop'); }
+  } else {
+    $('ballLetter').textContent='';
+    $('ballNumber').textContent='—';
+    ball.className='bigball empty';
+  }
 
   syncRepBtn();
 
   // stats
   const drawn=(ev.drawn||[]).length;
   $('stD').textContent=drawn; $('stL').textContent=ev.mode-drawn;
-  $('stP').textContent=Math.round(drawn/ev.mode*100)+'%'; $('stU').textContent=ev.lastDrawn||'—';
+  $('stP').textContent=Math.round(drawn/ev.mode*100)+'%';
+  $('stU').textContent=ev.lastDrawn ? ballLabel(ev.lastDrawn, ev.mode) : '—';
 
   // strip
   const strip=$('hstrip'); strip.innerHTML='';
   [...(ev.drawn||[])].reverse().slice(0,20).forEach((n,i)=>{
-    const d=document.createElement('div'); d.className='mball'+(i===0?' latest':''); d.textContent=n; strip.appendChild(d);
+    const letter=getLetter(n,ev.mode);
+    const d=document.createElement('div');
+    d.className='mball l'+letter+(i===0?' latest':'');
+    d.innerHTML=`<span class="ml">${letter}</span><span class="mn">${n}</span>`;
+    strip.appendChild(d);
   });
 
   // log
   const log=$('hlog'); log.innerHTML='';
   [...(ev.drawn||[])].reverse().forEach((n,i)=>{
+    const letter=getLetter(n,ev.mode);
     const e=document.createElement('div'); e.className='lrow';
-    e.innerHTML=`<span class="lnum">${n}</span><span class="linfo">${i===0?'🟢':''}</span><span class="lseq">#${drawn-i}</span>`;
+    e.innerHTML=`<span class="lnum l${letter}">${letter} ${n}</span><span class="linfo">${i===0?'🟢':''}</span><span class="lseq">#${drawn-i}</span>`;
     log.appendChild(e);
   });
 
-  // grid
-  const grid=$('ngrid');
-  grid.className='ngrid '+(ev.mode===75?'g75':'g90');
+  // grid — 5 BINGO columns
+  const gridEl=$('bingoGrid');
   $('gridTitle').textContent=`Tabela — ${ev.mode} pedras`;
   const dSet=new Set(ev.drawn||[]);
-  let html='';
-  for(let i=1;i<=ev.mode;i++){
-    const il=i===ev.lastDrawn, id2=dSet.has(i);
-    html+=`<div class="nc${il?' latest':id2?' drawn':''}">${i}</div>`;
-  }
-  grid.innerHTML=html;
+  const size=ev.mode/5; // 18 for 90, 15 for 75
+  gridEl.innerHTML='';
+  LETTERS.forEach((letter,li)=>{
+    const col=document.createElement('div'); col.className='bingo-col';
+    const hdr=document.createElement('div'); hdr.className=`bingo-col-hdr l${letter}`; hdr.textContent=letter;
+    const nums=document.createElement('div'); nums.className='bingo-col-nums';
+    const start=li*size+1, end=start+size-1;
+    for(let i=start;i<=end;i++){
+      const isLatest=i===ev.lastDrawn, isDrawn=dSet.has(i);
+      const cell=document.createElement('div');
+      cell.className='nc'+(isDrawn||isLatest?` drawn-${letter}`:'')+( isLatest?' latest':'');
+      cell.textContent=i;
+      nums.appendChild(cell);
+    }
+    col.appendChild(hdr); col.appendChild(nums); gridEl.appendChild(col);
+  });
 
   // finished
   if((ev.drawn||[]).length>=ev.mode){$('finBar').classList.add('show');$('finTxt').textContent=`Todas as ${ev.mode} pedras foram sorteadas!`;}
@@ -661,7 +741,7 @@ $('btnDraw').addEventListener('click', () => {
   ev.drawn.push(n); ev.lastDrawn=n;
   if(ev.status==='ativo') ev.status='andamento';
   saveEv(); renderS(true);
-  if(voiceOn) speak(`Número ${n}`);
+  if(voiceOn) speak(`${getLetter(n, ev.mode)}, ${n}`);
 });
 
 $('btnVoltar').addEventListener('click', () => { evId=null;evData=null;curPrizeId=null; showScreen('s1'); });

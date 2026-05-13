@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v3.1 — 2026-05-13 -->
+<!-- IBBI Bingo v3.2 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -101,20 +101,19 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 
 /* ── PRIZE ROW ── */
 .prize-list{display:flex;flex-direction:column;gap:8px;margin-top:6px}
-.prize-row{background:var(–surface2);border:1px solid var(–border);border-radius:var(–rsm);padding:10px 12px}
-.prize-row-top{display:flex;align-items:center;gap:6px}
-.p-ord{font-family:‘Bebas Neue’,sans-serif;font-size:1.1rem;color:var(–accent);width:22px;flex-shrink:0;text-align:center}
-.p-inp{flex:1;background:none;border:none;color:var(–text);font-family:‘Barlow’,sans-serif;font-size:.9rem;font-weight:600;outline:none;padding:2px 0}
+.prize-row{background:var(–surface3);border:1.5px solid var(–border2);border-radius:var(–rsm);padding:10px 12px}
+.prize-row-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.p-ord{font-family:‘Bebas Neue’,sans-serif;font-size:1.2rem;color:var(–accent);width:26px;flex-shrink:0;text-align:center}
+.p-inp{flex:1;background:var(–surface2);border:1.5px solid var(–border2);color:var(–text);font-family:‘Barlow’,sans-serif;font-size:.95rem;font-weight:600;outline:none;padding:7px 10px;border-radius:6px;transition:border-color .2s}
+.p-inp:focus{border-color:var(–accent)}
 .p-inp::placeholder{color:var(–text3)}
-.p-rm{background:none;border:none;color:var(–text3);cursor:pointer;font-size:1rem;padding:2px 6px;line-height:1}
+.p-rm{background:none;border:none;color:var(–text3);cursor:pointer;font-size:1.1rem;padding:4px 6px;line-height:1;flex-shrink:0}
 .p-rm:hover{color:var(–red)}
-.prize-row-opts{margin-top:8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.radio-group{display:flex;gap:6px;flex-wrap:wrap}
-.radio-opt{display:flex;align-items:center;gap:5px;cursor:pointer;font-size:.8rem;font-weight:700;color:var(–text2);background:var(–surface3);border:1.5px solid var(–border);border-radius:6px;padding:4px 10px;transition:all .15s}
-.radio-opt input{display:none}
-.radio-opt.sel{border-color:var(–accent);color:var(–accent);background:rgba(0,184,240,.08)}
-.check-opt{display:flex;align-items:center;gap:5px;cursor:pointer;font-size:.8rem;font-weight:700;color:var(–text2)}
-.check-opt input{accent-color:var(–accent2);width:14px;height:14px}
+.prize-row-opts{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.regra-lbl{font-size:.68rem;font-weight:800;color:var(–text3);text-transform:uppercase;letter-spacing:1px;width:100%;margin-bottom:2px}
+.radio-btn{cursor:pointer;font-size:.82rem;font-weight:700;color:var(–text2);background:var(–surface2);border:1.5px solid var(–border2);border-radius:6px;padding:5px 12px;transition:all .15s;user-select:none}
+.radio-btn:hover{border-color:var(–accent);color:var(–text)}
+.radio-btn.sel{border-color:var(–accent);color:var(–accent);background:rgba(0,184,240,.1)}
 
 /* ── SCREEN 2 — SORTEIO ── */
 #s2{background:radial-gradient(ellipse at 80% 0%,#0a1525 0%,var(–bg) 60%)}
@@ -272,7 +271,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v3.1</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v3.2</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -619,21 +618,19 @@ function addPrize(){
     <button class="p-rm" type="button">✕</button>
   </div>
   <div class="prize-row-opts">
-    <div style="font-size:.7rem;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:1px;width:100%;margin-bottom:4px">Regra de Batida</div>
-    <div class="radio-group">
-      <label class="radio-opt sel"><input type="radio" name="regra_${n}" value="cheia" checked> 🔲 Cartela Cheia</label>
-      <label class="radio-opt"><input type="radio" name="regra_${n}" value="linhaDiagonal"> ➕ Linha / Coluna / Diagonal</label>
-    </div>
+    <div class="regra-lbl">Regra de Batida</div>
+    <button type="button" class="radio-btn sel" data-regra="cheia">🔲 Cartela Cheia</button>
+    <button type="button" class="radio-btn" data-regra="linhaDiagonal">➕ Linha / Coluna / Diagonal</button>
   </div>`;
   row.querySelector('.p-rm').addEventListener('click',()=>{row.remove();reindexPrizes();});
-  // radio visual
-  row.querySelectorAll('.radio-opt').forEach(opt=>{
-    opt.addEventListener('click',()=>{
-      row.querySelectorAll('.radio-opt').forEach(o=>o.classList.remove('sel'));
-      opt.classList.add('sel');
+  row.querySelectorAll('.radio-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      row.querySelectorAll('.radio-btn').forEach(b=>b.classList.remove('sel'));
+      btn.classList.add('sel');
     });
   });
   list.appendChild(row);
+  row.querySelector('.p-inp').focus();
 }
 function reindexPrizes(){
   document.querySelectorAll('#mPrizeList .prize-row').forEach((r,i)=>{r.querySelector('.p-ord').textContent=i+1;});
@@ -649,7 +646,7 @@ $('btnCreateEv').addEventListener('click',()=>{
   const valid=[];
   rows.forEach(row=>{
     const n=row.querySelector('.p-inp').value.trim(); if(!n)return;
-    const regra=row.querySelector('input[type=radio]:checked')?.value||'cheia';
+    const regra=row.querySelector('.radio-btn.sel')?.dataset.regra||'cheia';
     valid.push({nome:n,ordem:valid.length+1,regra,ganhadores:[],ganhoEm:null});
   });
   if(!valid.length){alert('Adicione pelo menos um prêmio.');return;}

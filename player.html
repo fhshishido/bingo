@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v6.1 — 2026-05-13 -->
+<!-- IBBI Bingo Player v6.2 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -208,8 +208,24 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 @keyframes spin{to{transform:rotate(360deg)}}
 .ocr-status{font-size:.78rem;color:var(–text2);margin-top:8px;text-align:center;min-height:20px}
 
+/* ── GRID ADJUST SCREEN ── */
+
 /* NOT FOUND */
-.not-found{/* NOT FOUND */
+.not-found{/* ── GRID ADJUST SCREEN ── */
+#vAjuste{background:#000;position:fixed;inset:0;z-index:500;display:none;flex-direction:column}
+#vAjuste.active{display:flex}
+.ajuste-head{padding:10px 14px;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.8);position:absolute;top:0;left:0;right:0;z-index:10;backdrop-filter:blur(4px)}
+.ajuste-title{font-family:‘Bebas Neue’,sans-serif;font-size:1.2rem;letter-spacing:2px;color:var(–accent);flex:1}
+.ajuste-canvas-wrap{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+#ajusteCanvas{display:block;max-width:100%;max-height:100%;touch-action:none}
+.ajuste-foot{padding:10px 14px 20px;background:rgba(0,0,0,.85);display:flex;flex-direction:column;gap:8px}
+.rot-row{display:flex;align-items:center;gap:8px}
+.rot-row label{font-size:.72rem;font-weight:800;color:var(–text2);white-space:nowrap;letter-spacing:1px;text-transform:uppercase;width:80px}
+.rot-row span{font-size:.72rem;color:var(–accent);width:36px;text-align:right}
+#rotSlider{flex:1;accent-color:var(–accent)}
+.ajuste-btns{display:flex;gap:8px}
+
+/* NOT FOUND */
 .not-found{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:30px;background:var(–bg)}
 .nf-icon{font-size:3.5rem;margin-bottom:14px}
 .nf-title{font-family:‘Bebas Neue’,sans-serif;font-size:2rem;color:var(–text2);letter-spacing:2px;margin-bottom:8px}
@@ -241,7 +257,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar →</button>
         </div>
       </div>
-      <div class="vtag">v6.1</div>
+      <div class="vtag">v6.2</div>
     </div>
   </div>
 </div>
@@ -281,7 +297,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       </div>
     </div>
   </div>
-  <div class="vtag">v6.1</div>
+  <div class="vtag">v6.2</div>
 </div>
 ```
 
@@ -296,7 +312,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">—</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v6.1</span>
+    <span class="p-vtag">v6.2</span>
     <span class="conn off" id="pConn">⬤</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -426,6 +442,30 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       <div style="text-align:center;margin-top:8px">
         <button class="btn btn-ghost btn-sm" id="btnOcrCancel3">Cancelar</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- TELA: Ajuste da Grade -->
+
+<div id="vAjuste">
+  <div class="ajuste-head">
+    <div class="ajuste-title">📐 Ajustar Grade</div>
+    <span style="font-size:.72rem;color:var(--text2)">Arraste os cantos • Mova pelo centro</span>
+  </div>
+  <div class="ajuste-canvas-wrap">
+    <canvas id="ajusteCanvas"></canvas>
+  </div>
+  <div class="ajuste-foot">
+    <div class="rot-row">
+      <label>Rotação</label>
+      <input type="range" id="rotSlider" min="-15" max="15" step="0.5" value="0">
+      <span id="rotVal">0°</span>
+    </div>
+    <div class="ajuste-btns">
+      <button class="btn btn-ghost btn-sm" id="btnAjusteReset" style="flex:1">↺ Resetar</button>
+      <button class="btn btn-ghost btn-sm" id="btnAjusteCancelar" style="flex:1">✕ Cancelar</button>
+      <button class="btn btn-acc" id="btnAjusteProcessar" style="flex:2">✅ Processar</button>
     </div>
   </div>
 </div>
@@ -795,9 +835,8 @@ function initOcr(){
     const file=e.target.files[0]; if(!file)return;
     const url=URL.createObjectURL(file);
     $('ocrImg').src=url; $('ocrImgPreview').src=url;
-    showOcrStep(2);
-    $('ocrLoading').style.display='block';
-    await runOcr(url);
+    closeM('mOcr');
+    await openAjuste(url);
   });
   $('btnOcrConfirmar').addEventListener('click',()=>confirmOcr());
 
@@ -1084,6 +1123,345 @@ async function runOcrTesseract(imageUrl){
     renderOcrGrid();
   }catch(err){
     $('ocrLoading').innerHTML='<div style="color:var(--red);font-weight:700;padding:10px">❌ Erro no OCR. Tente outra foto.</div>';
+    setTimeout(()=>showOcrStep(1),3000);
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  GRID ADJUSTMENT SCREEN
+// ══════════════════════════════════════════════════════
+let _ajusteImg = null;   // HTMLImageElement
+let _ajusteUrl = '';     // blob URL
+let _ajusteRot = 0;      // rotation degrees
+let _ajusteGrid = null;  // {x,y,w,h} in canvas coords
+let _ajusteDrag = null;  // dragging state
+let _ajusteCanvas = null, _ajusteCtx = null;
+
+async function openAjuste(url){
+  _ajusteUrl=url; _ajusteRot=0;
+  $('rotSlider').value=0; $('rotVal').textContent='0°';
+
+  // Load image
+  _ajusteImg = await loadImage(url);
+
+  // Show screen
+  document.getElementById('vAjuste').classList.add('active');
+
+  // Setup canvas
+  _ajusteCanvas = $('ajusteCanvas');
+  _ajusteCtx = _ajusteCanvas.getContext('2d');
+
+  // Size canvas to fit screen
+  const wrap = _ajusteCanvas.parentElement;
+  const maxW = wrap.clientWidth;
+  const maxH = wrap.clientHeight || window.innerHeight - 160;
+  const scale = Math.min(maxW/_ajusteImg.width, maxH/_ajusteImg.height, 1);
+  _ajusteCanvas.width  = Math.round(_ajusteImg.width  * scale);
+  _ajusteCanvas.height = Math.round(_ajusteImg.height * scale);
+
+  resetGrid();
+  drawAjuste();
+  bindAjusteEvents();
+}
+
+function resetGrid(){
+  const cw=_ajusteCanvas.width, ch=_ajusteCanvas.height;
+  const margin=0.08;
+  _ajusteGrid={
+    x: Math.round(cw*margin),
+    y: Math.round(ch*margin),
+    w: Math.round(cw*(1-margin*2)),
+    h: Math.round(ch*(1-margin*2))
+  };
+}
+
+function drawAjuste(){
+  if(!_ajusteCtx||!_ajusteImg) return;
+  const c=_ajusteCanvas, ctx=_ajusteCtx;
+  const cw=c.width, ch=c.height;
+
+  ctx.clearRect(0,0,cw,ch);
+
+  // Draw image (rotated around canvas center)
+  ctx.save();
+  ctx.translate(cw/2, ch/2);
+  ctx.rotate(_ajusteRot * Math.PI/180);
+  ctx.drawImage(_ajusteImg, -cw/2, -ch/2, cw, ch);
+  ctx.restore();
+
+  const {x,y,w,h}=_ajusteGrid;
+
+  // Dim outside grid
+  ctx.fillStyle='rgba(0,0,0,0.45)';
+  ctx.fillRect(0,0,cw,y);
+  ctx.fillRect(0,y+h,cw,ch-y-h);
+  ctx.fillRect(0,y,x,h);
+  ctx.fillRect(x+w,y,cw-x-w,h);
+
+  // Draw grid lines (5 cols × 6 rows including header)
+  ctx.strokeStyle='rgba(0,184,240,0.85)';
+  ctx.lineWidth=1.5;
+  const cols=5, rows=6;
+  const cellW=w/cols, cellH=h/rows;
+
+  // Vertical lines
+  for(let c2=0;c2<=cols;c2++){
+    ctx.beginPath();
+    ctx.moveTo(x+c2*cellW, y);
+    ctx.lineTo(x+c2*cellW, y+h);
+    ctx.stroke();
+  }
+  // Horizontal lines
+  for(let r=0;r<=rows;r++){
+    ctx.beginPath();
+    ctx.moveTo(x, y+r*cellH);
+    ctx.lineTo(x+w, y+r*cellH);
+    ctx.stroke();
+  }
+
+  // Header row highlight
+  ctx.fillStyle='rgba(0,184,240,0.12)';
+  ctx.fillRect(x+1,y+1,w-2,cellH-2);
+
+  // Grid border
+  ctx.strokeStyle='#00b8f0';
+  ctx.lineWidth=2;
+  ctx.strokeRect(x,y,w,h);
+
+  // Corner handles
+  const handles=getHandles();
+  handles.forEach(({hx,hy})=>{
+    ctx.beginPath();
+    ctx.arc(hx,hy,10,0,Math.PI*2);
+    ctx.fillStyle='#00b8f0';
+    ctx.fill();
+    ctx.strokeStyle='#fff';
+    ctx.lineWidth=2;
+    ctx.stroke();
+  });
+}
+
+function getHandles(){
+  const {x,y,w,h}=_ajusteGrid;
+  return[
+    {hx:x,   hy:y,   corner:'tl'},
+    {hx:x+w, hy:y,   corner:'tr'},
+    {hx:x,   hy:y+h, corner:'bl'},
+    {hx:x+w, hy:y+h, corner:'br'},
+  ];
+}
+
+function getCanvasPos(e, canvas){
+  const rect=canvas.getBoundingClientRect();
+  const scaleX=canvas.width/rect.width;
+  const scaleY=canvas.height/rect.height;
+  const touch=e.touches?e.touches[0]:e;
+  return{
+    x:(touch.clientX-rect.left)*scaleX,
+    y:(touch.clientY-rect.top)*scaleY
+  };
+}
+
+function bindAjusteEvents(){
+  const c=_ajusteCanvas;
+  // Remove old listeners by cloning
+  const newC=c.cloneNode(true);
+  c.parentNode.replaceChild(newC,c);
+  _ajusteCanvas=newC;
+  _ajusteCtx=newC.getContext('2d');
+
+  const onStart=(e)=>{
+    e.preventDefault();
+    const pos=getCanvasPos(e,_ajusteCanvas);
+    // Check if near a corner handle
+    const handles=getHandles();
+    const hit=handles.find(h=>Math.hypot(h.hx-pos.x,h.hy-pos.y)<20);
+    if(hit){
+      _ajusteDrag={type:'corner',corner:hit.corner,startX:pos.x,startY:pos.y,grid:{..._ajusteGrid}};
+    } else {
+      // Check if inside grid → move
+      const {x,y,w,h}=_ajusteGrid;
+      if(pos.x>x&&pos.x<x+w&&pos.y>y&&pos.y<y+h){
+        _ajusteDrag={type:'move',startX:pos.x,startY:pos.y,grid:{..._ajusteGrid}};
+      }
+    }
+  };
+
+  const onMove=(e)=>{
+    if(!_ajusteDrag) return;
+    e.preventDefault();
+    const pos=getCanvasPos(e,_ajusteCanvas);
+    const dx=pos.x-_ajusteDrag.startX;
+    const dy=pos.y-_ajusteDrag.startY;
+    const g={..._ajusteDrag.grid};
+    const MIN=40;
+
+    if(_ajusteDrag.type==='move'){
+      _ajusteGrid.x=g.x+dx;
+      _ajusteGrid.y=g.y+dy;
+    } else {
+      switch(_ajusteDrag.corner){
+        case 'tl':
+          _ajusteGrid.x=Math.min(g.x+dx, g.x+g.w-MIN);
+          _ajusteGrid.y=Math.min(g.y+dy, g.y+g.h-MIN);
+          _ajusteGrid.w=g.w-(_ajusteGrid.x-g.x);
+          _ajusteGrid.h=g.h-(_ajusteGrid.y-g.y);
+          break;
+        case 'tr':
+          _ajusteGrid.y=Math.min(g.y+dy, g.y+g.h-MIN);
+          _ajusteGrid.w=Math.max(MIN, g.w+dx);
+          _ajusteGrid.h=g.h-(_ajusteGrid.y-g.y);
+          break;
+        case 'bl':
+          _ajusteGrid.x=Math.min(g.x+dx, g.x+g.w-MIN);
+          _ajusteGrid.w=g.w-(_ajusteGrid.x-g.x);
+          _ajusteGrid.h=Math.max(MIN, g.h+dy);
+          break;
+        case 'br':
+          _ajusteGrid.w=Math.max(MIN, g.w+dx);
+          _ajusteGrid.h=Math.max(MIN, g.h+dy);
+          break;
+      }
+    }
+    drawAjuste();
+  };
+
+  const onEnd=()=>{ _ajusteDrag=null; };
+
+  newC.addEventListener('mousedown',onStart);
+  newC.addEventListener('mousemove',onMove);
+  newC.addEventListener('mouseup',onEnd);
+  newC.addEventListener('touchstart',onStart,{passive:false});
+  newC.addEventListener('touchmove',onMove,{passive:false});
+  newC.addEventListener('touchend',onEnd);
+
+  // Rotation slider
+  $('rotSlider').oninput=()=>{
+    _ajusteRot=parseFloat($('rotSlider').value);
+    $('rotVal').textContent=_ajusteRot+'°';
+    drawAjuste();
+  };
+
+  // Buttons
+  $('btnAjusteReset').onclick=()=>{ resetGrid(); _ajusteRot=0; $('rotSlider').value=0; $('rotVal').textContent='0°'; drawAjuste(); };
+  $('btnAjusteCancelar').onclick=()=>{ document.getElementById('vAjuste').classList.remove('active'); openM('mOcr'); };
+  $('btnAjusteProcessar').onclick=()=>processarComGrade();
+}
+
+async function processarComGrade(){
+  document.getElementById('vAjuste').classList.remove('active');
+  // Go back to OCR modal step 2
+  openM('mOcr');
+  showOcrStep(2);
+  $('ocrLoading').style.display='block';
+  $('ocrStatusTxt').textContent='Processando com grade ajustada...';
+
+  try{
+    const mode=evData?.mode||90;
+    // Render image to offscreen canvas with rotation applied
+    const img=_ajusteImg;
+    const offCanvas=document.createElement('canvas');
+    offCanvas.width=img.width; offCanvas.height=img.height;
+    const offCtx=offCanvas.getContext('2d');
+    offCtx.save();
+    offCtx.translate(img.width/2,img.height/2);
+    offCtx.rotate(_ajusteRot*Math.PI/180);
+    offCtx.drawImage(img,-img.width/2,-img.height/2);
+    offCtx.restore();
+
+    // Scale grid coords from canvas display size to actual image size
+    const scaleX=img.width/_ajusteCanvas.width;
+    const scaleY=img.height/_ajusteCanvas.height;
+    const grid={
+      x: _ajusteGrid.x*scaleX,
+      y: _ajusteGrid.y*scaleY,
+      w: _ajusteGrid.w*scaleX,
+      h: _ajusteGrid.h*scaleY,
+    };
+
+    // Setup Tesseract worker
+    const worker=await Tesseract.createWorker('eng',1,{
+      logger:m=>{ if(m.status==='recognizing text') $('ocrStatusTxt').textContent='Lendo... '+Math.round((m.progress||0)*100)+'%'; }
+    });
+    await worker.setParameters({tessedit_char_whitelist:'0123456789',tessedit_pageseg_mode:'10'});
+
+    const results=[];
+    const cellW=grid.w/5;
+    const cellH=grid.h/6; // 6 rows: 1 header + 5 numbers
+    let debugLog='';
+
+    for(let row=1;row<=5;row++){
+      for(let col=0;col<5;col++){
+        const inset=cellW*0.08;
+        const cx=grid.x+col*cellW+inset;
+        const cy=grid.y+row*cellH+inset;
+        const cw2=cellW-inset*2;
+        const ch2=cellH-inset*2;
+
+        const cell=document.createElement('canvas');
+        const scale2=Math.max(3,120/cw2);
+        cell.width=Math.round(cw2*scale2);
+        cell.height=Math.round(ch2*scale2);
+        const cCtx=cell.getContext('2d');
+        cCtx.fillStyle='#fff';
+        cCtx.fillRect(0,0,cell.width,cell.height);
+        cCtx.drawImage(offCanvas,cx,cy,cw2,ch2,4,4,cell.width-8,cell.height-8);
+
+        // B&W
+        const id=cCtx.getImageData(0,0,cell.width,cell.height);
+        const d=id.data;
+        for(let i=0;i<d.length;i+=4){
+          const g=Math.round(0.299*d[i]+0.587*d[i+1]+0.114*d[i+2]);
+          const v=g<140?0:255;
+          d[i]=d[i+1]=d[i+2]=v;d[i+3]=255;
+        }
+        cCtx.putImageData(id,0,0);
+
+        const {data:{text}}=await worker.recognize(cell.toDataURL('image/png'));
+        const cleaned=text.trim().replace(/[^0-9]/g,'');
+        const n=cleaned?parseInt(cleaned):null;
+        results.push(n);
+        const pct=Math.round(((row-1)*5+col+1)/25*100);
+        $('ocrStatusTxt').textContent=`Lendo células... ${pct}%`;
+        debugLog+=`[r${row}c${col}] "${text.trim()}" → ${n}
+`;
+      }
+    }
+    await worker.terminate();
+
+    // Save debug
+    const rawEl=$('ocrRawText');
+    if(rawEl) rawEl.value=debugLog;
+
+    // Map to columns
+    _ocrNums={B:[],I:[],N:[],G:[],O:[]};
+    _ocrDetectedFreeCenter=false;
+    for(let row=0;row<5;row++){
+      LETTERS.forEach((letter,col)=>{
+        const n=results[row*5+col];
+        const {min,max}=colRange(letter,mode);
+        if(n&&n>=min&&n<=max){
+          _ocrNums[letter].push(n);
+        } else if(!n){
+          _ocrNums[letter].push(null);
+          if(row===2&&col===2) _ocrDetectedFreeCenter=true;
+        } else {
+          const rec=recoverNumber(n,min,max);
+          _ocrNums[letter].push(rec||null);
+          debugLog+=rec?`RECUPERADO: ${n}→${rec}
+`:`AVISO: ${n} inválido p/ ${letter}
+`;
+        }
+      });
+    }
+    LETTERS.forEach(l=>{ while(_ocrNums[l].length<5)_ocrNums[l].push(null); _ocrNums[l]=_ocrNums[l].slice(0,5); });
+
+    $('ocrLoading').style.display='none';
+    showOcrStep(3);
+    renderOcrGrid();
+  }catch(err){
+    console.error(err);
+    $('ocrLoading').innerHTML=`<div style="color:var(--red);padding:10px">❌ ${err.message}</div>`;
     setTimeout(()=>showOcrStep(1),3000);
   }
 }

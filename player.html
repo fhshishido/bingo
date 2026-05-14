@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v4.7 — 2026-05-13 -->
+<!-- IBBI Bingo Player v4.8 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -241,7 +241,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar →</button>
         </div>
       </div>
-      <div class="vtag">v4.7</div>
+      <div class="vtag">v4.8</div>
     </div>
   </div>
 </div>
@@ -281,7 +281,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       </div>
     </div>
   </div>
-  <div class="vtag">v4.7</div>
+  <div class="vtag">v4.8</div>
 </div>
 ```
 
@@ -296,7 +296,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">—</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v4.7</span>
+    <span class="p-vtag">v4.8</span>
     <span class="conn off" id="pConn">⬤</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -624,6 +624,8 @@ function friendlyAuthError(code){
 }
 
 // ── INIT GAME ────────────────────────────────────────
+let _bodyReady = false;
+
 async function initGame(){
   const snap=await get(fb(`bingo/eventos/${evId}`));
   const ev=snap.val();
@@ -632,7 +634,8 @@ async function initGame(){
   $('gameEvNome').textContent=ev.nome;
   $('gameUserName').textContent=userProfile?.apelido||userProfile?.nome||currentUser.email;
   showView('vJogo');
-  renderBody(); // renders shell with empty cartela slots — listener fills it
+  renderBody();
+  _bodyReady=true; // DOM is ready
 
   // Listen evento
   onValue(fb(`bingo/eventos/${evId}`),snap2=>{
@@ -671,12 +674,13 @@ async function initGame(){
       else{el.style.display='none';}
     }
 
-    // render regardless
-    if(!cartelas.length){
-      renderEmptyState();
-    } else {
-      renderCartela(); renderHist(); checkAutoBatida();
-    }
+    // wait for DOM to be ready before rendering
+    const doRender = () => {
+      if(!cartelas.length){ renderEmptyState(); }
+      else { renderCartela(); renderHist(); checkAutoBatida(); }
+    };
+    if(_bodyReady){ doRender(); }
+    else { setTimeout(doRender, 100); }
   });
 }
 
@@ -772,41 +776,70 @@ async function runOcr(imageUrl){
   try{
     $('ocrStatusTxt').textContent='Carregando motor OCR...';
     const worker = await Tesseract.createWorker('eng', 1, {
-      logger: m=>{ if(m.status==='recognizing text') $('ocrStatusTxt').textContent=`Lendo... ${Math.round((m.progress||0)*100)}%`; }
+      logger: m=>{
+        if(m.status==='recognizing text')
+          $('ocrStatusTxt').textContent='Lendo... '+Math.round((m.progress||0)*100)+'%';
+        else if(m.status.includes('load')||m.status.includes('init'))
+          $('ocrStatusTxt').textContent='Inicializando...';
+      }
     });
-    await worker.setParameters({ tessedit_char_whitelist:'0123456789', tessedit_pageseg_mode:'11' });
-    const {data:{text}}=await worker.recognize(imageUrl);
+    // digits only, word-level detection to get bounding boxes
+    await worker.setParameters({
+      tessedit_char_whitelist: '0123456789',
+      tessedit_pageseg_mode: '6'
+    });
+    const {data} = await worker.recognize(imageUrl);
     await worker.terminate();
-    // extract all numbers from OCR text
-    const found=[];
-    const matches=text.match(/\d+/g)||[];
-    matches.forEach(m=>{ const n=parseInt(m); if(n>=1&&n<=(evData?.mode||90)&&!found.includes(n))found.push(n); });
-    console.log('Numbers found by OCR:', found);
-    distributeOcrNumbers(found);
+
+    // Use bounding box X position to determine column
+    // Image is divided into 5 equal vertical bands: B|I|N|G|O
+    distributeOcrByPosition(data, $('ocrImg').naturalWidth || 1000);
+
     $('ocrLoading').style.display='none';
     showOcrStep(3);
     renderOcrGrid();
   }catch(err){
-    console.error(err);
-    $('ocrStatusTxt').textContent='Erro ao processar. Tente outra foto.';
-    $('ocrLoading').innerHTML='<div style="color:var(--red);font-weight:700">❌ Erro no OCR. Tente outra foto.</div>';
-    setTimeout(()=>{ showOcrStep(1); },2000);
+    console.error('OCR error:', err);
+    $('ocrStatusTxt').textContent='Erro ao processar.';
+    $('ocrLoading').innerHTML='<div style="color:var(--red);font-weight:700">Erro no OCR. Tente outra foto.</div>';
+    setTimeout(()=>{ showOcrStep(1); },2500);
   }
 }
 
-function distributeOcrNumbers(nums){
-  // reset
+function distributeOcrByPosition(data, imgWidth){
+  // Reset columns
   _ocrNums={B:[],I:[],N:[],G:[],O:[]};
   const mode=evData?.mode||90;
-  nums.forEach(n=>{
-    const letter=getLetter(n,mode);
-    if(_ocrNums[letter].length<5) _ocrNums[letter].push(n);
+  const colW=imgWidth/5;
+
+  // Collect all words with valid numbers and their X center position
+  const entries=[];
+  (data.words||[]).forEach(word=>{
+    const n=parseInt(word.text);
+    if(!isNaN(n)&&n>=1&&n<=mode&&word.text.match(/^\d{1,2}$/)){
+      const xCenter=(word.bbox.x0+word.bbox.x1)/2;
+      const col=Math.min(4,Math.floor(xCenter/colW));
+      entries.push({n, col, y:(word.bbox.y0+word.bbox.y1)/2});
+    }
   });
-  // sort each column and pad to 5
-  LETTERS.forEach(l=>{
-    _ocrNums[l].sort((a,b)=>a-b);
-    while(_ocrNums[l].length<5)_ocrNums[l].push(null);
+
+  // Sort by Y (top to bottom) within each column
+  LETTERS.forEach((letter,ci)=>{
+    const colEntries=entries.filter(e=>e.col===ci);
+    colEntries.sort((a,b)=>a.y-b.y);
+    // take up to 5 unique numbers per column
+    const seen=new Set();
+    colEntries.forEach(e=>{
+      if(!seen.has(e.n)&&_ocrNums[letter].length<5){
+        seen.add(e.n); _ocrNums[letter].push(e.n);
+      }
+    });
+    // sort ascending within column and pad
+    _ocrNums[letter].sort((a,b)=>a-b);
+    while(_ocrNums[letter].length<5)_ocrNums[letter].push(null);
   });
+
+  console.log('OCR by position:', JSON.stringify(_ocrNums));
 }
 
 function renderOcrGrid(){

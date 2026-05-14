@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v5.2 — 2026-05-13 -->
+<!-- IBBI Bingo Player v5.3 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -241,7 +241,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar →</button>
         </div>
       </div>
-      <div class="vtag">v5.2</div>
+      <div class="vtag">v5.3</div>
     </div>
   </div>
 </div>
@@ -281,7 +281,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       </div>
     </div>
   </div>
-  <div class="vtag">v5.2</div>
+  <div class="vtag">v5.3</div>
 </div>
 ```
 
@@ -296,7 +296,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">—</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v5.2</span>
+    <span class="p-vtag">v5.3</span>
     <span class="conn off" id="pConn">⬤</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -628,7 +628,14 @@ async function initGame(){
   // Show game screen and build DOM immediately — before any async calls
   showView('vJogo');
   renderBody();
-  renderEmptyState();
+
+  // Restore cartelas from localStorage cache instantly
+  if(loadCartelasFromCache()){
+    renderCartela(); renderHist();
+    showToast('Carregando...');
+  } else {
+    renderEmptyState();
+  }
 
   const snap=await get(fb(`bingo/eventos/${evId}`));
   const ev=snap.val();
@@ -699,8 +706,13 @@ function saveAllCartelas(){
   cartelas.forEach(c=>{ obj[c.fbId]={id:c.id,numeros:c.numeros,marcados:c.marcados||[],freeCenter:c.freeCenter||false,autoMarcar:c.autoMarcar!==false,criadaEm:c.criadaEm}; });
   const nome=userProfile?.apelido||userProfile?.nome||currentUser.email;
   _lastSaveTime=Date.now();
-  // Use set on the full brincante node to ensure deletions are reflected
-  // get current batidaStatus to preserve it
+  // Save to localStorage immediately for instant restore on refresh
+  try{
+    localStorage.setItem(`bingo_cartelas_${evId}_${currentUser.uid}`, JSON.stringify({
+      cartelas:obj, cartelaIdx, savedAt:Date.now()
+    }));
+  }catch(e){}
+  // Save to Firebase
   get(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}/batidaStatus`)).then(snap=>{
     const bs=snap.val();
     set(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),{
@@ -712,6 +724,19 @@ function saveAllCartelas(){
       cartelas:obj, nome, uid:currentUser.uid
     }).catch(console.error);
   });
+}
+
+function loadCartelasFromCache(){
+  if(!evId||!currentUser) return false;
+  try{
+    const raw=localStorage.getItem(`bingo_cartelas_${evId}_${currentUser.uid}`);
+    if(!raw) return false;
+    const {cartelas:obj, cartelaIdx:idx}=JSON.parse(raw);
+    if(!obj||!Object.keys(obj).length) return false;
+    cartelas=Object.entries(obj).map(([fbId,c])=>({fbId,...c})).sort((a,b)=>a.criadaEm-b.criadaEm);
+    cartelaIdx=Math.min(idx||0, cartelas.length-1);
+    return true;
+  }catch(e){ return false; }
 }
 
 
@@ -773,62 +798,44 @@ function initOcr(){
   });
 }
 
-// ── OCR WITH CANVAS PREPROCESSING ───────────────────
+// ── OCR — SIMPLE SCAN MODE ───────────────────────────
 async function runOcr(imageUrl){
   try{
-    $('ocrStatusTxt').textContent='Preparando imagem...';
     const mode = evData?.mode||90;
-
-    // Load image into canvas for preprocessing
-    const img = await loadImage(imageUrl);
-
-    // Preprocess: grayscale + contrast + upscale
-    const processed = preprocessImage(img);
-    $('ocrStatusTxt').textContent='Iniciando OCR...';
-
-    // Run Tesseract on preprocessed image
-    const worker = await Tesseract.createWorker('eng', 1, {
-      logger: m=>{
-        if(m.status==='recognizing text')
-          $('ocrStatusTxt').textContent='Lendo... '+Math.round((m.progress||0)*100)+'%';
-      }
-    });
-    await worker.setParameters({
-      tessedit_char_whitelist: '0123456789',
-      tessedit_pageseg_mode: '6', // uniform block
-      preserve_interword_spaces: '1'
-    });
-
-    const {data:{text}} = await worker.recognize(processed);
-    await worker.terminate();
-    console.log('OCR raw text:', text);
-
-    // Extract all valid bingo numbers
     const allNums = new Set();
-    (text.match(/\d+/g)||[]).forEach(m=>{
-      const n = parseInt(m);
-      if(n >= 1 && n <= mode) allNums.add(n);
-    });
-    console.log('Numbers found:', [...allNums]);
 
-    // If too few numbers detected, try again with different pageseg
-    if(allNums.size < 10){
-      $('ocrStatusTxt').textContent='Tentando modo alternativo...';
-      const worker2 = await Tesseract.createWorker('eng', 1, {});
-      await worker2.setParameters({
-        tessedit_char_whitelist: '0123456789',
-        tessedit_pageseg_mode: '11' // sparse text
+    // Run OCR in two passes: pageseg 6 then 11
+    const passes = [
+      {pageseg:'6',  label:'Passagem 1/2...'},
+      {pageseg:'11', label:'Passagem 2/2...'},
+    ];
+
+    for(const pass of passes){
+      $('ocrStatusTxt').textContent = pass.label;
+      const worker = await Tesseract.createWorker('eng', 1, {
+        logger: m=>{
+          if(m.status==='recognizing text')
+            $('ocrStatusTxt').textContent = pass.label+' '+Math.round((m.progress||0)*100)+'%';
+        }
       });
-      const {data:{text:text2}} = await worker2.recognize(processed);
-      await worker2.terminate();
-      console.log('OCR retry text:', text2);
-      (text2.match(/\d+/g)||[]).forEach(m=>{
+      await worker.setParameters({
+        tessedit_char_whitelist: '0123456789',
+        tessedit_pageseg_mode: pass.pageseg,
+      });
+      const {data:{text}} = await worker.recognize(imageUrl);
+      await worker.terminate();
+      console.log('OCR pass', pass.pageseg, ':', text);
+
+      // Extract all numbers in range
+      (text.match(/\d+/g)||[]).forEach(m=>{
         const n = parseInt(m);
         if(n >= 1 && n <= mode) allNums.add(n);
       });
-      console.log('Numbers after retry:', [...allNums]);
     }
 
+    console.log('All numbers found:', [...allNums], 'count:', allNums.size);
+
+    // Distribute by bingo column rules
     distributeByRange([...allNums], mode);
     $('ocrLoading').style.display='none';
     showOcrStep(3);
@@ -842,93 +849,6 @@ async function runOcr(imageUrl){
     </div>`;
     setTimeout(()=>showOcrStep(1), 3000);
   }
-}
-
-function loadImage(url){
-  return new Promise((resolve, reject)=>{
-    const img = new Image();
-    img.onload = ()=>resolve(img);
-    img.onerror = reject;
-    img.src = url;
-  });
-}
-
-function preprocessImage(img){
-  // Upscale to at least 1600px wide — Tesseract works best with large images
-  const TARGET = 1600;
-  const scale = Math.max(1.5, TARGET / img.width); // minimum 1.5x even if already large
-  const w = Math.round(img.width * scale);
-  const h = Math.round(img.height * scale);
-
-  const canvas = document.createElement('canvas');
-  canvas.width = w; canvas.height = h;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(img, 0, 0, w, h);
-
-  const imageData = ctx.getImageData(0, 0, w, h);
-  const data = imageData.data;
-
-  // Step 1: Convert to grayscale
-  const gray = new Uint8Array(w * h);
-  for(let i = 0; i < data.length; i += 4){
-    gray[i/4] = Math.round(0.299*data[i] + 0.587*data[i+1] + 0.114*data[i+2]);
-  }
-
-  // Step 2: Detect average brightness to determine if bg is light or dark
-  let sum = 0;
-  for(let i = 0; i < gray.length; i++) sum += gray[i];
-  const avgBrightness = sum / gray.length;
-  const lightBackground = avgBrightness > 128; // bingo cards usually white bg
-  console.log('Avg brightness:', avgBrightness, 'Light bg:', lightBackground);
-
-  // Step 3: Adaptive threshold using local mean (better than fixed threshold)
-  // Use Otsu's method for optimal threshold
-  const threshold = otsuThreshold(gray);
-  console.log('Otsu threshold:', threshold);
-
-  // Step 4: Apply threshold — ensure text is BLACK on WHITE background
-  for(let i = 0; i < gray.length; i++){
-    let bw;
-    if(lightBackground){
-      // Light bg: pixels darker than threshold = text (black), rest = white
-      bw = gray[i] < threshold ? 0 : 255;
-    } else {
-      // Dark bg: pixels lighter than threshold = text (white->black), rest = white
-      bw = gray[i] > threshold ? 0 : 255;
-    }
-    const idx = i * 4;
-    data[idx] = data[idx+1] = data[idx+2] = bw;
-    data[idx+3] = 255;
-  }
-
-  ctx.putImageData(imageData, 0, 0);
-  return canvas.toDataURL('image/png');
-}
-
-function otsuThreshold(gray){
-  // Compute histogram
-  const hist = new Array(256).fill(0);
-  for(let i = 0; i < gray.length; i++) hist[gray[i]]++;
-  const total = gray.length;
-
-  let sum = 0;
-  for(let i = 0; i < 256; i++) sum += i * hist[i];
-
-  let sumB = 0, wB = 0, wF = 0;
-  let maxVar = 0, threshold = 128;
-
-  for(let t = 0; t < 256; t++){
-    wB += hist[t];
-    if(wB === 0) continue;
-    wF = total - wB;
-    if(wF === 0) break;
-    sumB += t * hist[t];
-    const mB = sumB / wB;
-    const mF = (sum - sumB) / wF;
-    const varBetween = wB * wF * (mB - mF) * (mB - mF);
-    if(varBetween > maxVar){ maxVar = varBetween; threshold = t; }
-  }
-  return threshold;
 }
 
 function distributeByRange(nums, mode){

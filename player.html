@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v5.7 — 2026-05-13 -->
+<!-- IBBI Bingo Player v5.8 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -241,7 +241,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar →</button>
         </div>
       </div>
-      <div class="vtag">v5.7</div>
+      <div class="vtag">v5.8</div>
     </div>
   </div>
 </div>
@@ -281,7 +281,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       </div>
     </div>
   </div>
-  <div class="vtag">v5.7</div>
+  <div class="vtag">v5.8</div>
 </div>
 ```
 
@@ -296,7 +296,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">—</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v5.7</span>
+    <span class="p-vtag">v5.8</span>
     <span class="conn off" id="pConn">⬤</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -829,7 +829,7 @@ function initOcr(){
   });
 }
 
-// ── OCR — CLAUDE VISION ──────────────────────────────
+// ── OCR — CLAUDE VISION via Artifacts proxy ──────────────────────────────
 async function runOcr(imageUrl){
   try{
     const mode = evData?.mode||90;
@@ -842,44 +842,56 @@ async function runOcr(imageUrl){
 
     $('ocrStatusTxt').textContent='Lendo números...';
 
+    // Use Anthropic API — works via claude.ai proxy (no CORS issues in artifacts)
     const resp = await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
-        max_tokens:500,
+        max_tokens:300,
         messages:[{
           role:'user',
           content:[
-            {type:'image', source:{type:'base64', media_type:mimeType, data:base64}},
-            {type:'text', text:`Cartela de bingo ${mode} pedras. Leia todos os numeros das celulas. Responda SOMENTE com JSON: {"numeros":[n1,n2,...,n25]} listando os 25 numeros em ordem de leitura (linha por linha, esquerda para direita). Use null para celula vazia ou FREE CENTER.`}
+            {
+              type:'image',
+              source:{type:'base64', media_type:mimeType, data:base64}
+            },
+            {
+              type:'text',
+              text:'List all numbers visible in this bingo card grid cells. Reply ONLY with a JSON array of numbers like: [1,3,7,11,13,19,21,32,33,35,37,38,40,42,49,57,59,61,62,64,73,79,83,86,90]. No explanation, just the JSON array.'
+            }
           ]
         }]
       })
     });
 
-    if(!resp.ok){
-      const errText=await resp.text();
-      console.error('Claude API error:', resp.status, errText);
-      throw new Error('API '+resp.status);
-    }
-
     const json = await resp.json();
     const rawText = json.content?.[0]?.text||'';
-    console.log('Claude response:', rawText);
+    console.log('Claude response:', rawText, 'status:', resp.status);
 
     // Save for debug
     const rawEl=$('ocrRawText');
-    if(rawEl) rawEl.value='Claude Vision response:\n'+rawText+'\n\nStatus: '+resp.status;
+    if(rawEl) rawEl.value='Status: '+resp.status+'\nResponse:\n'+rawText;
 
-    // Parse JSON
+    if(!resp.ok || !rawText){
+      throw new Error('Claude status '+resp.status+': '+rawText.slice(0,100));
+    }
+
+    // Parse — expect a JSON array directly
     let nums=[];
     try{
       const cleaned=rawText.replace(/```json|```/g,'').trim();
-      const parsed=JSON.parse(cleaned);
-      nums=(parsed.numeros||[]).filter(n=>n!==null&&typeof n==='number'&&n>=1&&n<=mode);
+      // Try array first
+      if(cleaned.startsWith('[')){
+        nums=JSON.parse(cleaned).filter(n=>n!==null&&typeof n==='number'&&n>=1&&n<=mode);
+      } else {
+        // Try object with numeros key
+        const parsed=JSON.parse(cleaned);
+        const arr=parsed.numeros||parsed.numbers||parsed.nums||Object.values(parsed)[0]||[];
+        nums=arr.filter(n=>n!==null&&typeof n==='number'&&n>=1&&n<=mode);
+      }
     }catch(e){
-      console.warn('JSON parse failed, extracting numbers from text');
+      // Fallback: extract all numbers from text
       (rawText.match(/\d+/g)||[]).forEach(m=>{
         const n=parseInt(m);
         if(n>=1&&n<=mode) nums.push(n);
@@ -887,7 +899,11 @@ async function runOcr(imageUrl){
     }
 
     console.log('Numbers extracted:', nums);
-    if(nums.length<5) throw new Error('Poucos números detectados ('+nums.length+'). Tente foto melhor.');
+    if(rawEl) rawEl.value+='\n\nNumbers: '+JSON.stringify(nums);
+
+    if(nums.length<5){
+      throw new Error('Só '+nums.length+' números detectados. Tente foto mais nítida.');
+    }
 
     distributeByRange([...new Set(nums)], mode);
     $('ocrLoading').style.display='none';
@@ -896,9 +912,8 @@ async function runOcr(imageUrl){
 
   }catch(err){
     console.error('Claude Vision failed:', err.message);
-    // Save error to debug box
     const rawEl=$('ocrRawText');
-    if(rawEl) rawEl.value=(rawEl.value||'')+'\n\nERRO Claude: '+err.message;
+    if(rawEl) rawEl.value=(rawEl.value||'')+'\n\nFalhou: '+err.message+'\nUsando Tesseract...';
     // Fallback to Tesseract
     await runOcrTesseract(imageUrl);
   }

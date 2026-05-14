@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v6.8 — 2026-05-13 -->
+<!-- IBBI Bingo Player v6.9 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo Player v6.8</title>
+<title>IBBI Bingo Player v6.9</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -241,7 +241,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &#8594;</button>
         </div>
       </div>
-      <div class="vtag">v6.8</div>
+      <div class="vtag">v6.9</div>
     </div>
   </div>
 </div>
@@ -283,7 +283,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 ```
 
   </div>
-  <div class="vtag">v6.8</div>
+  <div class="vtag">v6.9</div>
 </div>
 
   </div>
@@ -297,7 +297,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">&mdash;</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v6.8</span>
+    <span class="p-vtag">v6.9</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -308,54 +308,58 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 <!-- MODAL: Escanear Cartela -->
 
 <div class="mbk" id="mOcr">
-  <div class="modal" style="max-width:420px;max-height:95vh">
-    <h2>&#128247; Escanear Cartela</h2>
-    <div id="ocrStep1">
-      <p style="font-size:.82rem;color:var(--text2);margin-bottom:14px">Tire uma foto da cartela inteira com boa iluminação. Enquadre apenas a cartela.</p>
-      <label style="display:block;width:100%;background:linear-gradient(135deg,var(--accent),#0090c8);color:#000;font-weight:900;border-radius:var(--rsm);padding:13px;text-align:center;cursor:pointer;font-family:'Barlow',sans-serif;font-size:.95rem">
-        &#128247; Tirar Foto / Escolher Imagem
-        <input type="file" id="ocrFileInput" accept="image/*" style="display:none">
-      </label>
-      <div style="text-align:center;margin-top:14px">
-        <button class="btn btn-ghost btn-sm" id="btnOcrCancel1">Cancelar</button>
-      </div>
+  <div class="modal" style="max-width:440px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <h2 style="margin:0">&#128247; Escanear Cartela</h2>
+      <button class="btn btn-ghost btn-sm" id="btnOcrFechar">&#10005;</button>
     </div>
-    <div id="ocrStep2" style="display:none">
-      <!-- Grid adjuster canvas -->
-      <div style="position:relative;width:100%;touch-action:none">
-        <canvas id="ocrCanvas" style="width:100%;display:block;border-radius:var(--rsm);border:1.5px solid var(--border2);touch-action:none"></canvas>
-      </div>
-      <div style="margin-top:8px;display:flex;align-items:center;gap:8px">
-        <label style="font-size:.68rem;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:1px;white-space:nowrap">Rotação</label>
-        <input type="range" id="ocrRotSlider" min="-20" max="20" step="0.5" value="0" style="flex:1;accent-color:var(--accent)">
-        <span id="ocrRotVal" style="font-size:.72rem;color:var(--accent);width:34px;text-align:right">0°</span>
-      </div>
-      <p style="font-size:.72rem;color:var(--text3);margin-top:6px">Arraste os cantos ● para ajustar • Centro para mover</p>
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <button class="btn btn-ghost btn-sm" id="btnOcrReset" style="flex:1">↺ Resetar</button>
-        <button class="btn btn-acc" id="btnOcrProcessar" style="flex:2">⚙ Processar</button>
-      </div>
-      <!-- Processing overlay -->
-      <div id="ocrLoading" style="display:none;text-align:center;padding:16px">
-        <div style="font-size:2rem;animation:spin 1s linear infinite;display:inline-block">⚙</div>
-        <div style="margin-top:8px;font-weight:700;color:var(--text)">Processando...</div>
-        <div id="ocrStatusTxt" style="font-size:.78rem;color:var(--text2);margin-top:6px">Iniciando...</div>
-      </div>
-    </div>
-    <div id="ocrStep3" style="display:none">
-      <img id="ocrImgPreview" class="ocr-preview" src="" alt="Cartela" style="margin-bottom:10px">
-      <p style="font-size:.78rem;color:var(--text2);margin-bottom:6px">Verifique os números. Toque numa célula para corrigir.</p>
-      <div class="ocr-grid" id="ocrGridEl"></div>
-      <div class="ocr-status" id="ocrValidTxt"></div>
-      <button class="btn btn-ghost btn-sm" id="btnOcrDebug" style="width:100%;margin-top:8px;font-size:.75rem">&#128269; Ver texto bruto do OCR</button>
-      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-        <button class="btn btn-ghost btn-sm" id="btnOcrRefoto" style="flex:1">&#128247; Nova Foto</button>
-        <button class="btn btn-acc" id="btnOcrConfirmar" style="flex:2">&#9989; Criar Cartela</button>
-      </div>
-      <div style="text-align:center;margin-top:8px">
-        <button class="btn btn-ghost btn-sm" id="btnOcrCancel3">Cancelar</button>
-      </div>
-    </div>
+
+```
+<!-- Escolher foto -->
+<div id="ocrZonaFoto">
+  <label id="ocrLabelFoto" style="display:block;width:100%;background:linear-gradient(135deg,var(--accent),#0090c8);color:#000;font-weight:900;border-radius:var(--rsm);padding:12px;text-align:center;cursor:pointer;font-family:'Barlow',sans-serif;font-size:.9rem">
+    &#128247; Escolher Foto
+    <input type="file" id="ocrFileInput" accept="image/*" style="display:none">
+  </label>
+  <p style="font-size:.72rem;color:var(--text3);margin-top:6px;text-align:center">Enquadre só os números da cartela (sem precisar do BINGO)</p>
+</div>
+
+<!-- Canvas + resultado (aparece após escolher foto) -->
+<div id="ocrZonaCanvas" style="display:none">
+  <!-- Canvas ajustável -->
+  <div style="position:relative;width:100%;margin-bottom:8px">
+    <canvas id="ocrCanvas" style="width:100%;display:block;border-radius:var(--rsm);border:1.5px solid var(--border2);touch-action:none;cursor:crosshair"></canvas>
+  </div>
+
+  <!-- Rotação -->
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+    <label style="font-size:.65rem;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:1px;white-space:nowrap">Rotação</label>
+    <input type="range" id="ocrRotSlider" min="-20" max="20" step="0.5" value="0" style="flex:1;accent-color:var(--accent);height:4px">
+    <span id="ocrRotVal" style="font-size:.72rem;color:var(--accent);width:32px;text-align:right">0°</span>
+  </div>
+
+  <!-- Status OCR -->
+  <div id="ocrStatus" style="font-size:.75rem;color:var(--text2);text-align:center;min-height:18px;margin-bottom:8px"></div>
+
+  <!-- Grade resultado -->
+  <div id="ocrZonaResultado" style="display:none">
+    <div class="ocr-grid" id="ocrGridEl"></div>
+    <div id="ocrValidTxt" style="font-size:.75rem;color:var(--text2);text-align:center;margin-top:6px;min-height:18px"></div>
+  </div>
+
+  <!-- Botões principais -->
+  <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+    <button class="btn btn-ghost btn-sm" id="btnOcrReset" style="flex:1">&#8635; Grade</button>
+    <button class="btn btn-acc btn-sm" id="btnOcrProcessar" style="flex:2">&#9881; Processar</button>
+  </div>
+  <div style="display:flex;gap:6px;margin-top:6px">
+    <button class="btn btn-ghost btn-sm" id="btnOcrNovaFoto" style="flex:1">&#128247; Nova Foto</button>
+    <button class="btn btn-ghost btn-sm" id="btnOcrDebug" style="flex:1">&#128269; Log</button>
+    <button class="btn btn-acc" id="btnOcrConfirmar" style="flex:2;display:none">&#9989; Criar Cartela</button>
+  </div>
+</div>
+```
+
   </div>
 </div>
 
@@ -680,7 +684,17 @@ function loadCartelasFromCache(){
 }
 
 
-// -- OCR / ESCANEAR CARTELA --
+// ══════════════════════════════════════════════════════
+//  OCR — GRADE AJUSTÁVEL INTEGRADA
+// ══════════════════════════════════════════════════════
+let _ocrImg = null;
+let _ocrUrl = '';
+let _ocrRot = 0;
+let _ocrGrid = null;   // {x,y,w,h} em coordenadas do canvas
+let _ocrDrag = null;
+let _ocrCanvas = null;
+let _ocrCtx = null;
+let _ocrEvBound = false;
 let _ocrNums = {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
 let _ocrDetectedFreeCenter = false;
 let _ocrCellCtx = null;
@@ -688,80 +702,85 @@ let _ocrCellVal = '';
 
 function openOcrModal(){
   _ocrNums={B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
-  showOcrStep(1);
   openM('mOcr');
 }
 
-function showOcrStep(n){
-  [1,2,3].forEach(i=>{ const el=$('ocrStep'+i); if(el)el.style.display=i===n?'block':'none'; });
-}
-
+// ── HELPERS ──────────────────────────────────────────
 function on(id, evt, fn){
   const el=document.getElementById(id);
   if(el) el.addEventListener(evt, fn);
-  else console.warn('initOcr: element not found:', id);
 }
 
+function recoverNumber(n, min, max){
+  if(!n) return null;
+  const s=String(n);
+  // Too long — try last 2 or 1 digits
+  if(s.length>2){
+    const l2=parseInt(s.slice(-2)); if(l2>=min&&l2<=max) return l2;
+    const l1=parseInt(s.slice(-1)); if(l1>=min&&l1<=max) return l1;
+  }
+  // Too small — try prepending digits
+  if(n<min){
+    for(let p=1;p<=9;p++){
+      const c=parseInt(String(p)+s); if(c>=min&&c<=max) return c;
+    }
+  }
+  return null;
+}
+
+
+// ── INIT OCR EVENT LISTENERS ─────────────────────────
 function initOcr(){
-  on('btnOcrCancel1','click',()=>closeM('mOcr'));
-  on('btnOcrCancel3','click',()=>closeM('mOcr'));
-  on('btnOcrRefoto','click',()=>{
-    showOcrStep(1);
-    const fi=document.getElementById('ocrFileInput'); if(fi)fi.value='';
-    ocrImg=null; ocrRot=0; ocrGrid=null;
-    // Reset canvas size so it redraws correctly next time
-    const oc=document.getElementById('ocrCanvas');
-    if(oc){ oc.width=0; oc.height=0; }
-    const rs=document.getElementById('ocrRotSlider'); if(rs) rs.value=0;
-    const rv=document.getElementById('ocrRotVal'); if(rv) rv.textContent='0°';
-    // Re-show canvas controls (hidden during processing)
-    const canvasWrap=oc?.parentElement; if(canvasWrap) canvasWrap.style.display='';
-    const rotRow=document.getElementById('ocrRotSlider')?.closest('div'); if(rotRow) rotRow.style.display='';
-  });
-  on('btnOcrDebug','click',()=>{ openM('mOcrDebug'); });
+  on('btnOcrFechar','click',()=>closeM('mOcr'));
+  on('btnOcrDebug','click',()=>openM('mOcrDebug'));
   on('btnOcrDebugClose','click',()=>closeM('mOcrDebug'));
   on('btnOcrDebugCopy','click',()=>{
     const t=document.getElementById('ocrRawText')?.value||'';
     navigator.clipboard.writeText(t).then(()=>showToast('Copiado!')).catch(()=>{});
   });
-  on('ocrFileInput','change',async(e)=>{
-    const file=e.target.files[0]; if(!file)return;
-    const url=URL.createObjectURL(file);
-    const ocrImgPreview=document.getElementById('ocrImgPreview');
-    if(ocrImgPreview) ocrImgPreview.src=url;
-    showOcrStep(2);
-    await initOcrCanvas(url);
+  on('ocrFileInput','change', async(e)=>{
+    const file=e.target.files[0]; if(!file) return;
+    _ocrUrl=URL.createObjectURL(file);
+    await ocrLoadFoto(_ocrUrl);
   });
-  on('btnOcrReset','click',()=>{ ocrGridReset(); });
-  on('btnOcrProcessar','click',()=>{ ocrProcessar(); });
+  on('btnOcrNovaFoto','click',()=>{
+    // Reset to choose photo state
+    _ocrImg=null; _ocrRot=0; _ocrGrid=null; _ocrEvBound=false;
+    const fi=document.getElementById('ocrFileInput'); if(fi) fi.value='';
+    const oc=document.getElementById('ocrCanvas'); if(oc){oc.width=10;oc.height=10;}
+    const rs=document.getElementById('ocrRotSlider'); if(rs) rs.value=0;
+    const rv=document.getElementById('ocrRotVal'); if(rv) rv.textContent='0°';
+    const zona=document.getElementById('ocrZonaCanvas'); if(zona) zona.style.display='none';
+    const zonaF=document.getElementById('ocrZonaFoto'); if(zonaF) zonaF.style.display='block';
+    const zonaR=document.getElementById('ocrZonaResultado'); if(zonaR) zonaR.style.display='none';
+    const btnC=document.getElementById('btnOcrConfirmar'); if(btnC) btnC.style.display='none';
+    const st=document.getElementById('ocrStatus'); if(st) st.textContent='';
+  });
+  on('btnOcrReset','click',()=>{ ocrGridReset(); ocrDraw(); });
+  on('btnOcrProcessar','click',()=>ocrProcessar());
+  on('btnOcrConfirmar','click',()=>ocrConfirmar());
   on('ocrRotSlider','input',()=>{
-    ocrRot=parseFloat(document.getElementById('ocrRotSlider').value);
-    document.getElementById('ocrRotVal').textContent=ocrRot+'°';
+    _ocrRot=parseFloat(document.getElementById('ocrRotSlider').value||0);
+    const rv=document.getElementById('ocrRotVal'); if(rv) rv.textContent=_ocrRot+'°';
     ocrDraw();
   });
-  $('btnOcrConfirmar').addEventListener('click',()=>confirmOcr());
-
-  // ocr cell numpad
+  // OCR cell correction numpad
   document.querySelectorAll('.npbtn[data-ocr]').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      if(_ocrCellVal.length>=2)return;
-      _ocrCellVal+=btn.dataset.ocr;
-      updateOcrCellDisplay();
-    });
+    btn.addEventListener('click',()=>{ if(_ocrCellVal.length>=2)return; _ocrCellVal+=btn.dataset.ocr; updateOcrCellDisplay(); });
   });
-  $('ocrCellBksp').addEventListener('click',()=>{ _ocrCellVal=_ocrCellVal.slice(0,-1); updateOcrCellDisplay(); });
-  $('ocrCellCancel').addEventListener('click',()=>{ closeM('mOcrCell'); _ocrCellCtx=null; _ocrCellVal=''; });
-  $('ocrCellClear').addEventListener('click',()=>{
+  on('ocrCellBksp','click',()=>{ _ocrCellVal=_ocrCellVal.slice(0,-1); updateOcrCellDisplay(); });
+  on('ocrCellCancel','click',()=>{ closeM('mOcrCell'); _ocrCellCtx=null; _ocrCellVal=''; });
+  on('ocrCellClear','click',()=>{
     if(!_ocrCellCtx)return;
     _ocrNums[_ocrCellCtx.letter][_ocrCellCtx.row]=null;
     closeM('mOcrCell'); _ocrCellCtx=null; _ocrCellVal='';
     renderOcrGrid();
   });
-  $('ocrCellOk').addEventListener('click',()=>{
+  on('ocrCellOk','click',()=>{
     if(!_ocrCellCtx||!_ocrCellVal)return;
     const n=parseInt(_ocrCellVal);
     const mode=evData?.mode||90;
-    const {min,max}=colRange(_ocrCellCtx.letter,mode);
+    const{min,max}=colRange(_ocrCellCtx.letter,mode);
     if(n<min||n>max){ updateOcrCellDisplay(); return; }
     _ocrNums[_ocrCellCtx.letter][_ocrCellCtx.row]=n;
     closeM('mOcrCell'); _ocrCellCtx=null; _ocrCellVal='';
@@ -769,343 +788,127 @@ function initOcr(){
   });
 }
 
-// -- OCR -- CELL-BY-CELL GRID CUTTING --
-async function runOcr(imageUrl){
-  try{
-    const mode = evData?.mode||90;
-    $('ocrStatusTxt').textContent='Carregando imagem...';
-
-    const img = await loadImage(imageUrl);
-    const w = img.naturalWidth, h = img.naturalHeight;
-    console.log('Image size:', w, 'x', h);
-
-    const cropBox = detectGridArea(img);
-    console.log('Grid area:', cropBox);
-    $('ocrStatusTxt').textContent='Grade detectada, lendo celulas...';
-
-    const worker = await Tesseract.createWorker('eng', 1, {});
-    await worker.setParameters({
-      tessedit_char_whitelist: '0123456789',
-      tessedit_pageseg_mode: '10',
-    });
-
-    const results = [];
-    const cellW = cropBox.w / 5;
-    const cellH = cropBox.h / 6;
-    let debugLog = '';
-
-    for(let row = 1; row <= 5; row++){
-      for(let col = 0; col < 5; col++){
-        const cx = cropBox.x + col * cellW;
-        const cy = cropBox.y + row * cellH;
-
-        const canvas = document.createElement('canvas');
-        const scale = Math.max(3, 120/cellW);
-        canvas.width  = Math.round(cellW * scale);
-        canvas.height = Math.round(cellH * scale);
-        const ctx = canvas.getContext('2d');
-
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        const inset = cellW * 0.08;
-        ctx.drawImage(img,
-          cx+inset, cy+inset, cellW-inset*2, cellH-inset*2,
-          6, 6, canvas.width-12, canvas.height-12
-        );
-
-        const id = ctx.getImageData(0,0,canvas.width,canvas.height);
-        const d = id.data;
-        for(let i=0;i<d.length;i+=4){
-          const g = Math.round(0.299*d[i]+0.587*d[i+1]+0.114*d[i+2]);
-          const v = g < 140 ? 0 : 255;
-          d[i]=d[i+1]=d[i+2]=v; d[i+3]=255;
-        }
-        ctx.putImageData(id,0,0);
-
-        const cellUrl = canvas.toDataURL('image/png');
-        const {data:{text}} = await worker.recognize(cellUrl);
-        const cleaned = text.trim().replace(/\D/g,'');
-        const n = cleaned ? parseInt(cleaned) : null;
-        results.push(n);
-        debugLog += `[r${row}c${col}] raw:"${text.trim()}" -> ${n}\n`;
-
-        const pct = Math.round(((row-1)*5+col+1)/25*100);
-        $('ocrStatusTxt').textContent=`Lendo celulas... ${pct}%`;
-      }
-    }
-
-    await worker.terminate();
-    console.log('Cell results:', results);
-
-    const rawEl=$('ocrRawText');
-    if(rawEl) rawEl.value = debugLog;
-
-    _ocrNums={B:[],I:[],N:[],G:[],O:[]};
-    _ocrDetectedFreeCenter=false;
-    for(let row=0;row<5;row++){
-      LETTERS.forEach((letter,col)=>{
-        const n = results[row*5+col];
-        const {min,max}=colRange(letter,mode);
-        if(n && n>=min && n<=max){
-          _ocrNums[letter].push(n);
-        } else if(n===null || n===undefined){
-          _ocrNums[letter].push(null);
-          if(row===2&&col===2) _ocrDetectedFreeCenter=true;
-        } else {
-          const recovered = recoverNumber(n, min, max);
-          if(recovered){
-            _ocrNums[letter].push(recovered);
-            if(rawEl) rawEl.value += `RECUPERADO: ${n} -> ${recovered} para coluna ${letter}\n`;
-          } else {
-            _ocrNums[letter].push(null);
-            if(rawEl) rawEl.value += `AVISO: ${n} invalido para coluna ${letter} (${min}-${max})\n`;
-          }
-        }
-      });
-    }
-
-    LETTERS.forEach(l=>{
-      while(_ocrNums[l].length<5) _ocrNums[l].push(null);
-      _ocrNums[l]=_ocrNums[l].slice(0,5);
-    });
-
-    $('ocrLoading').style.display='none';
-    showOcrStep(3);
-    renderOcrGrid();
-
-  }catch(err){
-    console.error('OCR cell error:', err);
-    const rawEl=$('ocrRawText');
-    if(rawEl) rawEl.value='Erro: '+err.message;
-    $('ocrLoading').innerHTML=`<div style="color:var(--red);font-weight:700;padding:12px">
-      ${err.message}<br><small>Tente enquadrar melhor a cartela.</small>
-    </div>`;
-    setTimeout(()=>showOcrStep(1),3000);
-  }
-}
-
-function loadImage(url){
-  return new Promise((res,rej)=>{
-    const img=new Image();
-    img.onload=()=>res(img);
-    img.onerror=rej;
-    img.src=url;
-    img.crossOrigin='anonymous';
-  });
-}
-
-function detectGridArea(img){
-  const w=img.naturalWidth, h=img.naturalHeight;
-  const canvas=document.createElement('canvas');
-  const scale=Math.min(1, 600/Math.max(w,h));
-  const sw=Math.round(w*scale), sh=Math.round(h*scale);
-  canvas.width=sw; canvas.height=sh;
-  const ctx=canvas.getContext('2d');
-  ctx.drawImage(img,0,0,sw,sh);
-  const data=ctx.getImageData(0,0,sw,sh).data;
-
-  function gray(x,y){ const i=(y*sw+x)*4; return 0.299*data[i]+0.587*data[i+1]+0.114*data[i+2]; }
-
-  function rowDark(y){ let s=0; for(let x=0;x<sw;x++) s+=(255-gray(x,y)); return s/sw; }
-  function colDark(x){ let s=0; for(let y=0;y<sh;y++) s+=(255-gray(x,y)); return s/sh; }
-
-  const threshold = 20;
-
-  let x0=0;
-  for(let x=0;x<sw*0.3;x++){ if(colDark(x)>threshold){x0=x;break;} }
-  let x1=sw-1;
-  for(let x=sw-1;x>sw*0.7;x--){ if(colDark(x)>threshold){x1=x;break;} }
-  let y0=0;
-  for(let y=0;y<sh*0.3;y++){ if(rowDark(y)>threshold){y0=y;break;} }
-  let y1=sh-1;
-  for(let y=sh-1;y>sh*0.7;y--){ if(rowDark(y)>threshold){y1=y;break;} }
-
-  const ox0=Math.max(0, Math.round(x0/scale)-2);
-  const oy0=Math.max(0, Math.round(y0/scale)-2);
-  const ox1=Math.min(w, Math.round(x1/scale)+2);
-  const oy1=Math.min(h, Math.round(y1/scale)+2);
-
-  console.log('Grid detected:', ox0, oy0, ox1-ox0, oy1-oy0, 'from', w, h);
-  return {x:ox0, y:oy0, w:ox1-ox0, h:oy1-oy0};
-}
-
-function recoverNumber(n, min, max){
-  if(!n) return null;
-  const s = String(n);
-
-  if(s.length > 2){
-    const last2 = parseInt(s.slice(-2));
-    if(last2>=min && last2<=max) return last2;
-    const last1 = parseInt(s.slice(-1));
-    if(last1>=min && last1<=max) return last1;
-  }
-
-  if(n < min){
-    for(let prefix=1; prefix<=9; prefix++){
-      const candidate = parseInt(String(prefix)+s);
-      if(candidate>=min && candidate<=max) return candidate;
-    }
-    for(let prefix=10; prefix<=99; prefix++){
-      const candidate = parseInt(String(prefix)+s);
-      if(candidate>=min && candidate<=max) return candidate;
-    }
-  }
-
-  return null;
-}
-
-async function blobToBase64(url){
-  const r=await fetch(url);
-  const blob=await r.blob();
-  return new Promise((res,rej)=>{
-    const reader=new FileReader();
-    reader.onload=()=>res(reader.result);
-    reader.onerror=rej;
-    reader.readAsDataURL(blob);
-  });
-}
-
-async function runOcrTesseract(imageUrl){
-  try{
-    const mode=evData?.mode||90;
-    const allNums=new Set();
-    let rawText='';
-    $('ocrStatusTxt').textContent='Tentando leitura alternativa...';
-    for(const pageseg of['6','11']){
-      const worker=await Tesseract.createWorker('eng',1,{
-        logger:m=>{if(m.status==='recognizing text')$('ocrStatusTxt').textContent='Lendo... '+Math.round((m.progress||0)*100)+'%';}
-      });
-      await worker.setParameters({tessedit_char_whitelist:'0123456789',tessedit_pageseg_mode:pageseg});
-      const {data:{text}}=await worker.recognize(imageUrl);
-      await worker.terminate();
-      rawText+=`[modo ${pageseg}]: ${text}\n`;
-      (text.match(/\d+/g)||[]).forEach(m=>{const n=parseInt(m);if(n>=1&&n<=mode)allNums.add(n);});
-    }
-    const rawEl=$('ocrRawText');
-    if(rawEl) rawEl.value=rawText;
-    distributeByRange([...allNums],mode);
-    $('ocrLoading').style.display='none';
-    showOcrStep(3);
-    renderOcrGrid();
-  }catch(err){
-    $('ocrLoading').innerHTML='<div style="color:var(--red);font-weight:700;padding:10px"> Erro no OCR. Tente outra foto.</div>';
-    setTimeout(()=>showOcrStep(1),3000);
-  }
-}
-
-// ========================================================
-//  GRID ADJUSTMENT SCREEN
-// ========================================================
-// ── OCR CANVAS GRID ADJUSTER ─────────────────────────
-let ocrImg = null;   // HTMLImageElement
-let ocrUrl = '';     // blob URL
-let ocrRot = 0;      // rotation degrees
-let ocrGrid = null;  // {x,y,w,h} in canvas coords
-let ocrDrag = null;  // drag state
-let ocrCanvasEl = null;
-let ocrCtx = null;
-
-async function initOcrCanvas(url){
-  ocrUrl = url;
-  ocrRot = 0;
-  ocrImg = await new Promise((res,rej)=>{
+// ── LOAD PHOTO ───────────────────────────────────────
+async function ocrLoadFoto(url){
+  _ocrImg = await new Promise((res,rej)=>{
     const img=new Image();
     img.onload=()=>res(img);
     img.onerror=rej;
     img.src=url;
   });
-  ocrCanvasEl = document.getElementById('ocrCanvas');
-  if(!ocrCanvasEl) return;
-  ocrCtx = ocrCanvasEl.getContext('2d');
 
-  // Size canvas to image aspect ratio, max 380px wide
-  const maxW = Math.min(380, window.innerWidth-60);
-  const scale = maxW / ocrImg.width;
-  ocrCanvasEl.width  = Math.round(ocrImg.width  * scale);
-  ocrCanvasEl.height = Math.round(ocrImg.height * scale);
+  _ocrCanvas = document.getElementById('ocrCanvas');
+  _ocrCtx = _ocrCanvas.getContext('2d');
 
-  // Try auto-detect grid area first, fall back to full image
-  const autoGrid = detectGridAreaForCanvas(ocrImg, ocrCanvasEl.width, ocrCanvasEl.height);
-  ocrGrid = autoGrid;
+  // Size canvas to image aspect, max 400px wide
+  const maxW=Math.min(400, (window.innerWidth||400)-60);
+  const scale=maxW/_ocrImg.width;
+  _ocrCanvas.width=Math.round(_ocrImg.width*scale);
+  _ocrCanvas.height=Math.round(_ocrImg.height*scale);
+
+  // Show canvas zone
+  const zonaF=document.getElementById('ocrZonaFoto'); if(zonaF) zonaF.style.display='none';
+  const zona=document.getElementById('ocrZonaCanvas'); if(zona) zona.style.display='block';
+
+  // Auto-detect grid (below BINGO header)
+  _ocrGrid = ocrDetectGrid(_ocrImg, _ocrCanvas.width, _ocrCanvas.height);
+  _ocrRot=0;
+
   ocrDraw();
-  ocrBindEvents();
+  if(!_ocrEvBound){ ocrBindEvents(); _ocrEvBound=true; }
 }
 
-function detectGridAreaForCanvas(img, cw, ch){
-  // Draw scaled image to temp canvas and scan for dark borders
+// ── AUTO DETECT GRID ─────────────────────────────────
+// Strategy: find the dark BINGO header band, start grid just below it
+// Grid = 5 rows of numbers only (no header)
+function ocrDetectGrid(img, cw, ch){
   const tmp=document.createElement('canvas');
-  const sc=Math.min(1, 400/Math.max(img.width,img.height));
-  tmp.width=Math.round(img.width*sc); tmp.height=Math.round(img.height*sc);
+  const sc=Math.min(1,500/Math.max(img.width,img.height));
+  tmp.width=Math.round(img.width*sc);
+  tmp.height=Math.round(img.height*sc);
   const tCtx=tmp.getContext('2d');
   tCtx.drawImage(img,0,0,tmp.width,tmp.height);
   const data=tCtx.getImageData(0,0,tmp.width,tmp.height).data;
   const tw=tmp.width, th=tmp.height;
 
   function gray(x,y){ const i=(y*tw+x)*4; return 0.299*data[i]+0.587*data[i+1]+0.114*data[i+2]; }
-  function rowDark(y){ let s=0; for(let x=0;x<tw;x++) s+=(255-gray(x,y)); return s/tw; }
+  function rowAvgGray(y){ let s=0; for(let x=Math.round(tw*0.1);x<Math.round(tw*0.9);x++) s+=gray(x,y); return s/Math.round(tw*0.8); }
   function colDark(x){ let s=0; for(let y=0;y<th;y++) s+=(255-gray(x,y)); return s/th; }
 
-  const T=15;
-  // Scan inward from each edge to find first dark line
-  let x0=Math.round(tw*0.03), x1=Math.round(tw*0.97);
-  let y0=Math.round(th*0.03), y1=Math.round(th*0.97);
-  for(let x=0;x<tw*0.4;x++){ if(colDark(x)>T){x0=x;break;} }
-  for(let x=tw-1;x>tw*0.6;x--){ if(colDark(x)>T){x1=x;break;} }
-  for(let y=0;y<th*0.4;y++){ if(rowDark(y)>T){y0=y;break;} }
-  for(let y=th-1;y>th*0.6;y--){ if(rowDark(y)>T){y1=y;break;} }
+  // Find outer borders
+  let x0=0,x1=tw-1,y0=0,y1=th-1;
+  const T=12;
+  for(let x=0;x<tw*0.35;x++){ if(colDark(x)>T){x0=x;break;} }
+  for(let x=tw-1;x>tw*0.65;x--){ if(colDark(x)>T){x1=x;break;} }
 
-  // Scale back to canvas display coordinates
-  const scaleX=(cw/img.width)/sc;
-  const scaleY=(ch/img.height)/sc;
-  const margin=4;
+  // Find BINGO header: dark horizontal band near the top
+  // Scan top 40% for the darkest row (avg gray < 80 = dark header)
+  let headerBottom = Math.round(th*0.05); // default: 5% from top
+  let darkestY = -1, darkestVal = 999;
+  for(let y=Math.round(th*0.02);y<Math.round(th*0.4);y++){
+    const avg=rowAvgGray(y);
+    if(avg<darkestVal){ darkestVal=avg; darkestY=y; }
+  }
+  // Find where the dark band ends (transition to light = numbers area)
+  if(darkestY>0){
+    for(let y=darkestY;y<Math.round(th*0.5);y++){
+      if(rowAvgGray(y)>160){ headerBottom=y; break; }
+    }
+  }
+
+  // Find bottom of grid
+  let gridBottom=th-1;
+  for(let y=th-1;y>th*0.5;y--){
+    if(colDark(Math.round(tw*0.5))>T||(255-rowAvgGray(y))>T){ gridBottom=y; break; }
+  }
+
+  // Convert to canvas display coords
+  const sX=cw/img.width/sc;
+  const sY=ch/img.height/sc;
+  const pad=3;
   return{
-    x: Math.max(0, x0*scaleX - margin),
-    y: Math.max(0, y0*scaleY - margin),
-    w: Math.min(cw, (x1-x0)*scaleX + margin*2),
-    h: Math.min(ch, (y1-y0)*scaleY + margin*2),
+    x: Math.max(0,(x0/sc)*sX-pad),
+    y: Math.max(0,(headerBottom/sc)*sY+pad), // start BELOW header
+    w: Math.min(cw,((x1-x0)/sc)*sX+pad*2),
+    h: Math.min(ch,((gridBottom-headerBottom)/sc)*sY-pad),
   };
 }
 
 function ocrGridReset(){
-  if(!ocrCanvasEl) return;
-  const cw=ocrCanvasEl.width, ch=ocrCanvasEl.height;
-  const mx=cw*0.05, my=ch*0.05;
-  ocrGrid={x:mx, y:my, w:cw-mx*2, h:ch-my*2};
-  ocrRot=0;
-  const rs=document.getElementById('ocrRotSlider');
-  const rv=document.getElementById('ocrRotVal');
-  if(rs) rs.value=0;
-  if(rv) rv.textContent='0°';
-  ocrDraw();
+  if(!_ocrImg||!_ocrCanvas) return;
+  _ocrGrid=ocrDetectGrid(_ocrImg,_ocrCanvas.width,_ocrCanvas.height);
+  _ocrRot=0;
+  const rs=document.getElementById('ocrRotSlider'); if(rs) rs.value=0;
+  const rv=document.getElementById('ocrRotVal'); if(rv) rv.textContent='0°';
 }
 
+// ── DRAW ─────────────────────────────────────────────
 function ocrDraw(){
-  if(!ocrCtx||!ocrImg||!ocrCanvasEl) return;
-  const c=ocrCanvasEl, ctx=ocrCtx;
+  if(!_ocrCtx||!_ocrImg||!_ocrCanvas||!_ocrGrid) return;
+  const c=_ocrCanvas, ctx=_ocrCtx;
   const cw=c.width, ch=c.height;
   ctx.clearRect(0,0,cw,ch);
 
   // Draw image with rotation
   ctx.save();
   ctx.translate(cw/2,ch/2);
-  ctx.rotate(ocrRot*Math.PI/180);
-  ctx.drawImage(ocrImg,-cw/2,-ch/2,cw,ch);
+  ctx.rotate(_ocrRot*Math.PI/180);
+  ctx.drawImage(_ocrImg,-cw/2,-ch/2,cw,ch);
   ctx.restore();
 
-  const {x,y,w,h}=ocrGrid;
-  const cols=5, rows=6, cellW=w/cols, cellH=h/rows;
+  const{x,y,w,h}=_ocrGrid;
+  const cols=5, rows=5, cellW=w/cols, cellH=h/rows;
 
   // Dim outside
-  ctx.fillStyle='rgba(0,0,0,0.5)';
+  ctx.fillStyle='rgba(0,0,0,0.45)';
   ctx.fillRect(0,0,cw,y);
   ctx.fillRect(0,y+h,cw,ch-y-h);
   ctx.fillRect(0,y,x,h);
   ctx.fillRect(x+w,y,cw-x-w,h);
 
-  // Grid lines
-  ctx.strokeStyle='rgba(0,184,240,0.8)';
-  ctx.lineWidth=1.2;
+  // Grid lines (5×5 — numbers only)
+  ctx.strokeStyle='rgba(0,184,240,0.75)';
+  ctx.lineWidth=1;
   for(let i=0;i<=cols;i++){
     ctx.beginPath(); ctx.moveTo(x+i*cellW,y); ctx.lineTo(x+i*cellW,y+h); ctx.stroke();
   }
@@ -1113,154 +916,118 @@ function ocrDraw(){
     ctx.beginPath(); ctx.moveTo(x,y+i*cellH); ctx.lineTo(x+w,y+i*cellH); ctx.stroke();
   }
 
-  // Header row tint
-  ctx.fillStyle='rgba(0,184,240,0.15)';
-  ctx.fillRect(x+1,y+1,w-2,cellH-2);
-
   // Border
   ctx.strokeStyle='#00b8f0'; ctx.lineWidth=2;
   ctx.strokeRect(x,y,w,h);
 
   // Corner handles
-  [[x,y],[x+w,y],[x,y+h],[x+w,y+h]].forEach(([hx,hy])=>{
+  [[x,y,'tl'],[x+w,y,'tr'],[x,y+h,'bl'],[x+w,y+h,'br']].forEach(([hx,hy])=>{
     ctx.beginPath(); ctx.arc(hx,hy,9,0,Math.PI*2);
     ctx.fillStyle='#00b8f0'; ctx.fill();
     ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke();
   });
 }
 
+// ── DRAG EVENTS ──────────────────────────────────────
 function ocrCanvasPos(e){
-  const rect=ocrCanvasEl.getBoundingClientRect();
-  const sx=ocrCanvasEl.width/rect.width;
-  const sy=ocrCanvasEl.height/rect.height;
+  const rect=_ocrCanvas.getBoundingClientRect();
+  const sx=_ocrCanvas.width/rect.width, sy=_ocrCanvas.height/rect.height;
   const t=e.touches?e.touches[0]:e;
   return{x:(t.clientX-rect.left)*sx, y:(t.clientY-rect.top)*sy};
 }
 
-let _ocrEventsAttached = false;
 function ocrBindEvents(){
-  // Only attach events once — reuse same canvas element
-  if(_ocrEventsAttached) { ocrDraw(); return; }
-  _ocrEventsAttached = true;
+  const HIT=16;
+  const handles=()=>{ const{x,y,w,h}=_ocrGrid; return [{x,y,c:'tl'},{x:x+w,y,c:'tr'},{x,y:y+h,c:'bl'},{x:x+w,y:y+h,c:'br'}]; };
 
-  const HIT=18;
-  function handles(){ const{x,y,w,h}=ocrGrid; return [{x,y,c:'tl'},{x:x+w,y,c:'tr'},{x,y:y+h,c:'bl'},{x:x+w,y:y+h,c:'br'}]; }
+  _ocrCanvas.addEventListener('mousedown',onS);
+  _ocrCanvas.addEventListener('touchstart',onS,{passive:false});
+  _ocrCanvas.addEventListener('mousemove',onM);
+  _ocrCanvas.addEventListener('touchmove',onM,{passive:false});
+  _ocrCanvas.addEventListener('mouseup',onE);
+  _ocrCanvas.addEventListener('touchend',onE);
 
-  ocrCanvasEl.addEventListener('mousedown', onStart);
-  ocrCanvasEl.addEventListener('touchstart', onStart, {passive:false});
-  ocrCanvasEl.addEventListener('mousemove', onMove);
-  ocrCanvasEl.addEventListener('touchmove', onMove, {passive:false});
-  ocrCanvasEl.addEventListener('mouseup', onEnd);
-  ocrCanvasEl.addEventListener('touchend', onEnd);
-
-  function onStart(e){
+  function onS(e){
     e.preventDefault();
-    // refresh canvas ref in case DOM updated
-    ocrCanvasEl=document.getElementById('ocrCanvas');
-    ocrCtx=ocrCanvasEl?.getContext('2d');
+    _ocrCanvas=document.getElementById('ocrCanvas');
+    _ocrCtx=_ocrCanvas.getContext('2d');
     const pos=ocrCanvasPos(e);
     const hit=handles().find(h=>Math.hypot(h.x-pos.x,h.y-pos.y)<HIT);
     if(hit){
-      ocrDrag={type:'corner',corner:hit.c,sx:pos.x,sy:pos.y,g:{...ocrGrid}};
+      _ocrDrag={type:'corner',corner:hit.c,sx:pos.x,sy:pos.y,g:{..._ocrGrid}};
     } else {
-      const{x,y,w,h}=ocrGrid;
-      if(pos.x>x&&pos.x<x+w&&pos.y>y&&pos.y<y+h){
-        ocrDrag={type:'move',sx:pos.x,sy:pos.y,g:{...ocrGrid}};
-      }
+      const{x,y,w,h}=_ocrGrid;
+      if(pos.x>x&&pos.x<x+w&&pos.y>y&&pos.y<y+h)
+        _ocrDrag={type:'move',sx:pos.x,sy:pos.y,g:{..._ocrGrid}};
     }
   }
-
-  function onMove(e){
-    if(!ocrDrag){return;}
-    e.preventDefault();
+  function onM(e){
+    if(!_ocrDrag)return; e.preventDefault();
     const pos=ocrCanvasPos(e);
-    const dx=pos.x-ocrDrag.sx, dy=pos.y-ocrDrag.sy;
-    const g=ocrDrag.g, MIN=40;
-    if(ocrDrag.type==='move'){
-      ocrGrid.x=g.x+dx; ocrGrid.y=g.y+dy;
-    } else {
-      switch(ocrDrag.corner){
-        case 'tl':
-          ocrGrid.x=Math.min(g.x+dx,g.x+g.w-MIN);
-          ocrGrid.y=Math.min(g.y+dy,g.y+g.h-MIN);
-          ocrGrid.w=g.w-(ocrGrid.x-g.x);
-          ocrGrid.h=g.h-(ocrGrid.y-g.y);
-          break;
-        case 'tr':
-          ocrGrid.y=Math.min(g.y+dy,g.y+g.h-MIN);
-          ocrGrid.w=Math.max(MIN,g.w+dx);
-          ocrGrid.h=g.h-(ocrGrid.y-g.y);
-          break;
-        case 'bl':
-          ocrGrid.x=Math.min(g.x+dx,g.x+g.w-MIN);
-          ocrGrid.w=g.w-(ocrGrid.x-g.x);
-          ocrGrid.h=Math.max(MIN,g.h+dy);
-          break;
-        case 'br':
-          ocrGrid.w=Math.max(MIN,g.w+dx);
-          ocrGrid.h=Math.max(MIN,g.h+dy);
-          break;
-      }
+    const dx=pos.x-_ocrDrag.sx, dy=pos.y-_ocrDrag.sy;
+    const g=_ocrDrag.g, MIN=30;
+    if(_ocrDrag.type==='move'){ _ocrGrid.x=g.x+dx; _ocrGrid.y=g.y+dy; }
+    else switch(_ocrDrag.corner){
+      case'tl': _ocrGrid.x=Math.min(g.x+dx,g.x+g.w-MIN); _ocrGrid.y=Math.min(g.y+dy,g.y+g.h-MIN); _ocrGrid.w=g.w-(_ocrGrid.x-g.x); _ocrGrid.h=g.h-(_ocrGrid.y-g.y); break;
+      case'tr': _ocrGrid.y=Math.min(g.y+dy,g.y+g.h-MIN); _ocrGrid.w=Math.max(MIN,g.w+dx); _ocrGrid.h=g.h-(_ocrGrid.y-g.y); break;
+      case'bl': _ocrGrid.x=Math.min(g.x+dx,g.x+g.w-MIN); _ocrGrid.w=g.w-(_ocrGrid.x-g.x); _ocrGrid.h=Math.max(MIN,g.h+dy); break;
+      case'br': _ocrGrid.w=Math.max(MIN,g.w+dx); _ocrGrid.h=Math.max(MIN,g.h+dy); break;
     }
     ocrDraw();
   }
-
-  function onEnd(){ ocrDrag=null; }
+  function onE(){ _ocrDrag=null; }
 }
 
+// ── PROCESS OCR ──────────────────────────────────────
 async function ocrProcessar(){
-  if(!ocrImg||!ocrGrid) return;
-  const loading=document.getElementById('ocrLoading');
-  const canvas=document.getElementById('ocrCanvas');
-  // Hide canvas controls during processing
-  const canvasWrap=canvas?.parentElement; if(canvasWrap) canvasWrap.style.display='none';
-  const rotRow=document.getElementById('ocrRotSlider')?.closest('div'); if(rotRow) rotRow.style.display='none';
-  const processBtn=document.getElementById('btnOcrProcessar')?.closest('div'); if(processBtn) processBtn.style.display='none';
-  if(loading) loading.style.display='block';
+  if(!_ocrImg||!_ocrGrid) return;
+  const st=document.getElementById('ocrStatus');
+  if(st) st.textContent='⚙ Processando...';
 
   try{
     const mode=evData?.mode||90;
 
-    // Render full-res image with rotation to offscreen canvas
+    // Render rotated full-res image to offscreen canvas
     const off=document.createElement('canvas');
-    off.width=ocrImg.width; off.height=ocrImg.height;
+    off.width=_ocrImg.width; off.height=_ocrImg.height;
     const offCtx=off.getContext('2d');
     offCtx.save();
-    offCtx.translate(ocrImg.width/2,ocrImg.height/2);
-    offCtx.rotate(ocrRot*Math.PI/180);
-    offCtx.drawImage(ocrImg,-ocrImg.width/2,-ocrImg.height/2);
+    offCtx.translate(_ocrImg.width/2,_ocrImg.height/2);
+    offCtx.rotate(_ocrRot*Math.PI/180);
+    offCtx.drawImage(_ocrImg,-_ocrImg.width/2,-_ocrImg.height/2);
     offCtx.restore();
 
-    // Scale grid from canvas display to full image coords
-    const sx=ocrImg.width/ocrCanvasEl.width;
-    const sy=ocrImg.height/ocrCanvasEl.height;
-    const grid={x:ocrGrid.x*sx, y:ocrGrid.y*sy, w:ocrGrid.w*sx, h:ocrGrid.h*sy};
+    // Scale grid coords: canvas display → full image
+    const sx=_ocrImg.width/_ocrCanvas.width;
+    const sy=_ocrImg.height/_ocrCanvas.height;
+    const grid={x:_ocrGrid.x*sx, y:_ocrGrid.y*sy, w:_ocrGrid.w*sx, h:_ocrGrid.h*sy};
 
-    // Setup Tesseract
     const worker=await Tesseract.createWorker('eng',1,{
-      logger:m=>{ if(m.status==='recognizing text'){ const st=document.getElementById('ocrStatusTxt'); if(st) st.textContent='Lendo... '+Math.round((m.progress||0)*100)+'%'; } }
+      logger:m=>{ if(m.status==='recognizing text'&&st) st.textContent='⚙ Lendo... '+Math.round((m.progress||0)*100)+'%'; }
     });
     await worker.setParameters({tessedit_char_whitelist:'0123456789',tessedit_pageseg_mode:'10'});
 
-    const cellW=grid.w/5, cellH=grid.h/6;
+    // 5×5 grid — numbers only, NO header row
+    const cellW=grid.w/5, cellH=grid.h/5;
     const results=[];
     let debugLog='';
 
-    for(let row=1;row<=5;row++){
+    for(let row=0;row<5;row++){
       for(let col=0;col<5;col++){
-        const inset=cellW*0.06;
+        // Inset 6% to avoid grid lines
+        const inset=Math.min(cellW,cellH)*0.06;
         const cx=grid.x+col*cellW+inset;
         const cy=grid.y+row*cellH+inset;
         const cw=cellW-inset*2, ch=cellH-inset*2;
 
         const cell=document.createElement('canvas');
-        const sc=Math.max(3,120/cw);
+        const sc=Math.max(3,120/Math.min(cw,ch));
         cell.width=Math.round(cw*sc); cell.height=Math.round(ch*sc);
         const cCtx=cell.getContext('2d');
         cCtx.fillStyle='#fff'; cCtx.fillRect(0,0,cell.width,cell.height);
         cCtx.drawImage(off,cx,cy,cw,ch,4,4,cell.width-8,cell.height-8);
 
-        // B&W
+        // Grayscale + B&W
         const id=cCtx.getImageData(0,0,cell.width,cell.height),d=id.data;
         for(let i=0;i<d.length;i+=4){
           const g=Math.round(0.299*d[i]+0.587*d[i+1]+0.114*d[i+2]);
@@ -1274,16 +1041,15 @@ async function ocrProcessar(){
         results.push(n);
         debugLog+=`[r${row}c${col}] "${text.trim()}" → ${n}
 `;
-        const pct=Math.round(((row-1)*5+col+1)/25*100);
-        const st=document.getElementById('ocrStatusTxt'); if(st) st.textContent=`Lendo células... ${pct}%`;
+        if(st) st.textContent=`⚙ Lendo... ${Math.round((row*5+col+1)/25*100)}%`;
       }
     }
     await worker.terminate();
 
-    // Save debug
+    // Save debug log
     const rawEl=document.getElementById('ocrRawText'); if(rawEl) rawEl.value=debugLog;
 
-    // Map to columns
+    // Map to BINGO columns
     _ocrNums={B:[],I:[],N:[],G:[],O:[]};
     _ocrDetectedFreeCenter=false;
     for(let row=0;row<5;row++){
@@ -1292,29 +1058,91 @@ async function ocrProcessar(){
         const{min,max}=colRange(letter,mode);
         if(n&&n>=min&&n<=max){
           _ocrNums[letter].push(n);
-        } else if(!n||n===null){
+        } else if(!n){
           _ocrNums[letter].push(null);
           if(row===2&&col===2) _ocrDetectedFreeCenter=true;
         } else {
           const rec=recoverNumber(n,min,max);
           _ocrNums[letter].push(rec||null);
-          if(rawEl) rawEl.value+=(rec?`RECUPERADO: ${n}→${rec}
-`:`AVISO: ${n} inválido p/ ${letter}
-`);
+          debugLog+=rec?`RECUPERADO: ${n}→${rec}\n`:`AVISO: ${n} inválido p/${letter}\n`;
         }
       });
     }
     LETTERS.forEach(l=>{ while(_ocrNums[l].length<5)_ocrNums[l].push(null); _ocrNums[l]=_ocrNums[l].slice(0,5); });
 
-    if(loading) loading.style.display='none';
-    showOcrStep(3);
+    // Show result grid
+    const zonaR=document.getElementById('ocrZonaResultado'); if(zonaR) zonaR.style.display='block';
+    const btnC=document.getElementById('btnOcrConfirmar'); if(btnC) btnC.style.display='';
     renderOcrGrid();
+    if(st) st.textContent='';
 
   }catch(err){
     console.error('OCR error:',err);
-    if(loading) loading.innerHTML=`<div style="color:var(--red);padding:10px">❌ ${err.message}</div>`;
-    setTimeout(()=>showOcrStep(1),3000);
+    if(st) st.textContent='❌ Erro: '+err.message;
   }
+}
+
+function ocrConfirmar(){
+  const c=novaCartela();
+  c.numeros=JSON.parse(JSON.stringify(_ocrNums));
+  c.freeCenter=_ocrDetectedFreeCenter;
+  const drawnSet=new Set(evData?.drawn||[]);
+  LETTERS.forEach(l=>{ c.numeros[l].forEach(n=>{ if(n&&drawnSet.has(n)){c.marcados=c.marcados||[];if(!c.marcados.includes(n))c.marcados.push(n);} }); });
+  cartelas.push(c); cartelaIdx=cartelas.length-1;
+  saveAllCartelas();
+  closeM('mOcr');
+  renderCartela(); renderHist(); checkAutoBatida();
+  showToast('✅ Cartela escaneada criada!');
+}
+
+// ── OCR CELL CORRECTION ──────────────────────────────
+function renderOcrGrid(){
+  const grid=document.getElementById('ocrGridEl'); if(!grid)return;
+  const mode=evData?.mode||90;
+  grid.innerHTML='';
+  let valid=0;
+  LETTERS.forEach(l=>{
+    const h=document.createElement('div'); h.className=`ocr-hdr l${l}`; h.textContent=l; grid.appendChild(h);
+  });
+  for(let row=0;row<5;row++){
+    LETTERS.forEach((letter,col)=>{
+      const n=_ocrNums[letter][row];
+      const{min,max}=colRange(letter,mode);
+      const cell=document.createElement('div');
+      if(n===null||n===undefined){ cell.className='ocr-cell empty-ocr'; cell.textContent='?'; }
+      else if(n>=min&&n<=max){ cell.className='ocr-cell ok'; cell.textContent=n; valid++; }
+      else{ cell.className='ocr-cell err'; cell.textContent=n; }
+      cell.addEventListener('click',()=>openOcrCellEdit(letter,row,n));
+      grid.appendChild(cell);
+    });
+  }
+  const total=25, pct=Math.round(valid/total*100);
+  const fc=_ocrDetectedFreeCenter?' | FREE CENTER':'';
+  const vt=document.getElementById('ocrValidTxt');
+  if(vt) vt.textContent=`${valid} números detectados (${pct}%)${fc} — toque para corrigir`;
+}
+
+function openOcrCellEdit(letter,row,currentVal){
+  _ocrCellCtx={letter,row};
+  _ocrCellVal=currentVal!=null?String(currentVal):'';
+  const mode=evData?.mode||90;
+  const{min,max}=colRange(letter,mode);
+  const t=document.getElementById('mOcrCellTitle'); if(t) t.textContent=`Coluna ${letter}`;
+  const s=document.getElementById('mOcrCellSub'); if(s) s.textContent=`Faixa válida: ${min} a ${max}`;
+  updateOcrCellDisplay();
+  openM('mOcrCell');
+}
+
+function updateOcrCellDisplay(){
+  const disp=document.getElementById('ocrCellDisplay'), hint=document.getElementById('ocrCellHint');
+  if(!disp)return;
+  const mode=evData?.mode||90;
+  if(!_ocrCellVal){ disp.textContent='—'; disp.className='np-display'; if(hint)hint.textContent=''; return; }
+  const n=parseInt(_ocrCellVal);
+  const{min,max}=colRange(_ocrCellCtx?.letter||'B',mode);
+  disp.textContent=_ocrCellVal;
+  if(n>=min&&n<=max){ disp.className='np-display valid'; if(hint){hint.textContent='✅ Válido'; hint.style.color='var(--green)';} }
+  else{ disp.className='np-display invalid'; if(hint){hint.textContent=`❌ Deve ser ${min}–${max}`; hint.style.color='var(--red)';} }
 }
 
 

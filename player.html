@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v6.6 — 2026-05-13 -->
+<!-- IBBI Bingo Player v6.7 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo Player v6.6</title>
+<title>IBBI Bingo Player v6.7</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -241,7 +241,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &#8594;</button>
         </div>
       </div>
-      <div class="vtag">v6.6</div>
+      <div class="vtag">v6.7</div>
     </div>
   </div>
 </div>
@@ -283,7 +283,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 ```
 
   </div>
-  <div class="vtag">v6.6</div>
+  <div class="vtag">v6.7</div>
 </div>
 
   </div>
@@ -297,7 +297,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">&mdash;</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v6.6</span>
+    <span class="p-vtag">v6.7</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -321,9 +321,23 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       </div>
     </div>
     <div id="ocrStep2" style="display:none">
-      <img id="ocrImg" class="ocr-preview" src="" alt="Cartela">
-      <div id="ocrLoading" style="text-align:center;padding:20px">
-        <div style="font-size:2rem;animation:spin 1s linear infinite;display:inline-block">&#9881;</div>
+      <!-- Grid adjuster canvas -->
+      <div style="position:relative;width:100%;touch-action:none">
+        <canvas id="ocrCanvas" style="width:100%;display:block;border-radius:var(--rsm);border:1.5px solid var(--border2);touch-action:none"></canvas>
+      </div>
+      <div style="margin-top:8px;display:flex;align-items:center;gap:8px">
+        <label style="font-size:.68rem;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:1px;white-space:nowrap">Rotação</label>
+        <input type="range" id="ocrRotSlider" min="-20" max="20" step="0.5" value="0" style="flex:1;accent-color:var(--accent)">
+        <span id="ocrRotVal" style="font-size:.72rem;color:var(--accent);width:34px;text-align:right">0°</span>
+      </div>
+      <p style="font-size:.72rem;color:var(--text3);margin-top:6px">Arraste os cantos ● para ajustar • Centro para mover</p>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn btn-ghost btn-sm" id="btnOcrReset" style="flex:1">↺ Resetar</button>
+        <button class="btn btn-acc" id="btnOcrProcessar" style="flex:2">⚙ Processar</button>
+      </div>
+      <!-- Processing overlay -->
+      <div id="ocrLoading" style="display:none;text-align:center;padding:16px">
+        <div style="font-size:2rem;animation:spin 1s linear infinite;display:inline-block">⚙</div>
         <div style="margin-top:8px;font-weight:700;color:var(--text)">Processando...</div>
         <div id="ocrStatusTxt" style="font-size:.78rem;color:var(--text2);margin-top:6px">Iniciando...</div>
       </div>
@@ -691,7 +705,13 @@ function on(id, evt, fn){
 function initOcr(){
   on('btnOcrCancel1','click',()=>closeM('mOcr'));
   on('btnOcrCancel3','click',()=>closeM('mOcr'));
-  on('btnOcrRefoto','click',()=>{ showOcrStep(1); const fi=document.getElementById('ocrFileInput'); if(fi)fi.value=''; });
+  on('btnOcrRefoto','click',()=>{
+    showOcrStep(1);
+    const fi=document.getElementById('ocrFileInput'); if(fi)fi.value='';
+    ocrImg=null; ocrRot=0;
+    const rs=document.getElementById('ocrRotSlider'); if(rs) rs.value=0;
+    const rv=document.getElementById('ocrRotVal'); if(rv) rv.textContent='0°';
+  });
   on('btnOcrDebug','click',()=>{ openM('mOcrDebug'); });
   on('btnOcrDebugClose','click',()=>closeM('mOcrDebug'));
   on('btnOcrDebugCopy','click',()=>{
@@ -701,14 +721,17 @@ function initOcr(){
   on('ocrFileInput','change',async(e)=>{
     const file=e.target.files[0]; if(!file)return;
     const url=URL.createObjectURL(file);
-    const ocrImg=document.getElementById('ocrImg');
     const ocrImgPreview=document.getElementById('ocrImgPreview');
-    if(ocrImg) ocrImg.src=url;
     if(ocrImgPreview) ocrImgPreview.src=url;
     showOcrStep(2);
-    const ol=document.getElementById('ocrLoading');
-    if(ol) ol.style.display='block';
-    await runOcr(url);
+    await initOcrCanvas(url);
+  });
+  on('btnOcrReset','click',()=>{ ocrGridReset(); });
+  on('btnOcrProcessar','click',()=>{ ocrProcessar(); });
+  on('ocrRotSlider','input',()=>{
+    ocrRot=parseFloat(document.getElementById('ocrRotSlider').value);
+    document.getElementById('ocrRotVal').textContent=ocrRot+'°';
+    ocrDraw();
   });
   $('btnOcrConfirmar').addEventListener('click',()=>confirmOcr());
 
@@ -968,6 +991,289 @@ async function runOcrTesseract(imageUrl){
 // ========================================================
 //  GRID ADJUSTMENT SCREEN
 // ========================================================
+// ── OCR CANVAS GRID ADJUSTER ─────────────────────────
+let ocrImg = null;   // HTMLImageElement
+let ocrUrl = '';     // blob URL
+let ocrRot = 0;      // rotation degrees
+let ocrGrid = null;  // {x,y,w,h} in canvas coords
+let ocrDrag = null;  // drag state
+let ocrCanvasEl = null;
+let ocrCtx = null;
+
+async function initOcrCanvas(url){
+  ocrUrl = url;
+  ocrRot = 0;
+  ocrImg = await new Promise((res,rej)=>{
+    const img=new Image();
+    img.onload=()=>res(img);
+    img.onerror=rej;
+    img.src=url;
+  });
+  ocrCanvasEl = document.getElementById('ocrCanvas');
+  if(!ocrCanvasEl) return;
+  ocrCtx = ocrCanvasEl.getContext('2d');
+
+  // Size canvas to image aspect ratio, max 380px wide
+  const maxW = Math.min(380, window.innerWidth-60);
+  const scale = maxW / ocrImg.width;
+  ocrCanvasEl.width  = Math.round(ocrImg.width  * scale);
+  ocrCanvasEl.height = Math.round(ocrImg.height * scale);
+
+  ocrGridReset();
+  ocrDraw();
+  ocrBindEvents();
+}
+
+function ocrGridReset(){
+  if(!ocrCanvasEl) return;
+  const cw=ocrCanvasEl.width, ch=ocrCanvasEl.height;
+  const mx=cw*0.05, my=ch*0.05;
+  ocrGrid={x:mx, y:my, w:cw-mx*2, h:ch-my*2};
+  ocrRot=0;
+  const rs=document.getElementById('ocrRotSlider');
+  const rv=document.getElementById('ocrRotVal');
+  if(rs) rs.value=0;
+  if(rv) rv.textContent='0°';
+  ocrDraw();
+}
+
+function ocrDraw(){
+  if(!ocrCtx||!ocrImg||!ocrCanvasEl) return;
+  const c=ocrCanvasEl, ctx=ocrCtx;
+  const cw=c.width, ch=c.height;
+  ctx.clearRect(0,0,cw,ch);
+
+  // Draw image with rotation
+  ctx.save();
+  ctx.translate(cw/2,ch/2);
+  ctx.rotate(ocrRot*Math.PI/180);
+  ctx.drawImage(ocrImg,-cw/2,-ch/2,cw,ch);
+  ctx.restore();
+
+  const {x,y,w,h}=ocrGrid;
+  const cols=5, rows=6, cellW=w/cols, cellH=h/rows;
+
+  // Dim outside
+  ctx.fillStyle='rgba(0,0,0,0.5)';
+  ctx.fillRect(0,0,cw,y);
+  ctx.fillRect(0,y+h,cw,ch-y-h);
+  ctx.fillRect(0,y,x,h);
+  ctx.fillRect(x+w,y,cw-x-w,h);
+
+  // Grid lines
+  ctx.strokeStyle='rgba(0,184,240,0.8)';
+  ctx.lineWidth=1.2;
+  for(let i=0;i<=cols;i++){
+    ctx.beginPath(); ctx.moveTo(x+i*cellW,y); ctx.lineTo(x+i*cellW,y+h); ctx.stroke();
+  }
+  for(let i=0;i<=rows;i++){
+    ctx.beginPath(); ctx.moveTo(x,y+i*cellH); ctx.lineTo(x+w,y+i*cellH); ctx.stroke();
+  }
+
+  // Header row tint
+  ctx.fillStyle='rgba(0,184,240,0.15)';
+  ctx.fillRect(x+1,y+1,w-2,cellH-2);
+
+  // Border
+  ctx.strokeStyle='#00b8f0'; ctx.lineWidth=2;
+  ctx.strokeRect(x,y,w,h);
+
+  // Corner handles
+  [[x,y],[x+w,y],[x,y+h],[x+w,y+h]].forEach(([hx,hy])=>{
+    ctx.beginPath(); ctx.arc(hx,hy,9,0,Math.PI*2);
+    ctx.fillStyle='#00b8f0'; ctx.fill();
+    ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke();
+  });
+}
+
+function ocrCanvasPos(e){
+  const rect=ocrCanvasEl.getBoundingClientRect();
+  const sx=ocrCanvasEl.width/rect.width;
+  const sy=ocrCanvasEl.height/rect.height;
+  const t=e.touches?e.touches[0]:e;
+  return{x:(t.clientX-rect.left)*sx, y:(t.clientY-rect.top)*sy};
+}
+
+function ocrBindEvents(){
+  const c=ocrCanvasEl;
+  // Clone to remove old listeners
+  const nc=c.cloneNode(true);
+  c.parentNode.replaceChild(nc,c);
+  ocrCanvasEl=nc;
+  ocrCtx=nc.getContext('2d');
+
+  const HIT=18;
+  function handles(){ const{x,y,w,h}=ocrGrid; return [{x,y,c:'tl'},{x:x+w,y,c:'tr'},{x,y:y+h,c:'bl'},{x:x+w,y:y+h,c:'br'}]; }
+
+  nc.addEventListener('mousedown', onStart);
+  nc.addEventListener('touchstart', onStart, {passive:false});
+  nc.addEventListener('mousemove', onMove);
+  nc.addEventListener('touchmove', onMove, {passive:false});
+  nc.addEventListener('mouseup', onEnd);
+  nc.addEventListener('touchend', onEnd);
+
+  function onStart(e){
+    e.preventDefault();
+    const pos=ocrCanvasPos(e);
+    const hit=handles().find(h=>Math.hypot(h.x-pos.x,h.y-pos.y)<HIT);
+    if(hit){
+      ocrDrag={type:'corner',corner:hit.c,sx:pos.x,sy:pos.y,g:{...ocrGrid}};
+    } else {
+      const{x,y,w,h}=ocrGrid;
+      if(pos.x>x&&pos.x<x+w&&pos.y>y&&pos.y<y+h){
+        ocrDrag={type:'move',sx:pos.x,sy:pos.y,g:{...ocrGrid}};
+      }
+    }
+  }
+
+  function onMove(e){
+    if(!ocrDrag){return;}
+    e.preventDefault();
+    const pos=ocrCanvasPos(e);
+    const dx=pos.x-ocrDrag.sx, dy=pos.y-ocrDrag.sy;
+    const g=ocrDrag.g, MIN=40;
+    if(ocrDrag.type==='move'){
+      ocrGrid.x=g.x+dx; ocrGrid.y=g.y+dy;
+    } else {
+      switch(ocrDrag.corner){
+        case 'tl':
+          ocrGrid.x=Math.min(g.x+dx,g.x+g.w-MIN);
+          ocrGrid.y=Math.min(g.y+dy,g.y+g.h-MIN);
+          ocrGrid.w=g.w-(ocrGrid.x-g.x);
+          ocrGrid.h=g.h-(ocrGrid.y-g.y);
+          break;
+        case 'tr':
+          ocrGrid.y=Math.min(g.y+dy,g.y+g.h-MIN);
+          ocrGrid.w=Math.max(MIN,g.w+dx);
+          ocrGrid.h=g.h-(ocrGrid.y-g.y);
+          break;
+        case 'bl':
+          ocrGrid.x=Math.min(g.x+dx,g.x+g.w-MIN);
+          ocrGrid.w=g.w-(ocrGrid.x-g.x);
+          ocrGrid.h=Math.max(MIN,g.h+dy);
+          break;
+        case 'br':
+          ocrGrid.w=Math.max(MIN,g.w+dx);
+          ocrGrid.h=Math.max(MIN,g.h+dy);
+          break;
+      }
+    }
+    ocrDraw();
+  }
+
+  function onEnd(){ ocrDrag=null; }
+  // Redraw after clone
+  ocrDraw();
+}
+
+async function ocrProcessar(){
+  if(!ocrImg||!ocrGrid) return;
+  const loading=document.getElementById('ocrLoading');
+  const canvas=document.getElementById('ocrCanvas');
+  if(canvas) canvas.style.display='none';
+  document.getElementById('ocrRotSlider')?.parentElement?.style && (document.getElementById('ocrRotSlider').closest('div').style.display='none');
+  if(loading) loading.style.display='block';
+
+  try{
+    const mode=evData?.mode||90;
+
+    // Render full-res image with rotation to offscreen canvas
+    const off=document.createElement('canvas');
+    off.width=ocrImg.width; off.height=ocrImg.height;
+    const offCtx=off.getContext('2d');
+    offCtx.save();
+    offCtx.translate(ocrImg.width/2,ocrImg.height/2);
+    offCtx.rotate(ocrRot*Math.PI/180);
+    offCtx.drawImage(ocrImg,-ocrImg.width/2,-ocrImg.height/2);
+    offCtx.restore();
+
+    // Scale grid from canvas display to full image coords
+    const sx=ocrImg.width/ocrCanvasEl.width;
+    const sy=ocrImg.height/ocrCanvasEl.height;
+    const grid={x:ocrGrid.x*sx, y:ocrGrid.y*sy, w:ocrGrid.w*sx, h:ocrGrid.h*sy};
+
+    // Setup Tesseract
+    const worker=await Tesseract.createWorker('eng',1,{
+      logger:m=>{ if(m.status==='recognizing text'){ const st=document.getElementById('ocrStatusTxt'); if(st) st.textContent='Lendo... '+Math.round((m.progress||0)*100)+'%'; } }
+    });
+    await worker.setParameters({tessedit_char_whitelist:'0123456789',tessedit_pageseg_mode:'10'});
+
+    const cellW=grid.w/5, cellH=grid.h/6;
+    const results=[];
+    let debugLog='';
+
+    for(let row=1;row<=5;row++){
+      for(let col=0;col<5;col++){
+        const inset=cellW*0.06;
+        const cx=grid.x+col*cellW+inset;
+        const cy=grid.y+row*cellH+inset;
+        const cw=cellW-inset*2, ch=cellH-inset*2;
+
+        const cell=document.createElement('canvas');
+        const sc=Math.max(3,120/cw);
+        cell.width=Math.round(cw*sc); cell.height=Math.round(ch*sc);
+        const cCtx=cell.getContext('2d');
+        cCtx.fillStyle='#fff'; cCtx.fillRect(0,0,cell.width,cell.height);
+        cCtx.drawImage(off,cx,cy,cw,ch,4,4,cell.width-8,cell.height-8);
+
+        // B&W
+        const id=cCtx.getImageData(0,0,cell.width,cell.height),d=id.data;
+        for(let i=0;i<d.length;i+=4){
+          const g=Math.round(0.299*d[i]+0.587*d[i+1]+0.114*d[i+2]);
+          const v=g<140?0:255; d[i]=d[i+1]=d[i+2]=v; d[i+3]=255;
+        }
+        cCtx.putImageData(id,0,0);
+
+        const{data:{text}}=await worker.recognize(cell.toDataURL('image/png'));
+        const cleaned=text.trim().replace(/[^0-9]/g,'');
+        const n=cleaned?parseInt(cleaned):null;
+        results.push(n);
+        debugLog+=`[r${row}c${col}] "${text.trim()}" → ${n}
+`;
+        const pct=Math.round(((row-1)*5+col+1)/25*100);
+        const st=document.getElementById('ocrStatusTxt'); if(st) st.textContent=`Lendo células... ${pct}%`;
+      }
+    }
+    await worker.terminate();
+
+    // Save debug
+    const rawEl=document.getElementById('ocrRawText'); if(rawEl) rawEl.value=debugLog;
+
+    // Map to columns
+    _ocrNums={B:[],I:[],N:[],G:[],O:[]};
+    _ocrDetectedFreeCenter=false;
+    for(let row=0;row<5;row++){
+      LETTERS.forEach((letter,col)=>{
+        const n=results[row*5+col];
+        const{min,max}=colRange(letter,mode);
+        if(n&&n>=min&&n<=max){
+          _ocrNums[letter].push(n);
+        } else if(!n||n===null){
+          _ocrNums[letter].push(null);
+          if(row===2&&col===2) _ocrDetectedFreeCenter=true;
+        } else {
+          const rec=recoverNumber(n,min,max);
+          _ocrNums[letter].push(rec||null);
+          if(rawEl) rawEl.value+=(rec?`RECUPERADO: ${n}→${rec}
+`:`AVISO: ${n} inválido p/ ${letter}
+`);
+        }
+      });
+    }
+    LETTERS.forEach(l=>{ while(_ocrNums[l].length<5)_ocrNums[l].push(null); _ocrNums[l]=_ocrNums[l].slice(0,5); });
+
+    if(loading) loading.style.display='none';
+    showOcrStep(3);
+    renderOcrGrid();
+
+  }catch(err){
+    console.error('OCR error:',err);
+    if(loading) loading.innerHTML=`<div style="color:var(--red);padding:10px">❌ ${err.message}</div>`;
+    setTimeout(()=>showOcrStep(1),3000);
+  }
+}
+
+
 function distributeByRange(nums, mode){
   _ocrNums={B:[],I:[],N:[],G:[],O:[]};
   const size=mode/5;

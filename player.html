@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v5.9 — 2026-05-13 -->
+<!-- IBBI Bingo Player v6.1 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -241,7 +241,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar →</button>
         </div>
       </div>
-      <div class="vtag">v5.9</div>
+      <div class="vtag">v6.1</div>
     </div>
   </div>
 </div>
@@ -281,7 +281,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       </div>
     </div>
   </div>
-  <div class="vtag">v5.9</div>
+  <div class="vtag">v6.1</div>
 </div>
 ```
 
@@ -296,7 +296,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">—</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v5.9</span>
+    <span class="p-vtag">v6.1</span>
     <span class="conn off" id="pConn">⬤</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -877,10 +877,11 @@ async function runOcr(imageUrl){
         ctx.fillStyle = '#fff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Draw cell upscaled
+        // Draw cell upscaled with small inset to avoid grid lines
+        const inset = cellW * 0.08; // 8% inset to avoid border lines
         ctx.drawImage(img,
-          cx, cy, cellW, cellH,
-          4, 4, canvas.width-8, canvas.height-8
+          cx+inset, cy+inset, cellW-inset*2, cellH-inset*2,
+          6, 6, canvas.width-12, canvas.height-12
         );
 
         // Grayscale + contrast
@@ -926,9 +927,15 @@ async function runOcr(imageUrl){
           _ocrNums[letter].push(null);
           if(row===2&&col===2) _ocrDetectedFreeCenter=true;
         } else {
-          // OCR read wrong number — put null, user can fix
-          _ocrNums[letter].push(null);
-          if(rawEl) rawEl.value += `AVISO: ${n} inválido para coluna ${letter} (${min}-${max})\n`;
+          // OCR read wrong number — try to recover
+          const recovered = recoverNumber(n, min, max);
+          if(recovered){
+            _ocrNums[letter].push(recovered);
+            if(rawEl) rawEl.value += `RECUPERADO: ${n} → ${recovered} para coluna ${letter}\n`;
+          } else {
+            _ocrNums[letter].push(null);
+            if(rawEl) rawEl.value += `AVISO: ${n} inválido para coluna ${letter} (${min}-${max})\n`;
+          }
         }
       });
     }
@@ -965,30 +972,81 @@ function loadImage(url){
 }
 
 function detectGridArea(img){
-  // Draw image to canvas and scan for grid boundaries
   const w=img.naturalWidth, h=img.naturalHeight;
   const canvas=document.createElement('canvas');
-  canvas.width=w; canvas.height=h;
+  // Work at reduced size for speed
+  const scale=Math.min(1, 600/Math.max(w,h));
+  const sw=Math.round(w*scale), sh=Math.round(h*scale);
+  canvas.width=sw; canvas.height=sh;
   const ctx=canvas.getContext('2d');
-  ctx.drawImage(img,0,0);
-  const data=ctx.getImageData(0,0,w,h).data;
+  ctx.drawImage(img,0,0,sw,sh);
+  const data=ctx.getImageData(0,0,sw,sh).data;
 
-  function grayAt(x,y){ const i=(y*w+x)*4; return 0.299*data[i]+0.587*data[i+1]+0.114*data[i+2]; }
-  function rowDarkness(y){ let s=0; for(let x=0;x<w;x++) s+=255-grayAt(x,y); return s/w; }
-  function colDarkness(x){ let s=0; for(let y=0;y<h;y++) s+=255-grayAt(x,y); return s/h; }
+  function gray(x,y){ const i=(y*sw+x)*4; return 0.299*data[i]+0.587*data[i+1]+0.114*data[i+2]; }
 
-  // Find darkest rows/cols to detect grid borders
-  // Scan from edges inward to find where content starts
-  const margin = 0.05; // ignore 5% border
-  let x0=Math.round(w*margin), x1=Math.round(w*(1-margin));
-  let y0=Math.round(h*margin), y1=Math.round(h*(1-margin));
+  // For each row, compute average darkness (dark = grid line or border)
+  function rowDark(y){ let s=0; for(let x=0;x<sw;x++) s+=(255-gray(x,y)); return s/sw; }
+  function colDark(x){ let s=0; for(let y=0;y<sh;y++) s+=(255-gray(x,y)); return s/sh; }
 
-  // Try to tighten by finding dark column lines on left/right
-  // Simple approach: use center 90% of image as grid
-  x0=Math.round(w*0.04); x1=Math.round(w*0.96);
-  y0=Math.round(h*0.04); y1=Math.round(h*0.96);
+  // Find top/bottom/left/right boundaries by looking for dark bands
+  // Scan from outside in to find where the grid starts
+  const threshold = 20; // minimum darkness to be considered a grid line
 
-  return {x:x0, y:y0, w:x1-x0, h:y1-y0};
+  // Left boundary
+  let x0=0;
+  for(let x=0;x<sw*0.3;x++){ if(colDark(x)>threshold){x0=x;break;} }
+  // Right boundary
+  let x1=sw-1;
+  for(let x=sw-1;x>sw*0.7;x--){ if(colDark(x)>threshold){x1=x;break;} }
+  // Top boundary
+  let y0=0;
+  for(let y=0;y<sh*0.3;y++){ if(rowDark(y)>threshold){y0=y;break;} }
+  // Bottom boundary
+  let y1=sh-1;
+  for(let y=sh-1;y>sh*0.7;y--){ if(rowDark(y)>threshold){y1=y;break;} }
+
+  // Convert back to original image coordinates
+  const ox0=Math.max(0, Math.round(x0/scale)-2);
+  const oy0=Math.max(0, Math.round(y0/scale)-2);
+  const ox1=Math.min(w, Math.round(x1/scale)+2);
+  const oy1=Math.min(h, Math.round(y1/scale)+2);
+
+  console.log('Grid detected:', ox0, oy0, ox1-ox0, oy1-oy0, 'from', w, h);
+  return {x:ox0, y:oy0, w:ox1-ox0, h:oy1-oy0};
+}
+
+function recoverNumber(n, min, max){
+  if(!n) return null;
+  const s = String(n);
+
+  // Case 1: number too long (e.g. 135 should be 35, or 37)
+  // Try last 2 digits
+  if(s.length > 2){
+    const last2 = parseInt(s.slice(-2));
+    if(last2>=min && last2<=max) return last2;
+    const last1 = parseInt(s.slice(-1));
+    if(last1>=min && last1<=max) return last1;
+  }
+
+  // Case 2: number too short (e.g. 7 should be 37, 47... or 1 should be 21, 31...)
+  // Try adding each possible prefix digit
+  if(n < min){
+    // Try prepending digits to make it fit in range
+    for(let prefix=1; prefix<=9; prefix++){
+      const candidate = parseInt(String(prefix)+s);
+      if(candidate>=min && candidate<=max) return candidate;
+    }
+    // Try prepending two digits
+    for(let prefix=10; prefix<=99; prefix++){
+      const candidate = parseInt(String(prefix)+s);
+      if(candidate>=min && candidate<=max) return candidate;
+    }
+  }
+
+  // Case 3: off by one digit (e.g. 7 read as part of 37 — missing first digit)
+  // Already covered above
+
+  return null;
 }
 
 async function blobToBase64(url){

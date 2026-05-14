@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v6.5 — 2026-05-13 -->
+<!-- IBBI Bingo Player v6.6 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo Player v6.5</title>
+<title>IBBI Bingo Player v6.6</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -241,7 +241,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &#8594;</button>
         </div>
       </div>
-      <div class="vtag">v6.5</div>
+      <div class="vtag">v6.6</div>
     </div>
   </div>
 </div>
@@ -283,7 +283,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 ```
 
   </div>
-  <div class="vtag">v6.5</div>
+  <div class="vtag">v6.6</div>
 </div>
 
   </div>
@@ -297,7 +297,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">&mdash;</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v6.5</span>
+    <span class="p-vtag">v6.6</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -682,22 +682,32 @@ function showOcrStep(n){
   [1,2,3].forEach(i=>{ const el=$('ocrStep'+i); if(el)el.style.display=i===n?'block':'none'; });
 }
 
+function on(id, evt, fn){
+  const el=document.getElementById(id);
+  if(el) el.addEventListener(evt, fn);
+  else console.warn('initOcr: element not found:', id);
+}
+
 function initOcr(){
-  $('btnOcrCancel1').addEventListener('click',()=>closeM('mOcr'));
-  $('btnOcrCancel3').addEventListener('click',()=>closeM('mOcr'));
-  $('btnOcrRefoto').addEventListener('click',()=>{ showOcrStep(1); $('ocrFileInput').value=''; });
-  $('btnOcrDebug').addEventListener('click',()=>{ openM('mOcrDebug'); });
-  $('btnOcrDebugClose').addEventListener('click',()=>closeM('mOcrDebug'));
-  $('btnOcrDebugCopy').addEventListener('click',()=>{
-    const t=$('ocrRawText')?.value||'';
+  on('btnOcrCancel1','click',()=>closeM('mOcr'));
+  on('btnOcrCancel3','click',()=>closeM('mOcr'));
+  on('btnOcrRefoto','click',()=>{ showOcrStep(1); const fi=document.getElementById('ocrFileInput'); if(fi)fi.value=''; });
+  on('btnOcrDebug','click',()=>{ openM('mOcrDebug'); });
+  on('btnOcrDebugClose','click',()=>closeM('mOcrDebug'));
+  on('btnOcrDebugCopy','click',()=>{
+    const t=document.getElementById('ocrRawText')?.value||'';
     navigator.clipboard.writeText(t).then(()=>showToast('Copiado!')).catch(()=>{});
   });
-  $('ocrFileInput').addEventListener('change',async(e)=>{
+  on('ocrFileInput','change',async(e)=>{
     const file=e.target.files[0]; if(!file)return;
     const url=URL.createObjectURL(file);
-    $('ocrImg').src=url; $('ocrImgPreview').src=url;
+    const ocrImg=document.getElementById('ocrImg');
+    const ocrImgPreview=document.getElementById('ocrImgPreview');
+    if(ocrImg) ocrImg.src=url;
+    if(ocrImgPreview) ocrImgPreview.src=url;
     showOcrStep(2);
-    $('ocrLoading').style.display='block';
+    const ol=document.getElementById('ocrLoading');
+    if(ol) ol.style.display='block';
     await runOcr(url);
   });
   $('btnOcrConfirmar').addEventListener('click',()=>confirmOcr());
@@ -1164,7 +1174,7 @@ function renderBody(){
   $('btnPuxarAuto').addEventListener('click',()=>puxarAutomatico());
   renderEmptyState();
   initNumpad();
-  initOcr();
+  // initOcr called separately after DOM ready
 }
 
 function showToast(msg){
@@ -1443,7 +1453,100 @@ $('btnBingoOk').addEventListener('click',()=>{
   const el=$('batidaStatusEl');
   if(el){el.className='batida-status bs-pend';el.textContent=' Batida enviada -- aguardando confirmacao...';}
 });
+// Init OCR handlers once
+initOcr();
 </script>
+
+<!-- VIEW: Not Found -->
+
+<div class="view" id="vNotFound">
+  <div class="not-found">
+    <div class="nf-icon">&#127178;</div>
+    <div class="nf-title">Evento não encontrado</div>
+    <div class="nf-sub" id="nfMsg">Este evento não existe ou foi excluído.<br>Peça o link correto ao organizador.</div>
+    <span class="nf-link">player.html?ev=ID_DO_EVENTO</span>
+  </div>
+</div>
+
+<!-- MODAL: Adicionar número -->
+
+<div class="mbk" id="mAddNum">
+  <div class="modal" style="max-width:320px">
+    <h2 id="mAddTitle">Adicionar?</h2>
+    <p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mAddTxt"></p>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnAddCancel">Cancelar</button>
+      <button class="btn btn-acc" id="btnAddOk">Adicionar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Remover número -->
+
+<div class="mbk" id="mRemNum">
+  <div class="modal" style="max-width:320px">
+    <h2>Remover?</h2>
+    <p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mRemTxt"></p>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnRemCancel">Cancelar</button>
+      <button class="btn btn-red" id="btnRemOk">Remover</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Excluir cartela -->
+
+<div class="mbk" id="mDelCartela">
+  <div class="modal" style="max-width:320px">
+    <h2>Excluir Cartela?</h2>
+    <p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mDelTxt"></p>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnDelCancel">Cancelar</button>
+      <button class="btn btn-red" id="btnDelOk">&#128465; Excluir</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Declarar BINGO -->
+
+<div class="mbk" id="mBingo">
+  <div class="modal" style="max-width:360px">
+    <h2>&#127881; Declarar BINGO?</h2>
+    <p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mBingoTxt"></p>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnBingoCancel">Cancelar</button>
+      <button class="btn" id="btnBingoOk" style="background:linear-gradient(135deg,#f5c800,#ff8c00);color:#000;font-weight:900;font-family:'Barlow',sans-serif;border:none;border-radius:var(--rsm);padding:9px 18px;cursor:pointer;font-size:.9rem">&#127881; Confirmar!</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Numpad -->
+
+<div class="mbk" id="mNumpad">
+  <div class="modal" style="max-width:300px">
+    <h2 id="mNumpadTitle">Digitar Número</h2>
+    <p style="font-size:.8rem;color:var(--text2);margin-bottom:10px" id="mNumpadSub"></p>
+    <div class="np-display" id="npDisplay">—</div>
+    <div class="np-hint" id="npHint"></div>
+    <div class="numpad" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px">
+      <button class="npbtn" data-n="1">1</button>
+      <button class="npbtn" data-n="2">2</button>
+      <button class="npbtn" data-n="3">3</button>
+      <button class="npbtn" data-n="4">4</button>
+      <button class="npbtn" data-n="5">5</button>
+      <button class="npbtn" data-n="6">6</button>
+      <button class="npbtn" data-n="7">7</button>
+      <button class="npbtn" data-n="8">8</button>
+      <button class="npbtn" data-n="9">9</button>
+      <button class="npbtn np-del" id="npBksp">&#9003;</button>
+      <button class="npbtn" data-n="0">0</button>
+      <button class="npbtn np-ok" id="npOk">OK</button>
+    </div>
+    <div class="mfoot" style="margin-top:14px">
+      <button class="btn btn-ghost btn-sm" id="btnNumpadCancel">Cancelar</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

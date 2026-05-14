@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v7.0 — 2026-05-13 -->
+<!-- IBBI Bingo Player v7.1 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -328,7 +328,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">&mdash;</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v7.0</span>
+    <span class="p-vtag">v7.1</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -480,23 +480,8 @@ transition:background-color 9999s ease-in-out 0s;
       </div>
       <div style="display:flex;gap:6px;margin-top:6px">
         <button class="btn btn-ghost btn-sm" id="btnOcrNovaFoto" style="flex:1">&#128247; Nova Foto</button>
-        <button class="btn btn-ghost btn-sm" id="btnOcrDebug" style="flex:1">&#128269; Log</button>
         <button class="btn btn-acc" id="btnOcrConfirmar" style="flex:2;display:none">&#9989; Criar</button>
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: OCR debug log -->
-
-<div class="mbk" id="mOcrDebug">
-  <div class="modal" style="max-width:460px;max-height:85vh">
-    <h2>&#128269; Texto Bruto OCR</h2>
-    <p style="font-size:.75rem;color:var(--text2);margin-bottom:10px">O que o Tesseract leu da imagem. Compartilhe isso para ajudar a melhorar o OCR.</p>
-    <textarea id="ocrRawText" readonly style="width:100%;height:300px;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);font-size:.8rem;border-radius:var(--rsm);padding:10px;resize:none;font-family:monospace;line-height:1.5"></textarea>
-    <div class="mfoot">
-      <button class="btn btn-ghost" id="btnOcrDebugClose">Fechar</button>
-      <button class="btn btn-acc btn-sm" id="btnOcrDebugCopy">&#128203; Copiar</button>
     </div>
   </div>
 </div>
@@ -659,7 +644,6 @@ $('btnCadastrar').addEventListener('click', async()=>{
   if(senha!==senhaConf){showErr('cadErr','As senhas nao coincidem.');return;}
   if(!nome){showErr('cadErr','Digite seu nome completo.');return;}
   if(!document.getElementById('chkTermos')?.checked){showErr('cadErr','Voce deve aceitar os termos de responsabilidade.');return;}
-  if(!document.getElementById('chkTermos')?.checked){showErr('cadErr','Voce deve aceitar os termos de responsabilidade para continuar.');return;}
   $('btnCadastrar').disabled=true; $('btnCadastrar').textContent='Criando conta...';
   try{
     const cred=await createUserWithEmailAndPassword(auth,email,senha);
@@ -850,12 +834,7 @@ function recoverNumber(n, min, max){
 
 function initOcr(){
   on('btnOcrFechar','click',()=>closeM('mOcr'));
-  on('btnOcrDebug','click',()=>openM('mOcrDebug'));
-  on('btnOcrDebugClose','click',()=>closeM('mOcrDebug'));
-  on('btnOcrDebugCopy','click',()=>{
-    const t=document.getElementById('ocrRawText')?.value||'';
-    navigator.clipboard.writeText(t).then(()=>showToast('Copiado!')).catch(()=>{});
-  });
+
   on('ocrFileInput','change',async(e)=>{
     const file=e.target.files[0]; if(!file) return;
     _ocrRot=0;
@@ -1089,7 +1068,6 @@ async function ocrProcessar(){
       }
     }
     await worker.terminate();
-    const rawEl=document.getElementById('ocrRawText'); if(rawEl) rawEl.value=debugLog;
     _ocrNums={B:[],I:[],N:[],G:[],O:[]}; _ocrDetectedFreeCenter=false;
     for(let row=0;row<5;row++){
       LETTERS.forEach((letter,col)=>{
@@ -1244,20 +1222,6 @@ function renderEmptyState(){
   if($('togAuto'))$('togAuto').checked=true;
 }
 
-function debugGridState(){
-  const grid=$('cartelaGrid');
-  const c=cartelas[cartelaIdx];
-  const numerosInfo=c?JSON.stringify(c.numeros).slice(0,100):'N/A';
-  const msg=`cartelaGrid: ${grid?'existe':'NAO EXISTE'}
-cartelas[]: ${cartelas.length} itens
-cartelaIdx: ${cartelaIdx}
-Firebase uid: ${currentUser?.uid||'N/A'}
-Cache: ${localStorage.getItem(`bingo_cartelas_${evId}_${currentUser?.uid}`)?'existe':'vazio'}
-cartela.id: ${c?.id||'N/A'}
-numeros ok: ${c&&c.numeros&&Array.isArray(c.numeros?.B)?'SIM':'NAO - FORMATO ERRADO'}
-numeros: ${numerosInfo}`;
-  alert(msg);
-}
 
 // -- RENDER BODY --
 function renderBody(){
@@ -1279,7 +1243,6 @@ function renderBody(){
       <button class="btn btn-acc btn-sm" id="btnNovaC">+ Nova</button>
       <button class="btn btn-ghost btn-sm" id="btnScan" title="Escanear cartela">&#128247;</button>
       <button class="btn btn-red btn-icon" id="btnDelC" title="Excluir cartela">&#128465;</button>
-      <button class="btn btn-ghost btn-icon" id="btnDebugGrid" title="Debug" style="font-size:.65rem;padding:4px 6px;color:var(--text3)">&#9881;</button>
     </div>
     <div class="cartela-wrap">
       <div class="cartela-hdr" id="cartelaHdr"></div>
@@ -1313,8 +1276,6 @@ function renderBody(){
     showToast(`Cartela ${cartelaIdx+1} de ${cartelas.length} criada!`);
   });
   $('btnDelC').addEventListener('click',()=>{ const c=cartelas[cartelaIdx]; if(!c)return; $('mDelTxt').textContent=`Excluir a cartela ${c.id}? Nao pode ser desfeito.`; openM('mDelCartela'); });
-  $('btnDebugGrid').addEventListener('click',()=>debugGridState());
-  $('togFree').addEventListener('change',()=>{ if(cartelas[cartelaIdx]){cartelas[cartelaIdx].freeCenter=$('togFree').checked;saveAllCartelas();renderCartela();} });
   $('togAuto').addEventListener('change',()=>{ if(cartelas[cartelaIdx]){cartelas[cartelaIdx].autoMarcar=$('togAuto').checked;saveAllCartelas();} });
   $('btnBingo').addEventListener('click',onBingoClick);
   $('pLastBall').addEventListener('click',onTapLastBall);

@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v6.9 — 2026-05-13 -->
+<!-- IBBI Bingo Player v7.0 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo Player v6.9</title>
+<title>IBBI Bingo Player v7.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -210,11 +210,36 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .ocr-status{font-size:.78rem;color:var(–text2);margin-top:8px;text-align:center;min-height:20px}
 
 /* – AJUSTE / GRID ADJUST SCREEN – */
+.ajuste-wrap{position:fixed;inset:0;z-index:2000;background:var(–bg);display:flex;flex-direction:column}
+.ajuste-top{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(–surface);border-bottom:1.5px solid var(–border);gap:8px;flex-shrink:0}
+.ajuste-top h2{font-family:‘Bebas Neue’,sans-serif;font-size:1.2rem;letter-spacing:2px;color:var(–accent);margin:0}
+.ajuste-canvas-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:10px;overflow:hidden;touch-action:none}
+.ajuste-canvas-wrap canvas{max-width:100%;max-height:100%;border:1.5px solid var(–border2);border-radius:var(–rsm);cursor:crosshair;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.ajuste-bottom{padding:12px 14px;background:var(–surface);border-top:1.5px solid var(–border);flex-shrink:0}
+.ajuste-rot{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ajuste-rot label{font-size:.72rem;font-weight:700;color:var(–text2);white-space:nowrap;flex-shrink:0}
+.ajuste-rot input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:6px;background:var(–surface2);border-radius:3px;outline:none}
+.ajuste-rot input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(–accent);cursor:pointer}
+.ajuste-rot .rot-val{font-size:.75rem;font-weight:800;color:var(–accent);min-width:36px;text-align:right}
+.ajuste-btns{display:flex;gap:8px;flex-wrap:wrap}
+.ajuste-btns .btn{flex:1;min-width:0}
+
+/* NOT FOUND */
 .not-found{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:30px;background:var(–bg)}
 .nf-icon{font-size:3.5rem;margin-bottom:14px}
 .nf-title{font-family:‘Bebas Neue’,sans-serif;font-size:2rem;color:var(–text2);letter-spacing:2px;margin-bottom:8px}
 .nf-sub{font-size:.85rem;color:var(–text3);line-height:1.6}
 .nf-link{color:var(–accent);font-family:monospace;font-size:.8rem;margin-top:10px;display:block}
+
+/* iOS autofill override */
+input:-webkit-autofill,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:hover {
+-webkit-box-shadow: 0 0 0 30px #161620 inset !important;
+-webkit-text-fill-color: #e4f2ff !important;
+caret-color: #e4f2ff;
+transition: background-color 9999s ease-in-out 0s;
+}
 </style>
 
 </head>
@@ -241,7 +266,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &#8594;</button>
         </div>
       </div>
-      <div class="vtag">v6.9</div>
+      <div class="vtag">v7.0</div>
     </div>
   </div>
 </div>
@@ -283,7 +308,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 ```
 
   </div>
-  <div class="vtag">v6.9</div>
+  <div class="vtag">v7.0</div>
 </div>
 
   </div>
@@ -297,7 +322,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">&mdash;</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v6.9</span>
+    <span class="p-vtag">v7.0</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -856,27 +881,47 @@ function ocrDetectGrid(img, cw, ch){
     }
   }
 
-  // Find bottom of grid
-  let gridBottom=th-1;
-  for(let y=th-1;y>th*0.5;y--){
-    if(colDark(Math.round(tw*0.5))>T||(255-rowAvgGray(y))>T){ gridBottom=y; break; }
+  // Find bottom of grid — scan from bottom up for last dark horizontal line
+  let gridBottom = Math.round(th * 0.95); // default: 95% height
+  for(let y=th-1; y>th*0.4; y--){
+    const dark = 255 - rowAvgGray(y);
+    if(dark > T){ gridBottom = y; break; }
   }
 
-  // Convert to canvas display coords
-  const sX=cw/img.width/sc;
-  const sY=ch/img.height/sc;
-  const pad=3;
+  // Convert tmp canvas coords → original image coords → canvas display coords
+  // tmp canvas is at scale sc, so: orig = tmp_coord / sc
+  // canvas display = orig * (cw / img.width)
+  const toCanvasX = (tx) => (tx / sc) * (cw / img.width);
+  const toCanvasY = (ty) => (ty / sc) * (ch / img.height);
+  const pad = 3;
+
+  const gx = Math.max(0, toCanvasX(x0) - pad);
+  const gy = Math.max(0, toCanvasY(headerBottom) + pad);
+  const gw = Math.min(cw - gx, toCanvasX(x1 - x0) + pad * 2);
+  const gh = Math.min(ch - gy, toCanvasY(gridBottom - headerBottom) - pad * 2);
+
+  console.log('Grid detect:', {gx,gy,gw,gh}, 'canvas:', cw, ch);
+
+  // Safety: clamp to canvas bounds
   return{
-    x: Math.max(0,(x0/sc)*sX-pad),
-    y: Math.max(0,(headerBottom/sc)*sY+pad), // start BELOW header
-    w: Math.min(cw,((x1-x0)/sc)*sX+pad*2),
-    h: Math.min(ch,((gridBottom-headerBottom)/sc)*sY-pad),
+    x: Math.max(0, Math.min(gx, cw - 40)),
+    y: Math.max(0, Math.min(gy, ch - 40)),
+    w: Math.max(40, Math.min(gw, cw - gx)),
+    h: Math.max(40, Math.min(gh, ch - gy)),
   };
 }
 
 function ocrGridReset(){
   if(!_ocrImg||!_ocrCanvas) return;
-  _ocrGrid=ocrDetectGrid(_ocrImg,_ocrCanvas.width,_ocrCanvas.height);
+  const detected = ocrDetectGrid(_ocrImg, _ocrCanvas.width, _ocrCanvas.height);
+  const cw = _ocrCanvas.width, ch = _ocrCanvas.height;
+  // Safety: if detection goes out of bounds, fall back to safe margins
+  if(detected.x < 0 || detected.y < 0 || detected.x + detected.w > cw || detected.y + detected.h > ch){
+    console.warn('Grid detection out of bounds, using safe fallback');
+    _ocrGrid = {x: cw*0.04, y: ch*0.04, w: cw*0.92, h: ch*0.92};
+  } else {
+    _ocrGrid = detected;
+  }
   _ocrRot=0;
   const rs=document.getElementById('ocrRotSlider'); if(rs) rs.value=0;
   const rv=document.getElementById('ocrRotVal'); if(rv) rv.textContent='0°';

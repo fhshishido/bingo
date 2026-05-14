@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v5.4 — 2026-05-13 -->
+<!-- IBBI Bingo Player v5.5 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -241,7 +241,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar →</button>
         </div>
       </div>
-      <div class="vtag">v5.4</div>
+      <div class="vtag">v5.5</div>
     </div>
   </div>
 </div>
@@ -281,7 +281,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       </div>
     </div>
   </div>
-  <div class="vtag">v5.4</div>
+  <div class="vtag">v5.5</div>
 </div>
 ```
 
@@ -296,7 +296,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">—</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v5.4</span>
+    <span class="p-vtag">v5.5</span>
     <span class="conn off" id="pConn">⬤</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -418,12 +418,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       <p style="font-size:.78rem;color:var(--text2);margin-bottom:6px">Verifique os números detectados. Toque numa célula para corrigir.</p>
       <div class="ocr-grid" id="ocrGridEl"></div>
       <div class="ocr-status" id="ocrValidTxt"></div>
-      <!-- Debug log -->
-      <div id="ocrDebugBox" style="margin-top:10px;display:none">
-        <div style="font-size:.65rem;font-weight:800;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">Texto bruto lido pelo OCR</div>
-        <textarea id="ocrRawText" readonly style="width:100%;height:80px;background:var(--surface2);border:1px solid var(--border);color:var(--text2);font-size:.72rem;border-radius:var(--rsm);padding:6px;resize:none;font-family:monospace"></textarea>
-      </div>
-      <button class="btn btn-ghost btn-sm" id="btnOcrDebug" style="width:100%;margin-top:6px;font-size:.75rem">🔍 Ver texto lido pelo OCR</button>
+      <button class="btn btn-ghost btn-sm" id="btnOcrDebug" style="width:100%;margin-top:8px;font-size:.75rem">🔍 Ver texto bruto do OCR</button>
       <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
         <button class="btn btn-ghost btn-sm" id="btnOcrRefoto" style="flex:1">📷 Nova Foto</button>
         <button class="btn btn-acc" id="btnOcrConfirmar" style="flex:2">✅ Criar Cartela</button>
@@ -431,6 +426,20 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       <div style="text-align:center;margin-top:8px">
         <button class="btn btn-ghost btn-sm" id="btnOcrCancel3">Cancelar</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: OCR debug log -->
+
+<div class="mbk" id="mOcrDebug">
+  <div class="modal" style="max-width:460px;max-height:85vh">
+    <h2>🔍 Texto Bruto OCR</h2>
+    <p style="font-size:.75rem;color:var(--text2);margin-bottom:10px">O que o Tesseract leu da imagem. Compartilhe isso para ajudar a melhorar o OCR.</p>
+    <textarea id="ocrRawText" readonly style="width:100%;height:300px;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);font-size:.8rem;border-radius:var(--rsm);padding:10px;resize:none;font-family:monospace;line-height:1.5"></textarea>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnOcrDebugClose">Fechar</button>
+      <button class="btn btn-acc btn-sm" id="btnOcrDebugCopy">📋 Copiar</button>
     </div>
   </div>
 </div>
@@ -773,9 +782,11 @@ function initOcr(){
   $('btnOcrCancel1').addEventListener('click',()=>closeM('mOcr'));
   $('btnOcrCancel3').addEventListener('click',()=>closeM('mOcr'));
   $('btnOcrRefoto').addEventListener('click',()=>{ showOcrStep(1); $('ocrFileInput').value=''; });
-  $('btnOcrDebug').addEventListener('click',()=>{
-    const box=$('ocrDebugBox');
-    box.style.display=box.style.display==='none'?'block':'none';
+  $('btnOcrDebug').addEventListener('click',()=>{ openM('mOcrDebug'); });
+  $('btnOcrDebugClose').addEventListener('click',()=>closeM('mOcrDebug'));
+  $('btnOcrDebugCopy').addEventListener('click',()=>{
+    const t=$('ocrRawText')?.value||'';
+    navigator.clipboard.writeText(t).then(()=>showToast('Copiado!')).catch(()=>{});
   });
   $('ocrFileInput').addEventListener('change',async(e)=>{
     const file=e.target.files[0]; if(!file)return;
@@ -815,64 +826,106 @@ function initOcr(){
   });
 }
 
-// ── OCR — SIMPLE SCAN MODE ───────────────────────────
+// ── OCR — CLAUDE VISION ──────────────────────────────
 async function runOcr(imageUrl){
   try{
     const mode = evData?.mode||90;
-    const allNums = new Set();
+    $('ocrStatusTxt').textContent='Analisando imagem...';
 
-    // Run OCR in two passes: pageseg 6 then 11
-    const passes = [
-      {pageseg:'6',  label:'Passagem 1/2...'},
-      {pageseg:'11', label:'Passagem 2/2...'},
-    ];
+    // Convert blob URL to base64
+    const base64Data = await blobToBase64(imageUrl);
+    const base64 = base64Data.split(',')[1];
+    const mimeType = base64Data.split(';')[0].split(':')[1]||'image/jpeg';
 
-    let _ocrRawText = '';
-    for(const pass of passes){
-      $('ocrStatusTxt').textContent = pass.label;
-      const worker = await Tesseract.createWorker('eng', 1, {
-        logger: m=>{
-          if(m.status==='recognizing text')
-            $('ocrStatusTxt').textContent = pass.label+' '+Math.round((m.progress||0)*100)+'%';
-        }
-      });
-      await worker.setParameters({
-        tessedit_char_whitelist: '0123456789',
-        tessedit_pageseg_mode: pass.pageseg,
-      });
-      const {data:{text}} = await worker.recognize(imageUrl);
-      await worker.terminate();
-      _ocrRawText += `[modo ${pass.pageseg}]: ${text}\n`;
-      console.log('OCR pass', pass.pageseg, ':', text);
+    $('ocrStatusTxt').textContent='Lendo números...';
 
-      // Extract all numbers in range
-      (text.match(/\d+/g)||[]).forEach(m=>{
-        const n = parseInt(m);
-        if(n >= 1 && n <= mode) allNums.add(n);
+    const resp = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:500,
+        messages:[{
+          role:'user',
+          content:[
+            {type:'image', source:{type:'base64', media_type:mimeType, data:base64}},
+            {type:'text', text:`Esta é uma cartela de bingo de ${mode} pedras. Liste TODOS os números visíveis nas células da cartela. Retorne APENAS um JSON no formato: {"numeros":[1,3,7,11,13,19,21,32,33,35,37,38,40,42,49,57,59,61,62,64,73,79,83,86,90]} com todos os números encontrados na ordem que aparecem. Se houver célula vazia ou FREE CENTER inclua null. Retorne SOMENTE o JSON, sem explicação.`}
+          ]
+        }]
+      })
+    });
+
+    const json = await resp.json();
+    const rawText = json.content?.[0]?.text||'';
+    console.log('Claude response:', rawText);
+
+    // Save for debug
+    const rawEl=$('ocrRawText');
+    if(rawEl) rawEl.value = 'Claude Vision:\n'+rawText;
+
+    // Parse JSON response
+    let nums = [];
+    try{
+      const cleaned = rawText.replace(/```json|```/g,'').trim();
+      const parsed = JSON.parse(cleaned);
+      nums = (parsed.numeros||[]).filter(n=>n!==null&&n>=1&&n<=mode);
+    }catch(e){
+      // fallback: extract numbers from text
+      (rawText.match(/\d+/g)||[]).forEach(m=>{
+        const n=parseInt(m);
+        if(n>=1&&n<=mode) nums.push(n);
       });
     }
 
-    console.log('All numbers found:', [...allNums], 'count:', allNums.size);
-
-    // Save raw text for debug display
-    try{
-      const rawEl=$('ocrRawText');
-      if(rawEl) rawEl.value=_ocrRawText;
-    }catch(e){}
-
-    // Distribute by bingo column rules
-    distributeByRange([...allNums], mode);
+    console.log('Numbers found:', nums);
+    distributeByRange([...new Set(nums)], mode);
     $('ocrLoading').style.display='none';
     showOcrStep(3);
     renderOcrGrid();
 
   }catch(err){
     console.error('OCR error:', err);
-    $('ocrLoading').innerHTML=`<div style="color:var(--red);font-weight:700;padding:10px">
-      ❌ Erro no OCR.<br>
-      <small>Tente uma foto mais nítida com boa iluminação.</small>
-    </div>`;
-    setTimeout(()=>showOcrStep(1), 3000);
+    // Fallback to Tesseract if Claude fails
+    await runOcrTesseract(imageUrl);
+  }
+}
+
+async function blobToBase64(url){
+  const r=await fetch(url);
+  const blob=await r.blob();
+  return new Promise((res,rej)=>{
+    const reader=new FileReader();
+    reader.onload=()=>res(reader.result);
+    reader.onerror=rej;
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function runOcrTesseract(imageUrl){
+  try{
+    const mode=evData?.mode||90;
+    const allNums=new Set();
+    let rawText='';
+    $('ocrStatusTxt').textContent='Tentando leitura alternativa...';
+    for(const pageseg of['6','11']){
+      const worker=await Tesseract.createWorker('eng',1,{
+        logger:m=>{if(m.status==='recognizing text')$('ocrStatusTxt').textContent='Lendo... '+Math.round((m.progress||0)*100)+'%';}
+      });
+      await worker.setParameters({tessedit_char_whitelist:'0123456789',tessedit_pageseg_mode:pageseg});
+      const {data:{text}}=await worker.recognize(imageUrl);
+      await worker.terminate();
+      rawText+=`[modo ${pageseg}]: ${text}\n`;
+      (text.match(/\d+/g)||[]).forEach(m=>{const n=parseInt(m);if(n>=1&&n<=mode)allNums.add(n);});
+    }
+    const rawEl=$('ocrRawText');
+    if(rawEl) rawEl.value=rawText;
+    distributeByRange([...allNums],mode);
+    $('ocrLoading').style.display='none';
+    showOcrStep(3);
+    renderOcrGrid();
+  }catch(err){
+    $('ocrLoading').innerHTML='<div style="color:var(--red);font-weight:700;padding:10px">❌ Erro no OCR. Tente outra foto.</div>';
+    setTimeout(()=>showOcrStep(1),3000);
   }
 }
 
@@ -1014,6 +1067,16 @@ function renderEmptyState(){
   if($('togAuto'))$('togAuto').checked=true;
 }
 
+function debugGridState(){
+  const grid=$('cartelaGrid');
+  const msg=`cartelaGrid: ${grid?'existe':'NÃO EXISTE'}
+cartelas[]: ${cartelas.length} itens
+cartelaIdx: ${cartelaIdx}
+Firebase uid: ${currentUser?.uid||'N/A'}
+Cache: ${localStorage.getItem(`bingo_cartelas_${evId}_${currentUser?.uid}`)?'existe':'vazio'}`;
+  alert(msg);
+}
+
 // ── RENDER BODY ──────────────────────────────────────
 function renderBody(){
   $('pBody').innerHTML=`
@@ -1034,6 +1097,7 @@ function renderBody(){
       <button class="btn btn-acc btn-sm" id="btnNovaC">+ Nova</button>
       <button class="btn btn-ghost btn-sm" id="btnScan" title="Escanear cartela">📷</button>
       <button class="btn btn-red btn-icon" id="btnDelC" title="Excluir cartela">🗑️</button>
+      <button class="btn btn-ghost btn-icon" id="btnDebugGrid" title="Debug" style="font-size:.65rem;padding:4px 6px;color:var(--text3)">⚙</button>
     </div>
     <div class="cartela-wrap">
       <div class="cartela-hdr" id="cartelaHdr"></div>
@@ -1066,6 +1130,7 @@ function renderBody(){
     showToast(`✅ Cartela ${cartelaIdx+1} de ${cartelas.length} criada!`);
   });
   $('btnDelC').addEventListener('click',()=>{ const c=cartelas[cartelaIdx]; if(!c)return; $('mDelTxt').textContent=`Excluir a cartela ${c.id}? Não pode ser desfeito.`; openM('mDelCartela'); });
+  $('btnDebugGrid').addEventListener('click',()=>debugGridState());
   $('togFree').addEventListener('change',()=>{ if(cartelas[cartelaIdx]){cartelas[cartelaIdx].freeCenter=$('togFree').checked;saveAllCartelas();renderCartela();} });
   $('togAuto').addEventListener('change',()=>{ if(cartelas[cartelaIdx]){cartelas[cartelaIdx].autoMarcar=$('togAuto').checked;saveAllCartelas();} });
   $('btnBingo').addEventListener('click',onBingoClick);

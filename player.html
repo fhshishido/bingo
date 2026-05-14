@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v5.3 — 2026-05-13 -->
+<!-- IBBI Bingo Player v5.4 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -241,7 +241,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar →</button>
         </div>
       </div>
-      <div class="vtag">v5.3</div>
+      <div class="vtag">v5.4</div>
     </div>
   </div>
 </div>
@@ -281,7 +281,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       </div>
     </div>
   </div>
-  <div class="vtag">v5.3</div>
+  <div class="vtag">v5.4</div>
 </div>
 ```
 
@@ -296,7 +296,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">—</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v5.3</span>
+    <span class="p-vtag">v5.4</span>
     <span class="conn off" id="pConn">⬤</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -418,7 +418,13 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       <p style="font-size:.78rem;color:var(--text2);margin-bottom:6px">Verifique os números detectados. Toque numa célula para corrigir.</p>
       <div class="ocr-grid" id="ocrGridEl"></div>
       <div class="ocr-status" id="ocrValidTxt"></div>
-      <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+      <!-- Debug log -->
+      <div id="ocrDebugBox" style="margin-top:10px;display:none">
+        <div style="font-size:.65rem;font-weight:800;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">Texto bruto lido pelo OCR</div>
+        <textarea id="ocrRawText" readonly style="width:100%;height:80px;background:var(--surface2);border:1px solid var(--border);color:var(--text2);font-size:.72rem;border-radius:var(--rsm);padding:6px;resize:none;font-family:monospace"></textarea>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="btnOcrDebug" style="width:100%;margin-top:6px;font-size:.75rem">🔍 Ver texto lido pelo OCR</button>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
         <button class="btn btn-ghost btn-sm" id="btnOcrRefoto" style="flex:1">📷 Nova Foto</button>
         <button class="btn btn-acc" id="btnOcrConfirmar" style="flex:2">✅ Criar Cartela</button>
       </div>
@@ -653,21 +659,28 @@ async function initGame(){
     renderPremio(); renderBall(); renderHist(); checkAutoBatida();
   });
 
-  // Listen cartelas do user — first fire populates cartelas[]
-  let firstFire=true;
+  // Listen cartelas do user
   onValue(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),snap2=>{
     const data=snap2.val();
     const age=Date.now()-_lastSaveTime;
-    // Skip Firebase update if we just saved locally within 1.5s (avoids overwrite race)
-    if(data?.cartelas && (firstFire || age>1500)){
+
+    // Always update cartelas from Firebase unless we JUST saved locally (<1.5s)
+    if(data?.cartelas && age>1500){
       const novo=Object.entries(data.cartelas)
         .map(([fbId,c])=>({fbId,...c}))
         .sort((a,b)=>a.criadaEm-b.criadaEm);
-      if(firstFire){ cartelaIdx=0; }
-      else if(cartelaIdx>=novo.length){ cartelaIdx=Math.max(0,novo.length-1); }
-      cartelas=novo;
+      if(novo.length){
+        // preserve current index if possible
+        if(cartelaIdx>=novo.length) cartelaIdx=Math.max(0,novo.length-1);
+        cartelas=novo;
+        // update localStorage cache
+        try{
+          const obj={};
+          cartelas.forEach(c=>{obj[c.fbId]={id:c.id,numeros:c.numeros,marcados:c.marcados||[],freeCenter:c.freeCenter||false,autoMarcar:c.autoMarcar!==false,criadaEm:c.criadaEm};});
+          localStorage.setItem(`bingo_cartelas_${evId}_${currentUser.uid}`,JSON.stringify({cartelas:obj,cartelaIdx,savedAt:Date.now()}));
+        }catch(e){}
+      }
     }
-    firstFire=false;
 
     // batida status
     const bs=data?.batidaStatus;
@@ -681,10 +694,10 @@ async function initGame(){
       else{el.style.display='none';}
     }
 
-    // render — retry until DOM is ready
-    const doRender = () => {
-      if(!$('cartelaGrid')){ setTimeout(doRender, 150); return; }
-      if(!cartelas.length){ renderEmptyState(); }
+    // render with retry
+    const doRender=()=>{
+      if(!$('cartelaGrid')){setTimeout(doRender,100);return;}
+      if(!cartelas.length) renderEmptyState();
       else { renderCartela(); renderHist(); checkAutoBatida(); }
     };
     doRender();
@@ -760,6 +773,10 @@ function initOcr(){
   $('btnOcrCancel1').addEventListener('click',()=>closeM('mOcr'));
   $('btnOcrCancel3').addEventListener('click',()=>closeM('mOcr'));
   $('btnOcrRefoto').addEventListener('click',()=>{ showOcrStep(1); $('ocrFileInput').value=''; });
+  $('btnOcrDebug').addEventListener('click',()=>{
+    const box=$('ocrDebugBox');
+    box.style.display=box.style.display==='none'?'block':'none';
+  });
   $('ocrFileInput').addEventListener('change',async(e)=>{
     const file=e.target.files[0]; if(!file)return;
     const url=URL.createObjectURL(file);
@@ -810,6 +827,7 @@ async function runOcr(imageUrl){
       {pageseg:'11', label:'Passagem 2/2...'},
     ];
 
+    let _ocrRawText = '';
     for(const pass of passes){
       $('ocrStatusTxt').textContent = pass.label;
       const worker = await Tesseract.createWorker('eng', 1, {
@@ -824,6 +842,7 @@ async function runOcr(imageUrl){
       });
       const {data:{text}} = await worker.recognize(imageUrl);
       await worker.terminate();
+      _ocrRawText += `[modo ${pass.pageseg}]: ${text}\n`;
       console.log('OCR pass', pass.pageseg, ':', text);
 
       // Extract all numbers in range
@@ -834,6 +853,12 @@ async function runOcr(imageUrl){
     }
 
     console.log('All numbers found:', [...allNums], 'count:', allNums.size);
+
+    // Save raw text for debug display
+    try{
+      const rawEl=$('ocrRawText');
+      if(rawEl) rawEl.value=_ocrRawText;
+    }catch(e){}
 
     // Distribute by bingo column rules
     distributeByRange([...allNums], mode);

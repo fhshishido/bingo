@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v4.2 — 2026-05-13 -->
+<!-- IBBI Bingo Player v4.3 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -211,7 +211,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar →</button>
         </div>
       </div>
-      <div class="vtag">v4.2</div>
+      <div class="vtag">v4.3</div>
     </div>
   </div>
 </div>
@@ -251,7 +251,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       </div>
     </div>
   </div>
-  <div class="vtag">v4.2</div>
+  <div class="vtag">v4.3</div>
 </div>
 ```
 
@@ -266,7 +266,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">—</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v4.2</span>
+    <span class="p-vtag">v4.3</span>
     <span class="conn off" id="pConn">⬤</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -537,12 +537,10 @@ async function initGame(){
       else{el.style.display='none';}
     }
 
-    // create first cartela if none exists
-    if(!cartelas.length){ const c=novaCartela(); cartelas=[c]; cartelaIdx=0; saveAllCartelas(); return; }
+    // no cartelas — show empty state, user must create
+    if(!cartelas.length){ renderEmptyState(); return; }
 
     renderCartela(); renderHist(); checkAutoBatida();
-
-    // local renders handle toast immediately
   });
 }
 
@@ -561,6 +559,25 @@ function saveAllCartelas(){
   cartelas.forEach(c=>{ obj[c.fbId]={id:c.id,numeros:c.numeros,marcados:c.marcados||[],freeCenter:c.freeCenter||false,autoMarcar:c.autoMarcar!==false,criadaEm:c.criadaEm}; });
   const nome=userProfile?.apelido||userProfile?.nome||currentUser.email;
   update(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),{cartelas:obj,nome,uid:currentUser.uid}).catch(console.error);
+}
+
+
+// ── EMPTY STATE ──────────────────────────────────────
+function renderEmptyState(){
+  const hdr=$('cartelaHdr'), grid=$('cartelaGrid');
+  const cnId=$('cnId'), cnPg=$('cnPg');
+  if(cnId) cnId.textContent='—';
+  if(cnPg) cnPg.textContent='Nenhuma cartela';
+  if(hdr) hdr.innerHTML='';
+  if(grid){
+    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:24px 10px;color:var(--text3)">
+      <div style="font-size:2rem;margin-bottom:8px">🃏</div>
+      <div style="font-size:.88rem;font-weight:700;margin-bottom:4px">Nenhuma cartela</div>
+      <div style="font-size:.78rem">Toque em <strong style="color:var(--accent)">+ Nova</strong> para criar sua cartela</div>
+    </div>`;
+  }
+  if($('togFree'))$('togFree').checked=false;
+  if($('togAuto'))$('togAuto').checked=true;
 }
 
 // ── RENDER BODY ──────────────────────────────────────
@@ -605,7 +622,8 @@ function renderBody(){
   $('btnNovaC').addEventListener('click',()=>{
     const c=novaCartela(); cartelas.push(c); cartelaIdx=cartelas.length-1;
     saveAllCartelas();
-    renderCartela(); renderHist();
+    // render immediately without waiting for Firebase
+    renderCartela(); renderHist(); checkAutoBatida();
     showToast('✅ Cartela criada!');
   });
   $('btnDelC').addEventListener('click',()=>{ const c=cartelas[cartelaIdx]; if(!c)return; $('mDelTxt').textContent=`Excluir a cartela ${c.id}? Não pode ser desfeito.`; openM('mDelCartela'); });
@@ -614,7 +632,8 @@ function renderBody(){
   $('btnBingo').addEventListener('click',onBingoClick);
   $('pLastBall').addEventListener('click',onTapLastBall);
   $('btnSair').addEventListener('click',async()=>{ await signOut(auth); });
-  // cartelas loaded by Firebase listener — no need to render here
+  // show empty state immediately — Firebase listener will populate
+  renderEmptyState();
 }
 
 function showToast(msg){
@@ -731,11 +750,10 @@ $('btnDelCancel').addEventListener('click',()=>closeM('mDelCartela'));
 $('btnDelOk').addEventListener('click',()=>{
   closeM('mDelCartela');
   cartelas.splice(cartelaIdx,1);
-  if(!cartelas.length){const nc=novaCartela();cartelas=[nc];}
-  if(cartelaIdx>=cartelas.length)cartelaIdx=Math.max(0,cartelas.length-1);
+  if(cartelaIdx>=cartelas.length) cartelaIdx=Math.max(0,cartelas.length-1);
   saveAllCartelas();
-  // render immediately — don't wait for Firebase
-  setTimeout(()=>{ renderCartela(); renderHist(); showToast('🗑️ Cartela excluída'); },50);
+  if(!cartelas.length){ renderEmptyState(); return; }
+  setTimeout(()=>{ renderCartela(); renderHist(); checkAutoBatida(); showToast('🗑️ Cartela excluída'); },50);
 });
 
 // ── HISTORY ──────────────────────────────────────────

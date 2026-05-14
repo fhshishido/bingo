@@ -6,9 +6,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <title>IBBI Bingo Player v6.5</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -213,8 +210,6 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .ocr-status{font-size:.78rem;color:var(–text2);margin-top:8px;text-align:center;min-height:20px}
 
 /* – AJUSTE / GRID ADJUST SCREEN – */
-
-/* NOT FOUND */
 .not-found{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:30px;background:var(–bg)}
 .nf-icon{font-size:3.5rem;margin-bottom:14px}
 .nf-title{font-family:‘Bebas Neue’,sans-serif;font-size:2rem;color:var(–text2);letter-spacing:2px;margin-bottom:8px}
@@ -316,7 +311,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
   <div class="modal" style="max-width:420px;max-height:95vh">
     <h2>&#128247; Escanear Cartela</h2>
     <div id="ocrStep1">
-      <p style="font-size:.82rem;color:var(--text2);margin-bottom:14px">Tire uma foto da cartela ou escolha da galeria. Enquadre a cartela inteira com boa iluminação.</p>
+      <p style="font-size:.82rem;color:var(--text2);margin-bottom:14px">Tire uma foto da cartela inteira com boa iluminação. Enquadre apenas a cartela.</p>
       <label style="display:block;width:100%;background:linear-gradient(135deg,var(--accent),#0090c8);color:#000;font-weight:900;border-radius:var(--rsm);padding:13px;text-align:center;cursor:pointer;font-family:'Barlow',sans-serif;font-size:.95rem">
         &#128247; Tirar Foto / Escolher Imagem
         <input type="file" id="ocrFileInput" accept="image/*" style="display:none">
@@ -335,7 +330,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     </div>
     <div id="ocrStep3" style="display:none">
       <img id="ocrImgPreview" class="ocr-preview" src="" alt="Cartela" style="margin-bottom:10px">
-      <p style="font-size:.78rem;color:var(--text2);margin-bottom:6px">Verifique os números. Toque para corrigir.</p>
+      <p style="font-size:.78rem;color:var(--text2);margin-bottom:6px">Verifique os números. Toque numa célula para corrigir.</p>
       <div class="ocr-grid" id="ocrGridEl"></div>
       <div class="ocr-status" id="ocrValidTxt"></div>
       <button class="btn btn-ghost btn-sm" id="btnOcrDebug" style="width:100%;margin-top:8px;font-size:.75rem">&#128269; Ver texto bruto do OCR</button>
@@ -706,8 +701,6 @@ function initOcr(){
     await runOcr(url);
   });
   $('btnOcrConfirmar').addEventListener('click',()=>confirmOcr());
-  
-
 
   // ocr cell numpad
   document.querySelectorAll('.npbtn[data-ocr]').forEach(btn=>{

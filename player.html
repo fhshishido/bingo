@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v4.9 — 2026-05-13 -->
+<!-- IBBI Bingo Player v5.1 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -241,7 +241,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar →</button>
         </div>
       </div>
-      <div class="vtag">v4.9</div>
+      <div class="vtag">v5.1</div>
     </div>
   </div>
 </div>
@@ -281,7 +281,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       </div>
     </div>
   </div>
-  <div class="vtag">v4.9</div>
+  <div class="vtag">v5.1</div>
 </div>
 ```
 
@@ -296,7 +296,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">—</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v4.9</span>
+    <span class="p-vtag">v5.1</span>
     <span class="conn off" id="pConn">⬤</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -624,8 +624,6 @@ function friendlyAuthError(code){
 }
 
 // ── INIT GAME ────────────────────────────────────────
-let _bodyReady = false;
-
 async function initGame(){
   const snap=await get(fb(`bingo/eventos/${evId}`));
   const ev=snap.val();
@@ -634,9 +632,8 @@ async function initGame(){
   $('gameEvNome').textContent=ev.nome;
   $('gameUserName').textContent=userProfile?.apelido||userProfile?.nome||currentUser.email;
   showView('vJogo');
-  renderBody(); // build DOM first, synchronously
-  _bodyReady=true;
-  renderEmptyState(); // show loading state while Firebase loads
+  renderBody();
+  renderEmptyState();
 
   // Listen evento
   onValue(fb(`bingo/eventos/${evId}`),snap2=>{
@@ -675,13 +672,13 @@ async function initGame(){
       else{el.style.display='none';}
     }
 
-    // wait for DOM to be ready before rendering
+    // render — retry until DOM is ready
     const doRender = () => {
+      if(!$('cartelaGrid')){ setTimeout(doRender, 150); return; }
       if(!cartelas.length){ renderEmptyState(); }
       else { renderCartela(); renderHist(); checkAutoBatida(); }
     };
-    if(_bodyReady){ doRender(); }
-    else { setTimeout(doRender, 100); }
+    doRender();
   });
 }
 
@@ -774,45 +771,167 @@ function initOcr(){
   });
 }
 
+// ── OCR WITH CANVAS PREPROCESSING ───────────────────
 async function runOcr(imageUrl){
   try{
-    $('ocrStatusTxt').textContent='Carregando motor OCR...';
+    $('ocrStatusTxt').textContent='Preparando imagem...';
+    const mode = evData?.mode||90;
+
+    // Load image into canvas for preprocessing
+    const img = await loadImage(imageUrl);
+
+    // Preprocess: grayscale + contrast + upscale
+    const processed = preprocessImage(img);
+    $('ocrStatusTxt').textContent='Iniciando OCR...';
+
+    // Run Tesseract on preprocessed image
     const worker = await Tesseract.createWorker('eng', 1, {
       logger: m=>{
         if(m.status==='recognizing text')
           $('ocrStatusTxt').textContent='Lendo... '+Math.round((m.progress||0)*100)+'%';
-        else if(m.status.includes('load')||m.status.includes('init'))
-          $('ocrStatusTxt').textContent='Inicializando...';
       }
     });
     await worker.setParameters({
       tessedit_char_whitelist: '0123456789',
-      tessedit_pageseg_mode: '6'
+      tessedit_pageseg_mode: '6', // uniform block
+      preserve_interword_spaces: '1'
     });
-    const {data:{text}} = await worker.recognize(imageUrl);
-    await worker.terminate();
 
-    // Extract all unique valid numbers from image
-    const mode = evData?.mode||90;
+    const {data:{text}} = await worker.recognize(processed);
+    await worker.terminate();
+    console.log('OCR raw text:', text);
+
+    // Extract all valid bingo numbers
     const allNums = new Set();
     (text.match(/\d+/g)||[]).forEach(m=>{
-      const n=parseInt(m);
-      if(n>=1 && n<=mode) allNums.add(n);
+      const n = parseInt(m);
+      if(n >= 1 && n <= mode) allNums.add(n);
     });
-    console.log('OCR all numbers found:', [...allNums]);
+    console.log('Numbers found:', [...allNums]);
 
-    // Distribute by value range (bingo rules — no position needed)
+    // If too few numbers detected, try again with different pageseg
+    if(allNums.size < 10){
+      $('ocrStatusTxt').textContent='Tentando modo alternativo...';
+      const worker2 = await Tesseract.createWorker('eng', 1, {});
+      await worker2.setParameters({
+        tessedit_char_whitelist: '0123456789',
+        tessedit_pageseg_mode: '11' // sparse text
+      });
+      const {data:{text:text2}} = await worker2.recognize(processed);
+      await worker2.terminate();
+      console.log('OCR retry text:', text2);
+      (text2.match(/\d+/g)||[]).forEach(m=>{
+        const n = parseInt(m);
+        if(n >= 1 && n <= mode) allNums.add(n);
+      });
+      console.log('Numbers after retry:', [...allNums]);
+    }
+
     distributeByRange([...allNums], mode);
-
     $('ocrLoading').style.display='none';
     showOcrStep(3);
     renderOcrGrid();
+
   }catch(err){
     console.error('OCR error:', err);
-    $('ocrStatusTxt').textContent='Erro ao processar.';
-    $('ocrLoading').innerHTML='<div style="color:var(--red);font-weight:700">Erro no OCR. Tente outra foto.</div>';
-    setTimeout(()=>{ showOcrStep(1); },2500);
+    $('ocrLoading').innerHTML=`<div style="color:var(--red);font-weight:700;padding:10px">
+      ❌ Erro no OCR.<br>
+      <small>Tente uma foto mais nítida com boa iluminação.</small>
+    </div>`;
+    setTimeout(()=>showOcrStep(1), 3000);
   }
+}
+
+function loadImage(url){
+  return new Promise((resolve, reject)=>{
+    const img = new Image();
+    img.onload = ()=>resolve(img);
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+function preprocessImage(img){
+  // Target size: upscale to at least 1200px wide for better OCR
+  const TARGET = 1400;
+  const scale = Math.max(1, TARGET / img.width);
+  const w = Math.round(img.width * scale);
+  const h = Math.round(img.height * scale);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+
+  // Draw upscaled
+  ctx.drawImage(img, 0, 0, w, h);
+
+  // Get pixel data
+  const imageData = ctx.getImageData(0, 0, w, h);
+  const data = imageData.data;
+
+  for(let i = 0; i < data.length; i += 4){
+    // Convert to grayscale (luminance formula)
+    const gray = Math.round(0.299*data[i] + 0.587*data[i+1] + 0.114*data[i+2]);
+
+    // Apply contrast stretch: push darks darker, lights lighter
+    // S-curve contrast enhancement
+    const contrasted = applySCurve(gray);
+
+    // Threshold: binarize to pure black/white
+    // Numbers on bingo cards are dark on light background
+    const bw = contrasted < 128 ? 0 : 255;
+
+    data[i] = data[i+1] = data[i+2] = bw;
+    data[i+3] = 255; // full alpha
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+
+  // Sharpen pass
+  sharpen(ctx, w, h);
+
+  // Return as data URL for Tesseract
+  return canvas.toDataURL('image/png');
+}
+
+function applySCurve(v){
+  // Normalize 0-1
+  const x = v / 255;
+  // Simple S-curve: enhances contrast in midtones
+  const s = x < 0.5
+    ? 2 * x * x
+    : 1 - Math.pow(-2*x+2, 2)/2;
+  return Math.round(s * 255);
+}
+
+function sharpen(ctx, w, h){
+  // Unsharp mask via convolution kernel
+  const kernel = [
+     0, -1,  0,
+    -1,  5, -1,
+     0, -1,  0
+  ];
+  const src = ctx.getImageData(0, 0, w, h);
+  const dst = ctx.createImageData(w, h);
+  const s = src.data, d = dst.data;
+  for(let y=1; y<h-1; y++){
+    for(let x=1; x<w-1; x++){
+      let r=0, g=0, b=0;
+      for(let ky=-1; ky<=1; ky++){
+        for(let kx=-1; kx<=1; kx++){
+          const idx=((y+ky)*w+(x+kx))*4;
+          const k=kernel[(ky+1)*3+(kx+1)];
+          r+=s[idx]*k; g+=s[idx+1]*k; b+=s[idx+2]*k;
+        }
+      }
+      const idx=(y*w+x)*4;
+      d[idx]  =Math.min(255,Math.max(0,r));
+      d[idx+1]=Math.min(255,Math.max(0,g));
+      d[idx+2]=Math.min(255,Math.max(0,b));
+      d[idx+3]=255;
+    }
+  }
+  ctx.putImageData(dst, 0, 0);
 }
 
 function distributeByRange(nums, mode){

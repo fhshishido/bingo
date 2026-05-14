@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v6.4 — 2026-05-13 -->
+<!-- IBBI Bingo Player v6.5 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo -- Login</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>IBBI Bingo Player v6.5</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -243,7 +246,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &#8594;</button>
         </div>
       </div>
-      <div class="vtag">v6.4</div>
+      <div class="vtag">v6.5</div>
     </div>
   </div>
 </div>
@@ -285,7 +288,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 ```
 
   </div>
-  <div class="vtag">v6.4</div>
+  <div class="vtag">v6.5</div>
 </div>
 
   </div>
@@ -299,13 +302,53 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">&mdash;</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v6.4</span>
+    <span class="p-vtag">v6.5</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div class="p-body" id="pBody"></div>
 </div>
 
 <!-- =============== VIEW: AJUSTE DE GRADE OCR =============== -->
+
+<!-- MODAL: Escanear Cartela -->
+
+<div class="mbk" id="mOcr">
+  <div class="modal" style="max-width:420px;max-height:95vh">
+    <h2>&#128247; Escanear Cartela</h2>
+    <div id="ocrStep1">
+      <p style="font-size:.82rem;color:var(--text2);margin-bottom:14px">Tire uma foto da cartela ou escolha da galeria. Enquadre a cartela inteira com boa iluminação.</p>
+      <label style="display:block;width:100%;background:linear-gradient(135deg,var(--accent),#0090c8);color:#000;font-weight:900;border-radius:var(--rsm);padding:13px;text-align:center;cursor:pointer;font-family:'Barlow',sans-serif;font-size:.95rem">
+        &#128247; Tirar Foto / Escolher Imagem
+        <input type="file" id="ocrFileInput" accept="image/*" style="display:none">
+      </label>
+      <div style="text-align:center;margin-top:14px">
+        <button class="btn btn-ghost btn-sm" id="btnOcrCancel1">Cancelar</button>
+      </div>
+    </div>
+    <div id="ocrStep2" style="display:none">
+      <img id="ocrImg" class="ocr-preview" src="" alt="Cartela">
+      <div id="ocrLoading" style="text-align:center;padding:20px">
+        <div style="font-size:2rem;animation:spin 1s linear infinite;display:inline-block">&#9881;</div>
+        <div style="margin-top:8px;font-weight:700;color:var(--text)">Processando...</div>
+        <div id="ocrStatusTxt" style="font-size:.78rem;color:var(--text2);margin-top:6px">Iniciando...</div>
+      </div>
+    </div>
+    <div id="ocrStep3" style="display:none">
+      <img id="ocrImgPreview" class="ocr-preview" src="" alt="Cartela" style="margin-bottom:10px">
+      <p style="font-size:.78rem;color:var(--text2);margin-bottom:6px">Verifique os números. Toque para corrigir.</p>
+      <div class="ocr-grid" id="ocrGridEl"></div>
+      <div class="ocr-status" id="ocrValidTxt"></div>
+      <button class="btn btn-ghost btn-sm" id="btnOcrDebug" style="width:100%;margin-top:8px;font-size:.75rem">&#128269; Ver texto bruto do OCR</button>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" id="btnOcrRefoto" style="flex:1">&#128247; Nova Foto</button>
+        <button class="btn btn-acc" id="btnOcrConfirmar" style="flex:2">&#9989; Criar Cartela</button>
+      </div>
+      <div style="text-align:center;margin-top:8px">
+        <button class="btn btn-ghost btn-sm" id="btnOcrCancel3">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL: OCR debug log -->
 

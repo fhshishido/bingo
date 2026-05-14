@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v4.8 — 2026-05-13 -->
+<!-- IBBI Bingo Player v4.9 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -241,7 +241,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar →</button>
         </div>
       </div>
-      <div class="vtag">v4.8</div>
+      <div class="vtag">v4.9</div>
     </div>
   </div>
 </div>
@@ -281,7 +281,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       </div>
     </div>
   </div>
-  <div class="vtag">v4.8</div>
+  <div class="vtag">v4.9</div>
 </div>
 ```
 
@@ -296,7 +296,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">—</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v4.8</span>
+    <span class="p-vtag">v4.9</span>
     <span class="conn off" id="pConn">⬤</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -634,8 +634,9 @@ async function initGame(){
   $('gameEvNome').textContent=ev.nome;
   $('gameUserName').textContent=userProfile?.apelido||userProfile?.nome||currentUser.email;
   showView('vJogo');
-  renderBody();
-  _bodyReady=true; // DOM is ready
+  renderBody(); // build DOM first, synchronously
+  _bodyReady=true;
+  renderEmptyState(); // show loading state while Firebase loads
 
   // Listen evento
   onValue(fb(`bingo/eventos/${evId}`),snap2=>{
@@ -717,6 +718,7 @@ function saveAllCartelas(){
 
 // ── OCR / ESCANEAR CARTELA ───────────────────────────
 let _ocrNums = {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
+let _ocrDetectedFreeCenter = false;
 let _ocrCellCtx = null; // {letter, row} being edited in ocr cell modal
 let _ocrCellVal = '';
 
@@ -783,17 +785,24 @@ async function runOcr(imageUrl){
           $('ocrStatusTxt').textContent='Inicializando...';
       }
     });
-    // digits only, word-level detection to get bounding boxes
     await worker.setParameters({
       tessedit_char_whitelist: '0123456789',
       tessedit_pageseg_mode: '6'
     });
-    const {data} = await worker.recognize(imageUrl);
+    const {data:{text}} = await worker.recognize(imageUrl);
     await worker.terminate();
 
-    // Use bounding box X position to determine column
-    // Image is divided into 5 equal vertical bands: B|I|N|G|O
-    distributeOcrByPosition(data, $('ocrImg').naturalWidth || 1000);
+    // Extract all unique valid numbers from image
+    const mode = evData?.mode||90;
+    const allNums = new Set();
+    (text.match(/\d+/g)||[]).forEach(m=>{
+      const n=parseInt(m);
+      if(n>=1 && n<=mode) allNums.add(n);
+    });
+    console.log('OCR all numbers found:', [...allNums]);
+
+    // Distribute by value range (bingo rules — no position needed)
+    distributeByRange([...allNums], mode);
 
     $('ocrLoading').style.display='none';
     showOcrStep(3);
@@ -806,40 +815,35 @@ async function runOcr(imageUrl){
   }
 }
 
-function distributeOcrByPosition(data, imgWidth){
-  // Reset columns
+function distributeByRange(nums, mode){
+  // Reset
   _ocrNums={B:[],I:[],N:[],G:[],O:[]};
-  const mode=evData?.mode||90;
-  const colW=imgWidth/5;
+  const size=mode/5; // 18 for 90-ball, 15 for 75-ball
 
-  // Collect all words with valid numbers and their X center position
-  const entries=[];
-  (data.words||[]).forEach(word=>{
-    const n=parseInt(word.text);
-    if(!isNaN(n)&&n>=1&&n<=mode&&word.text.match(/^\d{1,2}$/)){
-      const xCenter=(word.bbox.x0+word.bbox.x1)/2;
-      const col=Math.min(4,Math.floor(xCenter/colW));
-      entries.push({n, col, y:(word.bbox.y0+word.bbox.y1)/2});
-    }
+  // Each number belongs to exactly one column by its value range
+  // B=1-18, I=19-36, N=37-54, G=55-72, O=73-90 (for 90 balls)
+  nums.forEach(n=>{
+    const letter=getLetter(n,mode);
+    if(_ocrNums[letter].length<5) _ocrNums[letter].push(n);
   });
 
-  // Sort by Y (top to bottom) within each column
-  LETTERS.forEach((letter,ci)=>{
-    const colEntries=entries.filter(e=>e.col===ci);
-    colEntries.sort((a,b)=>a.y-b.y);
-    // take up to 5 unique numbers per column
-    const seen=new Set();
-    colEntries.forEach(e=>{
-      if(!seen.has(e.n)&&_ocrNums[letter].length<5){
-        seen.add(e.n); _ocrNums[letter].push(e.n);
-      }
-    });
-    // sort ascending within column and pad
-    _ocrNums[letter].sort((a,b)=>a-b);
-    while(_ocrNums[letter].length<5)_ocrNums[letter].push(null);
+  // Sort each column ascending
+  LETTERS.forEach(l=>{
+    _ocrNums[l].sort((a,b)=>a-b);
   });
 
-  console.log('OCR by position:', JSON.stringify(_ocrNums));
+  // Detect FREE CENTER: if N has exactly 4 numbers, mark center as free
+  // We'll reflect this in the toggle when user confirms
+  const nCount=_ocrNums['N'].filter(v=>v!==null).length;
+  _ocrDetectedFreeCenter = (nCount===4);
+
+  // Pad to 5 slots
+  LETTERS.forEach(l=>{
+    while(_ocrNums[l].length<5) _ocrNums[l].push(null);
+  });
+
+  console.log('Distributed by range:', JSON.stringify(_ocrNums));
+  console.log('Free center detected:', _ocrDetectedFreeCenter);
 }
 
 function renderOcrGrid(){
@@ -870,7 +874,8 @@ function renderOcrGrid(){
   }
   const pct=total>0?Math.round(valid/total*100):0;
   const vTxt=$('ocrValidTxt');
-  if(vTxt) vTxt.textContent=`${valid} de 25 números válidos (${pct}%) — toque para corrigir`;
+  const fcNote=_ocrDetectedFreeCenter?' | FREE CENTER detectado':'';
+  if(vTxt) vTxt.textContent=`${valid} números detectados (${pct}%)${fcNote} — toque para corrigir`;
 }
 
 function openOcrCellEdit(letter,row,currentVal){
@@ -898,6 +903,7 @@ function updateOcrCellDisplay(){
 function confirmOcr(){
   const c=novaCartela();
   c.numeros=JSON.parse(JSON.stringify(_ocrNums));
+  c.freeCenter=_ocrDetectedFreeCenter;
   // mark already drawn numbers
   const drawnSet=new Set(evData?.drawn||[]);
   LETTERS.forEach(l=>{ c.numeros[l].forEach(n=>{ if(n&&drawnSet.has(n)){ c.marcados=c.marcados||[]; if(!c.marcados.includes(n))c.marcados.push(n); } }); });
@@ -905,7 +911,8 @@ function confirmOcr(){
   saveAllCartelas();
   closeM('mOcr');
   renderCartela(); renderHist(); checkAutoBatida();
-  showToast('✅ Cartela escaneada criada!');
+  const fc=_ocrDetectedFreeCenter?' (FREE CENTER detectado)':'';
+  showToast('✅ Cartela escaneada criada!'+fc);
 }
 
 // ── PUXAR AUTOMÁTICO ─────────────────────────────────

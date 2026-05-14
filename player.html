@@ -1,14 +1,17 @@
-<!-- IBBI Bingo Player v7.1 — 2026-05-13 -->
+<!-- IBBI Bingo Player v7.2 — 2026-05-13 -->
 
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo -- Login</title>
+<title>IBBI Bingo v7.2</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
+/* CRITICAL: ensure dark theme loads immediately */
+html{background:#060608}
 :root{
   --bg:#060608;--surface:#0f0f14;--surface2:#161620;--surface3:#1e1e2a;
   --border:#252535;--border2:#323248;
@@ -19,7 +22,7 @@
   --cB:#00b8f0;--cI:#00dfa8;--cN:#f5c800;--cG:#ff8c00;--cO:#c850ff;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden}
+body{background:#060608;background:var(--bg);color:#e4f2ff;color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 
 /* – BASE – */
@@ -327,7 +330,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">&mdash;</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v7.1</span>
+    <span class="p-vtag">v7.2</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -577,7 +580,6 @@ let _numpadVal='';
 // -- AUTH STATE --
 onAuthStateChanged(auth, async user=>{
   if(user){
-    if(currentUser) return;
     currentUser=user;
     const snap=await get(fb(`bingo/usuarios/${user.uid}`));
     userProfile=snap.val()||{nome:user.displayName||user.email};

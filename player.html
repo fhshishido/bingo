@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v6.2 — 2026-05-13 -->
+<!-- IBBI Bingo Player v6.3 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo — Login</title>
+<title>IBBI Bingo -- Login</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -23,113 +23,113 @@
 body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 
-/* ── BASE ── */
-.btn{border:none;border-radius:var(–rsm);padding:10px 20px;font-family:‘Barlow’,sans-serif;font-weight:800;font-size:.9rem;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+/* -- BASE -- */
+.btn{border:none;border-radius:var(--rsm);padding:10px 20px;font-family:'Barlow',sans-serif;font-weight:800;font-size:.9rem;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
 .btn:active{transform:scale(.95)}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.btn-acc{background:linear-gradient(135deg,var(–accent),#0090c8);color:#000;font-weight:900;box-shadow:0 4px 14px rgba(0,184,240,.28)}
+.btn-acc{background:linear-gradient(135deg,var(--accent),#0090c8);color:#000;font-weight:900;box-shadow:0 4px 14px rgba(0,184,240,.28)}
 .btn-acc:hover:not(:disabled){filter:brightness(1.1)}
-.btn-ghost{background:var(–surface2);color:var(–text2);border:1.5px solid var(–border)}
-.btn-ghost:hover:not(:disabled){border-color:var(–accent);color:var(–accent)}
-.btn-red{background:rgba(240,96,96,.1);color:var(–red);border:1.5px solid rgba(240,96,96,.3)}
+.btn-ghost{background:var(--surface2);color:var(--text2);border:1.5px solid var(--border)}
+.btn-ghost:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.btn-red{background:rgba(240,96,96,.1);color:var(--red);border:1.5px solid rgba(240,96,96,.3)}
 .btn-sm{padding:6px 12px;font-size:.78rem}
 .btn-icon{padding:6px 10px;font-size:1rem;min-width:36px}
 .btn-full{width:100%;padding:13px}
 .conn{font-size:.7rem;font-weight:700;padding:4px 10px;border-radius:20px;border:1px solid;white-space:nowrap}
-.conn.on{color:var(–green);border-color:var(–green);background:rgba(0,223,168,.1)}
-.conn.off{color:var(–red);border-color:var(–red);background:rgba(240,96,96,.1)}
-.inp{width:100%;background:var(–surface2);border:1.5px solid var(–border2);color:var(–text);border-radius:var(–rsm);padding:11px 13px;font-family:‘Barlow’,sans-serif;font-size:.95rem;font-weight:600;outline:none;transition:border-color .2s}
-.inp:focus{border-color:var(–accent)}
-.inp::placeholder{color:var(–text3)}
+.conn.on{color:var(--green);border-color:var(--green);background:rgba(0,223,168,.1)}
+.conn.off{color:var(--red);border-color:var(--red);background:rgba(240,96,96,.1)}
+.inp{width:100%;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:11px 13px;font-family:'Barlow',sans-serif;font-size:.95rem;font-weight:600;outline:none;transition:border-color .2s}
+.inp:focus{border-color:var(--accent)}
+.inp::placeholder{color:var(--text3)}
 .fg{margin-bottom:14px}
-.fg label{display:block;font-size:.68rem;font-weight:800;letter-spacing:1.5px;color:var(–text2);text-transform:uppercase;margin-bottom:5px}
-.err{color:var(–red);font-size:.8rem;font-weight:700;margin-top:8px;padding:8px 12px;background:rgba(240,96,96,.08);border:1px solid rgba(240,96,96,.25);border-radius:var(–rsm);display:none}
+.fg label{display:block;font-size:.68rem;font-weight:800;letter-spacing:1.5px;color:var(--text2);text-transform:uppercase;margin-bottom:5px}
+.err{color:var(--red);font-size:.8rem;font-weight:700;margin-top:8px;padding:8px 12px;background:rgba(240,96,96,.08);border:1px solid rgba(240,96,96,.25);border-radius:var(--rsm);display:none}
 .err.show{display:block}
-.ok-msg{color:var(–green);font-size:.8rem;font-weight:700;margin-top:8px;padding:8px 12px;background:rgba(0,223,168,.08);border:1px solid rgba(0,223,168,.25);border-radius:var(–rsm);display:none}
+.ok-msg{color:var(--green);font-size:.8rem;font-weight:700;margin-top:8px;padding:8px 12px;background:rgba(0,223,168,.08);border:1px solid rgba(0,223,168,.25);border-radius:var(--rsm);display:none}
 .ok-msg.show{display:block}
-.divider{height:1px;background:var(–border);margin:16px 0}
-.sec-lbl{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(–text3);text-transform:uppercase}
-.card{background:var(–surface);border:1.5px solid var(–border);border-radius:var(–radius);padding:14px}
-.card h3{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(–text3);text-transform:uppercase;margin-bottom:10px}
+.divider{height:1px;background:var(--border);margin:16px 0}
+.sec-lbl{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase}
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px}
+.card h3{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:10px}
 
-/* ── MODAL ── */
+/* -- MODAL -- */
 .mbk{display:none;position:fixed;inset:0;background:rgba(0,0,2,.92);backdrop-filter:blur(6px);z-index:1000;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto}
 .mbk.open{display:flex}
-.modal{background:var(–surface);border:1.5px solid var(–border2);border-radius:var(–radius);width:100%;max-width:380px;padding:22px;animation:mIn .22s cubic-bezier(.2,1.4,.4,1) both;margin:auto;flex-shrink:0}
+.modal{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);width:100%;max-width:380px;padding:22px;animation:mIn .22s cubic-bezier(.2,1.4,.4,1) both;margin:auto;flex-shrink:0}
 @keyframes mIn{from{transform:scale(.88);opacity:0}}
-.modal h2{font-family:‘Bebas Neue’,sans-serif;font-size:1.5rem;letter-spacing:2px;color:var(–accent);margin-bottom:14px}
+.modal h2{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:2px;color:var(--accent);margin-bottom:14px}
 .mfoot{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
 
-/* ── VIEWS ── */
+/* -- VIEWS -- */
 .view{display:none;min-height:100vh}
 .view.active{display:block}
-.auth-bg{background:radial-gradient(ellipse at 50% 0%,#0a1e35 0%,var(–bg) 70%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.auth-bg{background:radial-gradient(ellipse at 50% 0%,#0a1e35 0%,var(--bg) 70%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
 .auth-box{width:100%;max-width:380px}
-.auth-logo{font-family:‘Bebas Neue’,sans-serif;font-size:4.5rem;letter-spacing:6px;color:var(–accent);text-shadow:0 0 40px rgba(0,184,240,.4);text-align:center;line-height:1}
-.auth-logo span{color:var(–accent2)}
+.auth-logo{font-family:'Bebas Neue',sans-serif;font-size:4.5rem;letter-spacing:6px;color:var(--accent);text-shadow:0 0 40px rgba(0,184,240,.4);text-align:center;line-height:1}
+.auth-logo span{color:var(--accent2)}
 .auth-ibbi{text-align:center;margin-bottom:6px}
-.auth-ibbi span{background:linear-gradient(135deg,var(–accent),var(–accent2));color:#060608;font-size:.58rem;font-weight:900;letter-spacing:2px;padding:2px 8px;border-radius:4px;text-transform:uppercase}
-.auth-ev{text-align:center;font-size:.78rem;font-weight:700;color:var(–text2);margin-bottom:24px}
-.auth-card{background:var(–surface);border:1.5px solid var(–border2);border-radius:var(–radius);padding:24px}
-.auth-card-title{font-family:‘Bebas Neue’,sans-serif;font-size:1.6rem;letter-spacing:2px;color:var(–accent);margin-bottom:16px}
-.auth-link{color:var(–accent);font-size:.82rem;font-weight:700;cursor:pointer;text-decoration:underline;background:none;border:none;padding:0;font-family:‘Barlow’,sans-serif}
-.auth-link:hover{color:var(–accent2)}
-.vtag{font-size:.6rem;font-weight:700;color:var(–text3);text-align:center;margin-top:12px}
+.auth-ibbi span{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.58rem;font-weight:900;letter-spacing:2px;padding:2px 8px;border-radius:4px;text-transform:uppercase}
+.auth-ev{text-align:center;font-size:.78rem;font-weight:700;color:var(--text2);margin-bottom:24px}
+.auth-card{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);padding:24px}
+.auth-card-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;color:var(--accent);margin-bottom:16px}
+.auth-link{color:var(--accent);font-size:.82rem;font-weight:700;cursor:pointer;text-decoration:underline;background:none;border:none;padding:0;font-family:'Barlow',sans-serif}
+.auth-link:hover{color:var(--accent2)}
+.vtag{font-size:.6rem;font-weight:700;color:var(--text3);text-align:center;margin-top:12px}
 
-/* ── HEADER ── */
-.p-head{background:rgba(4,4,6,.97);border-bottom:1.5px solid var(–border);padding:10px 14px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
-.p-logo{font-family:‘Bebas Neue’,sans-serif;font-size:1.4rem;letter-spacing:3px;color:var(–accent);line-height:1}
-.p-logo span{color:var(–accent2)}
-.ibbi-badge{background:linear-gradient(135deg,var(–accent),var(–accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase}
-.p-evname{font-size:.7rem;font-weight:700;color:var(–text2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.p-username{font-size:.75rem;font-weight:800;color:var(–accent2);white-space:nowrap;max-width:100px;overflow:hidden;text-overflow:ellipsis}
-.p-vtag{font-size:.58rem;font-weight:700;color:var(–text3)}
+/* -- HEADER -- */
+.p-head{background:rgba(4,4,6,.97);border-bottom:1.5px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.p-logo{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:3px;color:var(--accent);line-height:1}
+.p-logo span{color:var(--accent2)}
+.ibbi-badge{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase}
+.p-evname{font-size:.7rem;font-weight:700;color:var(--text2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.p-username{font-size:.75rem;font-weight:800;color:var(--accent2);white-space:nowrap;max-width:100px;overflow:hidden;text-overflow:ellipsis}
+.p-vtag{font-size:.58rem;font-weight:700;color:var(--text3)}
 
-/* ── GAME BODY ── */
+/* -- GAME BODY -- */
 .p-body{padding:10px 12px 60px;display:flex;flex-direction:column;gap:10px;max-width:480px;margin:0 auto;width:100%}
 
 /* PREMIO */
-.premio-info{background:var(–surface);border:1.5px solid var(–border);border-radius:var(–rsm);padding:9px 14px}
-.pi-nome{font-size:.92rem;font-weight:800;color:var(–text)}
-.pi-regra{font-size:.72rem;color:var(–accent);font-weight:700;margin-top:2px}
-.pi-empty{font-size:.82rem;color:var(–text3);font-weight:600}
+.premio-info{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rsm);padding:9px 14px}
+.pi-nome{font-size:.92rem;font-weight:800;color:var(--text)}
+.pi-regra{font-size:.72rem;color:var(--accent);font-weight:700;margin-top:2px}
+.pi-empty{font-size:.82rem;color:var(--text3);font-weight:600}
 
 /* BALL */
-.p-last-ball{display:flex;flex-direction:column;align-items:center;gap:8px;background:var(–surface);border:1.5px solid var(–border);border-radius:var(–radius);padding:16px;cursor:pointer;transition:border-color .3s,box-shadow .3s}
-.plb-hint{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(–text3);text-transform:uppercase}
-.plb-tap{font-size:.72rem;color:var(–text2);margin-top:2px}
-.p-last-ball.new-ball{border-color:var(–accent);box-shadow:0 0 20px rgba(0,184,240,.2)}
-.pbig{width:96px;height:96px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:‘Bebas Neue’,sans-serif;line-height:1;user-select:none;transition:all .3s}
+.p-last-ball{display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:border-color .3s,box-shadow .3s}
+.plb-hint{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase}
+.plb-tap{font-size:.72rem;color:var(--text2);margin-top:2px}
+.p-last-ball.new-ball{border-color:var(--accent);box-shadow:0 0 20px rgba(0,184,240,.2)}
+.pbig{width:96px;height:96px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;line-height:1;user-select:none;transition:all .3s}
 .pbig .pbl{font-size:1.1rem;opacity:.8}.pbig .pbn{font-size:2.8rem}
 .pbig.lB{background:radial-gradient(circle at 32% 30%,#d8f6ff,#00b8f0 55%,#005a80);color:#000;box-shadow:0 0 24px rgba(0,184,240,.5)}
 .pbig.lI{background:radial-gradient(circle at 32% 30%,#ccfff0,#00dfa8 55%,#005040);color:#000;box-shadow:0 0 24px rgba(0,223,168,.5)}
 .pbig.lN{background:radial-gradient(circle at 32% 30%,#fffbe0,#f5c800 55%,#806000);color:#000;box-shadow:0 0 24px rgba(245,200,0,.5)}
 .pbig.lG{background:radial-gradient(circle at 32% 30%,#fff0d8,#ff8c00 55%,#804000);color:#000;box-shadow:0 0 24px rgba(255,140,0,.5)}
 .pbig.lO{background:radial-gradient(circle at 32% 30%,#f8d8ff,#c850ff 55%,#600080);color:#000;box-shadow:0 0 24px rgba(200,80,255,.5)}
-.pbig.empty-ball{background:var(–surface2);color:var(–text3);box-shadow:none}
+.pbig.empty-ball{background:var(--surface2);color:var(--text3);box-shadow:none}
 .pbig.pop{animation:bpop .35s cubic-bezier(.15,1.6,.35,1) both}
 @keyframes bpop{from{transform:scale(.4);opacity:0}}
 
 /* CARTELA NAV */
 .cartela-nav{display:flex;align-items:center;gap:6px}
 .cn-info{text-align:center;flex:1}
-.cn-id{font-family:‘Bebas Neue’,sans-serif;font-size:1.1rem;color:var(–accent);letter-spacing:1px}
-.cn-pg{font-size:.7rem;color:var(–text3);font-weight:700;margin-top:1px}
-.cn-toast{font-size:.72rem;color:var(–green);font-weight:700;height:16px;text-align:center;margin-top:2px;transition:opacity .3s}
+.cn-id{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--accent);letter-spacing:1px}
+.cn-pg{font-size:.7rem;color:var(--text3);font-weight:700;margin-top:1px}
+.cn-toast{font-size:.72rem;color:var(--green);font-weight:700;height:16px;text-align:center;margin-top:2px;transition:opacity .3s}
 
 /* CARTELA */
-.cartela-wrap{background:var(–surface);border:1.5px solid var(–border);border-radius:var(–radius);overflow:hidden}
+.cartela-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .cartela-hdr{display:grid;grid-template-columns:repeat(5,1fr)}
-.ch-cell{font-family:‘Bebas Neue’,sans-serif;font-size:1.7rem;text-align:center;padding:8px 4px;line-height:1}
+.ch-cell{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;text-align:center;padding:8px 4px;line-height:1}
 .ch-cell.lB{background:rgba(0,184,240,.2);color:#00b8f0}
 .ch-cell.lI{background:rgba(0,223,168,.2);color:#00dfa8}
 .ch-cell.lN{background:rgba(245,200,0,.2);color:#f5c800}
 .ch-cell.lG{background:rgba(255,140,0,.2);color:#ff8c00}
 .ch-cell.lO{background:rgba(200,80,255,.2);color:#c850ff}
 .cartela-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:6px}
-.c-cell{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:‘Bebas Neue’,sans-serif;font-size:1.3rem;cursor:pointer;transition:all .2s;border:1.5px solid var(–border);background:var(–surface2);user-select:none}
-.c-cell.empty-cell{color:var(–text3);font-size:.85rem;border-style:dashed;border-color:var(–border2)}
-.c-cell.free-cell{background:var(–surface3);color:var(–text2);font-size:.9rem;cursor:default}
+.c-cell{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.3rem;cursor:pointer;transition:all .2s;border:1.5px solid var(--border);background:var(--surface2);user-select:none}
+.c-cell.empty-cell{color:var(--text3);font-size:.85rem;border-style:dashed;border-color:var(--border2)}
+.c-cell.free-cell{background:var(--surface3);color:var(--text2);font-size:.9rem;cursor:default}
 .c-cell.filled-B{color:#00b8f0;border-color:rgba(0,184,240,.4);background:rgba(0,184,240,.07)}
 .c-cell.filled-I{color:#00dfa8;border-color:rgba(0,223,168,.4);background:rgba(0,223,168,.07)}
 .c-cell.filled-N{color:#f5c800;border-color:rgba(245,200,0,.4);background:rgba(245,200,0,.07)}
@@ -145,42 +145,42 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 
 /* num pad modal */
 .numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
-.npbtn{border:none;border-radius:var(–rsm);padding:14px 8px;font-family:‘Bebas Neue’,sans-serif;font-size:1.5rem;background:var(–surface2);color:var(–text);cursor:pointer;transition:all .15s;border:1.5px solid var(–border2)}
-.npbtn:active{transform:scale(.92);background:var(–surface3)}
-.npbtn.np-del{font-size:1.1rem;color:var(–red);border-color:rgba(240,96,96,.3)}
-.npbtn.np-ok{background:linear-gradient(135deg,var(–accent),#0090c8);color:#000;font-weight:900;border-color:var(–accent)}
-.np-display{background:var(–surface2);border:1.5px solid var(–border2);border-radius:var(–rsm);padding:12px;text-align:center;font-family:‘Bebas Neue’,sans-serif;font-size:2rem;color:var(–text);min-height:56px;letter-spacing:2px}
-.np-display.valid{border-color:var(–green);color:var(–green)}
-.np-display.invalid{border-color:var(–red);color:var(–red)}
-.np-hint{font-size:.72rem;color:var(–text3);text-align:center;margin-top:6px;min-height:18px}
+.npbtn{border:none;border-radius:var(--rsm);padding:14px 8px;font-family:'Bebas Neue',sans-serif;font-size:1.5rem;background:var(--surface2);color:var(--text);cursor:pointer;transition:all .15s;border:1.5px solid var(--border2)}
+.npbtn:active{transform:scale(.92);background:var(--surface3)}
+.npbtn.np-del{font-size:1.1rem;color:var(--red);border-color:rgba(240,96,96,.3)}
+.npbtn.np-ok{background:linear-gradient(135deg,var(--accent),#0090c8);color:#000;font-weight:900;border-color:var(--accent)}
+.np-display{background:var(--surface2);border:1.5px solid var(--border2);border-radius:var(--rsm);padding:12px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--text);min-height:56px;letter-spacing:2px}
+.np-display.valid{border-color:var(--green);color:var(--green)}
+.np-display.invalid{border-color:var(--red);color:var(--red)}
+.np-hint{font-size:.72rem;color:var(--text3);text-align:center;margin-top:6px;min-height:18px}
 
 /* OPTS */
 .cartela-opts{display:flex;flex-wrap:wrap;gap:10px;padding:0 2px}
-.tog-row{display:flex;align-items:center;gap:7px;font-size:.82rem;font-weight:700;color:var(–text2);cursor:pointer;user-select:none}
+.tog-row{display:flex;align-items:center;gap:7px;font-size:.82rem;font-weight:700;color:var(--text2);cursor:pointer;user-select:none}
 .tog{position:relative;width:38px;height:20px;flex-shrink:0}
 .tog input{opacity:0;width:0;height:0}
-.tog-sl{position:absolute;inset:0;border-radius:20px;cursor:pointer;background:var(–surface2);border:1.5px solid var(–border);transition:.2s}
-.tog-sl::before{content:’’;position:absolute;width:12px;height:12px;background:var(–text3);border-radius:50%;top:2px;left:2px;transition:.2s}
+.tog-sl{position:absolute;inset:0;border-radius:20px;cursor:pointer;background:var(--surface2);border:1.5px solid var(--border);transition:.2s}
+.tog-sl::before{content:'';position:absolute;width:12px;height:12px;background:var(--text3);border-radius:50%;top:2px;left:2px;transition:.2s}
 .tog input:checked+.tog-sl{background:rgba(0,184,240,.18);border-color:#00b8f0}
 .tog input:checked+.tog-sl::before{background:#00b8f0;transform:translateX(18px)}
 
 /* BINGO BTN */
-.bingo-btn{width:100%;padding:18px;font-family:‘Bebas Neue’,sans-serif;font-size:2.2rem;letter-spacing:4px;border:none;border-radius:var(–radius);cursor:pointer;transition:all .2s;background:linear-gradient(135deg,#f5c800,#ff8c00);color:#000;box-shadow:0 4px 20px rgba(245,200,0,.3)}
+.bingo-btn{width:100%;padding:18px;font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:4px;border:none;border-radius:var(--radius);cursor:pointer;transition:all .2s;background:linear-gradient(135deg,#f5c800,#ff8c00);color:#000;box-shadow:0 4px 20px rgba(245,200,0,.3)}
 .bingo-btn:hover{filter:brightness(1.08)}
 .bingo-btn.pulsing{animation:bpulse 1s ease-in-out infinite}
 @keyframes bpulse{0%,100%{box-shadow:0 4px 20px rgba(245,200,0,.3)}50%{box-shadow:0 0 50px rgba(245,200,0,.9),0 0 100px rgba(245,200,0,.2)}}
 
 /* BATIDA STATUS */
-.batida-status{text-align:center;padding:12px 16px;border-radius:var(–rsm);font-weight:800;font-size:.88rem;display:none}
-.bs-pend{display:block!important;background:rgba(245,200,0,.1);color:var(–cN);border:1px solid rgba(245,200,0,.3)}
-.bs-conf{display:block!important;background:rgba(0,223,168,.1);color:var(–green);border:1px solid rgba(0,223,168,.3)}
-.bs-rej{display:block!important;background:rgba(240,96,96,.1);color:var(–red);border:1px solid rgba(240,96,96,.3);animation:shake .4s ease}
+.batida-status{text-align:center;padding:12px 16px;border-radius:var(--rsm);font-weight:800;font-size:.88rem;display:none}
+.bs-pend{display:block!important;background:rgba(245,200,0,.1);color:var(--cN);border:1px solid rgba(245,200,0,.3)}
+.bs-conf{display:block!important;background:rgba(0,223,168,.1);color:var(--green);border:1px solid rgba(0,223,168,.3)}
+.bs-rej{display:block!important;background:rgba(240,96,96,.1);color:var(--red);border:1px solid rgba(240,96,96,.3);animation:shake .4s ease}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 
 /* HISTORY */
-.p-hist-title{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(–text3);text-transform:uppercase}
+.p-hist-title{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase}
 .p-hist-strip{display:flex;flex-wrap:wrap;gap:5px}
-.ph-ball{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:‘Bebas Neue’,sans-serif;line-height:1;cursor:pointer;transition:transform .15s,opacity .15s;box-shadow:0 2px 5px rgba(0,0,0,.4)}
+.ph-ball{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;line-height:1;cursor:pointer;transition:transform .15s,opacity .15s;box-shadow:0 2px 5px rgba(0,0,0,.4)}
 .ph-ball:active{transform:scale(.88)}
 .ph-ball .phl{font-size:.48rem;opacity:.75}.ph-ball .phn{font-size:.92rem}
 .ph-ball.lB{background:radial-gradient(circle at 32% 30%,#d8f6ff,#00b8f0 55%,#005a80);color:#000}
@@ -188,55 +188,54 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .ph-ball.lN{background:radial-gradient(circle at 32% 30%,#fffbe0,#f5c800 55%,#806000);color:#000}
 .ph-ball.lG{background:radial-gradient(circle at 32% 30%,#fff0d8,#ff8c00 55%,#804000);color:#000}
 .ph-ball.lO{background:radial-gradient(circle at 32% 30%,#f8d8ff,#c850ff 55%,#600080);color:#000}
-.ph-ball.in-cartela{box-shadow:0 0 0 2.5px #fff,0 0 0 4.5px var(–green)}
+.ph-ball.in-cartela{box-shadow:0 0 0 2.5px #fff,0 0 0 4.5px var(--green)}
 .ph-ball.marked{opacity:.4;cursor:default}
 
-.ocr-preview{width:100%;max-height:220px;object-fit:contain;border-radius:var(–rsm);border:1.5px solid var(–border2);display:block}
+/* OCR */
+.ocr-preview{width:100%;max-height:220px;object-fit:contain;border-radius:var(--rsm);border:1.5px solid var(--border2);display:block}
 .ocr-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-top:10px}
-.ocr-hdr{font-family:‘Bebas Neue’,sans-serif;font-size:1.4rem;text-align:center;padding:5px 2px;border-radius:4px 4px 0 0}
+.ocr-hdr{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;text-align:center;padding:5px 2px;border-radius:4px 4px 0 0}
 .ocr-hdr.lB{background:rgba(0,184,240,.2);color:#00b8f0}
 .ocr-hdr.lI{background:rgba(0,223,168,.2);color:#00dfa8}
 .ocr-hdr.lN{background:rgba(245,200,0,.2);color:#f5c800}
 .ocr-hdr.lG{background:rgba(255,140,0,.2);color:#ff8c00}
 .ocr-hdr.lO{background:rgba(200,80,255,.2);color:#c850ff}
-.ocr-cell{background:var(–surface2);border:1.5px solid var(–border2);border-radius:4px;text-align:center;font-family:‘Bebas Neue’,sans-serif;font-size:1.1rem;padding:6px 2px;cursor:pointer;transition:all .15s;min-height:36px;display:flex;align-items:center;justify-content:center}
-.ocr-cell.ok{border-color:var(–green);color:var(–green)}
-.ocr-cell.err{border-color:var(–red);color:var(–red)}
-.ocr-cell.empty-ocr{color:var(–text3);font-size:.75rem;border-style:dashed}
-.ocr-loading{text-align:center;padding:20px;color:var(–text2)}
+.ocr-cell{background:var(--surface2);border:1.5px solid var(--border2);border-radius:4px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;padding:6px 2px;cursor:pointer;transition:all .15s;min-height:36px;display:flex;align-items:center;justify-content:center}
+.ocr-cell.ok{border-color:var(--green);color:var(--green)}
+.ocr-cell.err{border-color:var(--red);color:var(--red)}
+.ocr-cell.empty-ocr{color:var(--text3);font-size:.75rem;border-style:dashed}
+.ocr-loading{text-align:center;padding:20px;color:var(--text2)}
 .ocr-loading .spin{animation:spin 1s linear infinite;display:inline-block;font-size:2rem}
 @keyframes spin{to{transform:rotate(360deg)}}
-.ocr-status{font-size:.78rem;color:var(–text2);margin-top:8px;text-align:center;min-height:20px}
+.ocr-status{font-size:.78rem;color:var(--text2);margin-top:8px;text-align:center;min-height:20px}
 
-/* ── GRID ADJUST SCREEN ── */
-
-/* NOT FOUND */
-.not-found{/* ── GRID ADJUST SCREEN ── */
-#vAjuste{background:#000;position:fixed;inset:0;z-index:500;display:none;flex-direction:column}
-#vAjuste.active{display:flex}
-.ajuste-head{padding:10px 14px;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.8);position:absolute;top:0;left:0;right:0;z-index:10;backdrop-filter:blur(4px)}
-.ajuste-title{font-family:‘Bebas Neue’,sans-serif;font-size:1.2rem;letter-spacing:2px;color:var(–accent);flex:1}
-.ajuste-canvas-wrap{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
-#ajusteCanvas{display:block;max-width:100%;max-height:100%;touch-action:none}
-.ajuste-foot{padding:10px 14px 20px;background:rgba(0,0,0,.85);display:flex;flex-direction:column;gap:8px}
-.rot-row{display:flex;align-items:center;gap:8px}
-.rot-row label{font-size:.72rem;font-weight:800;color:var(–text2);white-space:nowrap;letter-spacing:1px;text-transform:uppercase;width:80px}
-.rot-row span{font-size:.72rem;color:var(–accent);width:36px;text-align:right}
-#rotSlider{flex:1;accent-color:var(–accent)}
-.ajuste-btns{display:flex;gap:8px}
+/* -- AJUSTE / GRID ADJUST SCREEN -- */
+.ajuste-wrap{position:fixed;inset:0;z-index:2000;background:var(--bg);display:flex;flex-direction:column}
+.ajuste-top{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface);border-bottom:1.5px solid var(--border);gap:8px;flex-shrink:0}
+.ajuste-top h2{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:2px;color:var(--accent);margin:0}
+.ajuste-canvas-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:10px;overflow:hidden;touch-action:none}
+.ajuste-canvas-wrap canvas{max-width:100%;max-height:100%;border:1.5px solid var(--border2);border-radius:var(--rsm);cursor:crosshair;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.ajuste-bottom{padding:12px 14px;background:var(--surface);border-top:1.5px solid var(--border);flex-shrink:0}
+.ajuste-rot{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ajuste-rot label{font-size:.72rem;font-weight:700;color:var(--text2);white-space:nowrap;flex-shrink:0}
+.ajuste-rot input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:6px;background:var(--surface2);border-radius:3px;outline:none}
+.ajuste-rot input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer}
+.ajuste-rot .rot-val{font-size:.75rem;font-weight:800;color:var(--accent);min-width:36px;text-align:right}
+.ajuste-btns{display:flex;gap:8px;flex-wrap:wrap}
+.ajuste-btns .btn{flex:1;min-width:0}
 
 /* NOT FOUND */
-.not-found{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:30px;background:var(–bg)}
+.not-found{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:30px;background:var(--bg)}
 .nf-icon{font-size:3.5rem;margin-bottom:14px}
-.nf-title{font-family:‘Bebas Neue’,sans-serif;font-size:2rem;color:var(–text2);letter-spacing:2px;margin-bottom:8px}
-.nf-sub{font-size:.85rem;color:var(–text3);line-height:1.6}
-.nf-link{color:var(–accent);font-family:monospace;font-size:.8rem;margin-top:10px;display:block}
+.nf-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--text2);letter-spacing:2px;margin-bottom:8px}
+.nf-sub{font-size:.85rem;color:var(--text3);line-height:1.6}
+.nf-link{color:var(--accent);font-family:monospace;font-size:.8rem;margin-top:10px;display:block}
 </style>
 
 </head>
 <body>
 
-<!-- ═══════════════ VIEW: LOGIN ═══════════════ -->
+<!-- =============== VIEW: LOGIN =============== -->
 
 <div class="view active" id="vLogin">
   <div class="auth-bg">
@@ -249,20 +248,20 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
         <div class="fg"><label>E-mail</label><input class="inp" type="email" id="loginEmail" placeholder="seu@email.com" autocomplete="email"></div>
         <div class="fg"><label>Senha</label><input class="inp" type="password" id="loginSenha" placeholder="Sua senha" autocomplete="current-password"></div>
         <div class="err" id="loginErr"></div>
-        <button class="btn btn-acc btn-full" id="btnLogin" style="margin-top:4px">Entrar →</button>
+        <button class="btn btn-acc btn-full" id="btnLogin" style="margin-top:4px">Entrar &#8594;</button>
         <div style="text-align:center;margin-top:14px;display:flex;flex-direction:column;gap:8px">
           <button class="auth-link" id="btnEsqueceuSenha">Esqueci minha senha</button>
-          <div class="ok-msg" id="resetOk">E-mail de recuperação enviado! Verifique sua caixa de entrada.</div>
-          <div style="color:var(--text3);font-size:.8rem">Não tem conta?</div>
-          <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar →</button>
+          <div class="ok-msg" id="resetOk">E-mail de recupera&ccedil;&atilde;o enviado! Verifique sua caixa de entrada.</div>
+          <div style="color:var(--text3);font-size:.8rem">N&atilde;o tem conta?</div>
+          <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &#8594;</button>
         </div>
       </div>
-      <div class="vtag">v6.2</div>
+      <div class="vtag">v6.3</div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════ VIEW: CADASTRO ═══════════════ -->
+<!-- =============== VIEW: CADASTRO =============== -->
 
 <div class="view" id="vCadastro">
   <div class="auth-bg" style="align-items:flex-start;padding-top:30px">
@@ -273,10 +272,9 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
         <div class="auth-card">
           <div class="auth-card-title">Cadastro</div>
 
-```
       <div style="font-size:.72rem;font-weight:800;letter-spacing:1px;color:var(--accent);text-transform:uppercase;margin-bottom:12px">Dados de acesso *</div>
       <div class="fg"><label>E-mail *</label><input class="inp" type="email" id="cadEmail" placeholder="seu@email.com" autocomplete="email"></div>
-      <div class="fg"><label>Senha * <span style="font-weight:400;color:var(--text3)">(mín. 6 caracteres)</span></label><input class="inp" type="password" id="cadSenha" placeholder="Crie uma senha" autocomplete="new-password"></div>
+      <div class="fg"><label>Senha * <span style="font-weight:400;color:var(--text3)">(m&iacute;n. 6 caracteres)</span></label><input class="inp" type="password" id="cadSenha" placeholder="Crie uma senha" autocomplete="new-password"></div>
       <div class="fg"><label>Confirmar Senha *</label><input class="inp" type="password" id="cadSenhaConf" placeholder="Repita a senha" autocomplete="new-password"></div>
 
       <div class="divider"></div>
@@ -288,43 +286,68 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       <div style="font-size:.72rem;font-weight:800;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin-bottom:12px">Contato opcional</div>
       <div class="fg"><label>Celular</label><input class="inp" type="tel" id="cadCelular" placeholder="(92) 99999-9999" maxlength="20" autocomplete="tel"></div>
       <div class="fg"><label>Data de nascimento</label><input class="inp" type="date" id="cadNasc"></div>
-      <div class="fg"><label>Endereço</label><input class="inp" type="text" id="cadEndereco" placeholder="Rua, número, bairro" maxlength="100" autocomplete="street-address"></div>
+      <div class="fg"><label>Endere&ccedil;o</label><input class="inp" type="text" id="cadEndereco" placeholder="Rua, n&uacute;mero, bairro" maxlength="100" autocomplete="street-address"></div>
 
       <div class="err" id="cadErr"></div>
-      <button class="btn btn-acc btn-full" id="btnCadastrar" style="margin-top:8px">Criar Conta →</button>
+      <button class="btn btn-acc btn-full" id="btnCadastrar" style="margin-top:8px">Criar Conta &#8594;</button>
       <div style="text-align:center;margin-top:12px">
-        <button class="auth-link" id="btnIrLogin">← Já tenho conta</button>
+        <button class="auth-link" id="btnIrLogin">&#8592; J&aacute; tenho conta</button>
       </div>
     </div>
   </div>
-  <div class="vtag">v6.2</div>
+  <div class="vtag">v6.3</div>
 </div>
-```
 
   </div>
 </div>
 
-<!-- ═══════════════ VIEW: JOGO ═══════════════ -->
+<!-- =============== VIEW: JOGO =============== -->
 
 <div class="view" id="vJogo">
   <div class="p-head">
     <div class="p-logo">B<span>I</span>NGO</div>
     <div class="ibbi-badge">IBBI</div>
-    <div class="p-evname" id="gameEvNome">—</div>
+    <div class="p-evname" id="gameEvNome">&mdash;</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v6.2</span>
-    <span class="conn off" id="pConn">⬤</span>
+    <span class="p-vtag">v6.3</span>
+    <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div class="p-body" id="pBody"></div>
 </div>
 
-<!-- ═══════════════ VIEW: NOT FOUND ═══════════════ -->
+<!-- =============== VIEW: AJUSTE DE GRADE OCR =============== -->
+
+<div class="view" id="vAjuste">
+  <div class="ajuste-wrap">
+    <div class="ajuste-top">
+      <button class="btn btn-ghost btn-sm" id="btnAjusteCancelar">&#8592; Voltar</button>
+      <h2>&#9881; Ajustar Grade</h2>
+      <button class="btn btn-acc btn-sm" id="btnAjusteProcessar">&#9989; Processar</button>
+    </div>
+    <div class="ajuste-canvas-wrap">
+      <canvas id="ajusteCanvas"></canvas>
+    </div>
+    <div class="ajuste-bottom">
+      <div class="ajuste-rot">
+        <label>Rota&ccedil;&atilde;o</label>
+        <input type="range" id="rotSlider" min="-45" max="45" value="0" step="0.5">
+        <span class="rot-val" id="rotVal">0&deg;</span>
+      </div>
+      <div class="ajuste-btns">
+        <button class="btn btn-ghost btn-sm" id="btnAjusteReset">&#128260; Resetar</button>
+        <span style="font-size:.68rem;color:var(--text3);flex:1;text-align:center;padding-top:4px">Arraste a grade &bull; Arraste os cantos para redimensionar</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =============== VIEW: NOT FOUND =============== -->
 
 <div class="view" id="vNotFound">
   <div class="not-found">
-    <div class="nf-icon">🎱</div>
-    <div class="nf-title">Evento não encontrado</div>
-    <div class="nf-sub" id="nfMsg">Este evento não existe ou foi excluído.<br>Peça o link correto ao organizador.</div>
+    <div class="nf-icon">&#127921;</div>
+    <div class="nf-title">Evento n&atilde;o encontrado</div>
+    <div class="nf-sub" id="nfMsg">Este evento n&atilde;o existe ou foi exclu&iacute;do.<br>Pe&ccedil;a o link correto ao organizador.</div>
     <span class="nf-link">player.html?ev=ID_DO_EVENTO</span>
   </div>
 </div>
@@ -359,29 +382,29 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mDelTxt"></p>
     <div class="mfoot">
       <button class="btn btn-ghost" id="btnDelCancel">Cancelar</button>
-      <button class="btn btn-red" id="btnDelOk">🗑️ Excluir</button>
+      <button class="btn btn-red" id="btnDelOk">&#128465; Excluir</button>
     </div>
   </div>
 </div>
 
 <div class="mbk" id="mBingo">
   <div class="modal">
-    <h2>🎉 Declarar BINGO?</h2>
+    <h2>&#127881; Declarar BINGO?</h2>
     <p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mBingoTxt"></p>
     <div class="mfoot">
       <button class="btn btn-ghost" id="btnBingoCancel">Cancelar</button>
-      <button class="btn" id="btnBingoOk" style="background:linear-gradient(135deg,#f5c800,#ff8c00);color:#000;font-weight:900;font-family:'Barlow',sans-serif;border:none;border-radius:var(--rsm);padding:9px 18px;cursor:pointer;font-size:.9rem">🎉 Confirmar!</button>
+      <button class="btn" id="btnBingoOk" style="background:linear-gradient(135deg,#f5c800,#ff8c00);color:#000;font-weight:900;font-family:'Barlow',sans-serif;border:none;border-radius:var(--rsm);padding:9px 18px;cursor:pointer;font-size:.9rem">&#127881; Confirmar!</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL: Digitar número na célula -->
+<!-- MODAL: Digitar n&uacute;mero na c&eacute;lula -->
 
 <div class="mbk" id="mNumpad">
   <div class="modal" style="max-width:320px">
-    <h2 id="mNumpadTitle">Digitar Número</h2>
+    <h2 id="mNumpadTitle">Digitar N&uacute;mero</h2>
     <p style="font-size:.8rem;color:var(--text2);margin-bottom:10px" id="mNumpadSub"></p>
-    <div class="np-display" id="npDisplay">—</div>
+    <div class="np-display" id="npDisplay">&mdash;</div>
     <div class="np-hint" id="npHint"></div>
     <div class="numpad">
       <button class="npbtn" data-n="1">1</button>
@@ -393,7 +416,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       <button class="npbtn" data-n="7">7</button>
       <button class="npbtn" data-n="8">8</button>
       <button class="npbtn" data-n="9">9</button>
-      <button class="npbtn np-del" id="npBksp">⌫</button>
+      <button class="npbtn np-del" id="npBksp">&#9003;</button>
       <button class="npbtn" data-n="0">0</button>
       <button class="npbtn np-ok" id="npOk">OK</button>
     </div>
@@ -407,12 +430,12 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 
 <div class="mbk" id="mOcr">
   <div class="modal" style="max-width:420px;max-height:95vh">
-    <h2>📷 Escanear Cartela</h2>
+    <h2>&#128247; Escanear Cartela</h2>
     <!-- Step 1: choose photo -->
     <div id="ocrStep1">
-      <p style="font-size:.82rem;color:var(--text2);margin-bottom:14px">Tire uma foto da sua cartela ou escolha da galeria. Certifique-se de boa iluminação.</p>
+      <p style="font-size:.82rem;color:var(--text2);margin-bottom:14px">Tire uma foto da sua cartela ou escolha da galeria. Certifique-se de boa ilumina&ccedil;&atilde;o.</p>
       <label style="display:block;width:100%;background:linear-gradient(135deg,var(--accent),#0090c8);color:#000;font-weight:900;border-radius:var(--rsm);padding:13px;text-align:center;cursor:pointer;font-family:'Barlow',sans-serif;font-size:.95rem">
-        📷 Tirar Foto / Escolher Imagem
+        &#128247; Tirar Foto / Escolher Imagem
         <input type="file" id="ocrFileInput" accept="image/*" style="display:none">
       </label>
       <div style="text-align:center;margin-top:14px">
@@ -422,8 +445,11 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <!-- Step 2: processing -->
     <div id="ocrStep2" style="display:none">
       <img id="ocrImg" class="ocr-preview" src="" alt="Cartela">
+      <div style="text-align:center;margin:10px 0">
+        <button class="btn btn-ghost btn-sm" id="btnOcrAjuste">&#9881; Ajustar Grade</button>
+      </div>
       <div class="ocr-loading" id="ocrLoading">
-        <div class="spin">⚙️</div>
+        <div class="spin">&#9881;</div>
         <div style="margin-top:8px;font-weight:700">Processando imagem...</div>
         <div class="ocr-status" id="ocrStatusTxt">Iniciando OCR...</div>
       </div>
@@ -431,13 +457,13 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <!-- Step 3: review grid -->
     <div id="ocrStep3" style="display:none">
       <img id="ocrImgPreview" class="ocr-preview" src="" alt="Cartela" style="margin-bottom:10px">
-      <p style="font-size:.78rem;color:var(--text2);margin-bottom:6px">Verifique os números detectados. Toque numa célula para corrigir.</p>
+      <p style="font-size:.78rem;color:var(--text2);margin-bottom:6px">Verifique os n&uacute;meros detectados. Toque numa c&eacute;lula para corrigir.</p>
       <div class="ocr-grid" id="ocrGridEl"></div>
       <div class="ocr-status" id="ocrValidTxt"></div>
-      <button class="btn btn-ghost btn-sm" id="btnOcrDebug" style="width:100%;margin-top:8px;font-size:.75rem">🔍 Ver texto bruto do OCR</button>
+      <button class="btn btn-ghost btn-sm" id="btnOcrDebug" style="width:100%;margin-top:8px;font-size:.75rem">&#128269; Ver texto bruto do OCR</button>
       <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-        <button class="btn btn-ghost btn-sm" id="btnOcrRefoto" style="flex:1">📷 Nova Foto</button>
-        <button class="btn btn-acc" id="btnOcrConfirmar" style="flex:2">✅ Criar Cartela</button>
+        <button class="btn btn-ghost btn-sm" id="btnOcrRefoto" style="flex:1">&#128247; Nova Foto</button>
+        <button class="btn btn-acc" id="btnOcrConfirmar" style="flex:2">&#9989; Criar Cartela</button>
       </div>
       <div style="text-align:center;margin-top:8px">
         <button class="btn btn-ghost btn-sm" id="btnOcrCancel3">Cancelar</button>
@@ -446,51 +472,27 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
   </div>
 </div>
 
-<!-- TELA: Ajuste da Grade -->
-
-<div id="vAjuste">
-  <div class="ajuste-head">
-    <div class="ajuste-title">📐 Ajustar Grade</div>
-    <span style="font-size:.72rem;color:var(--text2)">Arraste os cantos • Mova pelo centro</span>
-  </div>
-  <div class="ajuste-canvas-wrap">
-    <canvas id="ajusteCanvas"></canvas>
-  </div>
-  <div class="ajuste-foot">
-    <div class="rot-row">
-      <label>Rotação</label>
-      <input type="range" id="rotSlider" min="-15" max="15" step="0.5" value="0">
-      <span id="rotVal">0°</span>
-    </div>
-    <div class="ajuste-btns">
-      <button class="btn btn-ghost btn-sm" id="btnAjusteReset" style="flex:1">↺ Resetar</button>
-      <button class="btn btn-ghost btn-sm" id="btnAjusteCancelar" style="flex:1">✕ Cancelar</button>
-      <button class="btn btn-acc" id="btnAjusteProcessar" style="flex:2">✅ Processar</button>
-    </div>
-  </div>
-</div>
-
 <!-- MODAL: OCR debug log -->
 
 <div class="mbk" id="mOcrDebug">
   <div class="modal" style="max-width:460px;max-height:85vh">
-    <h2>🔍 Texto Bruto OCR</h2>
+    <h2>&#128269; Texto Bruto OCR</h2>
     <p style="font-size:.75rem;color:var(--text2);margin-bottom:10px">O que o Tesseract leu da imagem. Compartilhe isso para ajudar a melhorar o OCR.</p>
     <textarea id="ocrRawText" readonly style="width:100%;height:300px;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);font-size:.8rem;border-radius:var(--rsm);padding:10px;resize:none;font-family:monospace;line-height:1.5"></textarea>
     <div class="mfoot">
       <button class="btn btn-ghost" id="btnOcrDebugClose">Fechar</button>
-      <button class="btn btn-acc btn-sm" id="btnOcrDebugCopy">📋 Copiar</button>
+      <button class="btn btn-acc btn-sm" id="btnOcrDebugCopy">&#128203; Copiar</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL: corrigir célula OCR -->
+<!-- MODAL: corrigir c&eacute;lula OCR -->
 
 <div class="mbk" id="mOcrCell">
   <div class="modal" style="max-width:300px">
     <h2 id="mOcrCellTitle">Corrigir</h2>
     <p style="font-size:.8rem;color:var(--text2);margin-bottom:10px" id="mOcrCellSub"></p>
-    <div class="np-display" id="ocrCellDisplay">—</div>
+    <div class="np-display" id="ocrCellDisplay">&mdash;</div>
     <div class="np-hint" id="ocrCellHint"></div>
     <div class="numpad">
       <button class="npbtn" data-ocr="1">1</button>
@@ -502,7 +504,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       <button class="npbtn" data-ocr="7">7</button>
       <button class="npbtn" data-ocr="8">8</button>
       <button class="npbtn" data-ocr="9">9</button>
-      <button class="npbtn np-del" id="ocrCellBksp">⌫</button>
+      <button class="npbtn np-del" id="ocrCellBksp">&#9003;</button>
       <button class="npbtn" data-ocr="0">0</button>
       <button class="npbtn np-ok" id="ocrCellOk">OK</button>
     </div>
@@ -512,6 +514,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     </div>
   </div>
 </div>
+
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -531,7 +534,7 @@ const db = getDatabase(app);
 const auth = getAuth(app);
 const fb = p => ref(db, p);
 
-// ── HELPERS ──────────────────────────────────────────
+// -- HELPERS --
 const genId = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
 const $ = id => document.getElementById(id);
 const openM = id => $(id).classList.add('open');
@@ -543,7 +546,7 @@ function showErr(elId, msg){ const el=$(elId); el.textContent=msg; el.classList.
 function hideErr(elId){ $(elId).classList.remove('show'); }
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// ── AUDIO ────────────────────────────────────────────
+// -- AUDIO --
 const AC = new (window.AudioContext||window.webkitAudioContext)();
 function tone(freq,dur,type='sine',vol=0.25){
   try{ const o=AC.createOscillator(),g=AC.createGain(); o.connect(g);g.connect(AC.destination); o.type=type;o.frequency.value=freq; g.gain.setValueAtTime(vol,AC.currentTime);g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+dur); o.start();o.stop(AC.currentTime+dur); }catch(e){}
@@ -554,31 +557,30 @@ const sndBingo  = ()=>[523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.2
 const sndReject = ()=>tone(200,.5,'sawtooth',.3);
 const sndConfirm= ()=>[523,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.2,'sine',.35),i*140));
 
-// ── CONNECTIVITY ────────────────────────────────────
+// -- CONNECTIVITY --
 onValue(fb('.info/connected'),s=>{
   const on=s.val(),d=$('pConn');
-  if(d){d.textContent=on?'⬤ online':'⬤ offline';d.className='conn '+(on?'on':'off');}
+  if(d){d.textContent=on?'online':'offline';d.className='conn '+(on?'on':'off');}
 });
 
-// ── URL ──────────────────────────────────────────────
+// -- URL --
 const params = new URLSearchParams(window.location.search);
 const evId = params.get('ev');
 
-// ── STATE ─────────────────────────────────────────────
+// -- STATE --
 let evData=null, currentUser=null, userProfile=null;
 let cartelas=[], cartelaIdx=0;
 let pendingAdd=null, pendingRem=null;
 let toastTimer=null;
-let _lastSaveTime=0; // timestamp of last local save
-let _numpadCtx=null; // {letter, row} for current numpad session
-let _numpadVal='';   // current digits typed
+let _lastSaveTime=0;
+let _numpadCtx=null;
+let _numpadVal='';
 
-// ── AUTH STATE ───────────────────────────────────────
+// -- AUTH STATE --
 onAuthStateChanged(auth, async user=>{
   if(user){
-    if(currentUser) return; // already initialized, skip re-init
+    if(currentUser) return;
     currentUser=user;
-    // load profile
     const snap=await get(fb(`bingo/usuarios/${user.uid}`));
     userProfile=snap.val()||{nome:user.displayName||user.email};
     if(evId) await initGame();
@@ -587,18 +589,17 @@ onAuthStateChanged(auth, async user=>{
     currentUser=null; userProfile=null;
     if(!evId){
       showView('vNotFound');
-      $('nfMsg').textContent='Link inválido. Peça o link correto ao organizador.';
+      $('nfMsg').textContent='Link invalido. Peca o link correto ao organizador.';
     } else {
-      // load ev name for login screen
       const snap=await get(fb(`bingo/eventos/${evId}`));
       const ev=snap.val();
-      $('loginEvNome').textContent=ev?ev.nome:'Evento não encontrado';
+      $('loginEvNome').textContent=ev?ev.nome:'Evento nao encontrado';
       showView('vLogin');
     }
   }
 });
 
-// ── LOGIN ────────────────────────────────────────────
+// -- LOGIN --
 $('btnIrCadastro').addEventListener('click',()=>{ hideErr('loginErr'); showView('vCadastro'); setTimeout(()=>$('cadEmail').focus(),200); });
 $('btnIrLogin').addEventListener('click',()=>{ hideErr('cadErr'); showView('vLogin'); setTimeout(()=>$('loginEmail').focus(),200); });
 
@@ -611,9 +612,8 @@ $('btnLogin').addEventListener('click', async()=>{
   $('btnLogin').disabled=true; $('btnLogin').textContent='Entrando...';
   try{
     await signInWithEmailAndPassword(auth,email,senha);
-    // onAuthStateChanged handles the rest
   }catch(e){
-    $('btnLogin').disabled=false; $('btnLogin').textContent='Entrar →';
+    $('btnLogin').disabled=false; $('btnLogin').textContent='Entrar ->';
     showErr('loginErr', friendlyAuthError(e.code));
   }
 });
@@ -628,7 +628,7 @@ $('btnEsqueceuSenha').addEventListener('click',async()=>{
   }catch(e){ showErr('loginErr',friendlyAuthError(e.code)); }
 });
 
-// ── CADASTRO ─────────────────────────────────────────
+// -- CADASTRO --
 $('cadSenhaConf').addEventListener('keydown',e=>{ if(e.key==='Enter') $('btnCadastrar').click(); });
 $('btnCadastrar').addEventListener('click', async()=>{
   const email=$('cadEmail').value.trim();
@@ -641,14 +641,13 @@ $('btnCadastrar').addEventListener('click', async()=>{
   const endereco=$('cadEndereco').value.trim();
   hideErr('cadErr');
   if(!email){showErr('cadErr','Digite seu e-mail.');return;}
-  if(!senha||senha.length<6){showErr('cadErr','Senha deve ter no mínimo 6 caracteres.');return;}
-  if(senha!==senhaConf){showErr('cadErr','As senhas não coincidem.');return;}
+  if(!senha||senha.length<6){showErr('cadErr','Senha deve ter no minimo 6 caracteres.');return;}
+  if(senha!==senhaConf){showErr('cadErr','As senhas nao coincidem.');return;}
   if(!nome){showErr('cadErr','Digite seu nome completo.');return;}
   $('btnCadastrar').disabled=true; $('btnCadastrar').textContent='Criando conta...';
   try{
     const cred=await createUserWithEmailAndPassword(auth,email,senha);
     await updateProfile(cred.user,{displayName:nome});
-    // save profile
     await set(fb(`bingo/usuarios/${cred.user.uid}`),{
       nome, email,
       apelido:apelido||null,
@@ -657,34 +656,31 @@ $('btnCadastrar').addEventListener('click', async()=>{
       endereco:endereco||null,
       criadoEm:Date.now()
     });
-    // onAuthStateChanged handles redirect
   }catch(e){
-    $('btnCadastrar').disabled=false; $('btnCadastrar').textContent='Criar Conta →';
+    $('btnCadastrar').disabled=false; $('btnCadastrar').textContent='Criar Conta ->';
     showErr('cadErr',friendlyAuthError(e.code));
   }
 });
 
 function friendlyAuthError(code){
   const msgs={
-    'auth/invalid-email':'E-mail inválido.',
-    'auth/user-not-found':'E-mail não cadastrado.',
+    'auth/invalid-email':'E-mail invalido.',
+    'auth/user-not-found':'E-mail nao cadastrado.',
     'auth/wrong-password':'Senha incorreta.',
-    'auth/email-already-in-use':'Este e-mail já está cadastrado.',
-    'auth/weak-password':'Senha muito fraca. Use no mínimo 6 caracteres.',
+    'auth/email-already-in-use':'Este e-mail ja esta cadastrado.',
+    'auth/weak-password':'Senha muito fraca. Use no minimo 6 caracteres.',
     'auth/too-many-requests':'Muitas tentativas. Tente novamente mais tarde.',
-    'auth/network-request-failed':'Erro de conexão. Verifique sua internet.',
+    'auth/network-request-failed':'Erro de conexao. Verifique sua internet.',
     'auth/invalid-credential':'E-mail ou senha incorretos.',
   };
   return msgs[code]||'Erro: '+code;
 }
 
-// ── INIT GAME ────────────────────────────────────────
+// -- INIT GAME --
 async function initGame(){
-  // Show game screen and build DOM immediately — before any async calls
   showView('vJogo');
   renderBody();
 
-  // Restore cartelas from localStorage cache instantly
   if(loadCartelasFromCache()){
     renderCartela(); renderHist();
     showToast('Carregando...');
@@ -699,7 +695,6 @@ async function initGame(){
   $('gameEvNome').textContent=ev.nome;
   $('gameUserName').textContent=userProfile?.apelido||userProfile?.nome||currentUser.email;
 
-  // Listen evento
   onValue(fb(`bingo/eventos/${evId}`),snap2=>{
     const ev2=snap2.val(); if(!ev2)return;
     const newBall=evData&&ev2.lastDrawn!==evData.lastDrawn;
@@ -708,7 +703,6 @@ async function initGame(){
     renderPremio(); renderBall(); renderHist(); checkAutoBatida();
   });
 
-  // Listen cartelas do user
   let _fbFirstLoad=true;
   onValue(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),snap2=>{
     const data=snap2.val();
@@ -722,7 +716,6 @@ async function initGame(){
       if(novo.length){
         if(cartelaIdx>=novo.length) cartelaIdx=Math.max(0,novo.length-1);
         cartelas=novo;
-        // always update localStorage when Firebase gives us data
         try{
           const obj={};
           cartelas.forEach(c=>{obj[c.fbId]={id:c.id,numeros:c.numeros,marcados:c.marcados||[],freeCenter:c.freeCenter||false,autoMarcar:c.autoMarcar!==false,criadaEm:c.criadaEm};});
@@ -732,19 +725,17 @@ async function initGame(){
     }
     _fbFirstLoad=false;
 
-    // batida status
     const bs=data?.batidaStatus;
     const el=$('batidaStatusEl');
     if(el){
       el.className='batida-status';
-      if(bs==='pendente'){el.className='batida-status bs-pend';el.textContent='⏳ Batida enviada — aguardando confirmação...';}
-      else if(bs==='confirmada'){el.className='batida-status bs-conf';el.textContent='🎉 BINGO CONFIRMADO! Parabéns!';sndConfirm();}
-      else if(bs==='rejeitada'){el.className='batida-status bs-rej';el.textContent='❌ Batida rejeitada — continue jogando!';sndReject();
+      if(bs==='pendente'){el.className='batida-status bs-pend';el.textContent=' Batida enviada -- aguardando confirmacao...';}
+      else if(bs==='confirmada'){el.className='batida-status bs-conf';el.textContent=' BINGO CONFIRMADO! Parabens!';sndConfirm();}
+      else if(bs==='rejeitada'){el.className='batida-status bs-rej';el.textContent=' Batida rejeitada -- continue jogando!';sndReject();
         setTimeout(()=>{if($('batidaStatusEl')){$('batidaStatusEl').style.display='none';update(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),{batidaStatus:null});}},4000);}
       else{el.style.display='none';}
     }
 
-    // render with retry
     const doRender=()=>{
       if(!$('cartelaGrid')){setTimeout(doRender,100);return;}
       if(!cartelas.length) renderEmptyState();
@@ -754,7 +745,7 @@ async function initGame(){
   });
 }
 
-// ── CARTELA HELPERS ──────────────────────────────────
+// -- CARTELA HELPERS --
 function novaCartela(){
   const mode=evData?.mode||90;
   return{id:gerarCartelaId(mode),fbId:genId(),
@@ -769,13 +760,11 @@ function saveAllCartelas(){
   cartelas.forEach(c=>{ obj[c.fbId]={id:c.id,numeros:c.numeros,marcados:c.marcados||[],freeCenter:c.freeCenter||false,autoMarcar:c.autoMarcar!==false,criadaEm:c.criadaEm}; });
   const nome=userProfile?.apelido||userProfile?.nome||currentUser.email;
   _lastSaveTime=Date.now();
-  // Save to localStorage immediately for instant restore on refresh
   try{
     localStorage.setItem(`bingo_cartelas_${evId}_${currentUser.uid}`, JSON.stringify({
       cartelas:obj, cartelaIdx, savedAt:Date.now()
     }));
   }catch(e){}
-  // Save to Firebase
   get(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}/batidaStatus`)).then(snap=>{
     const bs=snap.val();
     set(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),{
@@ -805,10 +794,10 @@ function loadCartelasFromCache(){
 }
 
 
-// ── OCR / ESCANEAR CARTELA ───────────────────────────
+// -- OCR / ESCANEAR CARTELA --
 let _ocrNums = {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
 let _ocrDetectedFreeCenter = false;
-let _ocrCellCtx = null; // {letter, row} being edited in ocr cell modal
+let _ocrCellCtx = null;
 let _ocrCellVal = '';
 
 function openOcrModal(){
@@ -835,10 +824,19 @@ function initOcr(){
     const file=e.target.files[0]; if(!file)return;
     const url=URL.createObjectURL(file);
     $('ocrImg').src=url; $('ocrImgPreview').src=url;
-    closeM('mOcr');
-    await openAjuste(url);
+    showOcrStep(2);
+    $('ocrLoading').style.display='block';
+    await runOcr(url);
   });
   $('btnOcrConfirmar').addEventListener('click',()=>confirmOcr());
+  
+  // Botao Ajustar Grade -- abre tela de ajuste
+  $('btnOcrAjuste').addEventListener('click',()=>{
+    const url = $('ocrImg').src;
+    if(!url) return;
+    closeM('mOcr');
+    openAjuste(url);
+  });
 
   // ocr cell numpad
   document.querySelectorAll('.npbtn[data-ocr]').forEach(btn=>{
@@ -868,7 +866,7 @@ function initOcr(){
   });
 }
 
-// ── OCR — CELL-BY-CELL GRID CUTTING ─────────────────
+// -- OCR -- CELL-BY-CELL GRID CUTTING --
 async function runOcr(imageUrl){
   try{
     const mode = evData?.mode||90;
@@ -878,52 +876,41 @@ async function runOcr(imageUrl){
     const w = img.naturalWidth, h = img.naturalHeight;
     console.log('Image size:', w, 'x', h);
 
-    // ── Step 1: auto-crop to grid area ──────────────────
-    // Most bingo photos have the grid filling most of the image
-    // We try to detect the grid by scanning for the darkest horizontal lines
     const cropBox = detectGridArea(img);
     console.log('Grid area:', cropBox);
-    $('ocrStatusTxt').textContent='Grade detectada, lendo células...';
+    $('ocrStatusTxt').textContent='Grade detectada, lendo celulas...';
 
-    // ── Step 2: cut into cells and OCR each one ─────────
-    // Grid has 6 rows (1 header BINGO + 5 numbers) and 5 cols
-    // We skip row 0 (header) and read rows 1-5
     const worker = await Tesseract.createWorker('eng', 1, {});
     await worker.setParameters({
       tessedit_char_whitelist: '0123456789',
-      tessedit_pageseg_mode: '10', // single character/word
+      tessedit_pageseg_mode: '10',
     });
 
-    const results = []; // flat array of 25 values row by row
+    const results = [];
     const cellW = cropBox.w / 5;
-    const cellH = cropBox.h / 6; // 6 rows including header
+    const cellH = cropBox.h / 6;
     let debugLog = '';
 
-    for(let row = 1; row <= 5; row++){       // skip row 0 (BINGO header)
+    for(let row = 1; row <= 5; row++){
       for(let col = 0; col < 5; col++){
-        // Extract cell image
         const cx = cropBox.x + col * cellW;
         const cy = cropBox.y + row * cellH;
 
         const canvas = document.createElement('canvas');
-        // Upscale cell for better OCR
         const scale = Math.max(3, 120/cellW);
         canvas.width  = Math.round(cellW * scale);
         canvas.height = Math.round(cellH * scale);
         const ctx = canvas.getContext('2d');
 
-        // White background
         ctx.fillStyle = '#fff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Draw cell upscaled with small inset to avoid grid lines
-        const inset = cellW * 0.08; // 8% inset to avoid border lines
+        const inset = cellW * 0.08;
         ctx.drawImage(img,
           cx+inset, cy+inset, cellW-inset*2, cellH-inset*2,
           6, 6, canvas.width-12, canvas.height-12
         );
 
-        // Grayscale + contrast
         const id = ctx.getImageData(0,0,canvas.width,canvas.height);
         const d = id.data;
         for(let i=0;i<d.length;i+=4){
@@ -938,22 +925,19 @@ async function runOcr(imageUrl){
         const cleaned = text.trim().replace(/\D/g,'');
         const n = cleaned ? parseInt(cleaned) : null;
         results.push(n);
-        debugLog += `[r${row}c${col}] raw:"${text.trim()}" → ${n}\n`;
+        debugLog += `[r${row}c${col}] raw:"${text.trim()}" -> ${n}\n`;
 
         const pct = Math.round(((row-1)*5+col+1)/25*100);
-        $('ocrStatusTxt').textContent=`Lendo células... ${pct}%`;
+        $('ocrStatusTxt').textContent=`Lendo celulas... ${pct}%`;
       }
     }
 
     await worker.terminate();
     console.log('Cell results:', results);
 
-    // Save debug log
     const rawEl=$('ocrRawText');
     if(rawEl) rawEl.value = debugLog;
 
-    // results[0..24] = row1col0..row5col4
-    // Map to columns: col0=B, col1=I, col2=N, col3=G, col4=O
     _ocrNums={B:[],I:[],N:[],G:[],O:[]};
     _ocrDetectedFreeCenter=false;
     for(let row=0;row<5;row++){
@@ -966,20 +950,18 @@ async function runOcr(imageUrl){
           _ocrNums[letter].push(null);
           if(row===2&&col===2) _ocrDetectedFreeCenter=true;
         } else {
-          // OCR read wrong number — try to recover
           const recovered = recoverNumber(n, min, max);
           if(recovered){
             _ocrNums[letter].push(recovered);
-            if(rawEl) rawEl.value += `RECUPERADO: ${n} → ${recovered} para coluna ${letter}\n`;
+            if(rawEl) rawEl.value += `RECUPERADO: ${n} -> ${recovered} para coluna ${letter}\n`;
           } else {
             _ocrNums[letter].push(null);
-            if(rawEl) rawEl.value += `AVISO: ${n} inválido para coluna ${letter} (${min}-${max})\n`;
+            if(rawEl) rawEl.value += `AVISO: ${n} invalido para coluna ${letter} (${min}-${max})\n`;
           }
         }
       });
     }
 
-    // Pad columns to 5
     LETTERS.forEach(l=>{
       while(_ocrNums[l].length<5) _ocrNums[l].push(null);
       _ocrNums[l]=_ocrNums[l].slice(0,5);
@@ -994,7 +976,7 @@ async function runOcr(imageUrl){
     const rawEl=$('ocrRawText');
     if(rawEl) rawEl.value='Erro: '+err.message;
     $('ocrLoading').innerHTML=`<div style="color:var(--red);font-weight:700;padding:12px">
-      ❌ ${err.message}<br><small>Tente enquadrar melhor a cartela.</small>
+      ${err.message}<br><small>Tente enquadrar melhor a cartela.</small>
     </div>`;
     setTimeout(()=>showOcrStep(1),3000);
   }
@@ -1013,7 +995,6 @@ function loadImage(url){
 function detectGridArea(img){
   const w=img.naturalWidth, h=img.naturalHeight;
   const canvas=document.createElement('canvas');
-  // Work at reduced size for speed
   const scale=Math.min(1, 600/Math.max(w,h));
   const sw=Math.round(w*scale), sh=Math.round(h*scale);
   canvas.width=sw; canvas.height=sh;
@@ -1023,28 +1004,20 @@ function detectGridArea(img){
 
   function gray(x,y){ const i=(y*sw+x)*4; return 0.299*data[i]+0.587*data[i+1]+0.114*data[i+2]; }
 
-  // For each row, compute average darkness (dark = grid line or border)
   function rowDark(y){ let s=0; for(let x=0;x<sw;x++) s+=(255-gray(x,y)); return s/sw; }
   function colDark(x){ let s=0; for(let y=0;y<sh;y++) s+=(255-gray(x,y)); return s/sh; }
 
-  // Find top/bottom/left/right boundaries by looking for dark bands
-  // Scan from outside in to find where the grid starts
-  const threshold = 20; // minimum darkness to be considered a grid line
+  const threshold = 20;
 
-  // Left boundary
   let x0=0;
   for(let x=0;x<sw*0.3;x++){ if(colDark(x)>threshold){x0=x;break;} }
-  // Right boundary
   let x1=sw-1;
   for(let x=sw-1;x>sw*0.7;x--){ if(colDark(x)>threshold){x1=x;break;} }
-  // Top boundary
   let y0=0;
   for(let y=0;y<sh*0.3;y++){ if(rowDark(y)>threshold){y0=y;break;} }
-  // Bottom boundary
   let y1=sh-1;
   for(let y=sh-1;y>sh*0.7;y--){ if(rowDark(y)>threshold){y1=y;break;} }
 
-  // Convert back to original image coordinates
   const ox0=Math.max(0, Math.round(x0/scale)-2);
   const oy0=Math.max(0, Math.round(y0/scale)-2);
   const ox1=Math.min(w, Math.round(x1/scale)+2);
@@ -1058,8 +1031,6 @@ function recoverNumber(n, min, max){
   if(!n) return null;
   const s = String(n);
 
-  // Case 1: number too long (e.g. 135 should be 35, or 37)
-  // Try last 2 digits
   if(s.length > 2){
     const last2 = parseInt(s.slice(-2));
     if(last2>=min && last2<=max) return last2;
@@ -1067,23 +1038,16 @@ function recoverNumber(n, min, max){
     if(last1>=min && last1<=max) return last1;
   }
 
-  // Case 2: number too short (e.g. 7 should be 37, 47... or 1 should be 21, 31...)
-  // Try adding each possible prefix digit
   if(n < min){
-    // Try prepending digits to make it fit in range
     for(let prefix=1; prefix<=9; prefix++){
       const candidate = parseInt(String(prefix)+s);
       if(candidate>=min && candidate<=max) return candidate;
     }
-    // Try prepending two digits
     for(let prefix=10; prefix<=99; prefix++){
       const candidate = parseInt(String(prefix)+s);
       if(candidate>=min && candidate<=max) return candidate;
     }
   }
-
-  // Case 3: off by one digit (e.g. 7 read as part of 37 — missing first digit)
-  // Already covered above
 
   return null;
 }
@@ -1122,36 +1086,32 @@ async function runOcrTesseract(imageUrl){
     showOcrStep(3);
     renderOcrGrid();
   }catch(err){
-    $('ocrLoading').innerHTML='<div style="color:var(--red);font-weight:700;padding:10px">❌ Erro no OCR. Tente outra foto.</div>';
+    $('ocrLoading').innerHTML='<div style="color:var(--red);font-weight:700;padding:10px"> Erro no OCR. Tente outra foto.</div>';
     setTimeout(()=>showOcrStep(1),3000);
   }
 }
 
-// ══════════════════════════════════════════════════════
+// ========================================================
 //  GRID ADJUSTMENT SCREEN
-// ══════════════════════════════════════════════════════
-let _ajusteImg = null;   // HTMLImageElement
-let _ajusteUrl = '';     // blob URL
-let _ajusteRot = 0;      // rotation degrees
-let _ajusteGrid = null;  // {x,y,w,h} in canvas coords
-let _ajusteDrag = null;  // dragging state
+// ========================================================
+let _ajusteImg = null;
+let _ajusteUrl = '';
+let _ajusteRot = 0;
+let _ajusteGrid = null;
+let _ajusteDrag = null;
 let _ajusteCanvas = null, _ajusteCtx = null;
 
 async function openAjuste(url){
   _ajusteUrl=url; _ajusteRot=0;
-  $('rotSlider').value=0; $('rotVal').textContent='0°';
+  $('rotSlider').value=0; $('rotVal').textContent='0 deg';
 
-  // Load image
   _ajusteImg = await loadImage(url);
 
-  // Show screen
   document.getElementById('vAjuste').classList.add('active');
 
-  // Setup canvas
   _ajusteCanvas = $('ajusteCanvas');
   _ajusteCtx = _ajusteCanvas.getContext('2d');
 
-  // Size canvas to fit screen
   const wrap = _ajusteCanvas.parentElement;
   const maxW = wrap.clientWidth;
   const maxH = wrap.clientHeight || window.innerHeight - 160;
@@ -1182,7 +1142,6 @@ function drawAjuste(){
 
   ctx.clearRect(0,0,cw,ch);
 
-  // Draw image (rotated around canvas center)
   ctx.save();
   ctx.translate(cw/2, ch/2);
   ctx.rotate(_ajusteRot * Math.PI/180);
@@ -1191,27 +1150,23 @@ function drawAjuste(){
 
   const {x,y,w,h}=_ajusteGrid;
 
-  // Dim outside grid
   ctx.fillStyle='rgba(0,0,0,0.45)';
   ctx.fillRect(0,0,cw,y);
   ctx.fillRect(0,y+h,cw,ch-y-h);
   ctx.fillRect(0,y,x,h);
   ctx.fillRect(x+w,y,cw-x-w,h);
 
-  // Draw grid lines (5 cols × 6 rows including header)
   ctx.strokeStyle='rgba(0,184,240,0.85)';
   ctx.lineWidth=1.5;
   const cols=5, rows=6;
   const cellW=w/cols, cellH=h/rows;
 
-  // Vertical lines
   for(let c2=0;c2<=cols;c2++){
     ctx.beginPath();
     ctx.moveTo(x+c2*cellW, y);
     ctx.lineTo(x+c2*cellW, y+h);
     ctx.stroke();
   }
-  // Horizontal lines
   for(let r=0;r<=rows;r++){
     ctx.beginPath();
     ctx.moveTo(x, y+r*cellH);
@@ -1219,16 +1174,13 @@ function drawAjuste(){
     ctx.stroke();
   }
 
-  // Header row highlight
   ctx.fillStyle='rgba(0,184,240,0.12)';
   ctx.fillRect(x+1,y+1,w-2,cellH-2);
 
-  // Grid border
   ctx.strokeStyle='#00b8f0';
   ctx.lineWidth=2;
   ctx.strokeRect(x,y,w,h);
 
-  // Corner handles
   const handles=getHandles();
   handles.forEach(({hx,hy})=>{
     ctx.beginPath();
@@ -1264,7 +1216,6 @@ function getCanvasPos(e, canvas){
 
 function bindAjusteEvents(){
   const c=_ajusteCanvas;
-  // Remove old listeners by cloning
   const newC=c.cloneNode(true);
   c.parentNode.replaceChild(newC,c);
   _ajusteCanvas=newC;
@@ -1273,13 +1224,11 @@ function bindAjusteEvents(){
   const onStart=(e)=>{
     e.preventDefault();
     const pos=getCanvasPos(e,_ajusteCanvas);
-    // Check if near a corner handle
     const handles=getHandles();
     const hit=handles.find(h=>Math.hypot(h.hx-pos.x,h.hy-pos.y)<20);
     if(hit){
       _ajusteDrag={type:'corner',corner:hit.corner,startX:pos.x,startY:pos.y,grid:{..._ajusteGrid}};
     } else {
-      // Check if inside grid → move
       const {x,y,w,h}=_ajusteGrid;
       if(pos.x>x&&pos.x<x+w&&pos.y>y&&pos.y<y+h){
         _ajusteDrag={type:'move',startX:pos.x,startY:pos.y,grid:{..._ajusteGrid}};
@@ -1335,22 +1284,19 @@ function bindAjusteEvents(){
   newC.addEventListener('touchmove',onMove,{passive:false});
   newC.addEventListener('touchend',onEnd);
 
-  // Rotation slider
   $('rotSlider').oninput=()=>{
     _ajusteRot=parseFloat($('rotSlider').value);
-    $('rotVal').textContent=_ajusteRot+'°';
+    $('rotVal').textContent=_ajusteRot+' deg';
     drawAjuste();
   };
 
-  // Buttons
-  $('btnAjusteReset').onclick=()=>{ resetGrid(); _ajusteRot=0; $('rotSlider').value=0; $('rotVal').textContent='0°'; drawAjuste(); };
+  $('btnAjusteReset').onclick=()=>{ resetGrid(); _ajusteRot=0; $('rotSlider').value=0; $('rotVal').textContent='0 deg'; drawAjuste(); };
   $('btnAjusteCancelar').onclick=()=>{ document.getElementById('vAjuste').classList.remove('active'); openM('mOcr'); };
   $('btnAjusteProcessar').onclick=()=>processarComGrade();
 }
 
 async function processarComGrade(){
   document.getElementById('vAjuste').classList.remove('active');
-  // Go back to OCR modal step 2
   openM('mOcr');
   showOcrStep(2);
   $('ocrLoading').style.display='block';
@@ -1358,7 +1304,6 @@ async function processarComGrade(){
 
   try{
     const mode=evData?.mode||90;
-    // Render image to offscreen canvas with rotation applied
     const img=_ajusteImg;
     const offCanvas=document.createElement('canvas');
     offCanvas.width=img.width; offCanvas.height=img.height;
@@ -1369,7 +1314,6 @@ async function processarComGrade(){
     offCtx.drawImage(img,-img.width/2,-img.height/2);
     offCtx.restore();
 
-    // Scale grid coords from canvas display size to actual image size
     const scaleX=img.width/_ajusteCanvas.width;
     const scaleY=img.height/_ajusteCanvas.height;
     const grid={
@@ -1379,7 +1323,6 @@ async function processarComGrade(){
       h: _ajusteGrid.h*scaleY,
     };
 
-    // Setup Tesseract worker
     const worker=await Tesseract.createWorker('eng',1,{
       logger:m=>{ if(m.status==='recognizing text') $('ocrStatusTxt').textContent='Lendo... '+Math.round((m.progress||0)*100)+'%'; }
     });
@@ -1387,7 +1330,7 @@ async function processarComGrade(){
 
     const results=[];
     const cellW=grid.w/5;
-    const cellH=grid.h/6; // 6 rows: 1 header + 5 numbers
+    const cellH=grid.h/6;
     let debugLog='';
 
     for(let row=1;row<=5;row++){
@@ -1407,7 +1350,6 @@ async function processarComGrade(){
         cCtx.fillRect(0,0,cell.width,cell.height);
         cCtx.drawImage(offCanvas,cx,cy,cw2,ch2,4,4,cell.width-8,cell.height-8);
 
-        // B&W
         const id=cCtx.getImageData(0,0,cell.width,cell.height);
         const d=id.data;
         for(let i=0;i<d.length;i+=4){
@@ -1422,18 +1364,15 @@ async function processarComGrade(){
         const n=cleaned?parseInt(cleaned):null;
         results.push(n);
         const pct=Math.round(((row-1)*5+col+1)/25*100);
-        $('ocrStatusTxt').textContent=`Lendo células... ${pct}%`;
-        debugLog+=`[r${row}c${col}] "${text.trim()}" → ${n}
-`;
+        $('ocrStatusTxt').textContent=`Lendo celulas... ${pct}%`;
+        debugLog+=`[r${row}c${col}] "${text.trim()}" -> ${n}\n`;
       }
     }
     await worker.terminate();
 
-    // Save debug
     const rawEl=$('ocrRawText');
     if(rawEl) rawEl.value=debugLog;
 
-    // Map to columns
     _ocrNums={B:[],I:[],N:[],G:[],O:[]};
     _ocrDetectedFreeCenter=false;
     for(let row=0;row<5;row++){
@@ -1448,9 +1387,7 @@ async function processarComGrade(){
         } else {
           const rec=recoverNumber(n,min,max);
           _ocrNums[letter].push(rec||null);
-          debugLog+=rec?`RECUPERADO: ${n}→${rec}
-`:`AVISO: ${n} inválido p/ ${letter}
-`;
+          debugLog+=rec?`RECUPERADO: ${n}->${rec}\n`:`AVISO: ${n} invalido p/ ${letter}\n`;
         }
       });
     }
@@ -1461,34 +1398,27 @@ async function processarComGrade(){
     renderOcrGrid();
   }catch(err){
     console.error(err);
-    $('ocrLoading').innerHTML=`<div style="color:var(--red);padding:10px">❌ ${err.message}</div>`;
+    $('ocrLoading').innerHTML=`<div style="color:var(--red);padding:10px"> ${err.message}</div>`;
     setTimeout(()=>showOcrStep(1),3000);
   }
 }
 
 function distributeByRange(nums, mode){
-  // Reset
   _ocrNums={B:[],I:[],N:[],G:[],O:[]};
-  const size=mode/5; // 18 for 90-ball, 15 for 75-ball
+  const size=mode/5;
 
-  // Each number belongs to exactly one column by its value range
-  // B=1-18, I=19-36, N=37-54, G=55-72, O=73-90 (for 90 balls)
   nums.forEach(n=>{
     const letter=getLetter(n,mode);
     if(_ocrNums[letter].length<5) _ocrNums[letter].push(n);
   });
 
-  // Sort each column ascending
   LETTERS.forEach(l=>{
     _ocrNums[l].sort((a,b)=>a-b);
   });
 
-  // Detect FREE CENTER: if N has exactly 4 numbers, mark center as free
-  // We'll reflect this in the toggle when user confirms
   const nCount=_ocrNums['N'].filter(v=>v!==null).length;
   _ocrDetectedFreeCenter = (nCount===4);
 
-  // Pad to 5 slots
   LETTERS.forEach(l=>{
     while(_ocrNums[l].length<5) _ocrNums[l].push(null);
   });
@@ -1502,11 +1432,9 @@ function renderOcrGrid(){
   const mode=evData?.mode||90;
   grid.innerHTML='';
   let valid=0, total=0;
-  // headers
   LETTERS.forEach(l=>{
     const h=document.createElement('div'); h.className=`ocr-hdr l${l}`; h.textContent=l; grid.appendChild(h);
   });
-  // cells
   for(let row=0;row<5;row++){
     LETTERS.forEach((letter,col)=>{
       const n=_ocrNums[letter][row];
@@ -1526,7 +1454,7 @@ function renderOcrGrid(){
   const pct=total>0?Math.round(valid/total*100):0;
   const vTxt=$('ocrValidTxt');
   const fcNote=_ocrDetectedFreeCenter?' | FREE CENTER detectado':'';
-  if(vTxt) vTxt.textContent=`${valid} números detectados (${pct}%)${fcNote} — toque para corrigir`;
+  if(vTxt) vTxt.textContent=`${valid} numeros detectados (${pct}%)${fcNote} -- toque para corrigir`;
 }
 
 function openOcrCellEdit(letter,row,currentVal){
@@ -1535,7 +1463,7 @@ function openOcrCellEdit(letter,row,currentVal){
   const mode=evData?.mode||90;
   const {min,max}=colRange(letter,mode);
   $('mOcrCellTitle').textContent=`Coluna ${letter}`;
-  $('mOcrCellSub').textContent=`Faixa válida: ${min} a ${max}`;
+  $('mOcrCellSub').textContent=`Faixa valida: ${min} a ${max}`;
   updateOcrCellDisplay();
   openM('mOcrCell');
 }
@@ -1543,19 +1471,18 @@ function openOcrCellEdit(letter,row,currentVal){
 function updateOcrCellDisplay(){
   const disp=$('ocrCellDisplay'),hint=$('ocrCellHint'); if(!disp)return;
   const mode=evData?.mode||90;
-  if(!_ocrCellVal){ disp.textContent='—'; disp.className='np-display'; if(hint)hint.textContent=''; return; }
+  if(!_ocrCellVal){ disp.textContent='--'; disp.className='np-display'; if(hint)hint.textContent=''; return; }
   const n=parseInt(_ocrCellVal);
   const {min,max}=colRange(_ocrCellCtx?.letter||'B',mode);
   disp.textContent=_ocrCellVal;
-  if(n>=min&&n<=max){ disp.className='np-display valid'; hint.textContent=`✅ Válido`; hint.style.color='var(--green)'; }
-  else{ disp.className='np-display invalid'; hint.textContent=`❌ Deve ser ${min}–${max}`; hint.style.color='var(--red)'; }
+  if(n>=min&&n<=max){ disp.className='np-display valid'; hint.textContent='Valido'; hint.style.color='var(--green)'; }
+  else{ disp.className='np-display invalid'; hint.textContent=`Deve ser ${min}-${max}`; hint.style.color='var(--red)'; }
 }
 
 function confirmOcr(){
   const c=novaCartela();
   c.numeros=JSON.parse(JSON.stringify(_ocrNums));
   c.freeCenter=_ocrDetectedFreeCenter;
-  // mark already drawn numbers
   const drawnSet=new Set(evData?.drawn||[]);
   LETTERS.forEach(l=>{ c.numeros[l].forEach(n=>{ if(n&&drawnSet.has(n)){ c.marcados=c.marcados||[]; if(!c.marcados.includes(n))c.marcados.push(n); } }); });
   cartelas.push(c); cartelaIdx=cartelas.length-1;
@@ -1563,10 +1490,10 @@ function confirmOcr(){
   closeM('mOcr');
   renderCartela(); renderHist(); checkAutoBatida();
   const fc=_ocrDetectedFreeCenter?' (FREE CENTER detectado)':'';
-  showToast('✅ Cartela escaneada criada!'+fc);
+  showToast('Cartela escaneada criada!'+fc);
 }
 
-// ── PUXAR AUTOMÁTICO ─────────────────────────────────
+// -- PUXAR AUTOMATICO --
 function puxarAutomatico(){
   const c=cartelas[cartelaIdx]; if(!c)return;
   const drawnSet=new Set(evData?.drawn||[]);
@@ -1581,21 +1508,21 @@ function puxarAutomatico(){
   c.autoMarcar=true;
   if($('togAuto'))$('togAuto').checked=true;
   saveAllCartelas(); renderCartela(); renderHist(); checkAutoBatida();
-  if(count>0){ sndMark(); showToast(`🤖 ${count} número(s) marcado(s) automaticamente!`); }
-  else showToast('Nenhum número novo para marcar');
+  if(count>0){ sndMark(); showToast(`${count} numero(s) marcado(s) automaticamente!`); }
+  else showToast('Nenhum numero novo para marcar');
 }
 
 
-// ── EMPTY STATE ──────────────────────────────────────
+// -- EMPTY STATE --
 function renderEmptyState(){
   const hdr=$('cartelaHdr'), grid=$('cartelaGrid');
   const cnId=$('cnId'), cnPg=$('cnPg');
-  if(cnId) cnId.textContent='—';
+  if(cnId) cnId.textContent='--';
   if(cnPg) cnPg.textContent='Nenhuma cartela';
   if(hdr) hdr.innerHTML='';
   if(grid){
     grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:24px 10px;color:var(--text3)">
-      <div style="font-size:2rem;margin-bottom:8px">🃏</div>
+      <div style="font-size:2rem;margin-bottom:8px">?</div>
       <div style="font-size:.88rem;font-weight:700;margin-bottom:4px">Nenhuma cartela</div>
       <div style="font-size:.78rem">Toque em <strong style="color:var(--accent)">+ Nova</strong> para criar sua cartela</div>
     </div>`;
@@ -1608,51 +1535,51 @@ function debugGridState(){
   const grid=$('cartelaGrid');
   const c=cartelas[cartelaIdx];
   const numerosInfo=c?JSON.stringify(c.numeros).slice(0,100):'N/A';
-  const msg=`cartelaGrid: ${grid?'existe':'NÃO EXISTE'}
+  const msg=`cartelaGrid: ${grid?'existe':'NAO EXISTE'}
 cartelas[]: ${cartelas.length} itens
 cartelaIdx: ${cartelaIdx}
 Firebase uid: ${currentUser?.uid||'N/A'}
 Cache: ${localStorage.getItem(`bingo_cartelas_${evId}_${currentUser?.uid}`)?'existe':'vazio'}
 cartela.id: ${c?.id||'N/A'}
-numeros ok: ${c&&c.numeros&&Array.isArray(c.numeros?.B)?'SIM':'NÃO - FORMATO ERRADO'}
+numeros ok: ${c&&c.numeros&&Array.isArray(c.numeros?.B)?'SIM':'NAO - FORMATO ERRADO'}
 numeros: ${numerosInfo}`;
   alert(msg);
 }
 
-// ── RENDER BODY ──────────────────────────────────────
+// -- RENDER BODY --
 function renderBody(){
   $('pBody').innerHTML=`
     <div class="premio-info" id="premioInfo"><div class="pi-empty">Carregando...</div></div>
     <div class="p-last-ball" id="pLastBall">
-      <div class="plb-hint">Última pedra — toque para adicionar</div>
-      <div class="pbig empty-ball" id="pBigBall"><span class="pbl" id="pBallL"></span><span class="pbn" id="pBallN">—</span></div>
+      <div class="plb-hint">Ultima pedra -- toque para adicionar</div>
+      <div class="pbig empty-ball" id="pBigBall"><span class="pbl" id="pBallL"></span><span class="pbn" id="pBallN">--</span></div>
       <div class="plb-tap" id="pBallHint">Aguardando sorteio...</div>
     </div>
     <div class="cartela-nav">
-      <button class="btn btn-ghost btn-icon" id="btnPrev">←</button>
+      <button class="btn btn-ghost btn-icon" id="btnPrev"><-</button>
       <div class="cn-info">
-        <div class="cn-id" id="cnId">—</div>
+        <div class="cn-id" id="cnId">--</div>
         <div class="cn-pg" id="cnPg">Cartela 1 de 1</div>
         <div class="cn-toast" id="cnToast"></div>
       </div>
-      <button class="btn btn-ghost btn-icon" id="btnNext">→</button>
+      <button class="btn btn-ghost btn-icon" id="btnNext">-></button>
       <button class="btn btn-acc btn-sm" id="btnNovaC">+ Nova</button>
-      <button class="btn btn-ghost btn-sm" id="btnScan" title="Escanear cartela">📷</button>
-      <button class="btn btn-red btn-icon" id="btnDelC" title="Excluir cartela">🗑️</button>
-      <button class="btn btn-ghost btn-icon" id="btnDebugGrid" title="Debug" style="font-size:.65rem;padding:4px 6px;color:var(--text3)">⚙</button>
+      <button class="btn btn-ghost btn-sm" id="btnScan" title="Escanear cartela">&#128247;</button>
+      <button class="btn btn-red btn-icon" id="btnDelC" title="Excluir cartela">&#128465;</button>
+      <button class="btn btn-ghost btn-icon" id="btnDebugGrid" title="Debug" style="font-size:.65rem;padding:4px 6px;color:var(--text3)">&#9881;</button>
     </div>
     <div class="cartela-wrap">
       <div class="cartela-hdr" id="cartelaHdr"></div>
       <div class="cartela-grid" id="cartelaGrid"></div>
     </div>
     <div class="cartela-opts">
-      <label class="tog-row"><label class="tog"><input type="checkbox" id="togFree"><span class="tog-sl"></span></label>FREE CENTER (★)</label>
-      <label class="tog-row"><label class="tog"><input type="checkbox" id="togAuto" checked><span class="tog-sl"></span></label>Marcar automático</label>
+      <label class="tog-row"><label class="tog"><input type="checkbox" id="togFree"><span class="tog-sl"></span></label>FREE CENTER (*)</label>
+      <label class="tog-row"><label class="tog"><input type="checkbox" id="togAuto" checked><span class="tog-sl"></span></label>Marcar automatico</label>
     </div>
-    <button class="btn btn-ghost btn-sm" id="btnPuxarAuto" style="width:100%;color:var(--accent2);border-color:rgba(0,223,168,.3)">🤖 Puxar Automático (marcar já sorteados)</button>
+    <button class="btn btn-ghost btn-sm" id="btnPuxarAuto" style="width:100%;color:var(--accent2);border-color:rgba(0,223,168,.3)"> Puxar Automatico (marcar ja sorteados)</button>
     <div class="batida-status" id="batidaStatusEl"></div>
-    <button class="bingo-btn" id="btnBingo">🎉 BINGO!</button>
-    <div class="p-hist-title">Números sorteados — toque para adicionar</div>
+    <button class="bingo-btn" id="btnBingo"> BINGO!</button>
+    <div class="p-hist-title">Numeros sorteados -- toque para adicionar</div>
     <div class="p-hist-strip" id="pHistStrip"></div>
     <div style="margin-top:14px;text-align:center">
       <button class="btn btn-ghost btn-sm" id="btnSair">Sair da conta</button>
@@ -1664,14 +1591,14 @@ function renderBody(){
   $('btnNovaC').addEventListener('click',()=>{
     const c=novaCartela();
     cartelas.push(c);
-    cartelaIdx=cartelas.length-1; // go to new cartela
+    cartelaIdx=cartelas.length-1;
     saveAllCartelas();
     renderCartela();
     renderHist();
     checkAutoBatida();
-    showToast(`✅ Cartela ${cartelaIdx+1} de ${cartelas.length} criada!`);
+    showToast(`Cartela ${cartelaIdx+1} de ${cartelas.length} criada!`);
   });
-  $('btnDelC').addEventListener('click',()=>{ const c=cartelas[cartelaIdx]; if(!c)return; $('mDelTxt').textContent=`Excluir a cartela ${c.id}? Não pode ser desfeito.`; openM('mDelCartela'); });
+  $('btnDelC').addEventListener('click',()=>{ const c=cartelas[cartelaIdx]; if(!c)return; $('mDelTxt').textContent=`Excluir a cartela ${c.id}? Nao pode ser desfeito.`; openM('mDelCartela'); });
   $('btnDebugGrid').addEventListener('click',()=>debugGridState());
   $('togFree').addEventListener('change',()=>{ if(cartelas[cartelaIdx]){cartelas[cartelaIdx].freeCenter=$('togFree').checked;saveAllCartelas();renderCartela();} });
   $('togAuto').addEventListener('change',()=>{ if(cartelas[cartelaIdx]){cartelas[cartelaIdx].autoMarcar=$('togAuto').checked;saveAllCartelas();} });
@@ -1680,7 +1607,6 @@ function renderBody(){
   $('btnSair').addEventListener('click',async()=>{ await signOut(auth); });
   $('btnScan').addEventListener('click',()=>openOcrModal());
   $('btnPuxarAuto').addEventListener('click',()=>puxarAutomatico());
-  // show empty state immediately — Firebase listener will populate
   renderEmptyState();
   initNumpad();
   initOcr();
@@ -1693,24 +1619,24 @@ function showToast(msg){
   toastTimer=setTimeout(()=>{ if($('cnToast')){$('cnToast').textContent='';$('cnToast').style.opacity='0';} },2500);
 }
 
-// ── PREMIO ───────────────────────────────────────────
+// -- PREMIO --
 function renderPremio(){
   const el=$('premioInfo'); if(!el||!evData?.premios)return;
   const p=getCurrentPremio();
-  if(p) el.innerHTML=`<div class="pi-nome">#${p.ordem} — ${esc(p.nome)}</div><div class="pi-regra">${p.regra==='cheia'?'🔲 Cartela Cheia':'➕ Linha / Coluna / Diagonal'}</div>`;
-  else el.innerHTML='<div class="pi-empty">Nenhum prêmio ativo</div>';
+  if(p) el.innerHTML=`<div class="pi-nome">#${p.ordem} -- ${esc(p.nome)}</div><div class="pi-regra">${p.regra==='cheia'?' Cartela Cheia':' Linha / Coluna / Diagonal'}</div>`;
+  else el.innerHTML='<div class="pi-empty">Nenhum premio ativo</div>';
 }
 function getCurrentPremio(){
   if(!evData?.premios)return null;
   return Object.values(evData.premios).sort((a,b)=>a.ordem-b.ordem).find(p=>!p.ganhadores?.length)||null;
 }
 
-// ── BALL ─────────────────────────────────────────────
+// -- BALL --
 function renderBall(){
   const ball=$('pBigBall'),hint=$('pBallHint'); if(!ball)return;
   const n=evData?.lastDrawn,mode=evData?.mode||90;
-  if(n){ const l=getLetter(n,mode); $('pBallL').textContent=l; $('pBallN').textContent=n; ball.className=`pbig l${l}`; if(hint)hint.textContent='Toque para adicionar à cartela ativa'; }
-  else{ $('pBallL').textContent=''; $('pBallN').textContent='—'; ball.className='pbig empty-ball'; if(hint)hint.textContent='Aguardando sorteio...'; }
+  if(n){ const l=getLetter(n,mode); $('pBallL').textContent=l; $('pBallN').textContent=n; ball.className=`pbig l${l}`; if(hint)hint.textContent='Toque para adicionar a cartela ativa'; }
+  else{ $('pBallL').textContent=''; $('pBallN').textContent='--'; ball.className='pbig empty-ball'; if(hint)hint.textContent='Aguardando sorteio...'; }
 }
 function onNewBall(){
   sndNew();
@@ -1725,22 +1651,20 @@ function onTapLastBall(){
   const n=evData?.lastDrawn,mode=evData?.mode||90; if(!n)return;
   const l=getLetter(n,mode),c=cartelas[cartelaIdx]; if(!c)return;
   const all=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
-  if(all.includes(n)){showToast('Já está na cartela');return;}
+  if(all.includes(n)){showToast('Ja esta na cartela');return;}
   pendingAdd={n,letter:l};
   $('mAddTitle').textContent=`Adicionar ${l} ${n}?`;
-  $('mAddTxt').textContent=`Adicionar o número ${n} (coluna ${l}) à cartela ${c.id}?`;
+  $('mAddTxt').textContent=`Adicionar o numero ${n} (coluna ${l}) a cartela ${c.id}?`;
   openM('mAddNum');
 }
 
-// ── CARTELA ───────────────────────────────────────────
+// -- CARTELA --
 function ensureNumerosFormat(c){
-  // Ensure numeros has correct structure regardless of where data came from
   if(!c.numeros) c.numeros={};
   LETTERS.forEach(l=>{
     if(!Array.isArray(c.numeros[l])){
       c.numeros[l]=[null,null,null,null,null];
     }
-    // pad to 5 slots
     while(c.numeros[l].length<5) c.numeros[l].push(null);
   });
   return c;
@@ -1749,8 +1673,8 @@ function ensureNumerosFormat(c){
 function renderCartela(){
   const hdr=$('cartelaHdr'),grid=$('cartelaGrid'); if(!hdr||!grid)return;
   let c=cartelas[cartelaIdx]; if(!c)return;
-  c=ensureNumerosFormat(c); // defensive: fix any malformed numeros
-  $('cnId').textContent=c.id||'—';
+  c=ensureNumerosFormat(c);
+  $('cnId').textContent=c.id||'--';
   $('cnPg').textContent=`Cartela ${cartelaIdx+1} de ${cartelas.length}`;
   if($('togFree'))$('togFree').checked=c.freeCenter||false;
   if($('togAuto'))$('togAuto').checked=c.autoMarcar!==false;
@@ -1764,28 +1688,23 @@ function renderCartela(){
       const isFree=c.freeCenter&&row===2&&col===2;
       const num=(c.numeros[letter]||[])[row];
       const hasNum=num!==null&&num!==undefined;
-      const isDrawn=hasNum&&drawnSet.has(num);  // sorteado
-      const isMarked=hasNum&&marcados.has(num); // marcado (sorteado ou clicado)
+      const isDrawn=hasNum&&drawnSet.has(num);
+      const isMarked=hasNum&&marcados.has(num);
       const cell=document.createElement('div');
       if(isFree){
-        // FREE CENTER
         cell.className='c-cell free-cell';
-        cell.textContent='★';
+        cell.textContent='*';
       } else if(!hasNum){
-        // VAZIA — toque abre numpad
         cell.className='c-cell empty-cell';
         cell.textContent='+';
         cell.addEventListener('click',()=>openNumpad(letter,row));
       } else if(isDrawn||isMarked){
-        // SORTEADO/MARCADO — não pode mexer
         cell.className=`c-cell marked-${letter} just-marked`;
         cell.textContent=num;
-        cell.addEventListener('click',()=>showToast('Número já sorteado — não pode remover'));
+        cell.addEventListener('click',()=>showToast('Numero ja sorteado -- nao pode remover'));
       } else {
-        // DIGITADO MAS NÃO SORTEADO — pode remover
         cell.className=`c-cell filled-${letter}`;
         cell.textContent=num;
-        // small delete hint
         cell.title='Toque para remover';
         cell.addEventListener('click',()=>onFilledCell(num,letter,row));
       }
@@ -1795,13 +1714,12 @@ function renderCartela(){
 }
 function onEmptyCell(letter,row){ openNumpad(letter,row); }
 function onFilledCell(num,letter,row){
-  // only called for filled-but-not-drawn cells
   pendingRem={num,letter,row};
-  $('mRemTxt').textContent=`Remover o número ${num} (coluna ${letter}) da cartela?`;
+  $('mRemTxt').textContent=`Remover o numero ${num} (coluna ${letter}) da cartela?`;
   openM('mRemNum');
 }
 
-// ── NUMPAD ───────────────────────────────────────────
+// -- NUMPAD --
 function colRange(letter, mode){
   const idx=LETTERS.indexOf(letter), size=mode/5;
   return {min:Math.floor(idx*size)+1, max:Math.floor((idx+1)*size)};
@@ -1813,7 +1731,7 @@ function openNumpad(letter, row){
   const {min,max}=colRange(letter,mode);
   _numpadCtx={letter,row}; _numpadVal='';
   $('mNumpadTitle').textContent=`Coluna ${letter}`;
-  $('mNumpadSub').textContent=`Números válidos: ${min} a ${max}`;
+  $('mNumpadSub').textContent=`Numeros validos: ${min} a ${max}`;
   updateNumpadDisplay();
   openM('mNumpad');
 }
@@ -1821,24 +1739,23 @@ function openNumpad(letter, row){
 function updateNumpadDisplay(){
   const disp=$('npDisplay'), hint=$('npHint'); if(!disp)return;
   const mode=evData?.mode||90;
-  if(!_numpadVal||!_numpadCtx){ disp.textContent='—'; disp.className='np-display'; if(hint)hint.textContent=''; return; }
+  if(!_numpadVal||!_numpadCtx){ disp.textContent='--'; disp.className='np-display'; if(hint)hint.textContent=''; return; }
   const n=parseInt(_numpadVal);
   const {min,max}=colRange(_numpadCtx.letter,mode);
   const c=cartelas[cartelaIdx];
   const allNums=c?Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined):[];
   disp.textContent=_numpadVal;
   if(allNums.includes(n)){
-    disp.className='np-display invalid'; hint.textContent='⚠️ Já está na cartela'; hint.style.color='var(--red)';
+    disp.className='np-display invalid'; hint.textContent='Ja esta na cartela'; hint.style.color='var(--red)';
   } else if(n>=min&&n<=max){
-    disp.className='np-display valid'; hint.textContent=`✅ Válido para ${_numpadCtx.letter}`; hint.style.color='var(--green)';
+    disp.className='np-display valid'; hint.textContent=`Valido para ${_numpadCtx.letter}`; hint.style.color='var(--green)';
   } else if(_numpadVal.length>=2||n>max){
-    disp.className='np-display invalid'; hint.textContent=`❌ Deve ser ${min}–${max}`; hint.style.color='var(--red)';
+    disp.className='np-display invalid'; hint.textContent=`Deve ser ${min}-${max}`; hint.style.color='var(--red)';
   } else {
-    disp.className='np-display'; hint.textContent=`${_numpadCtx.letter}: ${min}–${max}`; hint.style.color='var(--text3)';
+    disp.className='np-display'; hint.textContent=`${_numpadCtx.letter}: ${min}-${max}`; hint.style.color='var(--text3)';
   }
 }
 
-// wire numpad buttons after DOM ready
 function initNumpad(){
   document.querySelectorAll('.npbtn[data-n]').forEach(btn=>{
     btn.addEventListener('click',()=>{
@@ -1856,8 +1773,8 @@ function initNumpad(){
     const {min,max}=colRange(_numpadCtx.letter,mode);
     const c=cartelas[cartelaIdx]; if(!c)return;
     const allNums=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
-    if(n<min||n>max){ showToast(`Inválido para ${_numpadCtx.letter} (${min}–${max})`); return; }
-    if(allNums.includes(n)){ showToast('Já está na cartela'); return; }
+    if(n<min||n>max){ showToast(`Invalido para ${_numpadCtx.letter} (${min}-${max})`); return; }
+    if(allNums.includes(n)){ showToast('Ja esta na cartela'); return; }
     const {letter,row}=_numpadCtx;
     const maxSlots=c.freeCenter&&letter==='N'?4:5;
     const filled=c.numeros[letter].filter(v=>v!==null&&v!==undefined);
@@ -1865,7 +1782,6 @@ function initNumpad(){
     const vals=[...filled,n].sort((a,b)=>a-b);
     while(vals.length<5)vals.push(null);
     c.numeros[letter]=vals;
-    // auto-mark if already drawn
     if(new Set(evData?.drawn||[]).has(n)){ c.marcados=c.marcados||[]; if(!c.marcados.includes(n))c.marcados.push(n); }
     closeM('mNumpad'); _numpadCtx=null; _numpadVal='';
     saveAllCartelas(); renderCartela(); renderHist(); checkAutoBatida(); sndMark();
@@ -1874,7 +1790,7 @@ function initNumpad(){
 function addNum(n,letter){
   const c=cartelas[cartelaIdx]; if(!c)return;
   const all=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
-  if(all.includes(n)){showToast('Já está na cartela');return;}
+  if(all.includes(n)){showToast('Ja esta na cartela');return;}
   const maxSlots=c.freeCenter&&letter==='N'?4:5;
   const filled=c.numeros[letter].filter(v=>v!==null&&v!==undefined);
   if(filled.length>=maxSlots){showToast(`Coluna ${letter} cheia`);return;}
@@ -1901,17 +1817,16 @@ $('btnDelCancel').addEventListener('click',()=>closeM('mDelCartela'));
 $('btnDelOk').addEventListener('click',()=>{
   closeM('mDelCartela');
   cartelas.splice(cartelaIdx,1);
-  // go to last cartela after delete
   cartelaIdx=Math.max(0,cartelas.length-1);
   saveAllCartelas();
   if(!cartelas.length){ renderEmptyState(); return; }
   renderCartela();
   renderHist();
   checkAutoBatida();
-  showToast('🗑️ Cartela excluída');
+  showToast('Cartela excluida');
 });
 
-// ── HISTORY ──────────────────────────────────────────
+// -- HISTORY --
 function renderHist(){
   const strip=$('pHistStrip'); if(!strip||!evData)return;
   const c=cartelas[cartelaIdx];
@@ -1924,12 +1839,12 @@ function renderHist(){
     const ball=document.createElement('div');
     ball.className=`ph-ball l${l}${inC?' in-cartela':''}${isMkd?' marked':''}`;
     ball.innerHTML=`<span class="phl">${l}</span><span class="phn">${n}</span>`;
-    if(!isMkd) ball.addEventListener('click',()=>{ pendingAdd={n,letter:l}; $('mAddTitle').textContent=`Adicionar ${l} ${n}?`; $('mAddTxt').textContent=`Adicionar o número ${n} (coluna ${l}) à cartela ${c?.id}?`; openM('mAddNum'); });
+    if(!isMkd) ball.addEventListener('click',()=>{ pendingAdd={n,letter:l}; $('mAddTitle').textContent=`Adicionar ${l} ${n}?`; $('mAddTxt').textContent=`Adicionar o numero ${n} (coluna ${l}) a cartela ${c?.id}?`; openM('mAddNum'); });
     strip.appendChild(ball);
   });
 }
 
-// ── BATIDA ───────────────────────────────────────────
+// -- BATIDA --
 function checkAutoBatida(){
   const c=cartelas[cartelaIdx]; if(!c)return;
   const p=getCurrentPremio(); if(!p)return;
@@ -1954,7 +1869,7 @@ function onBingoClick(){
   const c=cartelas[cartelaIdx]; if(!c)return;
   const p=getCurrentPremio();
   const nome=userProfile?.apelido||userProfile?.nome||currentUser.email;
-  $('mBingoTxt').textContent=`Declarar BINGO com a cartela ${c.id} (${nome})?\nO operador irá confirmar.`;
+  $('mBingoTxt').textContent=`Declarar BINGO com a cartela ${c.id} (${nome})?\nO operador ira confirmar.`;
   openM('mBingo');
 }
 $('btnBingoCancel').addEventListener('click',()=>closeM('mBingo'));
@@ -1971,7 +1886,7 @@ $('btnBingoOk').addEventListener('click',()=>{
   });
   update(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),{batidaStatus:'pendente'});
   const el=$('batidaStatusEl');
-  if(el){el.className='batida-status bs-pend';el.textContent='⏳ Batida enviada — aguardando confirmação...';}
+  if(el){el.className='batida-status bs-pend';el.textContent=' Batida enviada -- aguardando confirmacao...';}
 });
 </script>
 

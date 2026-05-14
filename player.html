@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v4.6 — 2026-05-13 -->
+<!-- IBBI Bingo Player v4.7 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -241,7 +241,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar →</button>
         </div>
       </div>
-      <div class="vtag">v4.6</div>
+      <div class="vtag">v4.7</div>
     </div>
   </div>
 </div>
@@ -281,7 +281,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       </div>
     </div>
   </div>
-  <div class="vtag">v4.6</div>
+  <div class="vtag">v4.7</div>
 </div>
 ```
 
@@ -296,7 +296,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">—</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v4.6</span>
+    <span class="p-vtag">v4.7</span>
     <span class="conn off" id="pConn">⬤</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -521,6 +521,7 @@ let _numpadVal='';   // current digits typed
 // ── AUTH STATE ───────────────────────────────────────
 onAuthStateChanged(auth, async user=>{
   if(user){
+    if(currentUser) return; // already initialized, skip re-init
     currentUser=user;
     // load profile
     const snap=await get(fb(`bingo/usuarios/${user.uid}`));
@@ -670,10 +671,12 @@ async function initGame(){
       else{el.style.display='none';}
     }
 
-    // no cartelas — show empty state, user must create
-    if(!cartelas.length){ renderEmptyState(); return; }
-
-    renderCartela(); renderHist(); checkAutoBatida();
+    // render regardless
+    if(!cartelas.length){
+      renderEmptyState();
+    } else {
+      renderCartela(); renderHist(); checkAutoBatida();
+    }
   });
 }
 
@@ -768,16 +771,17 @@ function initOcr(){
 async function runOcr(imageUrl){
   try{
     $('ocrStatusTxt').textContent='Carregando motor OCR...';
-    const worker = await Tesseract.createWorker('por+eng', 1, {
+    const worker = await Tesseract.createWorker('eng', 1, {
       logger: m=>{ if(m.status==='recognizing text') $('ocrStatusTxt').textContent=`Lendo... ${Math.round((m.progress||0)*100)}%`; }
     });
-    await worker.setParameters({ tessedit_char_whitelist:'0123456789 ' });
+    await worker.setParameters({ tessedit_char_whitelist:'0123456789', tessedit_pageseg_mode:'11' });
     const {data:{text}}=await worker.recognize(imageUrl);
     await worker.terminate();
     // extract all numbers from OCR text
     const found=[];
-    const matches=text.match(/\d{1,2}/g)||[];
+    const matches=text.match(/\d+/g)||[];
     matches.forEach(m=>{ const n=parseInt(m); if(n>=1&&n<=(evData?.mode||90)&&!found.includes(n))found.push(n); });
+    console.log('Numbers found by OCR:', found);
     distributeOcrNumbers(found);
     $('ocrLoading').style.display='none';
     showOcrStep(3);

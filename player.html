@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v4.4 — 2026-05-13 -->
+<!-- IBBI Bingo Player v4.5 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -8,6 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>IBBI Bingo — Login</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
 :root{
   --bg:#060608;--surface:#0f0f14;--surface2:#161620;--surface3:#1e1e2a;
@@ -142,6 +143,17 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .c-cell.just-marked{animation:cellpop .35s cubic-bezier(.15,1.6,.35,1) both}
 @keyframes cellpop{from{transform:scale(.55)}}
 
+/* num pad modal */
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.npbtn{border:none;border-radius:var(–rsm);padding:14px 8px;font-family:‘Bebas Neue’,sans-serif;font-size:1.5rem;background:var(–surface2);color:var(–text);cursor:pointer;transition:all .15s;border:1.5px solid var(–border2)}
+.npbtn:active{transform:scale(.92);background:var(–surface3)}
+.npbtn.np-del{font-size:1.1rem;color:var(–red);border-color:rgba(240,96,96,.3)}
+.npbtn.np-ok{background:linear-gradient(135deg,var(–accent),#0090c8);color:#000;font-weight:900;border-color:var(–accent)}
+.np-display{background:var(–surface2);border:1.5px solid var(–border2);border-radius:var(–rsm);padding:12px;text-align:center;font-family:‘Bebas Neue’,sans-serif;font-size:2rem;color:var(–text);min-height:56px;letter-spacing:2px}
+.np-display.valid{border-color:var(–green);color:var(–green)}
+.np-display.invalid{border-color:var(–red);color:var(–red)}
+.np-hint{font-size:.72rem;color:var(–text3);text-align:center;margin-top:6px;min-height:18px}
+
 /* OPTS */
 .cartela-opts{display:flex;flex-wrap:wrap;gap:10px;padding:0 2px}
 .tog-row{display:flex;align-items:center;gap:7px;font-size:.82rem;font-weight:700;color:var(–text2);cursor:pointer;user-select:none}
@@ -179,7 +191,25 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .ph-ball.in-cartela{box-shadow:0 0 0 2.5px #fff,0 0 0 4.5px var(–green)}
 .ph-ball.marked{opacity:.4;cursor:default}
 
+.ocr-preview{width:100%;max-height:220px;object-fit:contain;border-radius:var(–rsm);border:1.5px solid var(–border2);display:block}
+.ocr-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-top:10px}
+.ocr-hdr{font-family:‘Bebas Neue’,sans-serif;font-size:1.4rem;text-align:center;padding:5px 2px;border-radius:4px 4px 0 0}
+.ocr-hdr.lB{background:rgba(0,184,240,.2);color:#00b8f0}
+.ocr-hdr.lI{background:rgba(0,223,168,.2);color:#00dfa8}
+.ocr-hdr.lN{background:rgba(245,200,0,.2);color:#f5c800}
+.ocr-hdr.lG{background:rgba(255,140,0,.2);color:#ff8c00}
+.ocr-hdr.lO{background:rgba(200,80,255,.2);color:#c850ff}
+.ocr-cell{background:var(–surface2);border:1.5px solid var(–border2);border-radius:4px;text-align:center;font-family:‘Bebas Neue’,sans-serif;font-size:1.1rem;padding:6px 2px;cursor:pointer;transition:all .15s;min-height:36px;display:flex;align-items:center;justify-content:center}
+.ocr-cell.ok{border-color:var(–green);color:var(–green)}
+.ocr-cell.err{border-color:var(–red);color:var(–red)}
+.ocr-cell.empty-ocr{color:var(–text3);font-size:.75rem;border-style:dashed}
+.ocr-loading{text-align:center;padding:20px;color:var(–text2)}
+.ocr-loading .spin{animation:spin 1s linear infinite;display:inline-block;font-size:2rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ocr-status{font-size:.78rem;color:var(–text2);margin-top:8px;text-align:center;min-height:20px}
+
 /* NOT FOUND */
+.not-found{/* NOT FOUND */
 .not-found{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:30px;background:var(–bg)}
 .nf-icon{font-size:3.5rem;margin-bottom:14px}
 .nf-title{font-family:‘Bebas Neue’,sans-serif;font-size:2rem;color:var(–text2);letter-spacing:2px;margin-bottom:8px}
@@ -211,7 +241,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar →</button>
         </div>
       </div>
-      <div class="vtag">v4.4</div>
+      <div class="vtag">v4.5</div>
     </div>
   </div>
 </div>
@@ -251,7 +281,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       </div>
     </div>
   </div>
-  <div class="vtag">v4.4</div>
+  <div class="vtag">v4.5</div>
 </div>
 ```
 
@@ -266,7 +296,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">—</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v4.4</span>
+    <span class="p-vtag">v4.5</span>
     <span class="conn off" id="pConn">⬤</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -329,6 +359,105 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
   </div>
 </div>
 
+<!-- MODAL: Digitar número na célula -->
+
+<div class="mbk" id="mNumpad">
+  <div class="modal" style="max-width:320px">
+    <h2 id="mNumpadTitle">Digitar Número</h2>
+    <p style="font-size:.8rem;color:var(--text2);margin-bottom:10px" id="mNumpadSub"></p>
+    <div class="np-display" id="npDisplay">—</div>
+    <div class="np-hint" id="npHint"></div>
+    <div class="numpad">
+      <button class="npbtn" data-n="1">1</button>
+      <button class="npbtn" data-n="2">2</button>
+      <button class="npbtn" data-n="3">3</button>
+      <button class="npbtn" data-n="4">4</button>
+      <button class="npbtn" data-n="5">5</button>
+      <button class="npbtn" data-n="6">6</button>
+      <button class="npbtn" data-n="7">7</button>
+      <button class="npbtn" data-n="8">8</button>
+      <button class="npbtn" data-n="9">9</button>
+      <button class="npbtn np-del" id="npBksp">⌫</button>
+      <button class="npbtn" data-n="0">0</button>
+      <button class="npbtn np-ok" id="npOk">OK</button>
+    </div>
+    <div class="mfoot" style="margin-top:14px">
+      <button class="btn btn-ghost btn-sm" id="btnNumpadCancel">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: OCR Escanear Cartela -->
+
+<div class="mbk" id="mOcr">
+  <div class="modal" style="max-width:420px;max-height:95vh">
+    <h2>📷 Escanear Cartela</h2>
+    <!-- Step 1: choose photo -->
+    <div id="ocrStep1">
+      <p style="font-size:.82rem;color:var(--text2);margin-bottom:14px">Tire uma foto da sua cartela ou escolha da galeria. Certifique-se de boa iluminação.</p>
+      <label style="display:block;width:100%;background:linear-gradient(135deg,var(--accent),#0090c8);color:#000;font-weight:900;border-radius:var(--rsm);padding:13px;text-align:center;cursor:pointer;font-family:'Barlow',sans-serif;font-size:.95rem">
+        📷 Tirar Foto / Escolher Imagem
+        <input type="file" id="ocrFileInput" accept="image/*" style="display:none">
+      </label>
+      <div style="text-align:center;margin-top:14px">
+        <button class="btn btn-ghost btn-sm" id="btnOcrCancel1">Cancelar</button>
+      </div>
+    </div>
+    <!-- Step 2: processing -->
+    <div id="ocrStep2" style="display:none">
+      <img id="ocrImg" class="ocr-preview" src="" alt="Cartela">
+      <div class="ocr-loading" id="ocrLoading">
+        <div class="spin">⚙️</div>
+        <div style="margin-top:8px;font-weight:700">Processando imagem...</div>
+        <div class="ocr-status" id="ocrStatusTxt">Iniciando OCR...</div>
+      </div>
+    </div>
+    <!-- Step 3: review grid -->
+    <div id="ocrStep3" style="display:none">
+      <img id="ocrImgPreview" class="ocr-preview" src="" alt="Cartela" style="margin-bottom:10px">
+      <p style="font-size:.78rem;color:var(--text2);margin-bottom:6px">Verifique os números detectados. Toque numa célula para corrigir.</p>
+      <div class="ocr-grid" id="ocrGridEl"></div>
+      <div class="ocr-status" id="ocrValidTxt"></div>
+      <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" id="btnOcrRefoto" style="flex:1">📷 Nova Foto</button>
+        <button class="btn btn-acc" id="btnOcrConfirmar" style="flex:2">✅ Criar Cartela</button>
+      </div>
+      <div style="text-align:center;margin-top:8px">
+        <button class="btn btn-ghost btn-sm" id="btnOcrCancel3">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: corrigir célula OCR -->
+
+<div class="mbk" id="mOcrCell">
+  <div class="modal" style="max-width:300px">
+    <h2 id="mOcrCellTitle">Corrigir</h2>
+    <p style="font-size:.8rem;color:var(--text2);margin-bottom:10px" id="mOcrCellSub"></p>
+    <div class="np-display" id="ocrCellDisplay">—</div>
+    <div class="np-hint" id="ocrCellHint"></div>
+    <div class="numpad">
+      <button class="npbtn" data-ocr="1">1</button>
+      <button class="npbtn" data-ocr="2">2</button>
+      <button class="npbtn" data-ocr="3">3</button>
+      <button class="npbtn" data-ocr="4">4</button>
+      <button class="npbtn" data-ocr="5">5</button>
+      <button class="npbtn" data-ocr="6">6</button>
+      <button class="npbtn" data-ocr="7">7</button>
+      <button class="npbtn" data-ocr="8">8</button>
+      <button class="npbtn" data-ocr="9">9</button>
+      <button class="npbtn np-del" id="ocrCellBksp">⌫</button>
+      <button class="npbtn" data-ocr="0">0</button>
+      <button class="npbtn np-ok" id="ocrCellOk">OK</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+      <button class="btn btn-red btn-sm" id="ocrCellClear">Limpar</button>
+      <button class="btn btn-ghost btn-sm" id="ocrCellCancel">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, update, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -386,6 +515,8 @@ let cartelas=[], cartelaIdx=0;
 let pendingAdd=null, pendingRem=null;
 let toastTimer=null;
 let _suppressListener=false; // prevent Firebase from overwriting local changes
+let _numpadCtx=null; // {letter, row} for current numpad session
+let _numpadVal='';   // current digits typed
 
 // ── AUTH STATE ───────────────────────────────────────
 onAuthStateChanged(auth, async user=>{
@@ -566,6 +697,189 @@ function saveAllCartelas(){
 }
 
 
+// ── OCR / ESCANEAR CARTELA ───────────────────────────
+let _ocrNums = {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
+let _ocrCellCtx = null; // {letter, row} being edited in ocr cell modal
+let _ocrCellVal = '';
+
+function openOcrModal(){
+  _ocrNums={B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
+  showOcrStep(1);
+  openM('mOcr');
+}
+
+function showOcrStep(n){
+  [1,2,3].forEach(i=>{ const el=$('ocrStep'+i); if(el)el.style.display=i===n?'block':'none'; });
+}
+
+function initOcr(){
+  $('btnOcrCancel1').addEventListener('click',()=>closeM('mOcr'));
+  $('btnOcrCancel3').addEventListener('click',()=>closeM('mOcr'));
+  $('btnOcrRefoto').addEventListener('click',()=>{ showOcrStep(1); $('ocrFileInput').value=''; });
+  $('ocrFileInput').addEventListener('change',async(e)=>{
+    const file=e.target.files[0]; if(!file)return;
+    const url=URL.createObjectURL(file);
+    $('ocrImg').src=url; $('ocrImgPreview').src=url;
+    showOcrStep(2);
+    $('ocrLoading').style.display='block';
+    await runOcr(url);
+  });
+  $('btnOcrConfirmar').addEventListener('click',()=>confirmOcr());
+
+  // ocr cell numpad
+  document.querySelectorAll('.npbtn[data-ocr]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      if(_ocrCellVal.length>=2)return;
+      _ocrCellVal+=btn.dataset.ocr;
+      updateOcrCellDisplay();
+    });
+  });
+  $('ocrCellBksp').addEventListener('click',()=>{ _ocrCellVal=_ocrCellVal.slice(0,-1); updateOcrCellDisplay(); });
+  $('ocrCellCancel').addEventListener('click',()=>{ closeM('mOcrCell'); _ocrCellCtx=null; _ocrCellVal=''; });
+  $('ocrCellClear').addEventListener('click',()=>{
+    if(!_ocrCellCtx)return;
+    _ocrNums[_ocrCellCtx.letter][_ocrCellCtx.row]=null;
+    closeM('mOcrCell'); _ocrCellCtx=null; _ocrCellVal='';
+    renderOcrGrid();
+  });
+  $('ocrCellOk').addEventListener('click',()=>{
+    if(!_ocrCellCtx||!_ocrCellVal)return;
+    const n=parseInt(_ocrCellVal);
+    const mode=evData?.mode||90;
+    const {min,max}=colRange(_ocrCellCtx.letter,mode);
+    if(n<min||n>max){ updateOcrCellDisplay(); return; }
+    _ocrNums[_ocrCellCtx.letter][_ocrCellCtx.row]=n;
+    closeM('mOcrCell'); _ocrCellCtx=null; _ocrCellVal='';
+    renderOcrGrid();
+  });
+}
+
+async function runOcr(imageUrl){
+  try{
+    $('ocrStatusTxt').textContent='Carregando motor OCR...';
+    const worker = await Tesseract.createWorker('por+eng', 1, {
+      logger: m=>{ if(m.status==='recognizing text') $('ocrStatusTxt').textContent=`Lendo... ${Math.round((m.progress||0)*100)}%`; }
+    });
+    await worker.setParameters({ tessedit_char_whitelist:'0123456789 ' });
+    const {data:{text}}=await worker.recognize(imageUrl);
+    await worker.terminate();
+    // extract all numbers from OCR text
+    const found=[];
+    const matches=text.match(/\d{1,2}/g)||[];
+    matches.forEach(m=>{ const n=parseInt(m); if(n>=1&&n<=(evData?.mode||90)&&!found.includes(n))found.push(n); });
+    distributeOcrNumbers(found);
+    $('ocrLoading').style.display='none';
+    showOcrStep(3);
+    renderOcrGrid();
+  }catch(err){
+    console.error(err);
+    $('ocrStatusTxt').textContent='Erro ao processar. Tente outra foto.';
+    $('ocrLoading').innerHTML='<div style="color:var(--red);font-weight:700">❌ Erro no OCR. Tente outra foto.</div>';
+    setTimeout(()=>{ showOcrStep(1); },2000);
+  }
+}
+
+function distributeOcrNumbers(nums){
+  // reset
+  _ocrNums={B:[],I:[],N:[],G:[],O:[]};
+  const mode=evData?.mode||90;
+  nums.forEach(n=>{
+    const letter=getLetter(n,mode);
+    if(_ocrNums[letter].length<5) _ocrNums[letter].push(n);
+  });
+  // sort each column and pad to 5
+  LETTERS.forEach(l=>{
+    _ocrNums[l].sort((a,b)=>a-b);
+    while(_ocrNums[l].length<5)_ocrNums[l].push(null);
+  });
+}
+
+function renderOcrGrid(){
+  const grid=$('ocrGridEl'); if(!grid)return;
+  const mode=evData?.mode||90;
+  grid.innerHTML='';
+  let valid=0, total=0;
+  // headers
+  LETTERS.forEach(l=>{
+    const h=document.createElement('div'); h.className=`ocr-hdr l${l}`; h.textContent=l; grid.appendChild(h);
+  });
+  // cells
+  for(let row=0;row<5;row++){
+    LETTERS.forEach((letter,col)=>{
+      const n=_ocrNums[letter][row];
+      const cell=document.createElement('div');
+      const {min,max}=colRange(letter,mode);
+      if(n===null||n===undefined){
+        cell.className='ocr-cell empty-ocr'; cell.textContent='?'; total++;
+      } else if(n>=min&&n<=max){
+        cell.className='ocr-cell ok'; cell.textContent=n; valid++; total++;
+      } else {
+        cell.className='ocr-cell err'; cell.textContent=n; total++;
+      }
+      cell.addEventListener('click',()=>openOcrCellEdit(letter,row,n));
+      grid.appendChild(cell);
+    });
+  }
+  const pct=total>0?Math.round(valid/total*100):0;
+  const vTxt=$('ocrValidTxt');
+  if(vTxt) vTxt.textContent=`${valid} de 25 números válidos (${pct}%) — toque para corrigir`;
+}
+
+function openOcrCellEdit(letter,row,currentVal){
+  _ocrCellCtx={letter,row};
+  _ocrCellVal=currentVal!=null?String(currentVal):'';
+  const mode=evData?.mode||90;
+  const {min,max}=colRange(letter,mode);
+  $('mOcrCellTitle').textContent=`Coluna ${letter}`;
+  $('mOcrCellSub').textContent=`Faixa válida: ${min} a ${max}`;
+  updateOcrCellDisplay();
+  openM('mOcrCell');
+}
+
+function updateOcrCellDisplay(){
+  const disp=$('ocrCellDisplay'),hint=$('ocrCellHint'); if(!disp)return;
+  const mode=evData?.mode||90;
+  if(!_ocrCellVal){ disp.textContent='—'; disp.className='np-display'; if(hint)hint.textContent=''; return; }
+  const n=parseInt(_ocrCellVal);
+  const {min,max}=colRange(_ocrCellCtx?.letter||'B',mode);
+  disp.textContent=_ocrCellVal;
+  if(n>=min&&n<=max){ disp.className='np-display valid'; hint.textContent=`✅ Válido`; hint.style.color='var(--green)'; }
+  else{ disp.className='np-display invalid'; hint.textContent=`❌ Deve ser ${min}–${max}`; hint.style.color='var(--red)'; }
+}
+
+function confirmOcr(){
+  const c=novaCartela();
+  c.numeros=JSON.parse(JSON.stringify(_ocrNums));
+  // mark already drawn numbers
+  const drawnSet=new Set(evData?.drawn||[]);
+  LETTERS.forEach(l=>{ c.numeros[l].forEach(n=>{ if(n&&drawnSet.has(n)){ c.marcados=c.marcados||[]; if(!c.marcados.includes(n))c.marcados.push(n); } }); });
+  cartelas.push(c); cartelaIdx=cartelas.length-1;
+  saveAllCartelas();
+  closeM('mOcr');
+  renderCartela(); renderHist(); checkAutoBatida();
+  showToast('✅ Cartela escaneada criada!');
+}
+
+// ── PUXAR AUTOMÁTICO ─────────────────────────────────
+function puxarAutomatico(){
+  const c=cartelas[cartelaIdx]; if(!c)return;
+  const drawnSet=new Set(evData?.drawn||[]);
+  const allNums=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
+  if(!allNums.length){ showToast('Preencha a cartela primeiro'); return; }
+  let count=0;
+  allNums.forEach(n=>{
+    if(drawnSet.has(n)&&!(c.marcados||[]).includes(n)){
+      c.marcados=c.marcados||[]; c.marcados.push(n); count++;
+    }
+  });
+  c.autoMarcar=true;
+  if($('togAuto'))$('togAuto').checked=true;
+  saveAllCartelas(); renderCartela(); renderHist(); checkAutoBatida();
+  if(count>0){ sndMark(); showToast(`🤖 ${count} número(s) marcado(s) automaticamente!`); }
+  else showToast('Nenhum número novo para marcar');
+}
+
+
 // ── EMPTY STATE ──────────────────────────────────────
 function renderEmptyState(){
   const hdr=$('cartelaHdr'), grid=$('cartelaGrid');
@@ -602,6 +916,7 @@ function renderBody(){
       </div>
       <button class="btn btn-ghost btn-icon" id="btnNext">→</button>
       <button class="btn btn-acc btn-sm" id="btnNovaC">+ Nova</button>
+      <button class="btn btn-ghost btn-sm" id="btnScan" title="Escanear cartela">📷</button>
       <button class="btn btn-red btn-icon" id="btnDelC" title="Excluir cartela">🗑️</button>
     </div>
     <div class="cartela-wrap">
@@ -612,6 +927,7 @@ function renderBody(){
       <label class="tog-row"><label class="tog"><input type="checkbox" id="togFree"><span class="tog-sl"></span></label>FREE CENTER (★)</label>
       <label class="tog-row"><label class="tog"><input type="checkbox" id="togAuto" checked><span class="tog-sl"></span></label>Marcar automático</label>
     </div>
+    <button class="btn btn-ghost btn-sm" id="btnPuxarAuto" style="width:100%;color:var(--accent2);border-color:rgba(0,223,168,.3)">🤖 Puxar Automático (marcar já sorteados)</button>
     <div class="batida-status" id="batidaStatusEl"></div>
     <button class="bingo-btn" id="btnBingo">🎉 BINGO!</button>
     <div class="p-hist-title">Números sorteados — toque para adicionar</div>
@@ -639,8 +955,12 @@ function renderBody(){
   $('btnBingo').addEventListener('click',onBingoClick);
   $('pLastBall').addEventListener('click',onTapLastBall);
   $('btnSair').addEventListener('click',async()=>{ await signOut(auth); });
+  $('btnScan').addEventListener('click',()=>openOcrModal());
+  $('btnPuxarAuto').addEventListener('click',()=>puxarAutomatico());
   // show empty state immediately — Firebase listener will populate
   renderEmptyState();
+  initNumpad();
+  initOcr();
 }
 
 function showToast(msg){
@@ -700,32 +1020,119 @@ function renderCartela(){
   hdr.innerHTML='';
   LETTERS.forEach(l=>{ const cell=document.createElement('div'); cell.className=`ch-cell l${l}`; cell.textContent=l; hdr.appendChild(cell); });
   grid.innerHTML='';
+  const drawnSet=new Set(evData?.drawn||[]);
   const marcados=new Set(c.marcados||[]);
   for(let row=0;row<5;row++){
     LETTERS.forEach((letter,col)=>{
       const isFree=c.freeCenter&&row===2&&col===2;
       const num=c.numeros[letter][row];
+      const hasNum=num!==null&&num!==undefined;
+      const isDrawn=hasNum&&drawnSet.has(num);  // sorteado
+      const isMarked=hasNum&&marcados.has(num); // marcado (sorteado ou clicado)
       const cell=document.createElement('div');
-      if(isFree){cell.className='c-cell free-cell';cell.textContent='★';}
-      else if(num===null||num===undefined){cell.className='c-cell empty-cell';cell.textContent='+';cell.addEventListener('click',()=>onEmptyCell(letter,row));}
-      else{const marked=marcados.has(num);cell.className=`c-cell ${marked?'marked-'+letter:'filled-'+letter}`;cell.textContent=num;cell.addEventListener('click',()=>onFilledCell(num,letter,row));}
+      if(isFree){
+        // FREE CENTER
+        cell.className='c-cell free-cell';
+        cell.textContent='★';
+      } else if(!hasNum){
+        // VAZIA — toque abre numpad
+        cell.className='c-cell empty-cell';
+        cell.textContent='+';
+        cell.addEventListener('click',()=>openNumpad(letter,row));
+      } else if(isDrawn||isMarked){
+        // SORTEADO/MARCADO — não pode mexer
+        cell.className=`c-cell marked-${letter} just-marked`;
+        cell.textContent=num;
+        cell.addEventListener('click',()=>showToast('Número já sorteado — não pode remover'));
+      } else {
+        // DIGITADO MAS NÃO SORTEADO — pode remover
+        cell.className=`c-cell filled-${letter}`;
+        cell.textContent=num;
+        // small delete hint
+        cell.title='Toque para remover';
+        cell.addEventListener('click',()=>onFilledCell(num,letter,row));
+      }
       grid.appendChild(cell);
     });
   }
 }
-function onEmptyCell(letter,row){
-  const n=evData?.lastDrawn,mode=evData?.mode||90; if(!n)return;
-  if(getLetter(n,mode)!==letter){showToast(`Último número é ${getLetter(n,mode)}, não cabe em ${letter}`);return;}
-  const c=cartelas[cartelaIdx]; if(!c||c.numeros[letter][row]!==null&&c.numeros[letter][row]!==undefined)return;
-  pendingAdd={n,letter};
-  $('mAddTitle').textContent=`Adicionar ${letter} ${n}?`;
-  $('mAddTxt').textContent=`Adicionar o número ${n} à coluna ${letter} da cartela ${c.id}?`;
-  openM('mAddNum');
-}
+function onEmptyCell(letter,row){ openNumpad(letter,row); }
 function onFilledCell(num,letter,row){
+  // only called for filled-but-not-drawn cells
   pendingRem={num,letter,row};
-  $('mRemTxt').textContent=`Remover o número ${num} (${letter}) da cartela?`;
+  $('mRemTxt').textContent=`Remover o número ${num} (coluna ${letter}) da cartela?`;
   openM('mRemNum');
+}
+
+// ── NUMPAD ───────────────────────────────────────────
+function colRange(letter, mode){
+  const idx=LETTERS.indexOf(letter), size=mode/5;
+  return {min:Math.floor(idx*size)+1, max:Math.floor((idx+1)*size)};
+}
+
+function openNumpad(letter, row){
+  const c=cartelas[cartelaIdx]; if(!c)return;
+  const mode=evData?.mode||90;
+  const {min,max}=colRange(letter,mode);
+  _numpadCtx={letter,row}; _numpadVal='';
+  $('mNumpadTitle').textContent=`Coluna ${letter}`;
+  $('mNumpadSub').textContent=`Números válidos: ${min} a ${max}`;
+  updateNumpadDisplay();
+  openM('mNumpad');
+}
+
+function updateNumpadDisplay(){
+  const disp=$('npDisplay'), hint=$('npHint'); if(!disp)return;
+  const mode=evData?.mode||90;
+  if(!_numpadVal||!_numpadCtx){ disp.textContent='—'; disp.className='np-display'; if(hint)hint.textContent=''; return; }
+  const n=parseInt(_numpadVal);
+  const {min,max}=colRange(_numpadCtx.letter,mode);
+  const c=cartelas[cartelaIdx];
+  const allNums=c?Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined):[];
+  disp.textContent=_numpadVal;
+  if(allNums.includes(n)){
+    disp.className='np-display invalid'; hint.textContent='⚠️ Já está na cartela'; hint.style.color='var(--red)';
+  } else if(n>=min&&n<=max){
+    disp.className='np-display valid'; hint.textContent=`✅ Válido para ${_numpadCtx.letter}`; hint.style.color='var(--green)';
+  } else if(_numpadVal.length>=2||n>max){
+    disp.className='np-display invalid'; hint.textContent=`❌ Deve ser ${min}–${max}`; hint.style.color='var(--red)';
+  } else {
+    disp.className='np-display'; hint.textContent=`${_numpadCtx.letter}: ${min}–${max}`; hint.style.color='var(--text3)';
+  }
+}
+
+// wire numpad buttons after DOM ready
+function initNumpad(){
+  document.querySelectorAll('.npbtn[data-n]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      if(_numpadVal.length>=2)return;
+      _numpadVal+=btn.dataset.n;
+      updateNumpadDisplay();
+    });
+  });
+  $('npBksp').addEventListener('click',()=>{ _numpadVal=_numpadVal.slice(0,-1); updateNumpadDisplay(); });
+  $('btnNumpadCancel').addEventListener('click',()=>{ closeM('mNumpad'); _numpadCtx=null; _numpadVal=''; });
+  $('npOk').addEventListener('click',()=>{
+    if(!_numpadCtx||!_numpadVal)return;
+    const n=parseInt(_numpadVal);
+    const mode=evData?.mode||90;
+    const {min,max}=colRange(_numpadCtx.letter,mode);
+    const c=cartelas[cartelaIdx]; if(!c)return;
+    const allNums=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
+    if(n<min||n>max){ showToast(`Inválido para ${_numpadCtx.letter} (${min}–${max})`); return; }
+    if(allNums.includes(n)){ showToast('Já está na cartela'); return; }
+    const {letter,row}=_numpadCtx;
+    const maxSlots=c.freeCenter&&letter==='N'?4:5;
+    const filled=c.numeros[letter].filter(v=>v!==null&&v!==undefined);
+    if(filled.length>=maxSlots){ showToast(`Coluna ${letter} cheia`); return; }
+    const vals=[...filled,n].sort((a,b)=>a-b);
+    while(vals.length<5)vals.push(null);
+    c.numeros[letter]=vals;
+    // auto-mark if already drawn
+    if(new Set(evData?.drawn||[]).has(n)){ c.marcados=c.marcados||[]; if(!c.marcados.includes(n))c.marcados.push(n); }
+    closeM('mNumpad'); _numpadCtx=null; _numpadVal='';
+    saveAllCartelas(); renderCartela(); renderHist(); checkAutoBatida(); sndMark();
+  });
 }
 function addNum(n,letter){
   const c=cartelas[cartelaIdx]; if(!c)return;

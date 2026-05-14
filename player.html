@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v4.5 — 2026-05-13 -->
+<!-- IBBI Bingo Player v4.6 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -241,7 +241,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar →</button>
         </div>
       </div>
-      <div class="vtag">v4.5</div>
+      <div class="vtag">v4.6</div>
     </div>
   </div>
 </div>
@@ -281,7 +281,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       </div>
     </div>
   </div>
-  <div class="vtag">v4.5</div>
+  <div class="vtag">v4.6</div>
 </div>
 ```
 
@@ -296,7 +296,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">—</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v4.5</span>
+    <span class="p-vtag">v4.6</span>
     <span class="conn off" id="pConn">⬤</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -514,7 +514,7 @@ let evData=null, currentUser=null, userProfile=null;
 let cartelas=[], cartelaIdx=0;
 let pendingAdd=null, pendingRem=null;
 let toastTimer=null;
-let _suppressListener=false; // prevent Firebase from overwriting local changes
+let _lastSaveTime=0; // timestamp of last local save
 let _numpadCtx=null; // {letter, row} for current numpad session
 let _numpadVal='';   // current digits typed
 
@@ -646,7 +646,9 @@ async function initGame(){
   let firstFire=true;
   onValue(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),snap2=>{
     const data=snap2.val();
-    if(data?.cartelas && !_suppressListener){
+    const age=Date.now()-_lastSaveTime;
+    // Skip Firebase update if we just saved locally within 1.5s (avoids overwrite race)
+    if(data?.cartelas && (firstFire || age>1500)){
       const novo=Object.entries(data.cartelas)
         .map(([fbId,c])=>({fbId,...c}))
         .sort((a,b)=>a.criadaEm-b.criadaEm);
@@ -689,11 +691,20 @@ function saveAllCartelas(){
   const obj={};
   cartelas.forEach(c=>{ obj[c.fbId]={id:c.id,numeros:c.numeros,marcados:c.marcados||[],freeCenter:c.freeCenter||false,autoMarcar:c.autoMarcar!==false,criadaEm:c.criadaEm}; });
   const nome=userProfile?.apelido||userProfile?.nome||currentUser.email;
-  // suppress Firebase listener for 2s so local state isn't overwritten
-  _suppressListener=true;
-  clearTimeout(saveAllCartelas._t);
-  saveAllCartelas._t=setTimeout(()=>{ _suppressListener=false; },2000);
-  update(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),{cartelas:obj,nome,uid:currentUser.uid}).catch(console.error);
+  _lastSaveTime=Date.now();
+  // Use set on the full brincante node to ensure deletions are reflected
+  // get current batidaStatus to preserve it
+  get(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}/batidaStatus`)).then(snap=>{
+    const bs=snap.val();
+    set(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),{
+      cartelas:obj, nome, uid:currentUser.uid,
+      ...(bs?{batidaStatus:bs}:{})
+    }).catch(console.error);
+  }).catch(()=>{
+    set(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),{
+      cartelas:obj, nome, uid:currentUser.uid
+    }).catch(console.error);
+  });
 }
 
 

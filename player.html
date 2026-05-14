@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v5.5 — 2026-05-13 -->
+<!-- IBBI Bingo Player v5.7 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -53,9 +53,9 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .card h3{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(–text3);text-transform:uppercase;margin-bottom:10px}
 
 /* ── MODAL ── */
-.mbk{display:none;position:fixed;inset:0;background:rgba(0,0,2,.92);backdrop-filter:blur(6px);z-index:1000;align-items:center;justify-content:center;padding:16px}
+.mbk{display:none;position:fixed;inset:0;background:rgba(0,0,2,.92);backdrop-filter:blur(6px);z-index:1000;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto}
 .mbk.open{display:flex}
-.modal{background:var(–surface);border:1.5px solid var(–border2);border-radius:var(–radius);width:100%;max-width:380px;padding:22px;animation:mIn .22s cubic-bezier(.2,1.4,.4,1) both}
+.modal{background:var(–surface);border:1.5px solid var(–border2);border-radius:var(–radius);width:100%;max-width:380px;padding:22px;animation:mIn .22s cubic-bezier(.2,1.4,.4,1) both;margin:auto;flex-shrink:0}
 @keyframes mIn{from{transform:scale(.88);opacity:0}}
 .modal h2{font-family:‘Bebas Neue’,sans-serif;font-size:1.5rem;letter-spacing:2px;color:var(–accent);margin-bottom:14px}
 .mfoot{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
@@ -241,7 +241,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar →</button>
         </div>
       </div>
-      <div class="vtag">v5.5</div>
+      <div class="vtag">v5.7</div>
     </div>
   </div>
 </div>
@@ -281,7 +281,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       </div>
     </div>
   </div>
-  <div class="vtag">v5.5</div>
+  <div class="vtag">v5.7</div>
 </div>
 ```
 
@@ -296,7 +296,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">—</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v5.5</span>
+    <span class="p-vtag">v5.7</span>
     <span class="conn off" id="pConn">⬤</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -669,20 +669,20 @@ async function initGame(){
   });
 
   // Listen cartelas do user
+  let _fbFirstLoad=true;
   onValue(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),snap2=>{
     const data=snap2.val();
     const age=Date.now()-_lastSaveTime;
+    const justSaved=age<2000;
 
-    // Always update cartelas from Firebase unless we JUST saved locally (<1.5s)
-    if(data?.cartelas && age>1500){
+    if(data?.cartelas && !justSaved){
       const novo=Object.entries(data.cartelas)
-        .map(([fbId,c])=>({fbId,...c}))
+        .map(([fbId,c])=>ensureNumerosFormat({fbId,...c}))
         .sort((a,b)=>a.criadaEm-b.criadaEm);
       if(novo.length){
-        // preserve current index if possible
         if(cartelaIdx>=novo.length) cartelaIdx=Math.max(0,novo.length-1);
         cartelas=novo;
-        // update localStorage cache
+        // always update localStorage when Firebase gives us data
         try{
           const obj={};
           cartelas.forEach(c=>{obj[c.fbId]={id:c.id,numeros:c.numeros,marcados:c.marcados||[],freeCenter:c.freeCenter||false,autoMarcar:c.autoMarcar!==false,criadaEm:c.criadaEm};});
@@ -690,6 +690,7 @@ async function initGame(){
         }catch(e){}
       }
     }
+    _fbFirstLoad=false;
 
     // batida status
     const bs=data?.batidaStatus;
@@ -755,10 +756,12 @@ function loadCartelasFromCache(){
     if(!raw) return false;
     const {cartelas:obj, cartelaIdx:idx}=JSON.parse(raw);
     if(!obj||!Object.keys(obj).length) return false;
-    cartelas=Object.entries(obj).map(([fbId,c])=>({fbId,...c})).sort((a,b)=>a.criadaEm-b.criadaEm);
+    cartelas=Object.entries(obj)
+      .map(([fbId,c])=>ensureNumerosFormat({fbId,...c}))
+      .sort((a,b)=>a.criadaEm-b.criadaEm);
     cartelaIdx=Math.min(idx||0, cartelas.length-1);
-    return true;
-  }catch(e){ return false; }
+    return cartelas.length>0;
+  }catch(e){ console.error('Cache load error:',e); return false; }
 }
 
 
@@ -849,11 +852,17 @@ async function runOcr(imageUrl){
           role:'user',
           content:[
             {type:'image', source:{type:'base64', media_type:mimeType, data:base64}},
-            {type:'text', text:`Esta é uma cartela de bingo de ${mode} pedras. Liste TODOS os números visíveis nas células da cartela. Retorne APENAS um JSON no formato: {"numeros":[1,3,7,11,13,19,21,32,33,35,37,38,40,42,49,57,59,61,62,64,73,79,83,86,90]} com todos os números encontrados na ordem que aparecem. Se houver célula vazia ou FREE CENTER inclua null. Retorne SOMENTE o JSON, sem explicação.`}
+            {type:'text', text:`Cartela de bingo ${mode} pedras. Leia todos os numeros das celulas. Responda SOMENTE com JSON: {"numeros":[n1,n2,...,n25]} listando os 25 numeros em ordem de leitura (linha por linha, esquerda para direita). Use null para celula vazia ou FREE CENTER.`}
           ]
         }]
       })
     });
+
+    if(!resp.ok){
+      const errText=await resp.text();
+      console.error('Claude API error:', resp.status, errText);
+      throw new Error('API '+resp.status);
+    }
 
     const json = await resp.json();
     const rawText = json.content?.[0]?.text||'';
@@ -861,31 +870,36 @@ async function runOcr(imageUrl){
 
     // Save for debug
     const rawEl=$('ocrRawText');
-    if(rawEl) rawEl.value = 'Claude Vision:\n'+rawText;
+    if(rawEl) rawEl.value='Claude Vision response:\n'+rawText+'\n\nStatus: '+resp.status;
 
-    // Parse JSON response
-    let nums = [];
+    // Parse JSON
+    let nums=[];
     try{
-      const cleaned = rawText.replace(/```json|```/g,'').trim();
-      const parsed = JSON.parse(cleaned);
-      nums = (parsed.numeros||[]).filter(n=>n!==null&&n>=1&&n<=mode);
+      const cleaned=rawText.replace(/```json|```/g,'').trim();
+      const parsed=JSON.parse(cleaned);
+      nums=(parsed.numeros||[]).filter(n=>n!==null&&typeof n==='number'&&n>=1&&n<=mode);
     }catch(e){
-      // fallback: extract numbers from text
+      console.warn('JSON parse failed, extracting numbers from text');
       (rawText.match(/\d+/g)||[]).forEach(m=>{
         const n=parseInt(m);
         if(n>=1&&n<=mode) nums.push(n);
       });
     }
 
-    console.log('Numbers found:', nums);
+    console.log('Numbers extracted:', nums);
+    if(nums.length<5) throw new Error('Poucos números detectados ('+nums.length+'). Tente foto melhor.');
+
     distributeByRange([...new Set(nums)], mode);
     $('ocrLoading').style.display='none';
     showOcrStep(3);
     renderOcrGrid();
 
   }catch(err){
-    console.error('OCR error:', err);
-    // Fallback to Tesseract if Claude fails
+    console.error('Claude Vision failed:', err.message);
+    // Save error to debug box
+    const rawEl=$('ocrRawText');
+    if(rawEl) rawEl.value=(rawEl.value||'')+'\n\nERRO Claude: '+err.message;
+    // Fallback to Tesseract
     await runOcrTesseract(imageUrl);
   }
 }
@@ -1069,11 +1083,16 @@ function renderEmptyState(){
 
 function debugGridState(){
   const grid=$('cartelaGrid');
+  const c=cartelas[cartelaIdx];
+  const numerosInfo=c?JSON.stringify(c.numeros).slice(0,100):'N/A';
   const msg=`cartelaGrid: ${grid?'existe':'NÃO EXISTE'}
 cartelas[]: ${cartelas.length} itens
 cartelaIdx: ${cartelaIdx}
 Firebase uid: ${currentUser?.uid||'N/A'}
-Cache: ${localStorage.getItem(`bingo_cartelas_${evId}_${currentUser?.uid}`)?'existe':'vazio'}`;
+Cache: ${localStorage.getItem(`bingo_cartelas_${evId}_${currentUser?.uid}`)?'existe':'vazio'}
+cartela.id: ${c?.id||'N/A'}
+numeros ok: ${c&&c.numeros&&Array.isArray(c.numeros?.B)?'SIM':'NÃO - FORMATO ERRADO'}
+numeros: ${numerosInfo}`;
   alert(msg);
 }
 
@@ -1191,10 +1210,24 @@ function onTapLastBall(){
 }
 
 // ── CARTELA ───────────────────────────────────────────
+function ensureNumerosFormat(c){
+  // Ensure numeros has correct structure regardless of where data came from
+  if(!c.numeros) c.numeros={};
+  LETTERS.forEach(l=>{
+    if(!Array.isArray(c.numeros[l])){
+      c.numeros[l]=[null,null,null,null,null];
+    }
+    // pad to 5 slots
+    while(c.numeros[l].length<5) c.numeros[l].push(null);
+  });
+  return c;
+}
+
 function renderCartela(){
   const hdr=$('cartelaHdr'),grid=$('cartelaGrid'); if(!hdr||!grid)return;
-  const c=cartelas[cartelaIdx]; if(!c)return;
-  $('cnId').textContent=c.id;
+  let c=cartelas[cartelaIdx]; if(!c)return;
+  c=ensureNumerosFormat(c); // defensive: fix any malformed numeros
+  $('cnId').textContent=c.id||'—';
   $('cnPg').textContent=`Cartela ${cartelaIdx+1} de ${cartelas.length}`;
   if($('togFree'))$('togFree').checked=c.freeCenter||false;
   if($('togAuto'))$('togAuto').checked=c.autoMarcar!==false;
@@ -1206,7 +1239,7 @@ function renderCartela(){
   for(let row=0;row<5;row++){
     LETTERS.forEach((letter,col)=>{
       const isFree=c.freeCenter&&row===2&&col===2;
-      const num=c.numeros[letter][row];
+      const num=(c.numeros[letter]||[])[row];
       const hasNum=num!==null&&num!==undefined;
       const isDrawn=hasNum&&drawnSet.has(num);  // sorteado
       const isMarked=hasNum&&marcados.has(num); // marcado (sorteado ou clicado)

@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v4.1 — 2026-05-13 -->
+<!-- IBBI Bingo Player v4.2 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -26,7 +26,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .btn{border:none;border-radius:var(–rsm);padding:10px 20px;font-family:‘Barlow’,sans-serif;font-weight:800;font-size:.9rem;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
 .btn:active{transform:scale(.95)}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.btn-acc{background:linear-gradient(135deg,var(–accent),#0090c8);color:#fff;box-shadow:0 4px 14px rgba(0,184,240,.28)}
+.btn-acc{background:linear-gradient(135deg,var(–accent),#0090c8);color:#000;font-weight:900;box-shadow:0 4px 14px rgba(0,184,240,.28)}
 .btn-acc:hover:not(:disabled){filter:brightness(1.1)}
 .btn-ghost{background:var(–surface2);color:var(–text2);border:1.5px solid var(–border)}
 .btn-ghost:hover:not(:disabled){border-color:var(–accent);color:var(–accent)}
@@ -211,7 +211,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar →</button>
         </div>
       </div>
-      <div class="vtag">v4.1</div>
+      <div class="vtag">v4.2</div>
     </div>
   </div>
 </div>
@@ -251,7 +251,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       </div>
     </div>
   </div>
-  <div class="vtag">v4.1</div>
+  <div class="vtag">v4.2</div>
 </div>
 ```
 
@@ -266,7 +266,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">—</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v4.1</span>
+    <span class="p-vtag">v4.2</span>
     <span class="conn off" id="pConn">⬤</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -491,8 +491,6 @@ function friendlyAuthError(code){
 }
 
 // ── INIT GAME ────────────────────────────────────────
-let _pendingToast = null; // toast to show after next renderCartela
-
 async function initGame(){
   const snap=await get(fb(`bingo/eventos/${evId}`));
   const ev=snap.val();
@@ -544,8 +542,7 @@ async function initGame(){
 
     renderCartela(); renderHist(); checkAutoBatida();
 
-    // show pending toast after render
-    if(_pendingToast){ showToast(_pendingToast); _pendingToast=null; }
+    // local renders handle toast immediately
   });
 }
 
@@ -603,12 +600,13 @@ function renderBody(){
     </div>
   `;
 
-  $('btnPrev').addEventListener('click',()=>{ if(cartelaIdx>0){cartelaIdx--;renderCartela();renderHist();} });
-  $('btnNext').addEventListener('click',()=>{ if(cartelaIdx<cartelas.length-1){cartelaIdx++;renderCartela();renderHist();} });
+  $('btnPrev').addEventListener('click',()=>{ if(cartelaIdx>0){cartelaIdx--;renderCartela();renderHist();checkAutoBatida();} });
+  $('btnNext').addEventListener('click',()=>{ if(cartelaIdx<cartelas.length-1){cartelaIdx++;renderCartela();renderHist();checkAutoBatida();} });
   $('btnNovaC').addEventListener('click',()=>{
     const c=novaCartela(); cartelas.push(c); cartelaIdx=cartelas.length-1;
-    _pendingToast='✅ Cartela criada!';
-    saveAllCartelas(); // Firebase listener will re-render and show toast
+    saveAllCartelas();
+    renderCartela(); renderHist();
+    showToast('✅ Cartela criada!');
   });
   $('btnDelC').addEventListener('click',()=>{ const c=cartelas[cartelaIdx]; if(!c)return; $('mDelTxt').textContent=`Excluir a cartela ${c.id}? Não pode ser desfeito.`; openM('mDelCartela'); });
   $('togFree').addEventListener('change',()=>{ if(cartelas[cartelaIdx]){cartelas[cartelaIdx].freeCenter=$('togFree').checked;saveAllCartelas();renderCartela();} });
@@ -734,8 +732,10 @@ $('btnDelOk').addEventListener('click',()=>{
   closeM('mDelCartela');
   cartelas.splice(cartelaIdx,1);
   if(!cartelas.length){const nc=novaCartela();cartelas=[nc];}
-  if(cartelaIdx>=cartelas.length)cartelaIdx=cartelas.length-1;
-  saveAllCartelas();renderCartela();renderHist();showToast('🗑️ Cartela excluída');
+  if(cartelaIdx>=cartelas.length)cartelaIdx=Math.max(0,cartelas.length-1);
+  saveAllCartelas();
+  // render immediately — don't wait for Firebase
+  setTimeout(()=>{ renderCartela(); renderHist(); showToast('🗑️ Cartela excluída'); },50);
 });
 
 // ── HISTORY ──────────────────────────────────────────

@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v4.3 — 2026-05-13 -->
+<!-- IBBI Bingo Player v4.4 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -211,7 +211,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar →</button>
         </div>
       </div>
-      <div class="vtag">v4.3</div>
+      <div class="vtag">v4.4</div>
     </div>
   </div>
 </div>
@@ -251,7 +251,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       </div>
     </div>
   </div>
-  <div class="vtag">v4.3</div>
+  <div class="vtag">v4.4</div>
 </div>
 ```
 
@@ -266,7 +266,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">—</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v4.3</span>
+    <span class="p-vtag">v4.4</span>
     <span class="conn off" id="pConn">⬤</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -385,6 +385,7 @@ let evData=null, currentUser=null, userProfile=null;
 let cartelas=[], cartelaIdx=0;
 let pendingAdd=null, pendingRem=null;
 let toastTimer=null;
+let _suppressListener=false; // prevent Firebase from overwriting local changes
 
 // ── AUTH STATE ───────────────────────────────────────
 onAuthStateChanged(auth, async user=>{
@@ -514,11 +515,10 @@ async function initGame(){
   let firstFire=true;
   onValue(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),snap2=>{
     const data=snap2.val();
-    if(data?.cartelas){
+    if(data?.cartelas && !_suppressListener){
       const novo=Object.entries(data.cartelas)
         .map(([fbId,c])=>({fbId,...c}))
         .sort((a,b)=>a.criadaEm-b.criadaEm);
-      // preserve current index unless out of bounds
       if(firstFire){ cartelaIdx=0; }
       else if(cartelaIdx>=novo.length){ cartelaIdx=Math.max(0,novo.length-1); }
       cartelas=novo;
@@ -558,6 +558,10 @@ function saveAllCartelas(){
   const obj={};
   cartelas.forEach(c=>{ obj[c.fbId]={id:c.id,numeros:c.numeros,marcados:c.marcados||[],freeCenter:c.freeCenter||false,autoMarcar:c.autoMarcar!==false,criadaEm:c.criadaEm}; });
   const nome=userProfile?.apelido||userProfile?.nome||currentUser.email;
+  // suppress Firebase listener for 2s so local state isn't overwritten
+  _suppressListener=true;
+  clearTimeout(saveAllCartelas._t);
+  saveAllCartelas._t=setTimeout(()=>{ _suppressListener=false; },2000);
   update(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),{cartelas:obj,nome,uid:currentUser.uid}).catch(console.error);
 }
 
@@ -620,11 +624,14 @@ function renderBody(){
   $('btnPrev').addEventListener('click',()=>{ if(cartelaIdx>0){cartelaIdx--;renderCartela();renderHist();checkAutoBatida();} });
   $('btnNext').addEventListener('click',()=>{ if(cartelaIdx<cartelas.length-1){cartelaIdx++;renderCartela();renderHist();checkAutoBatida();} });
   $('btnNovaC').addEventListener('click',()=>{
-    const c=novaCartela(); cartelas.push(c); cartelaIdx=cartelas.length-1;
+    const c=novaCartela();
+    cartelas.push(c);
+    cartelaIdx=cartelas.length-1; // go to new cartela
     saveAllCartelas();
-    // render immediately without waiting for Firebase
-    renderCartela(); renderHist(); checkAutoBatida();
-    showToast('✅ Cartela criada!');
+    renderCartela();
+    renderHist();
+    checkAutoBatida();
+    showToast(`✅ Cartela ${cartelaIdx+1} de ${cartelas.length} criada!`);
   });
   $('btnDelC').addEventListener('click',()=>{ const c=cartelas[cartelaIdx]; if(!c)return; $('mDelTxt').textContent=`Excluir a cartela ${c.id}? Não pode ser desfeito.`; openM('mDelCartela'); });
   $('togFree').addEventListener('change',()=>{ if(cartelas[cartelaIdx]){cartelas[cartelaIdx].freeCenter=$('togFree').checked;saveAllCartelas();renderCartela();} });
@@ -750,10 +757,14 @@ $('btnDelCancel').addEventListener('click',()=>closeM('mDelCartela'));
 $('btnDelOk').addEventListener('click',()=>{
   closeM('mDelCartela');
   cartelas.splice(cartelaIdx,1);
-  if(cartelaIdx>=cartelas.length) cartelaIdx=Math.max(0,cartelas.length-1);
+  // go to last cartela after delete
+  cartelaIdx=Math.max(0,cartelas.length-1);
   saveAllCartelas();
   if(!cartelas.length){ renderEmptyState(); return; }
-  setTimeout(()=>{ renderCartela(); renderHist(); checkAutoBatida(); showToast('🗑️ Cartela excluída'); },50);
+  renderCartela();
+  renderHist();
+  checkAutoBatida();
+  showToast('🗑️ Cartela excluída');
 });
 
 // ── HISTORY ──────────────────────────────────────────

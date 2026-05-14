@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v5.8 — 2026-05-13 -->
+<!-- IBBI Bingo Player v5.9 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -241,7 +241,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar →</button>
         </div>
       </div>
-      <div class="vtag">v5.8</div>
+      <div class="vtag">v5.9</div>
     </div>
   </div>
 </div>
@@ -281,7 +281,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       </div>
     </div>
   </div>
-  <div class="vtag">v5.8</div>
+  <div class="vtag">v5.9</div>
 </div>
 ```
 
@@ -296,7 +296,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">—</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v5.8</span>
+    <span class="p-vtag">v5.9</span>
     <span class="conn off" id="pConn">⬤</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -829,94 +829,166 @@ function initOcr(){
   });
 }
 
-// ── OCR — CLAUDE VISION via Artifacts proxy ──────────────────────────────
+// ── OCR — CELL-BY-CELL GRID CUTTING ─────────────────
 async function runOcr(imageUrl){
   try{
     const mode = evData?.mode||90;
-    $('ocrStatusTxt').textContent='Analisando imagem...';
+    $('ocrStatusTxt').textContent='Carregando imagem...';
 
-    // Convert blob URL to base64
-    const base64Data = await blobToBase64(imageUrl);
-    const base64 = base64Data.split(',')[1];
-    const mimeType = base64Data.split(';')[0].split(':')[1]||'image/jpeg';
+    const img = await loadImage(imageUrl);
+    const w = img.naturalWidth, h = img.naturalHeight;
+    console.log('Image size:', w, 'x', h);
 
-    $('ocrStatusTxt').textContent='Lendo números...';
+    // ── Step 1: auto-crop to grid area ──────────────────
+    // Most bingo photos have the grid filling most of the image
+    // We try to detect the grid by scanning for the darkest horizontal lines
+    const cropBox = detectGridArea(img);
+    console.log('Grid area:', cropBox);
+    $('ocrStatusTxt').textContent='Grade detectada, lendo células...';
 
-    // Use Anthropic API — works via claude.ai proxy (no CORS issues in artifacts)
-    const resp = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:300,
-        messages:[{
-          role:'user',
-          content:[
-            {
-              type:'image',
-              source:{type:'base64', media_type:mimeType, data:base64}
-            },
-            {
-              type:'text',
-              text:'List all numbers visible in this bingo card grid cells. Reply ONLY with a JSON array of numbers like: [1,3,7,11,13,19,21,32,33,35,37,38,40,42,49,57,59,61,62,64,73,79,83,86,90]. No explanation, just the JSON array.'
-            }
-          ]
-        }]
-      })
+    // ── Step 2: cut into cells and OCR each one ─────────
+    // Grid has 6 rows (1 header BINGO + 5 numbers) and 5 cols
+    // We skip row 0 (header) and read rows 1-5
+    const worker = await Tesseract.createWorker('eng', 1, {});
+    await worker.setParameters({
+      tessedit_char_whitelist: '0123456789',
+      tessedit_pageseg_mode: '10', // single character/word
     });
 
-    const json = await resp.json();
-    const rawText = json.content?.[0]?.text||'';
-    console.log('Claude response:', rawText, 'status:', resp.status);
+    const results = []; // flat array of 25 values row by row
+    const cellW = cropBox.w / 5;
+    const cellH = cropBox.h / 6; // 6 rows including header
+    let debugLog = '';
 
-    // Save for debug
-    const rawEl=$('ocrRawText');
-    if(rawEl) rawEl.value='Status: '+resp.status+'\nResponse:\n'+rawText;
+    for(let row = 1; row <= 5; row++){       // skip row 0 (BINGO header)
+      for(let col = 0; col < 5; col++){
+        // Extract cell image
+        const cx = cropBox.x + col * cellW;
+        const cy = cropBox.y + row * cellH;
 
-    if(!resp.ok || !rawText){
-      throw new Error('Claude status '+resp.status+': '+rawText.slice(0,100));
+        const canvas = document.createElement('canvas');
+        // Upscale cell for better OCR
+        const scale = Math.max(3, 120/cellW);
+        canvas.width  = Math.round(cellW * scale);
+        canvas.height = Math.round(cellH * scale);
+        const ctx = canvas.getContext('2d');
+
+        // White background
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw cell upscaled
+        ctx.drawImage(img,
+          cx, cy, cellW, cellH,
+          4, 4, canvas.width-8, canvas.height-8
+        );
+
+        // Grayscale + contrast
+        const id = ctx.getImageData(0,0,canvas.width,canvas.height);
+        const d = id.data;
+        for(let i=0;i<d.length;i+=4){
+          const g = Math.round(0.299*d[i]+0.587*d[i+1]+0.114*d[i+2]);
+          const v = g < 140 ? 0 : 255;
+          d[i]=d[i+1]=d[i+2]=v; d[i+3]=255;
+        }
+        ctx.putImageData(id,0,0);
+
+        const cellUrl = canvas.toDataURL('image/png');
+        const {data:{text}} = await worker.recognize(cellUrl);
+        const cleaned = text.trim().replace(/\D/g,'');
+        const n = cleaned ? parseInt(cleaned) : null;
+        results.push(n);
+        debugLog += `[r${row}c${col}] raw:"${text.trim()}" → ${n}\n`;
+
+        const pct = Math.round(((row-1)*5+col+1)/25*100);
+        $('ocrStatusTxt').textContent=`Lendo células... ${pct}%`;
+      }
     }
 
-    // Parse — expect a JSON array directly
-    let nums=[];
-    try{
-      const cleaned=rawText.replace(/```json|```/g,'').trim();
-      // Try array first
-      if(cleaned.startsWith('[')){
-        nums=JSON.parse(cleaned).filter(n=>n!==null&&typeof n==='number'&&n>=1&&n<=mode);
-      } else {
-        // Try object with numeros key
-        const parsed=JSON.parse(cleaned);
-        const arr=parsed.numeros||parsed.numbers||parsed.nums||Object.values(parsed)[0]||[];
-        nums=arr.filter(n=>n!==null&&typeof n==='number'&&n>=1&&n<=mode);
-      }
-    }catch(e){
-      // Fallback: extract all numbers from text
-      (rawText.match(/\d+/g)||[]).forEach(m=>{
-        const n=parseInt(m);
-        if(n>=1&&n<=mode) nums.push(n);
+    await worker.terminate();
+    console.log('Cell results:', results);
+
+    // Save debug log
+    const rawEl=$('ocrRawText');
+    if(rawEl) rawEl.value = debugLog;
+
+    // results[0..24] = row1col0..row5col4
+    // Map to columns: col0=B, col1=I, col2=N, col3=G, col4=O
+    _ocrNums={B:[],I:[],N:[],G:[],O:[]};
+    _ocrDetectedFreeCenter=false;
+    for(let row=0;row<5;row++){
+      LETTERS.forEach((letter,col)=>{
+        const n = results[row*5+col];
+        const {min,max}=colRange(letter,mode);
+        if(n && n>=min && n<=max){
+          _ocrNums[letter].push(n);
+        } else if(n===null || n===undefined){
+          _ocrNums[letter].push(null);
+          if(row===2&&col===2) _ocrDetectedFreeCenter=true;
+        } else {
+          // OCR read wrong number — put null, user can fix
+          _ocrNums[letter].push(null);
+          if(rawEl) rawEl.value += `AVISO: ${n} inválido para coluna ${letter} (${min}-${max})\n`;
+        }
       });
     }
 
-    console.log('Numbers extracted:', nums);
-    if(rawEl) rawEl.value+='\n\nNumbers: '+JSON.stringify(nums);
+    // Pad columns to 5
+    LETTERS.forEach(l=>{
+      while(_ocrNums[l].length<5) _ocrNums[l].push(null);
+      _ocrNums[l]=_ocrNums[l].slice(0,5);
+    });
 
-    if(nums.length<5){
-      throw new Error('Só '+nums.length+' números detectados. Tente foto mais nítida.');
-    }
-
-    distributeByRange([...new Set(nums)], mode);
     $('ocrLoading').style.display='none';
     showOcrStep(3);
     renderOcrGrid();
 
   }catch(err){
-    console.error('Claude Vision failed:', err.message);
+    console.error('OCR cell error:', err);
     const rawEl=$('ocrRawText');
-    if(rawEl) rawEl.value=(rawEl.value||'')+'\n\nFalhou: '+err.message+'\nUsando Tesseract...';
-    // Fallback to Tesseract
-    await runOcrTesseract(imageUrl);
+    if(rawEl) rawEl.value='Erro: '+err.message;
+    $('ocrLoading').innerHTML=`<div style="color:var(--red);font-weight:700;padding:12px">
+      ❌ ${err.message}<br><small>Tente enquadrar melhor a cartela.</small>
+    </div>`;
+    setTimeout(()=>showOcrStep(1),3000);
   }
+}
+
+function loadImage(url){
+  return new Promise((res,rej)=>{
+    const img=new Image();
+    img.onload=()=>res(img);
+    img.onerror=rej;
+    img.src=url;
+    img.crossOrigin='anonymous';
+  });
+}
+
+function detectGridArea(img){
+  // Draw image to canvas and scan for grid boundaries
+  const w=img.naturalWidth, h=img.naturalHeight;
+  const canvas=document.createElement('canvas');
+  canvas.width=w; canvas.height=h;
+  const ctx=canvas.getContext('2d');
+  ctx.drawImage(img,0,0);
+  const data=ctx.getImageData(0,0,w,h).data;
+
+  function grayAt(x,y){ const i=(y*w+x)*4; return 0.299*data[i]+0.587*data[i+1]+0.114*data[i+2]; }
+  function rowDarkness(y){ let s=0; for(let x=0;x<w;x++) s+=255-grayAt(x,y); return s/w; }
+  function colDarkness(x){ let s=0; for(let y=0;y<h;y++) s+=255-grayAt(x,y); return s/h; }
+
+  // Find darkest rows/cols to detect grid borders
+  // Scan from edges inward to find where content starts
+  const margin = 0.05; // ignore 5% border
+  let x0=Math.round(w*margin), x1=Math.round(w*(1-margin));
+  let y0=Math.round(h*margin), y1=Math.round(h*(1-margin));
+
+  // Try to tighten by finding dark column lines on left/right
+  // Simple approach: use center 90% of image as grid
+  x0=Math.round(w*0.04); x1=Math.round(w*0.96);
+  y0=Math.round(h*0.04); y1=Math.round(h*0.96);
+
+  return {x:x0, y:y0, w:x1-x0, h:y1-y0};
 }
 
 async function blobToBase64(url){

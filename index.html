@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v3.4 — 2026-05-13 -->
+<!-- IBBI Bingo v3.4 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -257,9 +257,9 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
 </head>
 <body>
 
-<!-- ══════════════════════════════════
-     SCREEN 1 — EVENTOS
-══════════════════════════════════ -->
+<!-- ==================================
+     SCREEN 1 - EVENTOS
+================================== -->
 
 <div class="screen active" id="s1">
   <div class="s1-head">
@@ -286,9 +286,9 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
   </div>
 </div>
 
-<!-- ══════════════════════════════════
-     SCREEN 2 — SORTEIO
-══════════════════════════════════ -->
+<!-- ==================================
+     SCREEN 2 - SORTEIO
+================================== -->
 
 <div class="screen" id="s2">
   <div class="s2-head">
@@ -296,13 +296,12 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
     <span class="mode-badge" id="s2mode">90 pedras</span>
     <div class="s2-right">
       <button class="btn btn-ghost btn-sm" id="btnVoltar">&#8592; Voltar</button>
-      <button class="btn btn-ghost btn-sm" id="btnEditar">&#9881; Editar</button>
       <button class="btn btn-red btn-sm" id="btnEnc">&#9940; Encerrar</button>
     </div>
   </div>
   <div class="s2-body">
     <div class="main-col">
-      <!-- Prêmios -->
+      <!-- Premios -->
       <div class="prizes-panel">
         <div class="pp-head"><div class="sec-lbl">🏆 Prêmios</div></div>
         <div class="prizes-scroll" id="prizesScroll"></div>
@@ -312,7 +311,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
         <div class="sec-lbl" style="margin-bottom:10px">🔔 Batidas Recebidas</div>
         <div id="batidasList"></div>
       </div>
-      <!-- Prêmio atual -->
+      <!-- Premio atual -->
       <div class="cpbox">
         <div>
           <div class="cpbox-lbl">Sorteando agora</div>
@@ -385,7 +384,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
   </div>
 </div>
 
-<!-- ══ MODALS ══ -->
+<!-- == MODALS == -->
 
 <!-- Novo Evento -->
 
@@ -501,7 +500,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
 
 <div class="divider"></div>
 
-<!-- Zona de ações -->
+<!-- Zona de acoes -->
 <div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--rsm);padding:12px">
   <div class="sec-lbl" style="margin-bottom:10px">Acoes do Evento</div>
 
@@ -1166,6 +1165,15 @@ $('btnReiniciarConfirmar').addEventListener('click',async()=>{
       evData.cartelas[cid]={usada:false,jogador:null,playerId:null,ts:null};
     });
   }
+  // Zerar cartelas marcadas pelos jogadores no Firebase
+  update(fb(`bingo/eventos/${evId}`),{
+    drawn:[], lastDrawn:null, status:'ativo',
+    encerradoEm:null, batidas:{},
+    premios:evData.premios,
+    cartelas:evData.cartelas||{}
+  });
+  // Apagar marcacoes salvas pelos brincantes (cartelas/marcados)
+  set(fb(`bingo/eventos/${evId}/brincantes`), null).catch(()=>{});
   const premios=sortP(evData.premios);
   curPrizeId=premios[0]?.id||null;
   saveEv(); renderS(false);

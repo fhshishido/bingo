@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v7.6 - 2026-05-13 -->
+<!-- IBBI Bingo Player v7.9 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo v7.6</title>
+<title>IBBI Bingo v7.9</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -260,7 +260,7 @@ transition:background-color 9999s ease-in-out 0s;
 
 </style>
 
-  <meta name="app-version" content="v7.6">
+  <meta name="app-version" content="v7.9">
 </head>
 <body>
 
@@ -285,7 +285,7 @@ transition:background-color 9999s ease-in-out 0s;
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &#8594;</button>
         </div>
       </div>
-      <div class="vtag">v7.6</div>
+      <div class="vtag">v7.9</div>
     </div>
   </div>
 </div>
@@ -334,7 +334,7 @@ transition:background-color 9999s ease-in-out 0s;
 </div>
 
   </div>
-  <div class="vtag">v7.6</div>
+  <div class="vtag">v7.9</div>
 </div>
 
   </div>
@@ -380,7 +380,7 @@ transition:background-color 9999s ease-in-out 0s;
 
   <div style="margin-top:16px;text-align:center">
     <button class="btn btn-ghost btn-sm" id="btnVoltarSelecao">← Voltar</button>
-    <div class="vtag" style="margin-top:10px">v7.6</div>
+    <div class="vtag" style="margin-top:10px">v7.9</div>
   </div>
 </div>
 ```
@@ -396,7 +396,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">&mdash;</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v7.6</span>
+    <span class="p-vtag">v7.9</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -584,25 +584,6 @@ transition:background-color 9999s ease-in-out 0s;
 </div>
 
 <script type="module">
-// ===== AUTO VERSION MANAGEMENT =====
-// Altere apenas esta linha ao atualizar o app
-const APP_VERSION = 'v7.6';
-
-// Atualiza automaticamente todos os elementos de versao na pagina
-function updateVersionDisplays() {
-  document.querySelectorAll('.vtag, .p-vtag').forEach(el => {
-    el.textContent = APP_VERSION;
-  });
-  // Atualiza titulo se necessario
-  const title = document.querySelector('title');
-  if (title && title.textContent.includes('Bingo')) {
-    title.textContent = 'IBBI Bingo ' + APP_VERSION;
-  }
-}
-// Executa apos DOM carregar
-document.addEventListener('DOMContentLoaded', updateVersionDisplays);
-// ===================================
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, update, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -795,8 +776,17 @@ async function initGame(){
   onValue(fb(`bingo/eventos/${evId}`),snap2=>{
     const ev2=snap2.val(); if(!ev2)return;
     const newBall=evData&&ev2.lastDrawn!==evData.lastDrawn;
+    // Detectar reset — drawn foi zerado
+    const wasReset=evData&&(evData.drawn||[]).length>0&&(ev2.drawn||[]).length===0;
     evData=ev2;
-    if(newBall)onNewBall();
+    if(wasReset){
+      cartelas.forEach(c=>{ c.marcados=[]; });
+      try{ localStorage.removeItem('bingo_cartelas_'+evId+'_'+currentUser.uid); }catch(e){}
+      saveAllCartelas();
+      renderCartela(); renderHist();
+      showToast('Sorteio reiniciado pelo operador.');
+    }
+    if(newBall) onNewBall();
     renderPremio(); renderBall(); renderHist(); checkAutoBatida();
   });
 
@@ -805,6 +795,17 @@ async function initGame(){
     const data=snap2.val();
     const age=Date.now()-_lastSaveTime;
     const justSaved=age<2000;
+
+    // Sorteio foi reiniciado — brincante zerado no Firebase
+    if(!data && !justSaved && cartelas.length>0){
+      // Zerar marcacoes de todas as cartelas
+      cartelas.forEach(c=>{ c.marcados=[]; });
+      // Limpar cache local
+      try{ localStorage.removeItem('bingo_cartelas_'+evId+'_'+currentUser.uid); }catch(e){}
+      saveAllCartelas();
+      renderCartela(); renderHist();
+      showToast('Sorteio reiniciado. Cartelas desmarcadas.');
+    }
 
     if(data?.cartelas && !justSaved){
       const novo=Object.entries(data.cartelas)
@@ -892,7 +893,7 @@ function loadCartelasFromCache(){
 
 
 // ======================================================
-//  OCR - GRADE AJUSTAVEL INTEGRADA v7.6
+//  OCR - GRADE AJUSTAVEL INTEGRADA v7.9
 // ======================================================
 let _ocrNums = {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
 let _ocrDetectedFreeCenter = false;

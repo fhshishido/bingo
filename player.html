@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v8.0 - 2026-05-13 -->
+<!-- IBBI Bingo Player v8.1 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo v8.0</title>
+<title>IBBI Bingo v8.1</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -260,7 +260,7 @@ transition:background-color 9999s ease-in-out 0s;
 
 </style>
 
-  <meta name="app-version" content="v8.0">
+  <meta name="app-version" content="v8.1">
 </head>
 <body>
 
@@ -285,7 +285,7 @@ transition:background-color 9999s ease-in-out 0s;
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &#8594;</button>
         </div>
       </div>
-      <div class="vtag">v8.0</div>
+      <div class="vtag">v8.1</div>
     </div>
   </div>
 </div>
@@ -334,9 +334,52 @@ transition:background-color 9999s ease-in-out 0s;
 </div>
 
   </div>
-  <div class="vtag">v8.0</div>
+  <div class="vtag">v8.1</div>
 </div>
 
+  </div>
+</div>
+
+<!-- =============== VIEW: CADASTRO NO EVENTO =============== -->
+
+<div class="view" id="vCadastroEvento">
+  <div class="auth-bg">
+    <div class="auth-box" style="max-width:380px">
+      <div class="auth-logo">B<span>I</span>NGO</div>
+      <div class="auth-ibbi"><span>IBBI</span></div>
+      <div class="auth-card">
+        <div class="auth-card-title" id="cadEvTitle">Participar do Evento</div>
+        <div style="font-size:.82rem;color:var(--text2);margin-bottom:14px" id="cadEvNome"></div>
+        <div class="fg">
+          <label>Seu nome no evento</label>
+          <input type="text" id="cadEvApelido" placeholder="Como quer ser chamado..." maxlength="40" style="width:100%;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:9px 12px;font-family:'Barlow',sans-serif;font-size:.95rem;outline:none">
+        </div>
+        <div class="fg" id="cadEvQtdWrap">
+          <label>Quantas cartelas quer?</label>
+          <input type="number" id="cadEvQtd" value="1" min="1" max="100" style="width:100%;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:9px 12px;font-family:'Barlow',sans-serif;font-size:1.2rem;font-weight:800;text-align:center;outline:none">
+          <div style="font-size:.7rem;color:var(--text3);margin-top:4px" id="cadEvQtdHint"></div>
+        </div>
+        <div class="err-txt" id="cadEvErr" style="display:none"></div>
+        <button class="btn btn-acc" style="width:100%" id="btnCadastrarEvento">Solicitar Participacao &#8594;</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =============== VIEW: AGUARDANDO APROVACAO =============== -->
+
+<div class="view" id="vAguardando">
+  <div class="auth-bg">
+    <div class="auth-box" style="max-width:380px;text-align:center">
+      <div class="auth-logo">B<span>I</span>NGO</div>
+      <div class="auth-ibbi"><span>IBBI</span></div>
+      <div class="auth-card">
+        <div style="font-size:2.5rem;margin-bottom:12px">&#9203;</div>
+        <div style="font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:8px">Aguardando Aprovacao</div>
+        <div style="font-size:.85rem;color:var(--text2);margin-bottom:16px" id="aguardandoMsg">Sua solicitacao foi enviada ao organizador. Aguarde a liberacao para escolher suas cartelas.</div>
+        <div style="font-size:.78rem;color:var(--text3);padding:10px;background:var(--surface2);border-radius:var(--rsm)">Esta tela atualiza automaticamente quando voce for aprovado.</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -349,7 +392,7 @@ transition:background-color 9999s ease-in-out 0s;
       <div class="auth-ibbi"><span>IBBI</span></div>
       <div style="text-align:center;margin-bottom:16px">
         <div style="font-size:1.1rem;font-weight:800;color:var(--text)">Escolha sua Cartela</div>
-        <div style="font-size:.78rem;color:var(--text2);margin-top:4px">Toque em uma cartela disponível</div>
+        <div style="font-size:.78rem;color:var(--text2);margin-top:4px" id="selLimiteInfo">Toque em uma cartela disponivel</div>
       </div>
 
 ```
@@ -380,7 +423,7 @@ transition:background-color 9999s ease-in-out 0s;
 
   <div style="margin-top:16px;text-align:center">
     <button class="btn btn-ghost btn-sm" id="btnVoltarSelecao">← Voltar</button>
-    <div class="vtag" style="margin-top:10px">v8.0</div>
+    <div class="vtag" style="margin-top:10px">v8.1</div>
   </div>
 </div>
 ```
@@ -396,7 +439,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">&mdash;</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v8.0</span>
+    <span class="p-vtag">v8.1</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -753,6 +796,31 @@ function friendlyAuthError(code){
   return msgs[code]||'Erro: '+code;
 }
 
+// -- PERMISSAO HELPERS --
+let minhaPermissao = null;
+
+async function verificarPermissao(ev){
+  // Se evento nao exige aprovacao e nao tem limite, liberar direto
+  if(!ev.exigeAprovacao && !ev.maxCartelasUser) return 'livre';
+
+  // Verificar se ja tem permissao
+  const snapPerm = await get(fb('bingo/eventos/'+evId+'/permissoes/'+currentUser.uid));
+  const perm = snapPerm.val();
+  if(perm) { minhaPermissao=perm; return perm.status; }
+
+  // Sem permissao — precisa cadastrar
+  return 'sem_cadastro';
+}
+
+function mostrarCadastroEvento(ev){
+  $('cadEvNome').textContent = ev.nome||'';
+  $('cadEvTitle').textContent = 'Participar: '+esc(ev.nome||'');
+  const max = ev.maxCartelasUser||0;
+  $('cadEvQtdHint').textContent = max ? 'Maximo: '+max+' cartelas' : 'Sem limite definido';
+  if(max) $('cadEvQtd').max = max;
+  showView('vCadastroEvento');
+}
+
 // -- INIT GAME --
 async function initGame(){
   showView('vJogo');
@@ -765,13 +833,44 @@ async function initGame(){
     renderEmptyState();
   }
 
-  const snap=await get(fb(`bingo/eventos/${evId}`));
+  const snap=await get(fb('bingo/eventos/'+evId));
   const ev=snap.val();
   if(!ev){ showView('vNotFound'); return; }
   evData=ev;
   $('gameEvNome').textContent=ev.nome;
   $('gameUserName').textContent=userProfile?.apelido||userProfile?.nome||currentUser.email;
 
+  // Verificar permissao
+  const statusPerm = await verificarPermissao(ev);
+
+  if(statusPerm==='sem_cadastro'){
+    mostrarCadastroEvento(ev);
+    return;
+  }
+
+  if(statusPerm==='pendente'){
+    showView('vAguardando');
+    $('aguardandoMsg').textContent='Sua solicitacao foi enviada. Aguarde o organizador liberar sua participacao.';
+    // Escutar mudanca de status em tempo real
+    onValue(fb('bingo/eventos/'+evId+'/permissoes/'+currentUser.uid),snap2=>{
+      const p=snap2.val();
+      if(p?.status==='aprovado'){ minhaPermissao=p; continuarJogo(ev); }
+      else if(p?.status==='rejeitado'){ showToast('Sua solicitacao foi rejeitada pelo organizador.'); showView('vNotFound'); }
+    });
+    return;
+  }
+
+  if(statusPerm==='rejeitado'){
+    $('nfMsg').textContent='Sua participacao foi rejeitada pelo organizador.';
+    showView('vNotFound');
+    return;
+  }
+
+  continuarJogo(ev);
+}
+
+function continuarJogo(ev){
+  showView('vJogo');
   listenCartelasUsadas();
   onValue(fb(`bingo/eventos/${evId}`),snap2=>{
     const ev2=snap2.val(); if(!ev2)return;
@@ -843,7 +942,35 @@ async function initGame(){
   });
 }
 
-// -- CARTELA HELPERS --
+// -- CADASTRO NO EVENTO --
+$('btnCadastrarEvento')?.addEventListener('click', async()=>{
+  const apelido=($('cadEvApelido')?.value||'').trim();
+  if(!apelido){ $('cadEvErr').textContent='Digite seu nome no evento.'; $('cadEvErr').style.display='block'; return; }
+  const qtd=parseInt($('cadEvQtd')?.value)||1;
+  const max=evData?.maxCartelasUser||0;
+  const qtdFinal=max>0?Math.min(qtd,max):qtd;
+  const exige=evData?.exigeAprovacao||false;
+  const status=exige?'pendente':'aprovado';
+  const perm={
+    nome:apelido, qtdSolicitada:qtdFinal,
+    qtdAprovada:exige?0:qtdFinal,
+    status, ts:Date.now(), cadastradoPor:'self'
+  };
+  await set(fb('bingo/eventos/'+evId+'/permissoes/'+currentUser.uid), perm);
+  minhaPermissao=perm;
+  if(exige){
+    showView('vAguardando');
+    $('aguardandoMsg').textContent='Solicitacao enviada como "'+apelido+'". Aguarde o organizador liberar sua participacao.';
+    // Escutar aprovacao
+    onValue(fb('bingo/eventos/'+evId+'/permissoes/'+currentUser.uid),snap=>{
+      const p=snap.val();
+      if(p?.status==='aprovado'){ minhaPermissao=p; continuarJogo(evData); }
+      else if(p?.status==='rejeitado'){ $('nfMsg').textContent='Sua solicitacao foi rejeitada pelo organizador.'; showView('vNotFound'); }
+    });
+  } else {
+    continuarJogo(evData);
+  }
+});
 function novaCartela(){
   const mode=evData?.mode||90;
   return{id:gerarCartelaId(mode),fbId:genId(),
@@ -893,7 +1020,7 @@ function loadCartelasFromCache(){
 
 
 // ======================================================
-//  OCR - GRADE AJUSTAVEL INTEGRADA v8.0
+//  OCR - GRADE AJUSTAVEL INTEGRADA v8.1
 // ======================================================
 let _ocrNums = {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
 let _ocrDetectedFreeCenter = false;
@@ -1397,15 +1524,70 @@ function renderBody(){
       }
     }, {passive:true});
   })();
+  // Configurar botao Nova/Escolher baseado no tipo de evento
+  const isBanco = (evData?.tipoCartela||'livre')==='banco';
+  const btnNova = $('btnNovaC');
+  if(isBanco){
+    btnNova.textContent='&#127921; Escolher';
+    btnNova.title='Escolher cartela do banco';
+  }
+
+  function getQtdAprovada(){ return minhaPermissao?.qtdAprovada||evData?.maxCartelasUser||0; }
+  function getMinhasCartelas(){ return Object.keys(evData?.cartelas||{}).filter(cid=>(evData?.cartelas?.[cid]?.playerId===currentUser?.uid)).length; }
+
+  function verificarLimiteBtn(){
+    const qtdAp=getQtdAprovada();
+    const minhas=getMinhasCartelas();
+    if(isBanco){
+      if(qtdAp>0 && minhas>=qtdAp){
+        btnNova.disabled=true;
+        btnNova.title='Limite atingido ('+minhas+'/'+qtdAp+')';
+      } else {
+        btnNova.disabled=false;
+      }
+    } else {
+      const max=evData?.maxCartelasUser||0;
+      if(max>0 && cartelas.length>=max){
+        btnNova.disabled=true;
+        btnNova.title='Limite atingido ('+cartelas.length+'/'+max+')';
+      } else {
+        btnNova.disabled=false;
+      }
+    }
+  }
+  verificarLimiteBtn();
+
   $('btnNovaC').addEventListener('click',()=>{
-    const c=novaCartela();
-    cartelas.push(c);
-    cartelaIdx=cartelas.length-1;
-    saveAllCartelas();
-    renderCartela();
-    renderHist();
-    checkAutoBatida();
-    showToast(`Cartela ${cartelaIdx+1} de ${cartelas.length} criada!`);
+    if(isBanco){
+      // Verificar limite antes de abrir selecao
+      const qtdAp=getQtdAprovada();
+      const minhas=getMinhasCartelas();
+      if(qtdAp>0 && minhas>=qtdAp){
+        showToast('Limite atingido: '+minhas+'/'+qtdAp+' cartelas');
+        return;
+      }
+      // Atualizar info de limite na tela de selecao
+      if($('selLimiteInfo')){
+        $('selLimiteInfo').textContent = qtdAp>0
+          ? (minhas+' de '+qtdAp+' cartelas escolhidas')
+          : 'Sem limite definido';
+      }
+      showSelecaoCartela();
+    } else {
+      // Cartela livre — verificar limite
+      const max=evData?.maxCartelasUser||0;
+      if(max>0 && cartelas.length>=max){
+        showToast('Limite atingido: '+cartelas.length+'/'+max+' cartelas');
+        return;
+      }
+      const c=novaCartela();
+      cartelas.push(c);
+      cartelaIdx=cartelas.length-1;
+      saveAllCartelas();
+      renderCartela(); renderHist(); checkAutoBatida();
+      showToast('Cartela '+(cartelaIdx+1)+' de '+cartelas.length+' criada!');
+    }
+    verificarLimiteBtn();
   });
   $('btnDelC').addEventListener('click',()=>{ const c=cartelas[cartelaIdx]; if(!c)return; $('mDelTxt').textContent=`Excluir a cartela ${c.id}? Nao pode ser desfeito.`; openM('mDelCartela'); });
   $('togAuto').addEventListener('change',()=>{ if(cartelas[cartelaIdx]){cartelas[cartelaIdx].autoMarcar=$('togAuto').checked;saveAllCartelas();} });

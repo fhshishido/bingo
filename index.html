@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v3.5 - 2026-05-13 -->
+<!-- IBBI Bingo v3.6 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v3.5</title>
+<title>IBBI Bingo v3.6</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -271,7 +271,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v3.5</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v3.6</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -561,7 +561,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
 
 <script type="module">
 // ===== AUTO VERSION MANAGEMENT =====
-const APP_VERSION = 'v3.5';
+const APP_VERSION = 'v3.6';
 function updateVersionDisplays() {
   document.querySelectorAll('.vtag').forEach(el => {
     el.textContent = APP_VERSION;
@@ -586,7 +586,7 @@ const fb = p => ref(db, p);
 
 // --- HELPERS ---
 const genId = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-const fmtTs = ts => { if(!ts) return '—'; const d=new Date(ts); return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); };
+const fmtTs = ts => { if(!ts) return '-'; const d=new Date(ts); return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); };
 const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const $ = id => document.getElementById(id);
 const openM = id => $(id).classList.add('open');
@@ -634,7 +634,7 @@ $('btnRep')?.addEventListener('click',()=>{if(lastSpoken)speak(lastSpoken);});
 // --- CONNECTIVITY ---
 onValue(fb('.info/connected'),s=>{
   const on=s.val();
-  ['connDot','pConnDot'].forEach(id=>{ const d=$(id); if(d){d.textContent=on?'⬤ online':'⬤ offline'; d.className='conn '+(on?'on':'off');} });
+  ['connDot','pConnDot'].forEach(id=>{ const d=$(id); if(d){d.textContent=on?'&#11044; online':'&#11044; offline'; d.className='conn '+(on?'on':'off');} });
 });
 
 // --- DETECT MODE ---
@@ -656,7 +656,7 @@ onValue(fb('bingo/eventos'),snap=>{
 // --- SCREEN 1 ---
 function renderEv(){
   const g=$('evGrid'), ids=Object.keys(eventos);
-  if(!ids.length){g.innerHTML='<div class="empty-st"><div class="ei">🎱</div><p>Nenhum evento ainda.<br>Crie o primeiro!</p></div>';return;}
+  if(!ids.length){g.innerHTML='<div class="empty-st"><div class="ei">&#127921;</div><p>Nenhum evento ainda.<br>Crie o primeiro!</p></div>';return;}
   const ord={andamento:0,ativo:1,encerrado:2};
   ids.sort((a,b)=>{const oa=ord[eventos[a].status]??1,ob=ord[eventos[b].status]??1;return oa!==ob?oa-ob:(eventos[b].criadoEm||0)-(eventos[a].criadoEm||0);});
   g.innerHTML=ids.map(id=>cardHTML(id,eventos[id])).join('');
@@ -749,7 +749,7 @@ function updateBancoInfo() {
   $('mEvBancoInfo').innerHTML =
     `Banco G${modo}: <strong style="color:var(--accent)">${total}</strong> cartelas &nbsp;|&nbsp; ` +
     `Disponíveis: <strong style="color:var(--green)">${disp.length}</strong>` +
-    (disp.length===0 ? `<br><span style="color:var(--red)">⚠️ Banco vazio para G${modo}. Gere cartelas primeiro.</span>` : '');
+    (disp.length===0 ? `<br><span style="color:var(--red)">&#9888;️ Banco vazio para G${modo}. Gere cartelas primeiro.</span>` : '');
 }
 
 function toggleBancoOpts() {
@@ -776,12 +776,12 @@ function addPrize(){
   row.innerHTML=`<div class="prize-row-top">
     <span class="p-ord">${n}</span>
     <input class="p-inp" type="text" placeholder="Nome do prêmio..." maxlength="60">
-    <button class="p-rm" type="button">✕</button>
+    <button class="p-rm" type="button">&#10005;</button>
   </div>
   <div class="prize-row-opts">
     <div class="regra-lbl">Regra de Batida</div>
-    <button type="button" class="radio-btn sel" data-regra="cheia">🔲 Cartela Cheia</button>
-    <button type="button" class="radio-btn" data-regra="linhaDiagonal">➕ Linha / Coluna / Diagonal</button>
+    <button type="button" class="radio-btn sel" data-regra="cheia">Cartela Cheia</button>
+    <button type="button" class="radio-btn" data-regra="linhaDiagonal">Linha / Coluna / Diagonal</button>
   </div>`;
   row.querySelector('.p-rm').addEventListener('click',()=>{row.remove();reindexPrizes();});
   row.querySelectorAll('.radio-btn').forEach(btn=>{
@@ -885,7 +885,7 @@ function renderS(animated){
     const hasWinners=p.ganhadores?.length>0;
     const cls=hasWinners?'won':p.id===curPrizeId?'curr':'pend';
     const chip=document.createElement('div'); chip.className='pchip '+cls;
-    chip.innerHTML=`<span class="pc-ord">${p.ordem}</span><div><div class="pc-name">${esc(p.nome)}</div>${hasWinners?`<div class="pc-win">🏅 ${p.ganhadores.length} ganhador(es)</div>`:''}</div>`;
+    chip.innerHTML=`<span class="pc-ord">${p.ordem}</span><div><div class="pc-name">${esc(p.nome)}</div>${hasWinners?`<div class="pc-win">&#127941; ${p.ganhadores.length} ganhador(es)</div>`:''}</div>`;
     chip.addEventListener('click',()=>{curPrizeId=p.id;renderS(false);});
     ps.appendChild(chip);
   });
@@ -893,26 +893,26 @@ function renderS(animated){
   // current prize
   const cp=premios.find(p=>p.id===curPrizeId);
   if(cp){
-    $('cpName').textContent=`#${cp.ordem} — ${cp.nome}`;
-    $('cpRule').textContent=cp.regra==='cheia'?'🔲 Cartela Cheia':'➕ Linha / Coluna / Diagonal';
+    $('cpName').textContent=`#${cp.ordem} - ${cp.nome}`;
+    $('cpRule').textContent=cp.regra==='cheia'?'Cartela Cheia':'Linha / Coluna / Diagonal';
     const cw=$('cpWinner');
-    if(cp.ganhadores?.length){cw.className='cpbox-won';cw.textContent='🏅 '+cp.ganhadores.map(g=>g.nome).join(', ');}
+    if(cp.ganhadores?.length){cw.className='cpbox-won';cw.textContent='&#127941; '+cp.ganhadores.map(g=>g.nome).join(', ');}
     else{cw.className='cpbox-empty';cw.textContent='Sem ganhador registrado';}
     // winners card
     if(cp.ganhadores?.length>0){
       $('winnersCard').style.display='block';
       $('winnersList').innerHTML=cp.ganhadores.map((g,i)=>`
         <div class="winner-item">
-          <span class="wi-id">${esc(g.cartelaId||'—')}</span>
+          <span class="wi-id">${esc(g.cartelaId||'-')}</span>
           <span class="wi-name">${esc(g.nome)}</span>
-          <button class="wi-rm" data-idx="${i}" title="Remover">✕</button>
+          <button class="wi-rm" data-idx="${i}" title="Remover">&#10005;</button>
         </div>`).join('');
       $('winnersList').querySelectorAll('.wi-rm').forEach(btn=>{
         btn.addEventListener('click',()=>removeWinner(cp.id,parseInt(btn.dataset.idx)));
       });
       $('winnersActions').innerHTML=`
-        <button class="btn btn-green btn-sm" id="btnDividir">🤝 Dividir Prêmio</button>
-        <button class="btn btn-yellow btn-sm" id="btnEscolher">🏆 Escolher Um</button>`;
+        <button class="btn btn-green btn-sm" id="btnDividir">&#129309; Dividir Prêmio</button>
+        <button class="btn btn-yellow btn-sm" id="btnEscolher">&#127942; Escolher Um</button>`;
       $('winnersActions').querySelector('#btnDividir')?.addEventListener('click',()=>dividirPremio(cp.id));
       $('winnersActions').querySelector('#btnEscolher')?.addEventListener('click',()=>escolherVencedor(cp.id));
     } else { $('winnersCard').style.display='none'; }
@@ -925,13 +925,13 @@ function renderS(animated){
     $('ballLetter').textContent=letter; $('ballNumber').textContent=ev.lastDrawn;
     ball.className='bigball l'+letter;
     if(animated){ball.classList.remove('pop');void ball.offsetWidth;ball.classList.add('pop');}
-  } else {$('ballLetter').textContent='';$('ballNumber').textContent='—';ball.className='bigball empty';}
+  } else {$('ballLetter').textContent='';$('ballNumber').textContent='-';ball.className='bigball empty';}
 
   syncRepBtn();
   const drawn=(ev.drawn||[]).length;
   $('stD').textContent=drawn;$('stL').textContent=ev.mode-drawn;
   $('stP').textContent=Math.round(drawn/ev.mode*100)+'%';
-  $('stU').textContent=ev.lastDrawn?ballLabel(ev.lastDrawn,ev.mode):'—';
+  $('stU').textContent=ev.lastDrawn?ballLabel(ev.lastDrawn,ev.mode):'-';
 
   // strip
   const strip=$('hstrip'); strip.innerHTML='';
@@ -945,12 +945,12 @@ function renderS(animated){
   const log=$('hlog'); log.innerHTML='';
   [...(ev.drawn||[])].reverse().forEach((n,i)=>{
     const letter=getLetter(n,ev.mode); const e=document.createElement('div'); e.className='lrow';
-    e.innerHTML=`<span class="lnum l${letter}">${letter} ${n}</span><span class="linfo">${i===0?'🟢':''}</span><span class="lseq">#${drawn-i}</span>`;
+    e.innerHTML=`<span class="lnum l${letter}">${letter} ${n}</span><span class="linfo">${i===0?'&#128994;':''}</span><span class="lseq">#${drawn-i}</span>`;
     log.appendChild(e);
   });
 
   // grid
-  const gridEl=$('bingoGrid'); $('gridTitle').textContent=`Tabela — ${ev.mode} pedras`;
+  const gridEl=$('bingoGrid'); $('gridTitle').textContent=`Tabela - ${ev.mode} pedras`;
   const dSet=new Set(ev.drawn||[]),size=ev.mode/5;
   gridEl.innerHTML='';
   LETTERS.forEach((letter,li)=>{
@@ -981,12 +981,12 @@ function renderBatidas(batidas){
   pendentes.forEach(([bid,b])=>{
     const card=document.createElement('div'); card.className='batida-card';
     card.innerHTML=`<div class="batida-card-top">
-      <div><div class="batida-nome">${esc(b.playerNome||'Anônimo')}</div><div class="batida-id">Cartela: ${esc(b.cartelaId||'—')}</div></div>
-      <span class="batida-tipo">${b.tipo==='automatica'?'✅ Auto':'✋ Manual'}</span>
+      <div><div class="batida-nome">${esc(b.playerNome||'Anônimo')}</div><div class="batida-id">Cartela: ${esc(b.cartelaId||'-')}</div></div>
+      <span class="batida-tipo">${b.tipo==='automatica'?'&#9989; Auto':'&#9995; Manual'}</span>
     </div>
     <div class="batida-btns">
-      <button class="btn btn-red btn-sm" data-bid="${bid}">❌ Rejeitar</button>
-      <button class="btn btn-green btn-sm" data-bid="${bid}" data-confirm="1">✅ Confirmar</button>
+      <button class="btn btn-red btn-sm" data-bid="${bid}">&#10060; Rejeitar</button>
+      <button class="btn btn-green btn-sm" data-bid="${bid}" data-confirm="1">&#9989; Confirmar</button>
     </div>`;
     card.querySelector('[data-confirm]').addEventListener('click',()=>confirmarBatida(bid,b));
     card.querySelector('[data-bid]:not([data-confirm])').addEventListener('click',()=>rejeitarBatida(bid));

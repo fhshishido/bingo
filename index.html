@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v4.4 - 2026-05-13 -->
+<!-- IBBI Bingo v5.0 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v4.4</title>
+<title>IBBI Bingo v5.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -271,7 +271,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v4.4</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v5.0</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -296,6 +296,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
     <span class="mode-badge" id="s2mode">90 pedras</span>
     <div class="s2-right">
       <button class="btn btn-ghost btn-sm" id="btnVoltar">&#8592; Voltar</button>
+      <button class="btn btn-ghost btn-sm" id="btnPerms">&#128101; Permissoes</button>
       <button class="btn btn-red btn-sm" id="btnEnc">&#9940; Encerrar</button>
     </div>
   </div>
@@ -408,6 +409,20 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
       <div class="fg"><label>Senha para Entrar</label><input type="password" id="mEvSE" placeholder="Opcional"></div>
       <div class="fg"><label>Senha para Excluir</label><input type="password" id="mEvSX" placeholder="Opcional"></div>
     </div>
+    <div class="frow">
+      <div class="fg">
+        <label>Max Cartelas por Usuario</label>
+        <input type="number" id="mEvMaxCart" min="0" max="100" value="0" placeholder="0 = ilimitado" style="width:100%;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:9px 12px;font-family:'Barlow',sans-serif;font-size:.95rem;font-weight:600;outline:none">
+        <div style="font-size:.68rem;color:var(--text3);margin-top:4px">0 = ilimitado</div>
+      </div>
+      <div class="fg">
+        <label>Aprovacao do Gestor</label>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+          <label class="tog"><input type="checkbox" id="mEvExigeAp"><span class="tog-sl"></span></label>
+          <span style="font-size:.82rem;font-weight:700;color:var(--text2)">Exigir aprovacao</span>
+        </div>
+      </div>
+    </div>
     <div class="divider"></div>
     <div class="fg">
       <label>Prêmios (em ordem)</label>
@@ -490,6 +505,20 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
   <div class="fg"><label>Senha para Entrar</label><input type="password" id="eEvSE" placeholder="Deixe vazio para manter"></div>
   <div class="fg"><label>Senha para Excluir</label><input type="password" id="eEvSX" placeholder="Deixe vazio para manter"></div>
 </div>
+<div class="frow">
+  <div class="fg">
+    <label>Max Cartelas por Usuario</label>
+    <input type="number" id="eEvMaxCart" min="0" max="100" value="0" placeholder="0 = ilimitado" style="width:100%;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:9px 12px;font-family:'Barlow',sans-serif;font-size:.95rem;font-weight:600;outline:none">
+    <div style="font-size:.68rem;color:var(--text3);margin-top:4px">0 = ilimitado</div>
+  </div>
+  <div class="fg">
+    <label>Aprovacao do Gestor</label>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+      <label class="tog"><input type="checkbox" id="eEvExigeAp"><span class="tog-sl"></span></label>
+      <span style="font-size:.82rem;font-weight:700;color:var(--text2)">Exigir aprovacao</span>
+    </div>
+  </div>
+</div>
 <div class="fg">
   <label>Tipo de Cartela</label>
   <select id="eEvTipo" style="width:100%;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:9px 12px;font-family:'Barlow',sans-serif;font-size:.95rem;font-weight:600;outline:none">
@@ -563,6 +592,40 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
   </div>
 </div>
 
+<!-- Permissoes -->
+
+<div class="mbk" id="mPerms">
+  <div class="modal" style="max-width:560px">
+    <h2>&#128101; Permissoes</h2>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+      <input type="text" id="permsBusca" placeholder="Buscar por nome ou ID..." style="flex:1;min-width:140px;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:7px 10px;font-family:'Barlow',sans-serif;font-size:.88rem;outline:none">
+      <select id="permsFiltro" style="background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:7px 10px;font-family:'Barlow',sans-serif;font-size:.82rem;outline:none">
+        <option value="todos">Todos</option>
+        <option value="pendente">Pendentes</option>
+        <option value="aprovado">Aprovados</option>
+        <option value="rejeitado">Rejeitados</option>
+        <option value="sem_cadastro">Sem cadastro</option>
+      </select>
+    </div>
+    <div id="permsLista" style="display:flex;flex-direction:column;gap:8px;max-height:380px;overflow-y:auto;padding-right:4px"></div>
+    <div id="permsPager" style="display:none;justify-content:center;align-items:center;gap:8px;margin-top:10px">
+      <button class="btn btn-ghost btn-sm" id="btnPermsPrev">&#8592; Ant</button>
+      <span id="permsPg" style="font-size:.75rem;font-weight:800;color:var(--accent);min-width:60px;text-align:center"></span>
+      <button class="btn btn-ghost btn-sm" id="btnPermsNext">Prox &#8594;</button>
+    </div>
+    <div class="divider"></div>
+    <div style="font-size:.68rem;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Cadastrar Manualmente</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <input type="text" id="permsManNome" placeholder="Nome do jogador" style="flex:1;min-width:120px;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:7px 10px;font-family:'Barlow',sans-serif;font-size:.88rem;outline:none">
+      <input type="number" id="permsManQtd" min="1" max="100" value="1" style="width:70px;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:7px 10px;font-family:'Barlow',sans-serif;font-size:.88rem;outline:none;text-align:center">
+      <button class="btn btn-acc btn-sm" id="btnPermsCadastrar">+ Cadastrar</button>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnPermsFechar">Fechar</button>
+    </div>
+  </div>
+</div>
+
 </div>
 
 <script type="module">
@@ -570,7 +633,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v4.4';
+const APP_VERSION = 'v5.0';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -854,7 +917,10 @@ $('btnCreateEv').addEventListener('click',()=>{
 
   const id=genId(), premios={};
   valid.forEach(p=>{premios[genId()]={...p};});
-  const evObj = {nome,mode,tipoCartela,senhaEntrar:se||null,senhaExcluir:sx||null,criadoEm:Date.now(),encerradoEm:null,status:'ativo',drawn:[],lastDrawn:null,premios,batidas:{}};
+  const evObj = {nome,mode,tipoCartela,senhaEntrar:se||null,senhaExcluir:sx||null,
+    maxCartelasUser:parseInt($('mEvMaxCart').value)||0,
+    exigeAprovacao:$('mEvExigeAp').checked,
+    criadoEm:Date.now(),encerradoEm:null,status:'ativo',drawn:[],lastDrawn:null,premios,batidas:{}};
   if(tipoCartela==='banco') evObj.cartelas = cartelasReservadas;
   set(fb(`bingo/eventos/${id}`), evObj)
     .then(()=>closeM('mNewEv')).catch(e=>{console.error(e);alert('Erro: '+e.message);});
@@ -1064,8 +1130,141 @@ $('btnDraw')?.addEventListener('click',()=>{
 
 $('btnVoltar')?.addEventListener('click',()=>{evId=null;evData=null;curPrizeId=null;showScreen('s1');});
 $('btnEnc')?.addEventListener('click',()=>{
-  if(!confirm('Encerrar este bingo? O histórico será preservado.'))return;
+  if(!confirm('Encerrar este bingo? O historico sera preservado.'))return;
   evData.status='encerrado'; evData.encerradoEm=Date.now(); saveEv(); renderS(false);
+});
+
+// --- PERMISSOES ---
+const PERMS_PER_PAGE = 10;
+let permsPage = 1;
+let permsData = {};
+let brincantesData = {};
+let permsUnsub = null;
+let brincantesUnsub = null;
+
+$('btnPerms')?.addEventListener('click',()=>{
+  if(!evId) return;
+  $('permsBusca').value=''; $('permsFiltro').value='todos'; permsPage=1;
+  if(permsUnsub) permsUnsub();
+  permsUnsub = onValue(fb('bingo/eventos/'+evId+'/permissoes'),snap=>{ permsData=snap.val()||{}; renderPermsLista(); });
+  if(brincantesUnsub) brincantesUnsub();
+  brincantesUnsub = onValue(fb('bingo/eventos/'+evId+'/brincantes'),snap=>{ brincantesData=snap.val()||{}; renderPermsLista(); });
+  openM('mPerms');
+});
+$('btnPermsFechar')?.addEventListener('click',()=>{
+  if(permsUnsub){permsUnsub();permsUnsub=null;}
+  if(brincantesUnsub){brincantesUnsub();brincantesUnsub=null;}
+  closeM('mPerms');
+});
+$('permsBusca')?.addEventListener('input',()=>{permsPage=1;renderPermsLista();});
+$('permsFiltro')?.addEventListener('change',()=>{permsPage=1;renderPermsLista();});
+$('btnPermsPrev')?.addEventListener('click',()=>{if(permsPage>1){permsPage--;renderPermsLista();}});
+$('btnPermsNext')?.addEventListener('click',()=>{permsPage++;renderPermsLista();});
+
+function renderPermsLista(){
+  const busca=($('permsBusca')?.value||'').toLowerCase().trim();
+  const filtro=$('permsFiltro')?.value||'todos';
+  const todos={};
+  Object.entries(permsData).forEach(([uid,p])=>{ todos[uid]={uid,...p,fonte:'perm'}; });
+  Object.entries(brincantesData).forEach(([uid,b])=>{
+    if(!todos[uid]) todos[uid]={uid,nome:b.nome||b.apelido||uid,fonte:'brincante',status:'sem_cadastro',qtdSolicitada:0,qtdAprovada:0};
+  });
+  let lista=Object.values(todos);
+  if(filtro==='sem_cadastro') lista=lista.filter(u=>u.status==='sem_cadastro');
+  else if(filtro!=='todos') lista=lista.filter(u=>u.status===filtro);
+  if(busca) lista=lista.filter(u=>(u.nome||'').toLowerCase().includes(busca)||(u.uid||'').toLowerCase().includes(busca));
+  const ordS={pendente:0,sem_cadastro:1,aprovado:2,rejeitado:3};
+  lista.sort((a,b)=>(ordS[a.status]??9)-(ordS[b.status]??9));
+  const total=lista.length;
+  const totalPages=Math.max(1,Math.ceil(total/PERMS_PER_PAGE));
+  if(permsPage>totalPages) permsPage=totalPages;
+  const start=(permsPage-1)*PERMS_PER_PAGE;
+  const pagina=lista.slice(start,start+PERMS_PER_PAGE);
+  const el=$('permsLista'); if(!el) return;
+  if(!total){ el.innerHTML='<div style="text-align:center;padding:30px;color:var(--text3);font-size:.85rem">Nenhum usuario encontrado</div>'; $('permsPager').style.display='none'; return; }
+  el.innerHTML=pagina.map(u=>renderPermCard(u)).join('');
+  pagina.forEach(u=>{
+    el.querySelector('[data-aprovar="'+u.uid+'"]')?.addEventListener('click',()=>aprovarUser(u.uid));
+    el.querySelector('[data-rejeitar="'+u.uid+'"]')?.addEventListener('click',()=>rejeitarUser(u.uid));
+    el.querySelector('[data-revogar="'+u.uid+'"]')?.addEventListener('click',()=>revogarUser(u.uid));
+    el.querySelector('[data-ajustar="'+u.uid+'"]')?.addEventListener('change',e=>ajustarQtd(u.uid,parseInt(e.target.value)||0));
+  });
+  const pager=$('permsPager');
+  if(totalPages<=1){pager.style.display='none';}
+  else{pager.style.display='flex';$('permsPg').textContent=permsPage+' / '+totalPages;$('btnPermsPrev').disabled=permsPage<=1;$('btnPermsNext').disabled=permsPage>=totalPages;}
+}
+
+function renderPermCard(u){
+  const stCor={pendente:'rgba(245,200,0,.12)',aprovado:'rgba(0,223,168,.08)',rejeitado:'rgba(240,96,96,.08)',sem_cadastro:'rgba(0,184,240,.06)'}[u.status]||'var(--surface2)';
+  const stBrd={pendente:'rgba(245,200,0,.4)',aprovado:'rgba(0,223,168,.35)',rejeitado:'rgba(240,96,96,.3)',sem_cadastro:'rgba(0,184,240,.3)'}[u.status]||'var(--border)';
+  const stTxt={pendente:'#f5c800',aprovado:'#00dfa8',rejeitado:'#f06060',sem_cadastro:'#00b8f0'}[u.status]||'var(--text3)';
+  const stLbl={pendente:'Pendente',aprovado:'Aprovado',rejeitado:'Rejeitado',sem_cadastro:'Sem cadastro'}[u.status]||u.status;
+  const max=evData?.maxCartelasUser||0;
+  const cartUsadas=Object.keys(evData?.cartelas||{}).filter(cid=>(evData?.cartelas?.[cid]?.playerId===u.uid)).length;
+  let acoes='';
+  if(u.status==='pendente'||u.status==='sem_cadastro'){
+    acoes+='<input type="number" data-ajustar="'+u.uid+'" value="'+(u.qtdSolicitada||1)+'" min="1" max="'+(max||100)+'" style="width:52px;background:var(--surface3);border:1.5px solid var(--border2);color:var(--text);border-radius:6px;padding:4px 6px;font-size:.82rem;text-align:center;outline:none">';
+    acoes+='<button class="btn btn-green btn-sm" data-aprovar="'+u.uid+'">Aprovar</button>';
+    if(u.status==='pendente') acoes+='<button class="btn btn-red btn-sm" data-rejeitar="'+u.uid+'">Rejeitar</button>';
+  } else if(u.status==='aprovado'){
+    acoes+='<input type="number" data-ajustar="'+u.uid+'" value="'+(u.qtdAprovada||1)+'" min="1" max="'+(max||100)+'" style="width:52px;background:var(--surface3);border:1.5px solid var(--border2);color:var(--text);border-radius:6px;padding:4px 6px;font-size:.82rem;text-align:center;outline:none">';
+    acoes+='<button class="btn btn-ghost btn-sm" data-revogar="'+u.uid+'">Revogar</button>';
+  } else if(u.status==='rejeitado'){
+    acoes+='<button class="btn btn-green btn-sm" data-aprovar="'+u.uid+'">Re-Aprovar</button>';
+  }
+  return '<div style="background:'+stCor+';border:1.5px solid '+stBrd+';border-radius:var(--rsm);padding:10px">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:6px">'
+    +'<div><div style="font-size:.88rem;font-weight:800;color:var(--text)">'+esc(u.nome||u.uid)+'</div>'
+    +'<div style="font-size:.62rem;color:var(--text3);margin-top:1px">'+u.uid.slice(0,20)+'</div></div>'
+    +'<span style="font-size:.65rem;font-weight:800;padding:3px 8px;border-radius:20px;background:'+stCor+';color:'+stTxt+';border:1px solid '+stBrd+'">'+stLbl+'</span>'
+    +'</div>'
+    +'<div style="font-size:.72rem;color:var(--text2);margin-bottom:8px">'
+    +'Solicitado: <strong>'+(u.qtdSolicitada||'-')+'</strong>'
+    +' | Aprovado: <strong style="color:'+stTxt+'">'+(u.qtdAprovada||0)+'</strong>'
+    +' | Em uso: <strong>'+cartUsadas+'</strong>'
+    +(max?' | Limite: <strong>'+max+'</strong>':'')
+    +'</div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">'+acoes+'</div>'
+    +'</div>';
+}
+
+function aprovarUser(uid){
+  const u=permsData[uid]||{};
+  const el=document.querySelector('[data-ajustar="'+uid+'"]');
+  const qtd=el?parseInt(el.value)||1:(u.qtdSolicitada||1);
+  const max=evData?.maxCartelasUser||0;
+  const qtdFinal=max>0?Math.min(qtd,max):qtd;
+  const nome=u.nome||(brincantesData[uid]?.nome)||uid;
+  update(fb('bingo/eventos/'+evId+'/permissoes/'+uid),{nome,qtdAprovada:qtdFinal,status:'aprovado',qtdSolicitada:u.qtdSolicitada||qtdFinal,ts:u.ts||Date.now(),cadastradoPor:u.cadastradoPor||'gestor'});
+  showToast(nome+' aprovado com '+qtdFinal+' cartela(s)');
+}
+function rejeitarUser(uid){
+  update(fb('bingo/eventos/'+evId+'/permissoes/'+uid),{status:'rejeitado'});
+  showToast('Usuario rejeitado');
+}
+function revogarUser(uid){
+  if(!confirm('Revogar aprovacao? Nao remove cartelas ja escolhidas.'))return;
+  update(fb('bingo/eventos/'+evId+'/permissoes/'+uid),{status:'rejeitado',qtdAprovada:0});
+  showToast('Aprovacao revogada');
+}
+function ajustarQtd(uid,qtd){
+  if((permsData[uid]?.status)==='aprovado'){
+    const max=evData?.maxCartelasUser||0;
+    const qtdFinal=max>0?Math.min(qtd,max):qtd;
+    update(fb('bingo/eventos/'+evId+'/permissoes/'+uid),{qtdAprovada:qtdFinal});
+  }
+}
+$('btnPermsCadastrar')?.addEventListener('click',()=>{
+  const nome=($('permsManNome')?.value||'').trim();
+  if(!nome){showToast('Digite o nome');return;}
+  const qtd=parseInt($('permsManQtd')?.value)||1;
+  const max=evData?.maxCartelasUser||0;
+  const qtdFinal=max>0?Math.min(qtd,max):qtd;
+  const uid='manual_'+Date.now();
+  set(fb('bingo/eventos/'+evId+'/permissoes/'+uid),{nome,qtdSolicitada:qtdFinal,qtdAprovada:qtdFinal,status:'aprovado',cadastradoPor:'gestor',ts:Date.now()});
+  if($('permsManNome')) $('permsManNome').value='';
+  if($('permsManQtd')) $('permsManQtd').value='1';
+  showToast(nome+' cadastrado com '+qtdFinal+' cartela(s)');
 });
 
 // --- EDITAR EVENTO ---
@@ -1107,6 +1306,8 @@ function abrirModalEditar() {
 
   // Popular tipo
   $('eEvTipo').value = evData.tipoCartela||'livre';
+  $('eEvMaxCart').value = evData.maxCartelasUser||0;
+  $('eEvExigeAp').checked = evData.exigeAprovacao||false;
   toggleEBancoOpts();
   openM('mEditar');
   setTimeout(()=>$('eEvNome').focus(),80);
@@ -1160,6 +1361,8 @@ $('btnEditarSalvar')?.addEventListener('click',()=>{
   if(!valid.length){$('eEvErr').textContent='Adicione ao menos um premio.';$('eEvErr').style.display='block';return;}
 
   evData.nome = nome;
+  evData.maxCartelasUser = parseInt($('eEvMaxCart').value)||0;
+  evData.exigeAprovacao = $('eEvExigeAp').checked;
   const se=$('eEvSE').value; const sx=$('eEvSX').value;
   if(se!=='') evData.senhaEntrar = se||null;
   if(sx!=='') evData.senhaExcluir = sx||null;

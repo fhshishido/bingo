@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v5.7 - 2026-05-13 -->
+<!-- IBBI Bingo v5.9 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v5.7</title>
+<title>IBBI Bingo v5.9</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -271,7 +271,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v5.7</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v5.9</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -319,8 +319,9 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
           <div class="cpbox-rule" id="cpRule"></div>
           <div id="cpWinner" class="cpbox-empty">Sem ganhador registrado</div>
         </div>
-        <div class="cpbox-btns">
-          <button class="btn btn-green btn-sm" id="btnGanhador">🏅 Ganhador</button>
+        <div class="cpbox-btns" style="display:flex;flex-direction:column;gap:6px">
+          <button class="btn btn-green btn-sm" id="btnGanhador">🏅 Ganhadores do Premio</button>
+          <button class="btn btn-blue btn-sm" id="btnGanhadorTodos">🏆 Todos os Ganhadores</button>
         </div>
       </div>
       <!-- Ganhadores confirmados -->
@@ -464,17 +465,29 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
   </div>
 </div>
 
-<!-- Ganhador manual -->
+<!-- Ganhadores do Premio Atual -->
 
 <div class="mbk" id="mWin">
-  <div class="modal" style="max-width:380px">
-    <h2>🏅 Registrar Ganhador</h2>
+  <div class="modal" style="max-width:460px;max-height:80vh;display:flex;flex-direction:column">
+    <h2>🏅 Ganhadores do Premio</h2>
     <p style="font-size:.82rem;color:var(--text2);margin-bottom:14px" id="mWinPrize"></p>
-    <div class="fg"><label>Nome do Ganhador</label><input class="win-inp" type="text" id="mWinInp" placeholder="Digite o nome..." maxlength="80" style="width:100%;background:var(--surface2);border:2px solid var(--green);color:var(--text);border-radius:var(--rsm);padding:10px 14px;font-family:'Barlow',sans-serif;font-size:1rem;font-weight:700;outline:none"></div>
-    <div class="fg"><label>ID da Cartela (opcional)</label><input type="text" id="mWinCartela" placeholder="Ex: 90-B001" maxlength="20"></div>
+    <div id="mWinList" style="flex:1;overflow-y:auto;margin-bottom:14px;max-height:50vh"></div>
+    <div id="mWinActions" style="display:none;margin-bottom:14px"></div>
     <div class="mfoot">
-      <button class="btn btn-ghost" id="btnCancelWin">Cancelar</button>
-      <button class="btn btn-green" id="btnSaveWin">💾 Salvar</button>
+      <button class="btn btn-ghost" id="btnCancelWin">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Todos os Ganhadores -->
+
+<div class="mbk" id="mWinTodos">
+  <div class="modal" style="max-width:520px;max-height:85vh;display:flex;flex-direction:column">
+    <h2>🏆 Todos os Ganhadores</h2>
+    <p style="font-size:.82rem;color:var(--text2);margin-bottom:14px" id="mWinTodosSubtitle">Evento</p>
+    <div id="mWinTodosList" style="flex:1;overflow-y:auto;margin-bottom:14px;max-height:60vh"></div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnCloseWinTodos">Fechar</button>
     </div>
   </div>
 </div>
@@ -638,7 +651,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v5.7';
+const APP_VERSION = 'v5.9';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -842,6 +855,35 @@ $('mQRCode')?.addEventListener('click',(e)=>{
     $('qrImg').src='';
   }
 });
+
+function reiniciarEvento(id){
+  const ev=eventos[id]; if(!ev) return;
+  if(!confirm('Reiniciar "'+esc(ev.nome||id)+'"? Todas as pedras sorteadas, batidas e ganhadores serao apagados.')) return;
+  remove(fb('bingo/eventos/'+id+'/sorteados')).then(()=>{
+    remove(fb('bingo/eventos/'+id+'/batidas')).then(()=>{
+      const upd={};
+      Object.keys(ev.premios||{}).forEach(pid=>{
+        upd['premios/'+pid+'/ganhadores']=[];
+        upd['premios/'+pid+'/ganhoEm']=null;
+      });
+      upd['drawn']=[]; upd['lastDrawn']=null; upd['status']='ativo';
+      upd['encerradoEm']=null; upd['brincantes']=null;
+      update(fb('bingo/eventos/'+id), upd).then(()=>{
+        if(eventos[id]){
+          eventos[id].drawn=[]; eventos[id].lastDrawn=null; eventos[id].status='ativo';
+          eventos[id].encerradoEm=null; eventos[id].batidas={};
+          Object.keys(eventos[id].premios||{}).forEach(pid=>{
+            eventos[id].premios[pid].ganhadores=[];
+            eventos[id].premios[pid].ganhoEm=null;
+          });
+        }
+        showToast('Evento reiniciado! Pedras, batidas e ganhadores apagados.');
+        if(id===evId){ pedras=[]; updatePainel(); checkPremio(); }
+        renderS(false);
+      });
+    });
+  }).catch(e=>{console.error(e);showToast('Erro ao reiniciar: '+e.message);});
+}
 
 function openEditFromCard(id){
   evId=id; evData=JSON.parse(JSON.stringify(eventos[id]));
@@ -1585,21 +1627,70 @@ $('btnCopyLink')?.addEventListener('click',()=>{
   $('mQRCode').style.display='flex';
 });
 
+// Botao Ganhadores do Premio — abre modal com lista do premio atual
 $('btnGanhador')?.addEventListener('click',()=>{
   const cp=sortP(evData?.premios).find(p=>p.id===curPrizeId);
-  $('mWinPrize').textContent=cp?`Prêmio #${cp.ordem}: ${cp.nome}`:'';
-  $('mWinInp').value=''; $('mWinCartela').value=''; openM('mWin'); setTimeout(()=>$('mWinInp').focus(),80);
+  $('mWinPrize').textContent=cp?`Premio #${cp.ordem}: ${cp.nome} (${cp.regra==='cheia'?'Cheia':'Linha Dupla'})`:'';
+  renderGanhadoresPremio(cp);
+  openM('mWin');
 });
+function renderGanhadoresPremio(cp){
+  const list=$('mWinList');
+  const actions=$('mWinActions');
+  if(!cp||!cp.ganhadores||!cp.ganhadores.length){
+    list.innerHTML='<div style="text-align:center;color:var(--text3);padding:20px;font-size:.9rem">Nenhum ganhador confirmado neste premio.</div>';
+    actions.style.display='none';
+    return;
+  }
+  list.innerHTML=cp.ganhadores.map((g,i)=>`
+    <div class="winner-item" style="display:flex;align-items:center;gap:8px;padding:8px;border-bottom:1px solid var(--border)">
+      <span class="wi-id" style="font-size:.7rem;color:var(--text3);font-family:monospace">${esc(g.cartelaId||'-')}</span>
+      <span class="wi-name" style="flex:1;font-weight:700;font-size:.85rem">${esc(g.nome)}</span>
+      <span style="font-size:.65rem;color:var(--text3)">${g.ts?new Date(g.ts).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):''}</span>
+      <button class="wi-rm" data-idx="${i}" title="Remover" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:1rem">&#10005;</button>
+    </div>`).join('');
+  list.querySelectorAll('.wi-rm').forEach(btn=>{
+    btn.addEventListener('click',()=>{removeWinner(cp.id,parseInt(btn.dataset.idx));renderGanhadoresPremio(cp);});
+  });
+  actions.style.display='block';
+  actions.innerHTML=`<button class="btn btn-green btn-sm" id="btnDividir2">&#129309; Dividir Premio</button><button class="btn btn-yellow btn-sm" id="btnEscolher2">&#127942; Escolher Um</button>`;
+  $('btnDividir2')?.addEventListener('click',()=>dividirPremio(cp.id));
+  $('btnEscolher2')?.addEventListener('click',()=>{escolherVencedor(cp.id);renderGanhadoresPremio(cp);});
+}
 $('btnCancelWin')?.addEventListener('click',()=>closeM('mWin'));
-$('btnSaveWin')?.addEventListener('click',()=>{
-  const nome=$('mWinInp').value.trim(), cartelaId=$('mWinCartela').value.trim();
-  if(!nome||!curPrizeId)return;
-  if(!evData.premios[curPrizeId].ganhadores)evData.premios[curPrizeId].ganhadores=[];
-  evData.premios[curPrizeId].ganhadores.push({nome,cartelaId,ts:Date.now()});
-  evData.premios[curPrizeId].ganhoEm=Date.now();
-  saveEv(); closeM('mWin'); renderS(false);
+
+// Botao Todos os Ganhadores — abre modal com todos
+$('btnGanhadorTodos')?.addEventListener('click',()=>{
+  $('mWinTodosSubtitle').textContent=evData?.nome||'Evento';
+  renderTodosGanhadores();
+  openM('mWinTodos');
 });
-$('mWinInp')?.addEventListener('keydown',e=>{if(e.key==='Enter')$('btnSaveWin').click();});
+function renderTodosGanhadores(){
+  const list=$('mWinTodosList');
+  const premios=sortP(evData?.premios);
+  const comGanhadores=premios.filter(p=>p.ganhadores&&p.ganhadores.length>0);
+  if(!comGanhadores.length){
+    list.innerHTML='<div style="text-align:center;color:var(--text3);padding:30px;font-size:.9rem">Nenhum ganhador confirmado ainda.</div>';
+    return;
+  }
+  list.innerHTML=comGanhadores.map(p=>`
+    <div style="margin-bottom:16px">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--accent);letter-spacing:1px;padding:6px 8px;background:var(--surface2);border-radius:var(--rsm);margin-bottom:6px">
+        #${p.ordem} — ${esc(p.nome)} <span style="color:var(--text3);font-size:.75rem">(${p.regra==='cheia'?'Cheia':'Linha Dupla'})</span>
+      </div>
+      ${p.ganhadores.map(g=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid var(--border2)">
+          <span style="font-size:.7rem;color:var(--text3);font-family:monospace;min-width:80px">${esc(g.cartelaId||'-')}</span>
+          <span style="flex:1;font-weight:600;font-size:.82rem">${esc(g.nome)}</span>
+          <span style="font-size:.68rem;color:var(--text3)">${g.ts?new Date(g.ts).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):''}</span>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+$('btnCloseWinTodos')?.addEventListener('click',()=>closeM('mWinTodos'));
+$('mWinTodos')?.addEventListener('click',e=>{if(e.target===$('mWinTodos'))closeM('mWinTodos');});
+
 
 function saveEv(){
   if(!evId||!evData)return;

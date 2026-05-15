@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v9.4 - 2026-05-13 -->
+<!-- IBBI Bingo Player v9.5 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo v9.4</title>
+<title>IBBI Bingo v9.5</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -258,7 +258,7 @@ transition:background-color 9999s ease-in-out 0s;
 .ct-card-sel .ct-id-sel{font-family:'Bebas Neue';font-size:.9rem;color:var(--accent);letter-spacing:1px;text-align:center}
 .ct-card-sel .ct-mode-sel{font-size:.55rem;font-weight:800;padding:1px 4px;border-radius:3px;background:rgba(0,184,240,.12);color:var(--accent);text-align:center;margin-top:2px}
 
-/* === SELECAO: ESTILOS ADICIONAIS v9.4 === */
+/* === SELECAO: ESTILOS ADICIONAIS v9.5 === */
 .ct-card-sel .sel-hint{position:absolute;inset:0;background:rgba(0,184,240,.9);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:1.1rem;color:#000;letter-spacing:2px;z-index:4;animation:none;pointer-events:none;opacity:0;transition:opacity .2s}
 .ct-card-sel:active{transform:scale(.97)}
 
@@ -282,7 +282,7 @@ transition:background-color 9999s ease-in-out 0s;
 
 </style>
 
-  <meta name="app-version" content="v9.4">
+  <meta name="app-version" content="v9.5">
 </head>
 <body>
 
@@ -307,7 +307,7 @@ transition:background-color 9999s ease-in-out 0s;
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &#8594;</button>
         </div>
       </div>
-      <div class="vtag">v9.4</div>
+      <div class="vtag">v9.5</div>
     </div>
   </div>
 </div>
@@ -356,7 +356,7 @@ transition:background-color 9999s ease-in-out 0s;
 </div>
 
   </div>
-  <div class="vtag">v9.4</div>
+  <div class="vtag">v9.5</div>
 </div>
 
   </div>
@@ -443,7 +443,7 @@ transition:background-color 9999s ease-in-out 0s;
 
   <div style="margin-top:16px;text-align:center">
     <button class="btn btn-ghost btn-sm" id="btnVoltarSelecao">← Voltar</button>
-    <div class="vtag" style="margin-top:10px">v9.4</div>
+    <div class="vtag" style="margin-top:10px">v9.5</div>
   </div>
 </div>
 
@@ -458,7 +458,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="p-logo">B<span>I</span>NGO</div>
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname">Preview da Cartela</div>
-    <span class="p-vtag">v9.4</span>
+    <span class="p-vtag">v9.5</span>
   </div>
   <div class="p-body" style="padding-top:20px">
     <div id="previewCardWrap" style="max-width:420px;margin:0 auto;width:100%">
@@ -479,7 +479,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="p-logo">B<span>I</span>NGO</div>
     <div class="ibbi-badge">IBBI</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v9.4</span>
+    <span class="p-vtag">v9.5</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div id="gameEvBar" style="background:var(--surface);border-bottom:1.5px solid var(--border);padding:8px 14px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1px;color:var(--accent)">&mdash;</div>
@@ -1072,7 +1072,7 @@ function loadCartelasFromCache(){
 
 
 // ======================================================
-//  OCR - GRADE AJUSTAVEL INTEGRADA v9.4
+//  OCR - GRADE AJUSTAVEL INTEGRADA v9.5
 // ======================================================
 let _ocrNums = {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
 let _ocrDetectedFreeCenter = false;
@@ -1985,7 +1985,16 @@ function checkAutoBatida(){
   const marcados=new Set(c.marcados||[]);
   const bateu=p.regra==='cheia'?allNums.every(n=>marcados.has(n)):checkLD(c,marcados);
   bateu?btn.classList.add('pulsing'):btn.classList.remove('pulsing');
-  if(bateu)sndBingo();
+  if(bateu){
+    sndBingo();
+    // Navegar automaticamente para a pagina principal se estiver em outra view
+    const vJogo=document.getElementById('vJogo');
+    if(vJogo && !vJogo.classList.contains('active')){
+      showView('vJogo');
+      renderCartela(); renderHist(); updateCartelasInfo();
+      showToast('CARTELA BATEU! Voce foi levado para a pagina principal.');
+    }
+  }
 }
 function checkLD(c,marcados){
   for(let row=0;row<5;row++){if(LETTERS.every((l,col)=>{ if(c.freeCenter&&row===2&&col===2)return true; const n=c.numeros[l][row]; return n!==null&&n!==undefined&&marcados.has(n); }))return true;}

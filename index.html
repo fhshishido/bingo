@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v3.4 - 2026-05-13 -->
+<!-- IBBI Bingo v3.5 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v3.4</title>
+<title>IBBI Bingo v3.5</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -271,7 +271,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v3.4</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v3.5</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -395,7 +395,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
     <div class="fg"><label>Nome do Evento *</label><input type="text" id="mEvNome" placeholder="Ex: Bingo Festa Junina 2026" maxlength="60"></div>
     <div class="frow">
       <div class="fg"><label>Modo</label><select id="mEvMode"><option value="90" selected>90 pedras</option><option value="75">75 pedras</option></select></div>
-      <div class="fg"><label>Tipo de Cartela</label><select id="mEvTipo"><option value="livre" selected>Cartela Livre</option><option value="banco">🎴 Banco de Cartelas</option></select></div>
+      <div class="fg"><label>Tipo de Cartela</label><select id="mEvTipo"><option value="livre" selected>Cartela Livre</option><option value="banco">Banco de Cartelas</option></select></div>
     </div>
     <div id="mEvBancoOpts" style="display:none">
       <div class="fg">
@@ -561,7 +561,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
 
 <script type="module">
 // ===== AUTO VERSION MANAGEMENT =====
-const APP_VERSION = 'v3.4';
+const APP_VERSION = 'v3.5';
 function updateVersionDisplays() {
   document.querySelectorAll('.vtag').forEach(el => {
     el.textContent = APP_VERSION;
@@ -679,7 +679,7 @@ function cardHTML(id,ev){
   const stLbl={ativo:'Novo',andamento:'Em andamento',encerrado:'Encerrado'}[ev.status]||'Novo';
   const bc={ativo:'bg',andamento:'ba',encerrado:'be'}[ev.status]||'bg';
   const pc={ativo:'pp-g',andamento:'pp-a',encerrado:'pp-e'}[ev.status]||'pp-g';
-  const tipoTag=ev.tipoCartela==='livre'?'Cartela Livre':'Banco';
+  const tipoTag = (ev.tipoCartela||'livre')==='livre' ? 'Cartela Livre' : 'Banco';
   return `<div class="ev-card st-${ev.status||'ativo'}" data-evid="${id}">
     <div class="ev-head"><div class="ev-title">${esc(ev.nome)}</div><span class="badge ${bc}">${stLbl}</span></div>
     <div class="ev-meta"><span>${mode} pedras</span><span>${ganhos}/${premios.length} premios</span><span>${tipoTag}</span><span>${fmtTs(ev.criadoEm)}</span>${ev.status==='encerrado'?`<span>${fmtTs(ev.encerradoEm)}</span>`:''}</div>
@@ -1081,7 +1081,7 @@ function abrirModalEditar() {
   sortP(evData.premios).forEach(p=>addEPrize(p.nome, p.regra||'cheia'));
   $('btnEncerrarEvt').disabled = evData.status==='encerrado';
 
-  if(evData.tipoCartela==='banco') {
+  if((evData.tipoCartela||'livre')==='banco') {
     $('eEvBancoOpts').style.display='block';
     $('eEvQtdCartelas').value = Object.keys(evData.cartelas||{}).length;
     updateEBancoInfo();
@@ -1133,7 +1133,7 @@ $('btnEditarSalvar')?.addEventListener('click',()=>{
   if(sx!=='') evData.senhaExcluir = sx||null;
 
   // Ajustar quantidade de cartelas se banco
-  if(evData.tipoCartela==='banco') {
+  if((evData.tipoCartela||'livre')==='banco') {
     const novaQtd = parseInt($('eEvQtdCartelas').value)||0;
     const cartelasAtuais = evData.cartelas||{};
     const idsAtuais = Object.keys(cartelasAtuais);

@@ -296,6 +296,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
     <span class="mode-badge" id="s2mode">90 pedras</span>
     <div class="s2-right">
       <button class="btn btn-ghost btn-sm" id="btnVoltar">&#8592; Voltar</button>
+      <button class="btn btn-ghost btn-sm" id="btnEditar">&#9881; Editar</button>
       <button class="btn btn-red btn-sm" id="btnEnc">&#9940; Encerrar</button>
     </div>
   </div>
@@ -625,10 +626,10 @@ function loadVoices() {
   voices.forEach((v,i)=>{const o=document.createElement('option');o.value=i;o.textContent=v.name+(v.lang?` (${v.lang})`:'');sel.appendChild(o);});
 }
 window.speechSynthesis.onvoiceschanged=loadVoices; loadVoices();
-$('vtog').addEventListener('change',()=>{voiceOn=$('vtog').checked;syncRepBtn();});
+$('vtog')?.addEventListener('change',()=>{voiceOn=$('vtog').checked;syncRepBtn();});
 function syncRepBtn(){ $('btnRep').style.display=voiceOn&&(evData?.drawn?.length)?'inline-flex':'none'; }
 function speak(t){ if(!voiceOn)return; lastSpoken=t; window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); const si=$('vsel').value; u.rate=parseFloat($('vrate').value); if(voices[si])u.voice=voices[si]; u.lang='pt-BR'; window.speechSynthesis.speak(u); }
-$('btnRep').addEventListener('click',()=>{if(lastSpoken)speak(lastSpoken);});
+$('btnRep')?.addEventListener('click',()=>{if(lastSpoken)speak(lastSpoken);});
 
 // --- CONNECTIVITY ---
 onValue(fb('.info/connected'),s=>{
@@ -711,19 +712,10 @@ function shareEvent(id){
 }
 
 function openEditFromCard(id){
-  // Carrega o evento no sorteio temporariamente so para abrir o modal de edicao
   evId=id; evData=JSON.parse(JSON.stringify(eventos[id]));
   const premios=sortP(evData.premios);
   curPrizeId=premios[0]?.id||null;
-  // Popular modal Editar
-  $('eEvNome').value=evData.nome||'';
-  $('eEvSE').value=''; $('eEvSX').value='';
-  $('eEvErr').style.display='none';
-  $('ePrizeList').innerHTML='';
-  premios.forEach(p=>addEPrize(p.nome,p.regra||'cheia'));
-  $('btnEncerrarEvt').disabled=evData.status==='encerrado';
-  openM('mEditar');
-  setTimeout(()=>$('eEvNome').focus(),80);
+  abrirModalEditar();
 }
 
 // --- NOVO EVENTO ---
@@ -1032,7 +1024,7 @@ function escolherVencedor(prizeId){
   saveEv(); renderS(false);
 }
 
-$('btnDraw').addEventListener('click',()=>{
+$('btnDraw')?.addEventListener('click',()=>{
   const ev=evData;
   if(!ev||(ev.drawn||[]).length>=ev.mode||ev.status==='encerrado')return;
   const dSet=new Set(ev.drawn||[]),rem=[];
@@ -1046,8 +1038,8 @@ $('btnDraw').addEventListener('click',()=>{
   if(voiceOn)speak(`${getLetter(n,ev.mode)}, ${n}`);
 });
 
-$('btnVoltar').addEventListener('click',()=>{evId=null;evData=null;curPrizeId=null;showScreen('s1');});
-$('btnEnc').addEventListener('click',()=>{
+$('btnVoltar')?.addEventListener('click',()=>{evId=null;evData=null;curPrizeId=null;showScreen('s1');});
+$('btnEnc')?.addEventListener('click',()=>{
   if(!confirm('Encerrar este bingo? O histórico será preservado.'))return;
   evData.status='encerrado'; evData.encerradoEm=Date.now(); saveEv(); renderS(false);
 });
@@ -1079,7 +1071,7 @@ function reindexEPrizes(){
   document.querySelectorAll('#ePrizeList .prize-row').forEach((r,i)=>{r.querySelector('.p-ord').textContent=i+1;});
 }
 
-$('btnEditar').addEventListener('click',()=>{
+function abrirModalEditar() {
   if(!evData) return;
   $('eEvNome').value = evData.nome||'';
   $('eEvSE').value = '';
@@ -1089,11 +1081,9 @@ $('btnEditar').addEventListener('click',()=>{
   sortP(evData.premios).forEach(p=>addEPrize(p.nome, p.regra||'cheia'));
   $('btnEncerrarEvt').disabled = evData.status==='encerrado';
 
-  // Mostrar campo de cartelas se evento usa banco
   if(evData.tipoCartela==='banco') {
     $('eEvBancoOpts').style.display='block';
-    const atual = Object.keys(evData.cartelas||{}).length;
-    $('eEvQtdCartelas').value = atual;
+    $('eEvQtdCartelas').value = Object.keys(evData.cartelas||{}).length;
     updateEBancoInfo();
   } else {
     $('eEvBancoOpts').style.display='none';
@@ -1101,6 +1091,11 @@ $('btnEditar').addEventListener('click',()=>{
 
   openM('mEditar');
   setTimeout(()=>$('eEvNome').focus(),80);
+}
+
+// btnEditar so existe dentro do sorteio (screen 2)
+document.getElementById('btnEditar')?.addEventListener('click',()=>{
+  abrirModalEditar();
 });
 
 function updateEBancoInfo() {
@@ -1115,12 +1110,12 @@ function updateEBancoInfo() {
     (disp.length===0 && atual===0 ? `<br><span style="color:var(--red)">Banco vazio. Gere cartelas primeiro.</span>` : '');
 }
 
-$('eEvQtdCartelas').addEventListener('input', updateEBancoInfo);
+$('eEvQtdCartelas')?.addEventListener('input', updateEBancoInfo);
 
-$('btnEAddPrize').addEventListener('click',()=>addEPrize());
-$('btnEditarCancelar').addEventListener('click',()=>closeM('mEditar'));
+$('btnEAddPrize')?.addEventListener('click',()=>addEPrize());
+$('btnEditarCancelar')?.addEventListener('click',()=>closeM('mEditar'));
 
-$('btnEditarSalvar').addEventListener('click',()=>{
+$('btnEditarSalvar')?.addEventListener('click',()=>{
   const nome=$('eEvNome').value.trim();
   if(!nome){$('eEvErr').textContent='Digite o nome do evento.';$('eEvErr').style.display='block';return;}
   const rows=document.querySelectorAll('#ePrizeList .prize-row');
@@ -1190,7 +1185,7 @@ $('btnEditarSalvar').addEventListener('click',()=>{
 });
 
 // Botao Reiniciar dentro do modal Editar
-$('btnReiniciarEvt').addEventListener('click',()=>{
+$('btnReiniciarEvt')?.addEventListener('click',()=>{
   closeM('mEditar');
   $('mReiniciarSenha').value='';
   $('mReiniciarErr').style.display='none';
@@ -1200,14 +1195,14 @@ $('btnReiniciarEvt').addEventListener('click',()=>{
 });
 
 // Botao Encerrar dentro do modal Editar
-$('btnEncerrarEvt').addEventListener('click',()=>{
+$('btnEncerrarEvt')?.addEventListener('click',()=>{
   if(!confirm('Encerrar este bingo? O histórico será preservado.'))return;
   evData.status='encerrado'; evData.encerradoEm=Date.now();
   saveEv(); closeM('mEditar'); renderS(false);
 });
 
-$('btnReiniciarCancelar').addEventListener('click',()=>closeM('mReiniciar'));
-$('btnReiniciarConfirmar').addEventListener('click',async()=>{
+$('btnReiniciarCancelar')?.addEventListener('click',()=>closeM('mReiniciar'));
+$('btnReiniciarConfirmar')?.addEventListener('click',async()=>{
   if(evData?.senhaExcluir){
     if($('mReiniciarSenha').value !== evData.senhaExcluir){
       $('mReiniciarErr').style.display='block'; return;
@@ -1248,18 +1243,18 @@ function showToast(msg){
   document.body.appendChild(t);
   setTimeout(()=>t.remove(),2500);
 }
-$('btnCopyLink').addEventListener('click',()=>{
+$('btnCopyLink')?.addEventListener('click',()=>{
   const link=$('playerLinkBox').textContent;
   navigator.clipboard.writeText(link).then(()=>alert('Link copiado!')).catch(()=>alert(link));
 });
 
-$('btnGanhador').addEventListener('click',()=>{
+$('btnGanhador')?.addEventListener('click',()=>{
   const cp=sortP(evData?.premios).find(p=>p.id===curPrizeId);
   $('mWinPrize').textContent=cp?`Prêmio #${cp.ordem}: ${cp.nome}`:'';
   $('mWinInp').value=''; $('mWinCartela').value=''; openM('mWin'); setTimeout(()=>$('mWinInp').focus(),80);
 });
-$('btnCancelWin').addEventListener('click',()=>closeM('mWin'));
-$('btnSaveWin').addEventListener('click',()=>{
+$('btnCancelWin')?.addEventListener('click',()=>closeM('mWin'));
+$('btnSaveWin')?.addEventListener('click',()=>{
   const nome=$('mWinInp').value.trim(), cartelaId=$('mWinCartela').value.trim();
   if(!nome||!curPrizeId)return;
   if(!evData.premios[curPrizeId].ganhadores)evData.premios[curPrizeId].ganhadores=[];
@@ -1267,7 +1262,7 @@ $('btnSaveWin').addEventListener('click',()=>{
   evData.premios[curPrizeId].ganhoEm=Date.now();
   saveEv(); closeM('mWin'); renderS(false);
 });
-$('mWinInp').addEventListener('keydown',e=>{if(e.key==='Enter')$('btnSaveWin').click();});
+$('mWinInp')?.addEventListener('keydown',e=>{if(e.key==='Enter')$('btnSaveWin').click();});
 
 function saveEv(){
   if(!evId||!evData)return;

@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v7.3 — 2026-05-14 -->
+<!-- IBBI Bingo Player v7.3 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
+/* CRITICAL: ensure dark theme loads immediately */
 html{background:#060608}
 :root{
   --bg:#060608;--surface:#0f0f14;--surface2:#161620;--surface3:#1e1e2a;
@@ -24,6 +25,7 @@ html{background:#060608}
 body{background:#060608;background:var(--bg);color:#e4f2ff;color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 
+/* – BASE – */
 .btn{border:none;border-radius:var(--rsm);padding:10px 20px;font-family:'Barlow',sans-serif;font-weight:800;font-size:.9rem;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
 .btn:active{transform:scale(.95)}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
@@ -52,6 +54,7 @@ body{background:#060608;background:var(--bg);color:#e4f2ff;color:var(--text);fon
 .card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px}
 .card h3{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:10px}
 
+/* – MODAL – */
 .mbk{display:none;position:fixed;inset:0;background:rgba(0,0,2,.92);backdrop-filter:blur(6px);z-index:1000;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto}
 .mbk.open{display:flex}
 .modal{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);width:100%;max-width:380px;padding:22px;animation:mIn .22s cubic-bezier(.2,1.4,.4,1) both;margin:auto;flex-shrink:0}
@@ -59,6 +62,7 @@ body{background:#060608;background:var(--bg);color:#e4f2ff;color:var(--text);fon
 .modal h2{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:2px;color:var(--accent);margin-bottom:14px}
 .mfoot{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
 
+/* – VIEWS – */
 .view{display:none;min-height:100vh}
 .view.active{display:block}
 .auth-bg{background:radial-gradient(ellipse at 50% 0%,#0a1e35 0%,var(--bg) 70%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -74,6 +78,7 @@ body{background:#060608;background:var(--bg);color:#e4f2ff;color:var(--text);fon
 .auth-link:hover{color:var(--accent2)}
 .vtag{font-size:.6rem;font-weight:700;color:var(--text3);text-align:center;margin-top:12px}
 
+/* – HEADER – */
 .p-head{background:rgba(4,4,6,.97);border-bottom:1.5px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
 .p-logo{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:3px;color:var(--accent);line-height:1}
 .p-logo span{color:var(--accent2)}
@@ -82,13 +87,16 @@ body{background:#060608;background:var(--bg);color:#e4f2ff;color:var(--text);fon
 .p-username{font-size:.75rem;font-weight:800;color:var(--accent2);white-space:nowrap;max-width:100px;overflow:hidden;text-overflow:ellipsis}
 .p-vtag{font-size:.58rem;font-weight:700;color:var(--text3)}
 
+/* – GAME BODY – */
 .p-body{padding:10px 12px 60px;display:flex;flex-direction:column;gap:10px;max-width:480px;margin:0 auto;width:100%}
 
+/* PREMIO */
 .premio-info{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rsm);padding:9px 14px}
 .pi-nome{font-size:.92rem;font-weight:800;color:var(--text)}
 .pi-regra{font-size:.72rem;color:var(--accent);font-weight:700;margin-top:2px}
 .pi-empty{font-size:.82rem;color:var(--text3);font-weight:600}
 
+/* BALL */
 .p-last-ball{display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:border-color .3s,box-shadow .3s}
 .plb-hint{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase}
 .plb-tap{font-size:.72rem;color:var(--text2);margin-top:2px}
@@ -104,12 +112,14 @@ body{background:#060608;background:var(--bg);color:#e4f2ff;color:var(--text);fon
 .pbig.pop{animation:bpop .35s cubic-bezier(.15,1.6,.35,1) both}
 @keyframes bpop{from{transform:scale(.4);opacity:0}}
 
+/* CARTELA NAV */
 .cartela-nav{display:flex;align-items:center;gap:6px}
 .cn-info{text-align:center;flex:1}
 .cn-id{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--accent);letter-spacing:1px}
 .cn-pg{font-size:.7rem;color:var(--text3);font-weight:700;margin-top:1px}
 .cn-toast{font-size:.72rem;color:var(--green);font-weight:700;height:16px;text-align:center;margin-top:2px;transition:opacity .3s}
 
+/* CARTELA */
 .cartela-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .cartela-hdr{display:grid;grid-template-columns:repeat(5,1fr)}
 .ch-cell{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;text-align:center;padding:8px 4px;line-height:1}
@@ -135,6 +145,7 @@ body{background:#060608;background:var(--bg);color:#e4f2ff;color:var(--text);fon
 .c-cell.just-marked{animation:cellpop .35s cubic-bezier(.15,1.6,.35,1) both}
 @keyframes cellpop{from{transform:scale(.55)}}
 
+/* num pad modal */
 .numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
 .npbtn{border:none;border-radius:var(--rsm);padding:14px 8px;font-family:'Bebas Neue',sans-serif;font-size:1.5rem;background:var(--surface2);color:var(--text);cursor:pointer;transition:all .15s;border:1.5px solid var(--border2)}
 .npbtn:active{transform:scale(.92);background:var(--surface3)}
@@ -145,6 +156,7 @@ body{background:#060608;background:var(--bg);color:#e4f2ff;color:var(--text);fon
 .np-display.invalid{border-color:var(--red);color:var(--red)}
 .np-hint{font-size:.72rem;color:var(--text3);text-align:center;margin-top:6px;min-height:18px}
 
+/* OPTS */
 .cartela-opts{display:flex;flex-wrap:wrap;gap:10px;padding:0 2px}
 .tog-row{display:flex;align-items:center;gap:7px;font-size:.82rem;font-weight:700;color:var(--text2);cursor:pointer;user-select:none}
 .tog{position:relative;width:38px;height:20px;flex-shrink:0}
@@ -154,17 +166,20 @@ body{background:#060608;background:var(--bg);color:#e4f2ff;color:var(--text);fon
 .tog input:checked+.tog-sl{background:rgba(0,184,240,.18);border-color:#00b8f0}
 .tog input:checked+.tog-sl::before{background:#00b8f0;transform:translateX(18px)}
 
+/* BINGO BTN */
 .bingo-btn{width:100%;padding:18px;font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:4px;border:none;border-radius:var(--radius);cursor:pointer;transition:all .2s;background:linear-gradient(135deg,#f5c800,#ff8c00);color:#000;box-shadow:0 4px 20px rgba(245,200,0,.3)}
 .bingo-btn:hover{filter:brightness(1.08)}
 .bingo-btn.pulsing{animation:bpulse 1s ease-in-out infinite}
 @keyframes bpulse{0%,100%{box-shadow:0 4px 20px rgba(245,200,0,.3)}50%{box-shadow:0 0 50px rgba(245,200,0,.9),0 0 100px rgba(245,200,0,.2)}}
 
+/* BATIDA STATUS */
 .batida-status{text-align:center;padding:12px 16px;border-radius:var(--rsm);font-weight:800;font-size:.88rem;display:none}
 .bs-pend{display:block!important;background:rgba(245,200,0,.1);color:var(--cN);border:1px solid rgba(245,200,0,.3)}
 .bs-conf{display:block!important;background:rgba(0,223,168,.1);color:var(--green);border:1px solid rgba(0,223,168,.3)}
 .bs-rej{display:block!important;background:rgba(240,96,96,.1);color:var(--red);border:1px solid rgba(240,96,96,.3);animation:shake .4s ease}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 
+/* HISTORY */
 .p-hist-title{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase}
 .p-hist-strip{display:flex;flex-wrap:wrap;gap:5px}
 .ph-ball{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;line-height:1;cursor:pointer;transition:transform .15s,opacity .15s;box-shadow:0 2px 5px rgba(0,0,0,.4)}
@@ -178,6 +193,7 @@ body{background:#060608;background:var(--bg);color:#e4f2ff;color:var(--text);fon
 .ph-ball.in-cartela{box-shadow:0 0 0 2.5px #fff,0 0 0 4.5px var(--green)}
 .ph-ball.marked{opacity:.4;cursor:default}
 
+/* OCR */
 .ocr-preview{width:100%;max-height:220px;object-fit:contain;border-radius:var(--rsm);border:1.5px solid var(--border2);display:block}
 .ocr-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-top:10px}
 .ocr-hdr{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;text-align:center;padding:5px 2px;border-radius:4px 4px 0 0}
@@ -195,6 +211,7 @@ body{background:#060608;background:var(--bg);color:#e4f2ff;color:var(--text);fon
 @keyframes spin{to{transform:rotate(360deg)}}
 .ocr-status{font-size:.78rem;color:var(--text2);margin-top:8px;text-align:center;min-height:20px}
 
+/* – AJUSTE / GRID ADJUST SCREEN – */
 .ajuste-wrap{position:fixed;inset:0;z-index:2000;background:var(--bg);display:flex;flex-direction:column}
 .ajuste-top{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface);border-bottom:1.5px solid var(--border);gap:8px;flex-shrink:0}
 .ajuste-top h2{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:2px;color:var(--accent);margin:0}
@@ -209,12 +226,14 @@ body{background:#060608;background:var(--bg);color:#e4f2ff;color:var(--text);fon
 .ajuste-btns{display:flex;gap:8px;flex-wrap:wrap}
 .ajuste-btns .btn{flex:1;min-width:0}
 
+/* NOT FOUND */
 .not-found{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:30px;background:var(--bg)}
 .nf-icon{font-size:3.5rem;margin-bottom:14px}
 .nf-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--text2);letter-spacing:2px;margin-bottom:8px}
 .nf-sub{font-size:.85rem;color:var(--text3);line-height:1.6}
 .nf-link{color:var(--accent);font-family:monospace;font-size:.8rem;margin-top:10px;display:block}
 
+/* iOS autofill */
 input:-webkit-autofill,input:-webkit-autofill:focus{
 -webkit-box-shadow:0 0 0 30px #161620 inset !important;
 -webkit-text-fill-color:#e4f2ff !important;
@@ -222,11 +241,12 @@ transition:background-color 9999s ease-in-out 0s;
 }
 </style>
 
+  <meta name="app-version" content="v7.3">
 </head>
 <body>
-  <body>
 
 <!-- =============== VIEW: LOGIN =============== -->
+
 <div class="view active" id="vLogin">
   <div class="auth-bg">
     <div class="auth-box">
@@ -252,6 +272,7 @@ transition:background-color 9999s ease-in-out 0s;
 </div>
 
 <!-- =============== VIEW: CADASTRO =============== -->
+
 <div class="view" id="vCadastro">
   <div class="auth-bg" style="align-items:flex-start;padding-top:30px">
     <div class="auth-box">
@@ -260,41 +281,50 @@ transition:background-color 9999s ease-in-out 0s;
       <div style="margin-top:20px">
         <div class="auth-card">
           <div class="auth-card-title">Cadastro</div>
-          <div style="font-size:.72rem;font-weight:800;letter-spacing:1px;color:var(--accent);text-transform:uppercase;margin-bottom:12px">Dados de acesso *</div>
-          <div class="fg"><label>E-mail *</label><input class="inp" type="email" id="cadEmail" placeholder="seu@email.com" autocomplete="email"></div>
-          <div class="fg"><label>Senha * <span style="font-weight:400;color:var(--text3)">(m&iacute;n. 6 caracteres)</span></label><input class="inp" type="password" id="cadSenha" placeholder="Crie uma senha" autocomplete="new-password"></div>
-          <div class="fg"><label>Confirmar Senha *</label><input class="inp" type="password" id="cadSenhaConf" placeholder="Repita a senha" autocomplete="new-password"></div>
-          <div class="divider"></div>
-          <div style="font-size:.72rem;font-weight:800;letter-spacing:1px;color:var(--accent);text-transform:uppercase;margin-bottom:12px">Perfil *</div>
-          <div class="fg"><label>Nome completo *</label><input class="inp" type="text" id="cadNome" placeholder="Seu nome" maxlength="60" autocomplete="name"></div>
-          <div class="fg"><label>Apelido <span style="font-weight:400;color:var(--text3)">(como aparece no bingo)</span></label><input class="inp" type="text" id="cadApelido" placeholder="Ex: joao123" maxlength="30" autocomplete="off" autocapitalize="off"></div>
-          <div class="divider"></div>
-          <div style="font-size:.72rem;font-weight:800;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin-bottom:12px">Contato opcional</div>
-          <div class="fg"><label>Celular</label><input class="inp" type="tel" id="cadCelular" placeholder="(92) 99999-9999" maxlength="20" autocomplete="tel"></div>
-          <div class="fg"><label>Data de nascimento</label><input class="inp" type="date" id="cadNasc"></div>
-          <div class="fg"><label>Endere&ccedil;o</label><input class="inp" type="text" id="cadEndereco" placeholder="Rua, n&uacute;mero, bairro" maxlength="100" autocomplete="street-address"></div>
-          <div class="err" id="cadErr"></div>
-          <div style="background:var(--surface2);border:1.5px solid var(--border2);border-radius:var(--rsm);padding:12px;margin-top:10px;margin-bottom:4px">
-            <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;user-select:none">
-              <input type="checkbox" id="chkTermos" style="margin-top:3px;flex-shrink:0;accent-color:var(--accent);width:18px;height:18px">
-              <span style="font-size:.77rem;color:var(--text2);line-height:1.5">
-                Declaro que sou responsavel pela conferencia e correcao dos numeros da minha cartela, seja digitada manualmente ou importada por foto.
-                O IBBI Bingo nao se responsabiliza por erros de preenchimento que resultem em batida invalida.
-              </span>
-            </label>
-          </div>
-          <button class="btn btn-acc btn-full" id="btnCadastrar" style="margin-top:8px">Criar Conta &#8594;</button>
-          <div style="text-align:center;margin-top:12px">
-            <button class="auth-link" id="btnIrLogin">&#8592; J&aacute; tenho conta</button>
-          </div>
-        </div>
-      </div>
-      <div class="vtag">v7.3</div>
-    </div>
+
+```
+  <div style="font-size:.72rem;font-weight:800;letter-spacing:1px;color:var(--accent);text-transform:uppercase;margin-bottom:12px">Dados de acesso *</div>
+  <div class="fg"><label>E-mail *</label><input class="inp" type="email" id="cadEmail" placeholder="seu@email.com" autocomplete="email"></div>
+  <div class="fg"><label>Senha * <span style="font-weight:400;color:var(--text3)">(m&iacute;n. 6 caracteres)</span></label><input class="inp" type="password" id="cadSenha" placeholder="Crie uma senha" autocomplete="new-password"></div>
+  <div class="fg"><label>Confirmar Senha *</label><input class="inp" type="password" id="cadSenhaConf" placeholder="Repita a senha" autocomplete="new-password"></div>
+
+  <div class="divider"></div>
+  <div style="font-size:.72rem;font-weight:800;letter-spacing:1px;color:var(--accent);text-transform:uppercase;margin-bottom:12px">Perfil *</div>
+  <div class="fg"><label>Nome completo *</label><input class="inp" type="text" id="cadNome" placeholder="Seu nome" maxlength="60" autocomplete="name"></div>
+  <div class="fg"><label>Apelido <span style="font-weight:400;color:var(--text3)">(como aparece no bingo)</span></label><input class="inp" type="text" id="cadApelido" placeholder="Ex: joao123" maxlength="30" autocomplete="off" autocapitalize="off"></div>
+
+  <div class="divider"></div>
+  <div style="font-size:.72rem;font-weight:800;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin-bottom:12px">Contato opcional</div>
+  <div class="fg"><label>Celular</label><input class="inp" type="tel" id="cadCelular" placeholder="(92) 99999-9999" maxlength="20" autocomplete="tel"></div>
+  <div class="fg"><label>Data de nascimento</label><input class="inp" type="date" id="cadNasc"></div>
+  <div class="fg"><label>Endere&ccedil;o</label><input class="inp" type="text" id="cadEndereco" placeholder="Rua, n&uacute;mero, bairro" maxlength="100" autocomplete="street-address"></div>
+
+  <div class="err" id="cadErr"></div>
+  <div style="background:var(--surface2);border:1.5px solid var(--border2);border-radius:var(--rsm);padding:12px;margin-top:10px;margin-bottom:4px">
+    <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;user-select:none">
+      <input type="checkbox" id="chkTermos" style="margin-top:3px;flex-shrink:0;accent-color:var(--accent);width:18px;height:18px">
+      <span style="font-size:.77rem;color:var(--text2);line-height:1.5">
+        Declaro que sou responsavel pela conferencia e correcao dos numeros da minha cartela, seja digitada manualmente ou importada por foto.
+        O IBBI Bingo nao se responsabiliza por erros de preenchimento que resultem em batida invalida.
+      </span>
+    </label>
+  </div>
+  <button class="btn btn-acc btn-full" id="btnCadastrar" style="margin-top:8px">Criar Conta &#8594;</button>
+  <div style="text-align:center;margin-top:12px">
+    <button class="auth-link" id="btnIrLogin">&#8592; J&aacute; tenho conta</button>
+  </div>
+</div>
+```
+
+  </div>
+  <div class="vtag">v7.3</div>
+</div>
+
   </div>
 </div>
 
 <!-- =============== VIEW: JOGO =============== -->
+
 <div class="view" id="vJogo">
   <div class="p-head">
     <div class="p-logo">B<span>I</span>NGO</div>
@@ -308,6 +338,7 @@ transition:background-color 9999s ease-in-out 0s;
 </div>
 
 <!-- =============== VIEW: AJUSTE DE GRADE OCR =============== -->
+
 <div class="view" id="vAjuste">
   <div class="ajuste-wrap">
     <div class="ajuste-top">
@@ -333,6 +364,7 @@ transition:background-color 9999s ease-in-out 0s;
 </div>
 
 <!-- =============== VIEW: NOT FOUND =============== -->
+
 <div class="view" id="vNotFound">
   <div class="not-found">
     <div class="nf-icon">&#127921;</div>
@@ -343,6 +375,7 @@ transition:background-color 9999s ease-in-out 0s;
 </div>
 
 <!-- MODALS -->
+
 <div class="mbk" id="mAddNum">
   <div class="modal">
     <h2 id="mAddTitle">Adicionar?</h2>
@@ -387,10 +420,11 @@ transition:background-color 9999s ease-in-out 0s;
   </div>
 </div>
 
-<!-- MODAL: Digitar numero na celula -->
+<!-- MODAL: Digitar n&uacute;mero na c&eacute;lula -->
+
 <div class="mbk" id="mNumpad">
   <div class="modal" style="max-width:320px">
-    <h2 id="mNumpadTitle">Digitar Numero</h2>
+    <h2 id="mNumpadTitle">Digitar N&uacute;mero</h2>
     <p style="font-size:.8rem;color:var(--text2);margin-bottom:10px" id="mNumpadSub"></p>
     <div class="np-display" id="npDisplay">&mdash;</div>
     <div class="np-hint" id="npHint"></div>
@@ -415,12 +449,14 @@ transition:background-color 9999s ease-in-out 0s;
 </div>
 
 <!-- MODAL: Escanear Cartela -->
+
 <div class="mbk" id="mOcr">
   <div class="modal" style="max-width:440px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
       <h2 style="margin:0">&#128247; Escanear</h2>
       <button class="btn btn-ghost btn-sm" id="btnOcrFechar">&#10005;</button>
     </div>
+    <!-- Zona: escolher foto -->
     <div id="ocrZonaFoto">
       <p style="font-size:.78rem;color:var(--text2);margin-bottom:10px">Enquadre os numeros da cartela. A grade sera posicionada automaticamente.</p>
       <label style="display:block;width:100%;background:linear-gradient(135deg,var(--accent),#0090c8);color:#000;font-weight:900;border-radius:var(--rsm);padding:12px;text-align:center;cursor:pointer;font-family:'Barlow',sans-serif;font-size:.9rem">
@@ -428,6 +464,7 @@ transition:background-color 9999s ease-in-out 0s;
         <input type="file" id="ocrFileInput" accept="image/*" style="display:none">
       </label>
     </div>
+    <!-- Zona: canvas + ajuste + resultado -->
     <div id="ocrZonaCanvas" style="display:none">
       <canvas id="ocrCanvas" style="width:100%;display:block;border-radius:var(--rsm);border:1.5px solid var(--border2);touch-action:none;cursor:crosshair;margin-bottom:8px"></canvas>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
@@ -452,7 +489,8 @@ transition:background-color 9999s ease-in-out 0s;
   </div>
 </div>
 
-<!-- MODAL: corrigir celula OCR -->
+<!-- MODAL: corrigir c&eacute;lula OCR -->
+
 <div class="mbk" id="mOcrCell">
   <div class="modal" style="max-width:300px">
     <h2 id="mOcrCellTitle">Corrigir</h2>
@@ -480,20 +518,23 @@ transition:background-color 9999s ease-in-out 0s;
   </div>
 </div>
 
-    <script type="module">
+<script type="module">
 // ===== AUTO VERSION MANAGEMENT =====
 // Altere apenas esta linha ao atualizar o app
 const APP_VERSION = 'v7.3';
 
+// Atualiza automaticamente todos os elementos de versão na página
 function updateVersionDisplays() {
   document.querySelectorAll('.vtag, .p-vtag').forEach(el => {
     el.textContent = APP_VERSION;
   });
+  // Atualiza título se necessário
   const title = document.querySelector('title');
   if (title && title.textContent.includes('Bingo')) {
     title.textContent = 'IBBI Bingo ' + APP_VERSION;
   }
 }
+// Executa após DOM carregar
 document.addEventListener('DOMContentLoaded', updateVersionDisplays);
 // ===================================
 
@@ -773,7 +814,8 @@ function loadCartelasFromCache(){
   }catch(e){ console.error('Cache load error:',e); return false; }
 }
 
-      // ══════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════
 //  OCR — GRADE AJUSTÁVEL INTEGRADA v7.3
 // ══════════════════════════════════════════════════════
 let _ocrNums = {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
@@ -813,10 +855,13 @@ function recoverNumber(n, min, max){
 
 function initOcr(){
   on('btnOcrFechar','click',()=>closeM('mOcr'));
+
   on('ocrFileInput','change',async(e)=>{
     const file=e.target.files[0]; if(!file) return;
     _ocrRot=0;
     const url=URL.createObjectURL(file);
+    // update preview images too
+    const oi=document.getElementById('ocrImgPreview'); if(oi) oi.src=url;
     await ocrLoadFoto(url);
   });
   on('btnOcrNovaFoto','click',()=>{
@@ -893,10 +938,12 @@ function ocrDetectGrid(img,cw,ch){
   function colDark(x){ let s=0; for(let y=0;y<th;y++) s+=(255-gray(x,y)); return s/th; }
 
   const T=15;
+  // Left/right borders
   let x0=Math.round(tw*0.02), x1=Math.round(tw*0.98);
   for(let x=0;x<tw*0.4;x++){ if(colDark(x)>T){x0=x;break;} }
   for(let x=tw-1;x>tw*0.6;x--){ if(colDark(x)>T){x1=x;break;} }
 
+  // Find BINGO header bottom (dark band at top)
   let headerBottom=Math.round(th*0.04);
   let darkestY=0, darkestVal=999;
   for(let y=0;y<th*0.45;y++){ const v=rowAvg(y); if(v<darkestVal){darkestVal=v;darkestY=y;} }
@@ -904,9 +951,11 @@ function ocrDetectGrid(img,cw,ch){
     for(let y=darkestY;y<th*0.6;y++){ if(rowAvg(y)>160){headerBottom=y;break;} }
   }
 
+  // Find grid bottom
   let gridBottom=Math.round(th*0.96);
   for(let y=th-1;y>th*0.4;y--){ if((255-rowAvg(y))>T){gridBottom=y;break;} }
 
+  // Convert tmp → canvas coords (correct formula)
   const toX=(tx)=>(tx/sc)*(cw/img.width);
   const toY=(ty)=>(ty/sc)*(ch/img.height);
 
@@ -915,6 +964,9 @@ function ocrDetectGrid(img,cw,ch){
   const gw=Math.min(cw-gx-2, toX(x1)-toX(x0));
   const gh=Math.min(ch-gy-2, toY(gridBottom)-toY(headerBottom));
 
+  console.log('ocrDetectGrid:',{gx,gy,gw,gh,cw,ch});
+
+  // Safety clamp
   if(gw<30||gh<30){ return{x:cw*0.03,y:ch*0.03,w:cw*0.94,h:ch*0.94}; }
   return{x:gx,y:gy,w:gw,h:gh};
 }
@@ -962,7 +1014,7 @@ function ocrCanvasPos(e){
 
 function ocrBindEvents(){
   const HIT=18;
-  const handles=()=>{ const{x,y,w,h}=_ocrGrid; return [{x,y,c:'tl'},{x:x+w,y:c:'tr'},{x,y:y+h,c:'bl'},{x:x+w,y:y+h,c:'br'}]; };
+  const handles=()=>{ const{x,y,w,h}=_ocrGrid; return [{x,y,c:'tl'},{x:x+w,y,c:'tr'},{x,y:y+h,c:'bl'},{x:x+w,y:y+h,c:'br'}]; };
   _ocrCanvas.addEventListener('mousedown',onS);
   _ocrCanvas.addEventListener('touchstart',onS,{passive:false});
   _ocrCanvas.addEventListener('mousemove',onM);
@@ -1032,7 +1084,7 @@ async function ocrProcessar(){
         const cleaned=text.trim().replace(/[^0-9]/g,'');
         const n=cleaned?parseInt(cleaned):null;
         results.push(n);
-        debugLog+='[r'+row+'c'+col+'] "'+text.trim()+'" -> '+n+'\\n';
+        debugLog+='[r'+row+'c'+col+'] "'+text.trim()+'" -> '+n+'\n';
         if(st) st.textContent='Lendo... '+Math.round((row*5+col+1)/25*100)+'%';
       }
     }
@@ -1111,22 +1163,33 @@ function updateOcrCellDisplay(){
   else{ disp.className='np-display invalid'; if(hint){hint.textContent='Deve ser '+min+'-'+max;hint.style.color='var(--red)';} }
 }
 
+
 function distributeByRange(nums, mode){
   _ocrNums={B:[],I:[],N:[],G:[],O:[]};
   const size=mode/5;
+
   nums.forEach(n=>{
     const letter=getLetter(n,mode);
     if(_ocrNums[letter].length<5) _ocrNums[letter].push(n);
   });
+
   LETTERS.forEach(l=>{
     _ocrNums[l].sort((a,b)=>a-b);
   });
+
   const nCount=_ocrNums['N'].filter(v=>v!==null).length;
   _ocrDetectedFreeCenter = (nCount===4);
+
   LETTERS.forEach(l=>{
     while(_ocrNums[l].length<5) _ocrNums[l].push(null);
   });
+
+  console.log('Distributed by range:', JSON.stringify(_ocrNums));
+  console.log('Free center detected:', _ocrDetectedFreeCenter);
 }
+
+
+
 
 function confirmOcr(){
   const c=novaCartela();
@@ -1162,7 +1225,27 @@ function puxarAutomatico(){
 }
 
 
-      function renderBody(){
+// -- EMPTY STATE --
+function renderEmptyState(){
+  const hdr=$('cartelaHdr'), grid=$('cartelaGrid');
+  const cnId=$('cnId'), cnPg=$('cnPg');
+  if(cnId) cnId.textContent='--';
+  if(cnPg) cnPg.textContent='Nenhuma cartela';
+  if(hdr) hdr.innerHTML='';
+  if(grid){
+    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:24px 10px;color:var(--text3)">
+      <div style="font-size:2rem;margin-bottom:8px">?</div>
+      <div style="font-size:.88rem;font-weight:700;margin-bottom:4px">Nenhuma cartela</div>
+      <div style="font-size:.78rem">Toque em <strong style="color:var(--accent)">+ Nova</strong> para criar sua cartela</div>
+    </div>`;
+  }
+  if($('togFree'))$('togFree').checked=false;
+  if($('togAuto'))$('togAuto').checked=true;
+}
+
+
+// -- RENDER BODY --
+function renderBody(){
   $('pBody').innerHTML=`
     <div class="premio-info" id="premioInfo"><div class="pi-empty">Carregando...</div></div>
     <div class="p-last-ball" id="pLastBall">
@@ -1202,7 +1285,7 @@ function puxarAutomatico(){
   `;
 
   $('btnPrev').addEventListener('click',()=>{ if(cartelaIdx>0){cartelaIdx--;renderCartela();renderHist();checkAutoBatida();} });
-  $('btnNext').addEventListener('click',()=>{ if(cartelaIdx<<cartelas.length-1){cartelaIdx++;renderCartela();renderHist();checkAutoBatida();} });
+  $('btnNext').addEventListener('click',()=>{ if(cartelaIdx<cartelas.length-1){cartelaIdx++;renderCartela();renderHist();checkAutoBatida();} });
   $('btnNovaC').addEventListener('click',()=>{
     const c=novaCartela();
     cartelas.push(c);
@@ -1279,7 +1362,7 @@ function ensureNumerosFormat(c){
     if(!Array.isArray(c.numeros[l])){
       c.numeros[l]=[null,null,null,null,null];
     }
-    while(c.numeros[l].length<<5) c.numeros[l].push(null);
+    while(c.numeros[l].length<5) c.numeros[l].push(null);
   });
   return c;
 }
@@ -1297,7 +1380,7 @@ function renderCartela(){
   grid.innerHTML='';
   const drawnSet=new Set(evData?.drawn||[]);
   const marcados=new Set(c.marcados||[]);
-  for(let row=0;row<<5;row++){
+  for(let row=0;row<5;row++){
     LETTERS.forEach((letter,col)=>{
       const isFree=c.freeCenter&&row===2&&col===2;
       const num=(c.numeros[letter]||[])[row];
@@ -1387,14 +1470,14 @@ function initNumpad(){
     const {min,max}=colRange(_numpadCtx.letter,mode);
     const c=cartelas[cartelaIdx]; if(!c)return;
     const allNums=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
-    if(n<<min||n>max){ showToast(`Invalido para ${_numpadCtx.letter} (${min}-${max})`); return; }
+    if(n<min||n>max){ showToast(`Invalido para ${_numpadCtx.letter} (${min}-${max})`); return; }
     if(allNums.includes(n)){ showToast('Ja esta na cartela'); return; }
     const {letter,row}=_numpadCtx;
     const maxSlots=c.freeCenter&&letter==='N'?4:5;
     const filled=c.numeros[letter].filter(v=>v!==null&&v!==undefined);
     if(filled.length>=maxSlots){ showToast(`Coluna ${letter} cheia`); return; }
     const vals=[...filled,n].sort((a,b)=>a-b);
-    while(vals.length<<5)vals.push(null);
+    while(vals.length<5)vals.push(null);
     c.numeros[letter]=vals;
     if(new Set(evData?.drawn||[]).has(n)){ c.marcados=c.marcados||[]; if(!c.marcados.includes(n))c.marcados.push(n); }
     closeM('mNumpad'); _numpadCtx=null; _numpadVal='';
@@ -1408,7 +1491,7 @@ function addNum(n,letter){
   const maxSlots=c.freeCenter&&letter==='N'?4:5;
   const filled=c.numeros[letter].filter(v=>v!==null&&v!==undefined);
   if(filled.length>=maxSlots){showToast(`Coluna ${letter} cheia`);return;}
-  const vals=[...filled,n].sort((a,b)=>a-b); while(vals.length<<5)vals.push(null);
+  const vals=[...filled,n].sort((a,b)=>a-b); while(vals.length<5)vals.push(null);
   c.numeros[letter]=vals;
   if(evData&&new Set(evData.drawn||[]).has(n)){c.marcados=c.marcados||[];if(!c.marcados.includes(n))c.marcados.push(n);}
   saveAllCartelas();renderCartela();renderHist();sndMark();checkAutoBatida();
@@ -1417,7 +1500,7 @@ function remNum(num,letter,row){
   const c=cartelas[cartelaIdx]; if(!c)return;
   c.numeros[letter][row]=null;
   c.marcados=(c.marcados||[]).filter(m=>m!==num);
-  const vals=c.numeros[letter].filter(v=>v!==null&&v!==undefined).sort((a,b)=>a-b); while(vals.length<<5)vals.push(null);
+  const vals=c.numeros[letter].filter(v=>v!==null&&v!==undefined).sort((a,b)=>a-b); while(vals.length<5)vals.push(null);
   c.numeros[letter]=vals;
   saveAllCartelas();renderCartela();renderHist();checkAutoBatida();
 }
@@ -1472,8 +1555,38 @@ function checkAutoBatida(){
   if(bateu)sndBingo();
 }
 function checkLD(c,marcados){
-  for(let row=0;row<<5;row++){if(LETTERS.every((l,col)=>{ if(c.freeCenter&&row===2&&col===2)return true; const n=c.numeros[l][row]; return n!==null&&n!==undefined&&marcados.has(n); }))return true;}
-  for(let col=0;col<<5;col++){const l=LETTERS[col]; if(c.numeros[l].every((n,row)=>{ if(c.freeCenter&&row===2&&col===2)return true; return n!==null&&n!==undefined&&marcados.has(n); }))return true;}// ── EDITAR PERFIL ────────────────────────────────────
+  for(let row=0;row<5;row++){if(LETTERS.every((l,col)=>{ if(c.freeCenter&&row===2&&col===2)return true; const n=c.numeros[l][row]; return n!==null&&n!==undefined&&marcados.has(n); }))return true;}
+  for(let col=0;col<5;col++){const l=LETTERS[col]; if(c.numeros[l].every((n,row)=>{ if(c.freeCenter&&row===2&&col===2)return true; return n!==null&&n!==undefined&&marcados.has(n); }))return true;}
+  for(const d of[[[0,0],[1,1],[2,2],[3,3],[4,4]],[[0,4],[1,3],[2,2],[3,1],[4,0]]]){
+    if(d.every(([r,col])=>{ if(c.freeCenter&&r===2&&col===2)return true; const n=c.numeros[LETTERS[col]][r]; return n!==null&&n!==undefined&&marcados.has(n); }))return true;
+  }
+  return false;
+}
+function onBingoClick(){
+  const c=cartelas[cartelaIdx]; if(!c)return;
+  const p=getCurrentPremio();
+  const nome=userProfile?.apelido||userProfile?.nome||currentUser.email;
+  $('mBingoTxt').textContent=`Declarar BINGO com a cartela ${c.id} (${nome})?\nO operador ira confirmar.`;
+  openM('mBingo');
+}
+$('btnBingoCancel').addEventListener('click',()=>closeM('mBingo'));
+$('btnBingoOk').addEventListener('click',()=>{
+  closeM('mBingo');
+  const c=cartelas[cartelaIdx]; if(!c||!currentUser)return;
+  const p=getCurrentPremio();
+  const nome=userProfile?.apelido||userProfile?.nome||currentUser.email;
+  const batidaId=genId();
+  set(fb(`bingo/eventos/${evId}/batidas/${batidaId}`),{
+    playerId:currentUser.uid, playerNome:nome,
+    cartelaId:c.id, premioId:p?.id||null,
+    tipo:'manual', status:'pendente', timestamp:Date.now()
+  });
+  update(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),{batidaStatus:'pendente'});
+  const el=$('batidaStatusEl');
+  if(el){el.className='batida-status bs-pend';el.textContent=' Batida enviada -- aguardando confirmacao...';}
+});
+
+// ── EDITAR PERFIL ────────────────────────────────────
 function openEditarPerfil(){
   if(!userProfile||!currentUser) return;
   const g=id=>document.getElementById(id);
@@ -1509,7 +1622,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     const errEl=g('perfErr'),okEl=g('perfOk');
     errEl.classList.remove('show'); okEl.classList.remove('show');
     if(!nome){errEl.textContent='Nome e obrigatorio.';errEl.classList.add('show');return;}
-    if(senha&&senha.length<<6){errEl.textContent='Senha min. 6 caracteres.';errEl.classList.add('show');return;}
+    if(senha&&senha.length<6){errEl.textContent='Senha min. 6 caracteres.';errEl.classList.add('show');return;}
     if(senha&&senha!==senhaConf){errEl.textContent='Senhas nao coincidem.';errEl.classList.add('show');return;}
     g('btnSalvarPerfil').disabled=true; g('btnSalvarPerfil').textContent='Salvando...';
     try{
@@ -1557,6 +1670,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 </script>
 
 <!-- MODAL: Editar Perfil -->
+
 <div class="mbk" id="mPerfil">
   <div class="modal" style="max-width:400px;max-height:90vh;overflow-y:auto">
     <h2>&#9998; Meu Perfil</h2>
@@ -1580,6 +1694,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 </div>
 
 <!-- MODAL: Confirmar excluir conta -->
+
 <div class="mbk" id="mExcluirConta">
   <div class="modal" style="max-width:360px">
     <h2>&#128465; Excluir Conta?</h2>
@@ -1595,34 +1710,3 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 </body>
 </html>
-
-  for(const d of[[[0,0],[1,1],[2,2],[3,3],[4,4]],[[0,4],[1,3],[2,2],[3,1],[4,0]]]){
-    if(d.every(([r,col])=>{ if(c.freeCenter&&r===2&&col===2)return true; const n=c.numeros[LETTERS[col]][r]; return n!==null&&n!==undefined&&marcados.has(n); }))return true;
-  }
-  return false;
-}
-function onBingoClick(){
-  const c=cartelas[cartelaIdx]; if(!c)return;
-  const p=getCurrentPremio();
-  const nome=userProfile?.apelido||userProfile?.nome||currentUser.email;
-  $('mBingoTxt').textContent=`Declarar BINGO com a cartela ${c.id} (${nome})?\nO operador ira confirmar.`;
-  openM('mBingo');
-}
-$('btnBingoCancel').addEventListener('click',()=>closeM('mBingo'));
-$('btnBingoOk').addEventListener('click',()=>{
-  closeM('mBingo');
-  const c=cartelas[cartelaIdx]; if(!c||!currentUser)return;
-  const p=getCurrentPremio();
-  const nome=userProfile?.apelido||userProfile?.nome||currentUser.email;
-  const batidaId=genId();
-  set(fb(`bingo/eventos/${evId}/batidas/${batidaId}`),{
-    playerId:currentUser.uid, playerNome:nome,
-    cartelaId:c.id, premioId:p?.id||null,
-    tipo:'manual', status:'pendente', timestamp:Date.now()
-  });
-  update(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),{batidaStatus:'pendente'});
-  const el=$('batidaStatusEl');
-  if(el){el.className='batida-status bs-pend';el.textContent=' Batida enviada -- aguardando confirmacao...';}
-});
-
-      

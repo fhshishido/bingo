@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v4.1 - 2026-05-13 -->
+<!-- IBBI Bingo v4.4 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v4.1</title>
+<title>IBBI Bingo v4.4</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -271,7 +271,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v4.1</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v4.4</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -570,7 +570,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v4.1';
+const APP_VERSION = 'v4.4';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -649,19 +649,34 @@ let pendingOpenId=null, pendingDelId=null;
 let pendingBatidaId=null;
 
 onValue(fb('bingo/eventos'),snap=>{
-  eventos=snap.val()||{};
+  const val=snap.val();
+  console.log('FB eventos:', JSON.stringify(val).slice(0,200));
+  eventos=val||{};
+  try { localStorage.setItem('ibbi_eventos_cache', JSON.stringify(eventos)); } catch(e){}
   renderEv();
-  // sync live if in sorteio
   if(evId&&eventos[evId]){ evData=JSON.parse(JSON.stringify(eventos[evId])); renderS(false); }
 });
+
+// Carregar cache imediatamente enquanto Firebase nao responde
+try {
+  const cache = localStorage.getItem('ibbi_eventos_cache');
+  console.log('Cache:', cache ? 'sim ('+cache.length+' chars)' : 'vazio');
+  if(cache) { eventos=JSON.parse(cache); renderEv(); }
+} catch(e){ console.log('Cache erro:',e); }
 
 // --- SCREEN 1 ---
 function renderEv(){
   const g=$('evGrid'), ids=Object.keys(eventos);
   if(!ids.length){g.innerHTML='<div class="empty-st"><div class="ei">&#127921;</div><p>Nenhum evento ainda.<br>Crie o primeiro!</p></div>';return;}
   const ord={andamento:0,ativo:1,encerrado:2};
-  ids.sort((a,b)=>{const oa=ord[eventos[a].status]??1,ob=ord[eventos[b].status]??1;return oa!==ob?oa-ob:(eventos[b].criadoEm||0)-(eventos[a].criadoEm||0);});
-  g.innerHTML=ids.map(id=>cardHTML(id,eventos[id])).join('');
+  ids.sort((a,b)=>{const oa=ord[eventos[a]?.status]??1,ob=ord[eventos[b]?.status]??1;return oa!==ob?oa-ob:(eventos[b]?.criadoEm||0)-(eventos[a]?.criadoEm||0);});
+  try {
+    g.innerHTML=ids.map(id=>cardHTML(id,eventos[id])).join('');
+  } catch(e) {
+    console.log('renderEv erro:', e.message);
+    g.innerHTML='<div class="empty-st"><p>Erro ao carregar eventos. Veja console.</p></div>';
+    return;
+  }
   ids.forEach(id=>{
     const c=g.querySelector('[data-evid="'+id+'"]');
     if(c) c.addEventListener('click',()=>openEvent(id));
@@ -675,25 +690,30 @@ function renderEv(){
 }
 
 function cardHTML(id,ev){
-  const premios=sortP(ev.premios);
-  const ganhos=premios.filter(p=>p.ganhadores&&p.ganhadores.length).length;
-  const drawn=(ev.drawn||[]).length,mode=ev.mode||90,pct=Math.round(drawn/mode*100);
-  const stLbl={ativo:'Novo',andamento:'Em andamento',encerrado:'Encerrado'}[ev.status]||'Novo';
-  const bc={ativo:'bg',andamento:'ba',encerrado:'be'}[ev.status]||'bg';
-  const pc={ativo:'pp-g',andamento:'pp-a',encerrado:'pp-e'}[ev.status]||'pp-g';
-  const tipo = (ev.tipoCartela||'livre');
-  const tipoTag = tipo==='livre' ? 'Cartela Livre' : 'Banco';
-  const qtdTag = tipo==='banco' ? '<span>'+Object.keys(ev.cartelas||{}).length+' cartelas</span>' : '';
-  return '<div class="ev-card st-'+(ev.status||'ativo')+'" data-evid="'+id+'">'
-    +'<div class="ev-head"><div class="ev-title">'+esc(ev.nome)+'</div><span class="badge '+bc+'">'+stLbl+'</span></div>'
-    +'<div class="ev-meta"><span>'+mode+' pedras</span><span>'+ganhos+'/'+premios.length+' premios</span><span>'+tipoTag+'</span>'+qtdTag+'<span>'+fmtTs(ev.criadoEm)+'</span>'+(ev.status==='encerrado'?'<span>'+fmtTs(ev.encerradoEm)+'</span>':'')+'</div>'
-    +'<div class="ev-prog"><div class="ev-prog-bar '+pc+'" style="width:'+pct+'%"></div></div>'
-    +'<div class="ev-foot">'
-    +'<button class="btn btn-ghost btn-sm" data-shareid="'+id+'" title="Copiar link do player">&#128279; Link</button>'
-    +'<button class="btn btn-ghost btn-sm" data-editid="'+id+'">&#9881; Editar</button>'
-    +'<button class="btn btn-red btn-sm" data-delid="'+id+'">&#128465; Excluir</button>'
-    +'</div>'
-    +'</div>';
+  try {
+    const premios=sortP(ev.premios||{});
+    const ganhos=premios.filter(p=>p.ganhadores&&p.ganhadores.length).length;
+    const drawn=(ev.drawn||[]).length,mode=ev.mode||90,pct=Math.round(drawn/mode*100);
+    const stLbl={ativo:'Novo',andamento:'Em andamento',encerrado:'Encerrado'}[ev.status]||'Novo';
+    const bc={ativo:'bg',andamento:'ba',encerrado:'be'}[ev.status]||'bg';
+    const pc={ativo:'pp-g',andamento:'pp-a',encerrado:'pp-e'}[ev.status]||'pp-g';
+    const tipo=(ev.tipoCartela||'livre');
+    const tipoTag=tipo==='livre'?'Cartela Livre':'Banco';
+    const qtdTag=tipo==='banco'?'<span>'+Object.keys(ev.cartelas||{}).length+' cartelas</span>':'';
+    return '<div class="ev-card st-'+(ev.status||'ativo')+'" data-evid="'+id+'">'
+      +'<div class="ev-head"><div class="ev-title">'+esc(ev.nome||'')+'</div><span class="badge '+bc+'">'+stLbl+'</span></div>'
+      +'<div class="ev-meta"><span>'+(mode)+' pedras</span><span>'+ganhos+'/'+premios.length+' premios</span><span>'+tipoTag+'</span>'+qtdTag+'<span>'+fmtTs(ev.criadoEm)+'</span>'+(ev.status==='encerrado'?'<span>'+fmtTs(ev.encerradoEm)+'</span>':'')+'</div>'
+      +'<div class="ev-prog"><div class="ev-prog-bar '+pc+'" style="width:'+pct+'%"></div></div>'
+      +'<div class="ev-foot">'
+      +'<button class="btn btn-ghost btn-sm" data-shareid="'+id+'" title="Copiar link">&#128279; Link</button>'
+      +'<button class="btn btn-ghost btn-sm" data-editid="'+id+'">&#9881; Editar</button>'
+      +'<button class="btn btn-red btn-sm" data-delid="'+id+'">&#128465; Excluir</button>'
+      +'</div>'
+      +'</div>';
+  } catch(e) {
+    console.log('cardHTML erro id='+id+':', e.message);
+    return '<div class="ev-card" data-evid="'+id+'"><div class="ev-head"><div class="ev-title">'+id+'</div></div></div>';
+  }
 }
 
 function openEvent(id){

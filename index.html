@@ -487,8 +487,16 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
 ```
 <div class="fg"><label>Nome do Evento</label><input type="text" id="eEvNome" maxlength="60" placeholder="Nome do evento"></div>
 <div class="frow">
-  <div class="fg"><label>Senha para Entrar</label><input type="password" id="eEvSE" placeholder="Deixe vazio para remover"></div>
-  <div class="fg"><label>Senha para Excluir</label><input type="password" id="eEvSX" placeholder="Deixe vazio para remover"></div>
+  <div class="fg"><label>Senha para Entrar</label><input type="password" id="eEvSE" placeholder="Deixe vazio para manter"></div>
+  <div class="fg"><label>Senha para Excluir</label><input type="password" id="eEvSX" placeholder="Deixe vazio para manter"></div>
+</div>
+
+<div id="eEvBancoOpts" style="display:none">
+  <div class="fg">
+    <label>Qtde de Cartelas no Evento</label>
+    <input type="number" id="eEvQtdCartelas" min="1" max="5000" placeholder="Ex: 100" style="width:100%;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:9px 12px;font-family:'Barlow',sans-serif;font-size:.95rem;font-weight:600;outline:none;transition:border-color .2s">
+    <div id="eEvBancoInfo" style="font-size:.72rem;color:var(--text3);margin-top:6px;padding:7px 10px;background:var(--surface2);border-radius:var(--rsm);border:1px solid var(--border)"></div>
+  </div>
 </div>
 
 <div class="divider"></div>
@@ -1073,19 +1081,41 @@ function reindexEPrizes(){
 
 $('btnEditar').addEventListener('click',()=>{
   if(!evData) return;
-  // Popular campos com dados atuais
   $('eEvNome').value = evData.nome||'';
   $('eEvSE').value = '';
   $('eEvSX').value = '';
   $('eEvErr').style.display='none';
-  // Popular premios
   $('ePrizeList').innerHTML='';
   sortP(evData.premios).forEach(p=>addEPrize(p.nome, p.regra||'cheia'));
-  // Encerrar desabilitado se ja encerrado
   $('btnEncerrarEvt').disabled = evData.status==='encerrado';
+
+  // Mostrar campo de cartelas se evento usa banco
+  if(evData.tipoCartela==='banco') {
+    $('eEvBancoOpts').style.display='block';
+    const atual = Object.keys(evData.cartelas||{}).length;
+    $('eEvQtdCartelas').value = atual;
+    updateEBancoInfo();
+  } else {
+    $('eEvBancoOpts').style.display='none';
+  }
+
   openM('mEditar');
   setTimeout(()=>$('eEvNome').focus(),80);
 });
+
+function updateEBancoInfo() {
+  const modo = evData?.mode||90;
+  const atual = Object.keys(evData?.cartelas||{}).length;
+  const disp = bancoDisponiveis(modo, eventos);
+  // Disponiveis = do banco que nao estao em nenhum evento ativo (exceto este)
+  const dispTotal = disp.length + atual; // inclui as ja reservadas neste evento
+  $('eEvBancoInfo').innerHTML =
+    `Atual: <strong style="color:var(--accent)">${atual}</strong> cartelas &nbsp;|&nbsp; ` +
+    `Disponiveis para add: <strong style="color:var(--green)">${disp.length}</strong>` +
+    (disp.length===0 && atual===0 ? `<br><span style="color:var(--red)">Banco vazio. Gere cartelas primeiro.</span>` : '');
+}
+
+$('eEvQtdCartelas').addEventListener('input', updateEBancoInfo);
 
 $('btnEAddPrize').addEventListener('click',()=>addEPrize());
 $('btnEditarCancelar').addEventListener('click',()=>closeM('mEditar'));
@@ -1100,24 +1130,53 @@ $('btnEditarSalvar').addEventListener('click',()=>{
     const regra=row.querySelector('.radio-btn.sel')?.dataset.regra||'cheia';
     valid.push({nome:n,regra});
   });
-  if(!valid.length){$('eEvErr').textContent='Adicione ao menos um prêmio.';$('eEvErr').style.display='block';return;}
+  if(!valid.length){$('eEvErr').textContent='Adicione ao menos um premio.';$('eEvErr').style.display='block';return;}
 
   evData.nome = nome;
-  // Senha: vazio = manter a atual; novo valor = atualizar
   const se=$('eEvSE').value; const sx=$('eEvSX').value;
   if(se!=='') evData.senhaEntrar = se||null;
   if(sx!=='') evData.senhaExcluir = sx||null;
 
-  // Atualizar premios preservando ganhadores dos existentes
+  // Ajustar quantidade de cartelas se banco
+  if(evData.tipoCartela==='banco') {
+    const novaQtd = parseInt($('eEvQtdCartelas').value)||0;
+    const cartelasAtuais = evData.cartelas||{};
+    const idsAtuais = Object.keys(cartelasAtuais);
+    const qtdAtual = idsAtuais.length;
+
+    if(novaQtd > qtdAtual) {
+      // Adicionar mais cartelas
+      const faltam = novaQtd - qtdAtual;
+      const disp = bancoDisponiveis(evData.mode, eventos);
+      if(faltam > disp.length) {
+        $('eEvErr').textContent=`Banco insuficiente. Disponiveis: ${disp.length}, necessarios: ${faltam}.`;
+        $('eEvErr').style.display='block'; return;
+      }
+      disp.slice(0, faltam).forEach(cid=>{
+        cartelasAtuais[cid] = {usada:false, jogador:null, playerId:null, ts:null};
+      });
+      evData.cartelas = cartelasAtuais;
+    } else if(novaQtd < qtdAtual) {
+      // Remover cartelas nao usadas do final
+      const livres = idsAtuais.filter(cid=>!cartelasAtuais[cid].usada);
+      const aRemover = qtdAtual - novaQtd;
+      if(aRemover > livres.length) {
+        $('eEvErr').textContent=`Nao e possivel remover: ${qtdAtual-livres.length} cartelas ja estao em uso.`;
+        $('eEvErr').style.display='block'; return;
+      }
+      livres.slice(0, aRemover).forEach(cid=>delete cartelasAtuais[cid]);
+      evData.cartelas = cartelasAtuais;
+    }
+  }
+
+  // Atualizar premios
   const premiosAtuais = sortP(evData.premios);
   const novosPremios = {};
   valid.forEach((p,i)=>{
     const antigo = premiosAtuais[i];
     const pid = antigo ? antigo.id : genId();
     novosPremios[pid] = {
-      nome: p.nome,
-      ordem: i+1,
-      regra: p.regra,
+      nome: p.nome, ordem: i+1, regra: p.regra,
       ganhadores: antigo?.ganhadores||[],
       ganhoEm: antigo?.ganhoEm||null
     };
@@ -1165,18 +1224,20 @@ $('btnReiniciarConfirmar').addEventListener('click',async()=>{
       evData.cartelas[cid]={usada:false,jogador:null,playerId:null,ts:null};
     });
   }
-  // Zerar cartelas marcadas pelos jogadores no Firebase
-  update(fb(`bingo/eventos/${evId}`),{
+  // Um unico set atomico que zera tudo incluindo brincantes
+  const evReiniciado = {
+    ...evData,
     drawn:[], lastDrawn:null, status:'ativo',
     encerradoEm:null, batidas:{},
     premios:evData.premios,
-    cartelas:evData.cartelas||{}
-  });
-  // Apagar marcacoes salvas pelos brincantes (cartelas/marcados)
-  set(fb(`bingo/eventos/${evId}/brincantes`), null).catch(()=>{});
+    cartelas:evData.cartelas||{},
+    brincantes:null
+  };
+  set(fb(`bingo/eventos/${evId}`), evReiniciado).catch(console.error);
+  eventos[evId] = JSON.parse(JSON.stringify(evReiniciado));
   const premios=sortP(evData.premios);
   curPrizeId=premios[0]?.id||null;
-  saveEv(); renderS(false);
+  renderS(false);
   showToast('Sorteio reiniciado');
 });
 

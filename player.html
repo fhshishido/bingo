@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v8.2 - 2026-05-13 -->
+<!-- IBBI Bingo Player v8.3 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo v8.2</title>
+<title>IBBI Bingo v8.3</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -258,14 +258,31 @@ transition:background-color 9999s ease-in-out 0s;
 .ct-card-sel .ct-id-sel{font-family:'Bebas Neue';font-size:.9rem;color:var(--accent);letter-spacing:1px;text-align:center}
 .ct-card-sel .ct-mode-sel{font-size:.55rem;font-weight:800;padding:1px 4px;border-radius:3px;background:rgba(0,184,240,.12);color:var(--accent);text-align:center;margin-top:2px}
 
-/* === SELECAO: ESTILOS ADICIONAIS v8.2 === */
+/* === SELECAO: ESTILOS ADICIONAIS v8.3 === */
 .ct-card-sel .sel-hint{position:absolute;inset:0;background:rgba(0,184,240,.9);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:1.1rem;color:#000;letter-spacing:2px;z-index:4;animation:none;pointer-events:none;opacity:0;transition:opacity .2s}
 .ct-card-sel:active{transform:scale(.97)}
+
+/* === PREVIEW CARTELA === */
+.preview-hdr{display:grid;grid-template-columns:repeat(5,1fr);border-radius:var(--rsm) var(--rsm) 0 0;overflow:hidden}
+.preview-hdr .ph-cell{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;text-align:center;padding:10px 4px;line-height:1}
+.preview-hdr .ph-cell.lB{background:rgba(0,184,240,.2);color:#00b8f0}
+.preview-hdr .ph-cell.lI{background:rgba(0,223,168,.2);color:#00dfa8}
+.preview-hdr .ph-cell.lN{background:rgba(245,200,0,.2);color:#f5c800}
+.preview-hdr .ph-cell.lG{background:rgba(255,140,0,.2);color:#ff8c00}
+.preview-hdr .ph-cell.lO{background:rgba(200,80,255,.2);color:#c850ff}
+.preview-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;padding:8px;background:var(--surface);border:1.5px solid var(--border);border-top:none;border-radius:0 0 var(--rsm) var(--rsm)}
+.preview-grid .pg-cell{aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.6rem;border:1.5px solid var(--border);background:var(--surface2);color:var(--text)}
+.preview-grid .pg-cell.free-cell{background:var(--surface3);color:var(--text2);font-size:1rem}
+.preview-grid .pg-cell.filled-B{color:#00b8f0;border-color:rgba(0,184,240,.4);background:rgba(0,184,240,.07)}
+.preview-grid .pg-cell.filled-I{color:#00dfa8;border-color:rgba(0,223,168,.4);background:rgba(0,223,168,.07)}
+.preview-grid .pg-cell.filled-N{color:#f5c800;border-color:rgba(245,200,0,.4);background:rgba(245,200,0,.07)}
+.preview-grid .pg-cell.filled-G{color:#ff8c00;border-color:rgba(255,140,0,.4);background:rgba(255,140,0,.07)}
+.preview-grid .pg-cell.filled-O{color:#c850ff;border-color:rgba(200,80,255,.4);background:rgba(200,80,255,.07)}
 
 
 </style>
 
-  <meta name="app-version" content="v8.2">
+  <meta name="app-version" content="v8.3">
 </head>
 <body>
 
@@ -290,7 +307,7 @@ transition:background-color 9999s ease-in-out 0s;
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &#8594;</button>
         </div>
       </div>
-      <div class="vtag">v8.2</div>
+      <div class="vtag">v8.3</div>
     </div>
   </div>
 </div>
@@ -339,7 +356,7 @@ transition:background-color 9999s ease-in-out 0s;
 </div>
 
   </div>
-  <div class="vtag">v8.2</div>
+  <div class="vtag">v8.3</div>
 </div>
 
   </div>
@@ -397,11 +414,11 @@ transition:background-color 9999s ease-in-out 0s;
       <div class="auth-ibbi"><span>IBBI</span></div>
       <div style="text-align:center;margin-bottom:16px">
         <div style="font-size:1.1rem;font-weight:800;color:var(--text)">Escolha sua Cartela</div>
-        <div style="font-size:.78rem;color:var(--text2);margin-top:4px" id="selLimiteInfo">Toque 2x na cartela para escolher</div>
+        <div style="font-size:.78rem;color:var(--text2);margin-top:4px" id="selLimiteInfo">Toque na cartela para ver em tamanho grande</div>
       </div>
 
   <div style="display:flex;gap:8px;margin-bottom:12px;justify-content:center;flex-wrap:wrap">
-    <span style="font-size:.65rem;padding:4px 10px;border-radius:20px;background:rgba(0,223,168,.12);color:var(--green);border:1px solid rgba(0,223,168,.3)">🟢 Disponível — toque 2x</span>
+    <span style="font-size:.65rem;padding:4px 10px;border-radius:20px;background:rgba(0,223,168,.12);color:var(--green);border:1px solid rgba(0,223,168,.3)">🟢 Disponível — toque para ver</span>
     <span style="font-size:.65rem;padding:4px 10px;border-radius:20px;background:rgba(245,200,0,.12);color:var(--cN);border:1px solid rgba(245,200,0,.3)">🟡 Minha</span>
   </div>
 
@@ -426,11 +443,32 @@ transition:background-color 9999s ease-in-out 0s;
 
   <div style="margin-top:16px;text-align:center">
     <button class="btn btn-ghost btn-sm" id="btnVoltarSelecao">← Voltar</button>
-    <div class="vtag" style="margin-top:10px">v8.2</div>
+    <div class="vtag" style="margin-top:10px">v8.3</div>
   </div>
 </div>
 
 
+  </div>
+</div>
+
+<!-- =============== VIEW: PREVIEW CARTELA =============== -->
+
+<div class="view" id="vPreview">
+  <div class="p-head">
+    <div class="p-logo">B<span>I</span>NGO</div>
+    <div class="ibbi-badge">IBBI</div>
+    <div class="p-evname">Preview da Cartela</div>
+    <span class="p-vtag">v8.3</span>
+  </div>
+  <div class="p-body" style="padding-top:20px">
+    <div id="previewCardWrap" style="max-width:420px;margin:0 auto;width:100%">
+      <!-- Cartela em tamanho grande será renderizada aqui -->
+    </div>
+    <div id="previewInfo" style="text-align:center;margin:16px 0;font-size:.85rem;font-weight:700;color:var(--text2)"></div>
+    <div style="display:flex;gap:10px;max-width:420px;margin:0 auto;width:100%">
+      <button class="btn btn-ghost" id="btnPreviewVoltar" style="flex:1">← Voltar</button>
+      <button class="btn btn-acc" id="btnPreviewSalvar" style="flex:2;font-size:1rem">💾 Salvar Cartela</button>
+    </div>
   </div>
 </div>
 
@@ -442,7 +480,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">&mdash;</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v8.2</span>
+    <span class="p-vtag">v8.3</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -682,6 +720,7 @@ const evId = params.get('ev');
 
 // -- STATE --
 let evData=null, currentUser=null, userProfile=null;
+let previewCartelaId=null;
 let cartelas=[], cartelaIdx=0;
 let pendingAdd=null, pendingRem=null;
 let toastTimer=null;
@@ -697,14 +736,6 @@ onAuthStateChanged(auth, async user=>{
     userProfile=snap.val()||{nome:user.displayName||user.email};
     if(evId) {
   await initGame();
-  // Check if event uses bank cartelas
-  if(evData?.tipoCartela === 'banco') {
-    // Check if user already has a cartela from bank
-    const jaTemCartela = cartelas.some(c => c.origem === 'banco');
-    if(!jaTemCartela) {
-      showSelecaoCartela();
-    }
-  }
 }
     else showView('vNotFound');
   } else {
@@ -1023,7 +1054,7 @@ function loadCartelasFromCache(){
 
 
 // ======================================================
-//  OCR - GRADE AJUSTAVEL INTEGRADA v8.2
+//  OCR - GRADE AJUSTAVEL INTEGRADA v8.3
 // ======================================================
 let _ocrNums = {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
 let _ocrDetectedFreeCenter = false;
@@ -1472,6 +1503,7 @@ function renderBody(){
       <button class="btn btn-ghost btn-sm" id="btnScan" title="Escanear cartela">&#128247;</button>
       <button class="btn btn-red btn-icon" id="btnDelC" title="Excluir cartela">&#128465;</button>
     </div>
+    <div id="cartelasInfo" style="text-align:center;font-size:.72rem;font-weight:700;color:var(--text3);padding:4px 10px;background:var(--surface2);border-radius:var(--rsm);border:1px solid var(--border);display:none"></div>
     <div class="cartela-wrap" id="cartelaWrap">
       <div class="cartela-hdr" id="cartelaHdr"></div>
       <div class="cartela-grid" id="cartelaGrid"></div>
@@ -1560,6 +1592,34 @@ function renderBody(){
   }
   verificarLimiteBtn();
 
+  // Atualizar info de cartelas no topo
+  function updateCartelasInfo(){
+    const el=$('cartelasInfo'); if(!el) return;
+    if(isBanco){
+      const qtdAp=getQtdAprovada();
+      const minhas=getMinhasCartelas();
+      if(qtdAp>0){
+        el.style.display='block';
+        el.innerHTML=`<span style="color:var(--accent)">${minhas}</span> de <span style="color:var(--accent2)">${qtdAp}</span> cartelas ${minhas>=qtdAp?'✅':'— faltam '+(qtdAp-minhas)}`;
+      } else {
+        el.style.display='block';
+        el.textContent=minhas+' cartela'+(minhas!==1?'s':'')+' escolhida'+(minhas!==1?'s':'');
+      }
+    } else {
+      const max=evData?.maxCartelasUser||0;
+      if(max>0){
+        el.style.display='block';
+        el.innerHTML=`<span style="color:var(--accent)">${cartelas.length}</span> de <span style="color:var(--accent2)">${max}</span> cartelas ${cartelas.length>=max?'✅':''}`;
+      } else if(cartelas.length>0){
+        el.style.display='block';
+        el.textContent=cartelas.length+' cartela'+(cartelas.length!==1?'s':'');
+      } else {
+        el.style.display='none';
+      }
+    }
+  }
+  updateCartelasInfo();
+
   $('btnNovaC').addEventListener('click',()=>{
     if(isBanco){
       // Verificar limite antes de abrir selecao
@@ -1577,36 +1637,18 @@ function renderBody(){
       }
       showSelecaoCartela();
     } else {
-      // Cartela livre — abrir modal de escolha (branco ou OCR)
+      // Cartela própria — abrir OCR/digitador direto
       const max=evData?.maxCartelasUser||0;
       if(max>0 && cartelas.length>=max){
         showToast('Limite atingido: '+cartelas.length+'/'+max+' cartelas');
         return;
       }
-      openM('mNovaCartela');
+      openOcrModal();
     }
     verificarLimiteBtn();
   });
 
-  // Modal: Nova Cartela — escolha entre branco e OCR
-  $('btnNovaBranco')?.addEventListener('click', () => {
-    closeM('mNovaCartela');
-    const c = novaCartela();
-    cartelas.push(c);
-    cartelaIdx = cartelas.length - 1;
-    saveAllCartelas();
-    renderCartela(); renderHist(); checkAutoBatida();
-    showToast('Cartela '+(cartelaIdx+1)+' de '+cartelas.length+' criada!');
-    verificarLimiteBtn();
-  });
-  $('btnNovaOcr')?.addEventListener('click', () => {
-    closeM('mNovaCartela');
-    openOcrModal();
-    verificarLimiteBtn();
-  });
-  $('btnNovaCartelaCancel')?.addEventListener('click', () => {
-    closeM('mNovaCartela');
-  });
+
   $('btnDelC').addEventListener('click',()=>{ const c=cartelas[cartelaIdx]; if(!c)return; $('mDelTxt').textContent=`Excluir a cartela ${c.id}? Nao pode ser desfeito.`; openM('mDelCartela'); });
   $('togAuto').addEventListener('change',()=>{ if(cartelas[cartelaIdx]){cartelas[cartelaIdx].autoMarcar=$('togAuto').checked;saveAllCartelas();} });
   $('btnBingo').addEventListener('click',onBingoClick);
@@ -2090,20 +2132,13 @@ function renderSelecaoGrid() {
   updateSelPager(selPage, totalPages, total, start);
 }
 
-// Controle de duplo toque na selecao
+// 1 toque abre preview da cartela
 function onSelecaoTap(el, cid) {
-  const lastTap = parseInt(el.dataset.dbl || '0');
-  const now = Date.now();
-  if (now - lastTap < 400) {
-    // Duplo toque detectado — selecionar
-    el.dataset.dbl = '0';
-    selecionarCartela(cid);
-  } else {
-    // Primeiro toque — mostrar hint
-    el.dataset.dbl = String(now);
-    showToast('Toque 2x rapidamente para escolher');
-    setTimeout(() => { if(el.dataset.dbl === String(now)) el.dataset.dbl = '0'; }, 400);
-  }
+  const c = getCartelaLocal(cid);
+  if (!c) { showToast('Cartela nao encontrada no banco local'); return; }
+  previewCartelaId = cid;
+  renderPreviewCartela(c);
+  showView('vPreview');
 }
 
 function updateSelPager(page, totalPages, total, start) {
@@ -2207,10 +2242,82 @@ async function selecionarCartela(cartelaId) {
   if (c) {
     usarCartelaDoBanco(c);
     showToast(`Cartela ${cartelaId} escolhida!`);
+    // Verificar se atingiu o limite — voltar para o jogo
+    const qtdAp = minhaPermissao?.qtdAprovada || evData?.maxCartelasUser || 0;
+    const minhas = getMinhasCartelasCount();
+    if(qtdAp > 0 && minhas >= qtdAp){
+      showToast('Limite atingido! Voltando ao jogo...');
+      setTimeout(() => showView('vJogo'), 800);
+    } else if(document.getElementById('vPreview')?.classList.contains('active')){
+      // Voltar para selecao se estava no preview
+      showView('vSelecao');
+      renderSelecaoGrid();
+    }
   } else {
     showToast('Cartela não encontrada no banco local. Abra o gerador no mesmo dispositivo.');
   }
 }
+
+// Render preview da cartela em tamanho grande
+function renderPreviewCartela(c) {
+  const wrap = $('previewCardWrap');
+  const info = $('previewInfo');
+  if(!wrap) return;
+
+  // Header BINGO
+  const hdrHtml = LETTERS.map(l =>
+    `<div class="ph-cell l${l}">${l}</div>`
+  ).join('');
+
+  // Grid 5x5
+  let cellsHtml = '';
+  for(let row=0; row<5; row++){
+    LETTERS.forEach((col, ci) => {
+      const n = c.numeros[col][row];
+      const isFree = c.freeCenter && col === 'N' && row === 2;
+      let cls = 'pg-cell';
+      if(isFree) cls += ' free-cell';
+      else if(n) cls += ' filled-'+col;
+      cellsHtml += `<div class="${cls}">${isFree?'★':(n||'')}</div>`;
+    });
+  }
+
+  wrap.innerHTML = `
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--accent);letter-spacing:2px;text-align:center;margin-bottom:8px">${c.id}</div>
+    <div class="preview-hdr">${hdrHtml}</div>
+    <div class="preview-grid">${cellsHtml}</div>
+  `;
+
+  // Info de cartelas
+  if(info){
+    const qtdAp = minhaPermissao?.qtdAprovada || evData?.maxCartelasUser || 0;
+    const minhas = getMinhasCartelasCount();
+    if(qtdAp > 0){
+      const faltam = qtdAp - minhas;
+      info.innerHTML = `Cartelas: <span style="color:var(--accent)">${minhas}</span>/<span style="color:var(--accent2)">${qtdAp}</span>${faltam>0 ? ' — <span style="color:var(--cN)">faltam '+faltam+'</span>' : ''}`;
+    } else {
+      info.textContent = minhas+' cartela'+(minhas!==1?'s':'')+' escolhida'+(minhas!==1?'s':'');
+    }
+  }
+}
+
+function getMinhasCartelasCount(){
+  return Object.keys(bancoEvento).filter(cid => bancoEvento[cid]?.playerId === currentUser?.uid).length;
+}
+
+// Preview: voltar para selecao
+$('btnPreviewVoltar')?.addEventListener('click', () => {
+  previewCartelaId = null;
+  showView('vSelecao');
+});
+
+// Preview: salvar cartela
+$('btnPreviewSalvar')?.addEventListener('click', async () => {
+  if(!previewCartelaId) return;
+  const cid = previewCartelaId;
+  previewCartelaId = null;
+  await selecionarCartela(cid);
+});
 
 // Usar cartela no jogo
 function usarCartelaDoBanco(cartelaBanco) {

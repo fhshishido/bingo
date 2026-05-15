@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v3.6 - 2026-05-13 -->
+<!-- IBBI Bingo v3.7 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v3.6</title>
+<title>IBBI Bingo v3.7</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -271,7 +271,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v3.6</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v3.7</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -296,7 +296,6 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
     <span class="mode-badge" id="s2mode">90 pedras</span>
     <div class="s2-right">
       <button class="btn btn-ghost btn-sm" id="btnVoltar">&#8592; Voltar</button>
-      <button class="btn btn-ghost btn-sm" id="btnEditar">&#9881; Editar</button>
       <button class="btn btn-red btn-sm" id="btnEnc">&#9940; Encerrar</button>
     </div>
   </div>
@@ -491,6 +490,13 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
   <div class="fg"><label>Senha para Entrar</label><input type="password" id="eEvSE" placeholder="Deixe vazio para manter"></div>
   <div class="fg"><label>Senha para Excluir</label><input type="password" id="eEvSX" placeholder="Deixe vazio para manter"></div>
 </div>
+<div class="fg">
+  <label>Tipo de Cartela</label>
+  <select id="eEvTipo" style="width:100%;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:9px 12px;font-family:'Barlow',sans-serif;font-size:.95rem;font-weight:600;outline:none">
+    <option value="livre">Cartela Livre</option>
+    <option value="banco">Banco de Cartelas</option>
+  </select>
+</div>
 
 <div id="eEvBancoOpts" style="display:none">
   <div class="fg">
@@ -561,7 +567,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
 
 <script type="module">
 // ===== AUTO VERSION MANAGEMENT =====
-const APP_VERSION = 'v3.6';
+const APP_VERSION = 'v3.7';
 function updateVersionDisplays() {
   document.querySelectorAll('.vtag').forEach(el => {
     el.textContent = APP_VERSION;
@@ -679,17 +685,20 @@ function cardHTML(id,ev){
   const stLbl={ativo:'Novo',andamento:'Em andamento',encerrado:'Encerrado'}[ev.status]||'Novo';
   const bc={ativo:'bg',andamento:'ba',encerrado:'be'}[ev.status]||'bg';
   const pc={ativo:'pp-g',andamento:'pp-a',encerrado:'pp-e'}[ev.status]||'pp-g';
-  const tipoTag = (ev.tipoCartela||'livre')==='livre' ? 'Cartela Livre' : 'Banco';
-  return `<div class="ev-card st-${ev.status||'ativo'}" data-evid="${id}">
-    <div class="ev-head"><div class="ev-title">${esc(ev.nome)}</div><span class="badge ${bc}">${stLbl}</span></div>
-    <div class="ev-meta"><span>${mode} pedras</span><span>${ganhos}/${premios.length} premios</span><span>${tipoTag}</span><span>${fmtTs(ev.criadoEm)}</span>${ev.status==='encerrado'?`<span>${fmtTs(ev.encerradoEm)}</span>`:''}</div>
-    <div class="ev-prog"><div class="ev-prog-bar ${pc}" style="width:${pct}%"></div></div>
-    <div class="ev-foot">
-      <button class="btn btn-ghost btn-sm" data-shareid="${id}" title="Copiar link do player">&#128279; Link</button>
-      <button class="btn btn-ghost btn-sm" data-editid="${id}">&#9881; Editar</button>
-      <button class="btn btn-red btn-sm" data-delid="${id}">&#128465; Excluir</button>
-    </div>
-  </div>`;
+  const tipo = (ev.tipoCartela||'livre');
+  const tipoTag = tipo==='livre' ? 'Cartela Livre' : 'Banco';
+  const qtdTag = tipo==='banco' ? '<span>'+Object.keys(ev.cartelas||{}).length+' cartelas</span>' : '';
+  return '<div class="ev-card st-'+(ev.status||'ativo')+'" data-evid="'+id+'">'
+    +'<div class="ev-head"><div class="ev-title">'+esc(ev.nome)+'</div><span class="badge '+bc+'">'+stLbl+'</span></div>'
+    +'<div class="ev-meta"><span>'+mode+' pedras</span><span>'+ganhos+'/'+premios.length+' premios</span><span>'+tipoTag+'</span>'+qtdTag+'<span>'+fmtTs(ev.criadoEm)+'</span>'+(ev.status==='encerrado'?'<span>'+fmtTs(ev.encerradoEm)+'</span>':'')+'</div>'
+    +'<div class="ev-prog"><div class="ev-prog-bar '+pc+'" style="width:'+pct+'%"></div></div>'
+    +'<div class="ev-foot">'
+    +'<button class="btn btn-ghost btn-sm" data-shareid="'+id+'" title="Copiar link do player">&#128279; Link</button>'
+    +'<button class="btn btn-ghost btn-sm" data-editid="'+id+'">&#9881; Editar</button>'
+    +'<button class="btn btn-red btn-sm" data-delid="'+id+'">&#128465; Excluir</button>'
+    +'</div>'
+    +'</div>';
+}
 }
 
 function openEvent(id){
@@ -1081,17 +1090,20 @@ function abrirModalEditar() {
   sortP(evData.premios).forEach(p=>addEPrize(p.nome, p.regra||'cheia'));
   $('btnEncerrarEvt').disabled = evData.status==='encerrado';
 
-  if((evData.tipoCartela||'livre')==='banco') {
-    $('eEvBancoOpts').style.display='block';
-    $('eEvQtdCartelas').value = Object.keys(evData.cartelas||{}).length;
-    updateEBancoInfo();
-  } else {
-    $('eEvBancoOpts').style.display='none';
-  }
-
+  // Popular tipo
+  $('eEvTipo').value = evData.tipoCartela||'livre';
+  toggleEBancoOpts();
   openM('mEditar');
   setTimeout(()=>$('eEvNome').focus(),80);
 }
+
+function toggleEBancoOpts() {
+  const isBanco = $('eEvTipo').value === 'banco';
+  $('eEvBancoOpts').style.display = isBanco ? 'block' : 'none';
+  if(isBanco) updateEBancoInfo();
+}
+
+$('eEvTipo').addEventListener('change', toggleEBancoOpts);
 
 // btnEditar so existe dentro do sorteio (screen 2)
 document.getElementById('btnEditar')?.addEventListener('click',()=>{
@@ -1132,19 +1144,29 @@ $('btnEditarSalvar')?.addEventListener('click',()=>{
   if(se!=='') evData.senhaEntrar = se||null;
   if(sx!=='') evData.senhaExcluir = sx||null;
 
+  const novoTipo = $('eEvTipo').value;
+  const tipoAnterior = evData.tipoCartela||'livre';
+
+  // Mudou de banco para livre — liberar cartelas
+  if(tipoAnterior==='banco' && novoTipo==='livre') {
+    evData.cartelas = {};
+  }
+
+  evData.tipoCartela = novoTipo;
+
   // Ajustar quantidade de cartelas se banco
-  if((evData.tipoCartela||'livre')==='banco') {
+  if(novoTipo==='banco') {
     const novaQtd = parseInt($('eEvQtdCartelas').value)||0;
+    if(novaQtd<1){$('eEvErr').textContent='Informe a quantidade de cartelas.';$('eEvErr').style.display='block';return;}
     const cartelasAtuais = evData.cartelas||{};
     const idsAtuais = Object.keys(cartelasAtuais);
     const qtdAtual = idsAtuais.length;
 
     if(novaQtd > qtdAtual) {
-      // Adicionar mais cartelas
       const faltam = novaQtd - qtdAtual;
       const disp = bancoDisponiveis(evData.mode, eventos);
       if(faltam > disp.length) {
-        $('eEvErr').textContent=`Banco insuficiente. Disponiveis: ${disp.length}, necessarios: ${faltam}.`;
+        $('eEvErr').textContent='Banco insuficiente. Disponiveis: '+disp.length+', necessarios: '+faltam+'.';
         $('eEvErr').style.display='block'; return;
       }
       disp.slice(0, faltam).forEach(cid=>{
@@ -1152,11 +1174,10 @@ $('btnEditarSalvar')?.addEventListener('click',()=>{
       });
       evData.cartelas = cartelasAtuais;
     } else if(novaQtd < qtdAtual) {
-      // Remover cartelas nao usadas do final
       const livres = idsAtuais.filter(cid=>!cartelasAtuais[cid].usada);
       const aRemover = qtdAtual - novaQtd;
       if(aRemover > livres.length) {
-        $('eEvErr').textContent=`Nao e possivel remover: ${qtdAtual-livres.length} cartelas ja estao em uso.`;
+        $('eEvErr').textContent='Nao e possivel remover: '+(qtdAtual-livres.length)+' cartelas ja estao em uso.';
         $('eEvErr').style.display='block'; return;
       }
       livres.slice(0, aRemover).forEach(cid=>delete cartelasAtuais[cid]);

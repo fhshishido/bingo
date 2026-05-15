@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v5.1 - 2026-05-13 -->
+<!-- IBBI Bingo v5.3 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v5.1</title>
+<title>IBBI Bingo v5.3</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -271,7 +271,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v5.1</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v5.3</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -297,6 +297,8 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
     <div class="s2-right">
       <button class="btn btn-ghost btn-sm" id="btnVoltar">&#8592; Voltar</button>
       <button class="btn btn-ghost btn-sm" id="btnPerms">&#128101; Permissoes</button>
+      <button class="btn btn-ghost btn-sm" id="btnEditarS2">&#9881; Editar</button>
+      <button class="btn btn-yellow btn-sm" id="btnReiniciarS2">&#8635; Reiniciar</button>
       <button class="btn btn-red btn-sm" id="btnEnc">&#9940; Encerrar</button>
     </div>
   </div>
@@ -592,12 +594,18 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
   </div>
 </div>
 
-<!-- Permissoes -->
+<!-- Screen 3 - Permissoes -->
 
-<div class="mbk" id="mPerms">
-  <div class="modal" style="max-width:560px">
-    <h2>&#128101; Permissoes</h2>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+<div class="screen" id="s3">
+  <div class="s2-head">
+    <div class="s2-evname" id="s3name">Permissoes</div>
+    <span class="mode-badge" id="s3count">0 jogadores</span>
+    <div class="s2-right">
+      <button class="btn btn-ghost btn-sm" id="btnS3Voltar">&#8592; Voltar</button>
+    </div>
+  </div>
+  <div style="padding:12px;flex:1;display:flex;flex-direction:column;gap:10px;max-width:680px;margin:0 auto;width:100%">
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
       <input type="text" id="permsBusca" placeholder="Buscar por nome ou ID..." style="flex:1;min-width:140px;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:7px 10px;font-family:'Barlow',sans-serif;font-size:.88rem;outline:none">
       <select id="permsFiltro" style="background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:7px 10px;font-family:'Barlow',sans-serif;font-size:.82rem;outline:none">
         <option value="todos">Todos</option>
@@ -607,23 +615,23 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
         <option value="sem_cadastro">Sem cadastro</option>
       </select>
     </div>
-    <div id="permsLista" style="display:flex;flex-direction:column;gap:8px;max-height:380px;overflow-y:auto;padding-right:4px"></div>
-    <div id="permsPager" style="display:none;justify-content:center;align-items:center;gap:8px;margin-top:10px">
+    <div id="permsLista" style="display:flex;flex-direction:column;gap:8px;flex:1;overflow-y:auto;padding-right:4px"></div>
+    <div id="permsPager" style="display:none;justify-content:center;align-items:center;gap:8px;margin-top:4px">
       <button class="btn btn-ghost btn-sm" id="btnPermsPrev">&#8592; Ant</button>
       <span id="permsPg" style="font-size:.75rem;font-weight:800;color:var(--accent);min-width:60px;text-align:center"></span>
       <button class="btn btn-ghost btn-sm" id="btnPermsNext">Prox &#8594;</button>
     </div>
-    <div class="divider"></div>
-    <div style="font-size:.68rem;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Cadastrar Manualmente</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <input type="text" id="permsManNome" placeholder="Nome do jogador" style="flex:1;min-width:120px;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:7px 10px;font-family:'Barlow',sans-serif;font-size:.88rem;outline:none">
-      <input type="number" id="permsManQtd" min="1" max="100" value="1" style="width:70px;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:7px 10px;font-family:'Barlow',sans-serif;font-size:.88rem;outline:none;text-align:center">
-      <button class="btn btn-acc btn-sm" id="btnPermsCadastrar">+ Cadastrar</button>
-    </div>
-    <div class="mfoot">
-      <button class="btn btn-ghost" id="btnPermsFechar">Fechar</button>
+    <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rsm);padding:10px;margin-top:4px">
+      <div style="font-size:.68rem;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Cadastrar Manualmente</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input type="text" id="permsManNome" placeholder="Nome do jogador" style="flex:1;min-width:120px;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:7px 10px;font-family:'Barlow',sans-serif;font-size:.88rem;outline:none">
+        <input type="number" id="permsManQtd" min="1" max="100" value="1" style="width:70px;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:7px 10px;font-family:'Barlow',sans-serif;font-size:.88rem;outline:none;text-align:center">
+        <button class="btn btn-acc btn-sm" id="btnPermsCadastrar">+ Cadastrar</button>
+      </div>
     </div>
   </div>
+</div>
+
 </div>
 
 </div>
@@ -633,7 +641,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v5.1';
+const APP_VERSION = 'v5.3';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -1145,16 +1153,46 @@ let brincantesUnsub = null;
 $('btnPerms')?.addEventListener('click',()=>{
   if(!evId) return;
   $('permsBusca').value=''; $('permsFiltro').value='todos'; permsPage=1;
+  $('s3name').textContent = (evData?.nome||'Evento') + ' — Permissoes';
   if(permsUnsub) permsUnsub();
   permsUnsub = onValue(fb('bingo/eventos/'+evId+'/permissoes'),snap=>{ permsData=snap.val()||{}; renderPermsLista(); });
   if(brincantesUnsub) brincantesUnsub();
   brincantesUnsub = onValue(fb('bingo/eventos/'+evId+'/brincantes'),snap=>{ brincantesData=snap.val()||{}; renderPermsLista(); });
-  openM('mPerms');
+  showScreen('s3');
 });
-$('btnPermsFechar')?.addEventListener('click',()=>{
+
+  // Header: Editar evento
+  $('btnEditarS2')?.addEventListener('click',()=>{
+    if(!evId||!evData) return;
+    $('mEditId').value=evId;
+    $('mEditNome').value=evData.nome||'';
+    $('mEditP1').value=evData.premio1||'';
+    $('mEditP2').value=evData.premio2||'';
+    $('mEditModo').value=evData.modo||'75';
+    $('mEditMode').value=evData.mode||75;
+    $('mEditB').value=evData.intervalo||10;
+    $('mEditMax').value=evData.maxCartelasUser||0;
+    $('mEditTC').value=evData.tipoCartela||'propria';
+    $('mEditLink').value='https://sorteiobingo.netlify.app/play?evento='+encodeURIComponent(evId);
+    openM('mEditarEvento');
+  });
+
+  // Header: Reiniciar evento
+  $('btnReiniciarS2')?.addEventListener('click',()=>{
+    if(!evId){showToast('Nenhum evento ativo');return;}
+    if(!confirm('Reiniciar evento? Todas as pedras sorteadas serao apagadas, mas as permissoes e cartelas permanecem.')) return;
+    remove(fb('bingo/eventos/'+evId+'/sorteados')).then(()=>{
+      // Resetar premios ganhos
+      remove(fb('bingo/eventos/'+evId+'/premios')).then(()=>{
+        pedras=[]; updatePainel(); checkPremio(); renderEv();
+        showToast('Evento reiniciado com sucesso');
+      });
+    }).catch(e=>{console.error(e);showToast('Erro ao reiniciar: '+e.message);});
+  });
+$('btnS3Voltar')?.addEventListener('click',()=>{
   if(permsUnsub){permsUnsub();permsUnsub=null;}
   if(brincantesUnsub){brincantesUnsub();brincantesUnsub=null;}
-  closeM('mPerms');
+  showScreen('s2');
 });
 $('permsBusca')?.addEventListener('input',()=>{permsPage=1;renderPermsLista();});
 $('permsFiltro')?.addEventListener('change',()=>{permsPage=1;renderPermsLista();});

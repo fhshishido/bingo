@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v8.9 - 2026-05-13 -->
+<!-- IBBI Bingo Player v9.0 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo v8.9</title>
+<title>IBBI Bingo v9.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -258,7 +258,7 @@ transition:background-color 9999s ease-in-out 0s;
 .ct-card-sel .ct-id-sel{font-family:'Bebas Neue';font-size:.9rem;color:var(--accent);letter-spacing:1px;text-align:center}
 .ct-card-sel .ct-mode-sel{font-size:.55rem;font-weight:800;padding:1px 4px;border-radius:3px;background:rgba(0,184,240,.12);color:var(--accent);text-align:center;margin-top:2px}
 
-/* === SELECAO: ESTILOS ADICIONAIS v8.9 === */
+/* === SELECAO: ESTILOS ADICIONAIS v9.0 === */
 .ct-card-sel .sel-hint{position:absolute;inset:0;background:rgba(0,184,240,.9);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:1.1rem;color:#000;letter-spacing:2px;z-index:4;animation:none;pointer-events:none;opacity:0;transition:opacity .2s}
 .ct-card-sel:active{transform:scale(.97)}
 
@@ -282,7 +282,7 @@ transition:background-color 9999s ease-in-out 0s;
 
 </style>
 
-  <meta name="app-version" content="v8.9">
+  <meta name="app-version" content="v9.0">
 </head>
 <body>
 
@@ -307,7 +307,7 @@ transition:background-color 9999s ease-in-out 0s;
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &#8594;</button>
         </div>
       </div>
-      <div class="vtag">v8.9</div>
+      <div class="vtag">v9.0</div>
     </div>
   </div>
 </div>
@@ -356,7 +356,7 @@ transition:background-color 9999s ease-in-out 0s;
 </div>
 
   </div>
-  <div class="vtag">v8.9</div>
+  <div class="vtag">v9.0</div>
 </div>
 
   </div>
@@ -443,7 +443,7 @@ transition:background-color 9999s ease-in-out 0s;
 
   <div style="margin-top:16px;text-align:center">
     <button class="btn btn-ghost btn-sm" id="btnVoltarSelecao">← Voltar</button>
-    <div class="vtag" style="margin-top:10px">v8.9</div>
+    <div class="vtag" style="margin-top:10px">v9.0</div>
   </div>
 </div>
 
@@ -458,7 +458,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="p-logo">B<span>I</span>NGO</div>
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname">Preview da Cartela</div>
-    <span class="p-vtag">v8.9</span>
+    <span class="p-vtag">v9.0</span>
   </div>
   <div class="p-body" style="padding-top:20px">
     <div id="previewCardWrap" style="max-width:420px;margin:0 auto;width:100%">
@@ -479,7 +479,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="p-logo">B<span>I</span>NGO</div>
     <div class="ibbi-badge">IBBI</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v8.9</span>
+    <span class="p-vtag">v9.0</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div id="gameEvBar" style="background:var(--surface);border-bottom:1.5px solid var(--border);padding:8px 14px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1px;color:var(--accent)">&mdash;</div>
@@ -624,11 +624,18 @@ transition:background-color 9999s ease-in-out 0s;
       <div id="ocrStatus" style="font-size:.75rem;color:var(--text2);text-align:center;min-height:18px;margin-bottom:6px"></div>
       <div id="ocrZonaResultado" style="display:none">
         <div class="ocr-grid" id="ocrGridEl"></div>
-        <div id="ocrValidTxt" style="font-size:.73rem;color:var(--text2);text-align:center;margin-top:5px;min-height:16px"></div>
+        <div id="ocrValidTxt" style="font-size:.73rem;color:var(--text2);text-align:center;margin-top:5px;min-height:16px">Toque nas celulas para preencher manualmente</div>
         <div id="ocrDupMsg" style="display:none;background:rgba(240,96,96,.15);border:2px solid var(--red);border-radius:var(--rsm);padding:14px;margin-top:10px;text-align:center">
           <div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--red);letter-spacing:1px;margin-bottom:6px">&#9888; CARTELA JA EXISTE</div>
           <div style="font-size:.8rem;color:var(--text2);margin-bottom:8px" id="ocrDupTxt">Os numeros desta cartela sao identicos a uma cartela ja cadastrada.</div>
           <button class="btn btn-acc btn-sm" id="btnOcrTentarOutra" style="width:100%">&#128247; Escanear Outra Cartela</button>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px">
+          <label style="flex:1;display:block;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:8px;text-align:center;cursor:pointer;font-weight:700;font-size:.82rem">
+            &#128247; Carregar Foto
+            <input type="file" id="ocrFileInput2" accept="image/*" style="display:none">
+          </label>
+          <button class="btn btn-red btn-sm" id="btnOcrLimpar" style="flex:1">&#128465; Limpar</button>
         </div>
       </div>
       <div style="display:flex;gap:6px;margin-top:10px">
@@ -1068,7 +1075,7 @@ function loadCartelasFromCache(){
 
 
 // ======================================================
-//  OCR - GRADE AJUSTAVEL INTEGRADA v8.9
+//  OCR - GRADE AJUSTAVEL INTEGRADA v9.0
 // ======================================================
 let _ocrNums = {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
 let _ocrDetectedFreeCenter = false;
@@ -1084,7 +1091,16 @@ let _ocrEvBound = false;
 
 function openOcrModal(){
   _ocrNums={B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
+  _ocrImg=null; _ocrRot=0; _ocrGrid=null;
   openM('mOcr');
+  // Mostrar grade vazia diretamente (sem precisar de foto)
+  const zf=document.getElementById('ocrZonaFoto'); if(zf) zf.style.display='none';
+  const zc=document.getElementById('ocrZonaCanvas'); if(zc) zc.style.display='block';
+  const zr=document.getElementById('ocrZonaResultado'); if(zr) zr.style.display='block';
+  const bc=document.getElementById('btnOcrConfirmar'); if(bc) bc.style.display='none';
+  const st=document.getElementById('ocrStatus'); if(st) st.textContent='Preencha os numeros tocando nas celulas, ou carregue uma foto';
+  const dm=document.getElementById('ocrDupMsg'); if(dm) dm.style.display='none';
+  renderOcrGrid();
 }
 
 function on(id, evt, fn){
@@ -1112,9 +1128,29 @@ function initOcr(){
     const file=e.target.files[0]; if(!file) return;
     _ocrRot=0;
     const url=URL.createObjectURL(file);
-    // update preview images too
     const oi=document.getElementById('ocrImgPreview'); if(oi) oi.src=url;
     await ocrLoadFoto(url);
+  });
+  // Input file na zona de resultado (grade vazia)
+  on('ocrFileInput2','change',async(e)=>{
+    const file=e.target.files[0]; if(!file) return;
+    _ocrRot=0;
+    const url=URL.createObjectURL(file);
+    await ocrLoadFoto(url);
+  });
+  // Botao Limpar — limpa grade e foto
+  on('btnOcrLimpar','click',()=>{
+    _ocrNums={B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
+    _ocrImg=null; _ocrRot=0; _ocrGrid=null;
+    const fi=document.getElementById('ocrFileInput'); if(fi) fi.value='';
+    const fi2=document.getElementById('ocrFileInput2'); if(fi2) fi2.value='';
+    const oc=document.getElementById('ocrCanvas'); if(oc){oc.width=10;oc.height=10;}
+    const rs=document.getElementById('ocrRotSlider'); if(rs) rs.value=0;
+    const rv=document.getElementById('ocrRotVal'); if(rv) rv.textContent='0deg';
+    const st=document.getElementById('ocrStatus'); if(st) st.textContent='Preencha os numeros tocando nas celulas, ou carregue uma foto';
+    const bc=document.getElementById('btnOcrConfirmar'); if(bc) bc.style.display='none';
+    const dm=document.getElementById('ocrDupMsg'); if(dm) dm.style.display='none';
+    renderOcrGrid();
   });
   on('btnOcrNovaFoto','click',()=>{
     _ocrImg=null; _ocrRot=0; _ocrGrid=null; _ocrEvBound=false;

@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v5.6 - 2026-05-13 -->
+<!-- IBBI Bingo v5.7 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v5.6</title>
+<title>IBBI Bingo v5.7</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -271,7 +271,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v5.6</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v5.7</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -638,7 +638,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v5.6';
+const APP_VERSION = 'v5.7';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -1231,10 +1231,25 @@ $('btnS3Voltar')?.addEventListener('click',()=>{
   if(brincantesUnsub){brincantesUnsub();brincantesUnsub=null;}
   showScreen('s2');
 });
+// Som de navegacao (tick suave) usando Web Audio API
+function playNavSound(){
+  try{
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    const osc=ctx.createOscillator();
+    const gain=ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type='sine'; osc.frequency.setValueAtTime(800,ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(400,ctx.currentTime+0.08);
+    gain.gain.setValueAtTime(0.15,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.08);
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime+0.08);
+  }catch(e){}
+}
+
 $('permsBusca')?.addEventListener('input',()=>{permsPage=1;renderPermsLista();});
 $('permsFiltro')?.addEventListener('change',()=>{permsPage=1;renderPermsLista();});
-$('btnPermsPrev')?.addEventListener('click',()=>{if(permsPage>1){permsPage--;renderPermsLista();}});
-$('btnPermsNext')?.addEventListener('click',()=>{permsPage++;renderPermsLista();});
+$('btnPermsPrev')?.addEventListener('click',()=>{if(permsPage>1){permsPage--;playNavSound();renderPermsLista();}});
+$('btnPermsNext')?.addEventListener('click',()=>{permsPage++;playNavSound();renderPermsLista();});
 
 function renderPermsLista(){
   const busca=($('permsBusca')?.value||'').toLowerCase().trim();

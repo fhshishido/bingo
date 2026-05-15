@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v5.9 - 2026-05-13 -->
+<!-- IBBI Bingo v6.2 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v5.9</title>
+<title>IBBI Bingo v6.2</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -271,7 +271,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v5.9</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v6.2</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -651,7 +651,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v5.9';
+const APP_VERSION = 'v6.2';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -859,16 +859,18 @@ $('mQRCode')?.addEventListener('click',(e)=>{
 function reiniciarEvento(id){
   const ev=eventos[id]; if(!ev) return;
   if(!confirm('Reiniciar "'+esc(ev.nome||id)+'"? Todas as pedras sorteadas, batidas e ganhadores serao apagados.')) return;
-  remove(fb('bingo/eventos/'+id+'/sorteados')).then(()=>{
-    remove(fb('bingo/eventos/'+id+'/batidas')).then(()=>{
-      const upd={};
-      Object.keys(ev.premios||{}).forEach(pid=>{
-        upd['premios/'+pid+'/ganhadores']=[];
-        upd['premios/'+pid+'/ganhoEm']=null;
-      });
-      upd['drawn']=[]; upd['lastDrawn']=null; upd['status']='ativo';
-      upd['encerradoEm']=null; upd['brincantes']=null;
-      update(fb('bingo/eventos/'+id), upd).then(()=>{
+  const tasks=[];
+  tasks.push(remove(fb('bingo/eventos/'+id+'/sorteados')));
+  tasks.push(remove(fb('bingo/eventos/'+id+'/batidas')));
+  Object.keys(ev.premios||{}).forEach(pid=>{
+    tasks.push(set(fb('bingo/eventos/'+id+'/premios/'+pid+'/ganhadores'),[]));
+    tasks.push(set(fb('bingo/eventos/'+id+'/premios/'+pid+'/ganhoEm'),null));
+  });
+  const upd={};
+  upd['drawn']=[]; upd['lastDrawn']=null; upd['status']='ativo';
+  upd['encerradoEm']=null; upd['brincantes']=null;
+  tasks.push(update(fb('bingo/eventos/'+id), upd));
+  Promise.all(tasks).then(()=>{
         if(eventos[id]){
           eventos[id].drawn=[]; eventos[id].lastDrawn=null; eventos[id].status='ativo';
           eventos[id].encerradoEm=null; eventos[id].batidas={};
@@ -1046,6 +1048,16 @@ function loadSorteio(id){
   renderS(); showScreen('s2');
   // listen for batidas
   onValue(fb(`bingo/eventos/${id}/batidas`),snap=>{ renderBatidas(snap.val()||{}); });
+  // listen for premios changes (ganhadores)
+  onValue(fb(`bingo/eventos/${id}/premios`),snap=>{
+    console.log('onValue premios:', snap.val());
+    if(evData && snap.val()){
+      evData.premios=snap.val();
+      if(eventos[id]) eventos[id].premios=snap.val();
+      console.log('Premios atualizados:', Object.keys(snap.val()));
+      renderS(false);
+    }
+  });
 }
 
 function renderS(animated){
@@ -1172,12 +1184,31 @@ function renderBatidas(batidas){
 }
 
 function confirmarBatida(bid,b){
-  const ev=evData; if(!ev||!curPrizeId)return;
+  const ev=evData;
+  if(!ev){ console.error('confirmarBatida: evData null'); return; }
+  if(!curPrizeId){ console.error('confirmarBatida: curPrizeId null'); return; }
+  if(!ev.premios[curPrizeId]){ console.error('confirmarBatida: premio',curPrizeId,'nao existe'); return; }
   if(!ev.premios[curPrizeId].ganhadores) ev.premios[curPrizeId].ganhadores=[];
-  ev.premios[curPrizeId].ganhadores.push({nome:b.playerNome||'Anônimo',cartelaId:b.cartelaId||'',ts:Date.now()});
+  const ganhador={nome:b.playerNome||'Anonimo',cartelaId:b.cartelaId||'',ts:Date.now()};
+  ev.premios[curPrizeId].ganhadores.push(ganhador);
   ev.premios[curPrizeId].ganhoEm=Date.now();
-  update(fb(`bingo/eventos/${evId}/batidas/${bid}`),{status:'confirmada'});
-  soundConfirm(); saveEv(); renderS(false);
+  // Salvar ganhador no Firebase
+  const ganhadoresPath=`bingo/eventos/${evId}/premios/${curPrizeId}/ganhadores`;
+  const ganhoEmPath=`bingo/eventos/${evId}/premios/${curPrizeId}/ganhoEm`;
+  console.log('=== CONFIRMAR BATIDA ===');
+  console.log('Premio:', curPrizeId, 'Ganhador:', ganhador);
+  console.log('Path:', ganhadoresPath);
+  Promise.all([
+    set(fb(ganhadoresPath), ev.premios[curPrizeId].ganhadores),
+    set(fb(ganhoEmPath), Date.now()),
+    update(fb(`bingo/eventos/${evId}/batidas/${bid}`),{status:'confirmada'})
+  ]).then(()=>{
+    console.log('OK: Ganhadores salvos no Firebase');
+  }).catch(e=>{
+    console.error('ERRO ao salvar ganhadores:', e);
+    alert('Erro ao salvar ganhador: '+e.message);
+  });
+  soundConfirm(); renderS(false);
 }
 
 function rejeitarBatida(bid){
@@ -1188,6 +1219,11 @@ function removeWinner(prizeId,idx){
   if(!confirm('Remover este ganhador?'))return;
   evData.premios[prizeId].ganhadores.splice(idx,1);
   if(!evData.premios[prizeId].ganhadores.length) evData.premios[prizeId].ganhoEm=null;
+  // Salvar no Firebase
+  set(fb(`bingo/eventos/${evId}/premios/${prizeId}/ganhadores`), evData.premios[prizeId].ganhadores);
+  if(!evData.premios[prizeId].ganhadores.length){
+    set(fb(`bingo/eventos/${evId}/premios/${prizeId}/ganhoEm`), null);
+  }
   saveEv(); renderS(false);
 }
 function dividirPremio(prizeId){ alert('Prêmio dividido entre todos os ganhadores confirmados.'); }
@@ -1630,6 +1666,11 @@ $('btnCopyLink')?.addEventListener('click',()=>{
 // Botao Ganhadores do Premio — abre modal com lista do premio atual
 $('btnGanhador')?.addEventListener('click',()=>{
   const cp=sortP(evData?.premios).find(p=>p.id===curPrizeId);
+  console.log('=== MODAL GANHADORES ===');
+  console.log('curPrizeId:', curPrizeId);
+  console.log('cp:', cp?.nome, 'id:', cp?.id);
+  console.log('ganhadores:', JSON.stringify(cp?.ganhadores));
+  console.log('evData.premios:', Object.keys(evData?.premios||{}));
   $('mWinPrize').textContent=cp?`Premio #${cp.ordem}: ${cp.nome} (${cp.regra==='cheia'?'Cheia':'Linha Dupla'})`:'';
   renderGanhadoresPremio(cp);
   openM('mWin');

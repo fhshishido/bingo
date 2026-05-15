@@ -1379,15 +1379,7 @@ async function ocrProcessar(){
 }
 
 function ocrConfirmar(){
-  const c=novaCartela();
-  c.numeros=JSON.parse(JSON.stringify(_ocrNums));
-  c.freeCenter=_ocrDetectedFreeCenter;
-  const drawnSet=new Set(evData?.drawn||[]);
-  LETTERS.forEach(l=>{ c.numeros[l].forEach(n=>{ if(n&&drawnSet.has(n)){c.marcados=c.marcados||[];if(!c.marcados.includes(n))c.marcados.push(n);} }); });
-  cartelas.push(c); cartelaIdx=cartelas.length-1;
-  saveAllCartelas(); closeM('mOcr');
-  renderCartela(); renderHist(); checkAutoBatida();
-  showToast('Cartela escaneada criada!');
+  confirmOcr(); // delega para confirmOcr que verifica duplicatas
 }
 
 function renderOcrGrid(){

@@ -23,7 +23,7 @@ html{background:#060608}
 body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:5px}
 
-/* ── SHARED ── */
+/* === SHARED === */
 .sec-lbl{font-size:.66rem;font-weight:800;letter-spacing:2px;color:var(–text3);text-transform:uppercase}
 .btn{border:none;border-radius:var(–rsm);padding:9px 18px;font-family:‘Barlow’,sans-serif;font-weight:800;font-size:.9rem;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
 .btn:active{transform:scale(.96)}
@@ -49,7 +49,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .badge{font-size:.62rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0}
 .ba{background:rgba(0,184,240,.12);color:var(–accent);border:1px solid rgba(0,184,240,.3)}
 
-/* ── MODAL ── */
+/* === MODAL === */
 .mbk{display:none;position:fixed;inset:0;background:rgba(0,0,2,.92);backdrop-filter:blur(5px);z-index:1000;align-items:center;justify-content:center;padding:16px}
 .mbk.open{display:flex}
 .modal{background:var(–surface);border:1.5px solid var(–border2);border-radius:var(–radius);width:100%;max-width:500px;max-height:92vh;overflow-y:auto;padding:24px;animation:mIn .22s cubic-bezier(.2,1.4,.4,1) both}
@@ -57,20 +57,20 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .modal h2{font-family:‘Bebas Neue’,sans-serif;font-size:1.6rem;letter-spacing:2px;color:var(–accent);margin-bottom:16px}
 .mfoot{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
 
-/* ── HEADER ── */
+/* === HEADER === */
 .g-head{background:rgba(4,4,6,.97);border-bottom:1.5px solid var(–border);padding:10px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
 .logo{font-family:‘Bebas Neue’,sans-serif;font-size:2.2rem;letter-spacing:4px;color:var(–accent);line-height:1}
 .logo span{color:var(–accent2)}
 .logo-sub{font-size:.62rem;font-weight:700;letter-spacing:1.5px;color:var(–text3);text-transform:uppercase;margin-top:2px}
 .g-head-right{margin-left:auto;display:flex;gap:6px;align-items:center}
 
-/* ── LAYOUT ── */
-.g-body{display:grid;grid-template-columns:280px 1fr;gap:12px;padding:12px;min-height:calc(100vh - 62px)}
+/* === LAYOUT === */
+.g-body{display:grid;grid-template-columns:280px 1fr;gap:12px;padding:12px;align-items:start}
 @media(max-width:800px){.g-body{grid-template-columns:1fr}}
-.side-col{display:flex;flex-direction:column;gap:10px;position:sticky;top:74px;height:fit-content}
+.side-col{display:flex;flex-direction:column;gap:10px}
 .main-col{display:flex;flex-direction:column;gap:10px}
 
-/* ── MODO SELECTOR ── */
+/* === MODO SELECTOR === */
 .modo-sel{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .modo-btn{background:var(–surface2);border:2px solid var(–border);border-radius:var(–rsm);padding:12px 8px;text-align:center;cursor:pointer;transition:all .2s;user-select:none}
 .modo-btn:hover{border-color:var(–border2)}
@@ -84,12 +84,12 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .modo-btn.active-90 .modo-btn-cnt{color:var(–cN)}
 .modo-btn.active-75 .modo-btn-cnt{color:var(–green)}
 
-/* ── QTD INPUT ── */
+/* === QTD INPUT === */
 .qtd-big{width:100%;background:var(–surface2);border:1.5px solid var(–border2);color:var(–text);border-radius:var(–rsm);padding:10px;font-family:‘Bebas Neue’,sans-serif;font-size:2.2rem;text-align:center;letter-spacing:3px;outline:none;transition:border-color .2s}
 .qtd-big:focus{border-color:var(–accent)}
 .qtd-big::placeholder{color:var(–text3)}
 
-/* ── STATS ── */
+/* === STATS === */
 .stats-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 @media(max-width:500px){.stats-g{grid-template-columns:repeat(3,1fr)}}
 .sbox{background:var(–surface);border:1.5px solid var(–border);border-radius:var(–radius);padding:12px;text-align:center}
@@ -99,14 +99,14 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .sv-75{color:var(–green)}
 .sl{font-size:.64rem;font-weight:700;color:var(–text3);margin-top:3px;text-transform:uppercase;letter-spacing:1px}
 
-/* ── RANGE PANEL ── */
+/* === RANGE PANEL === */
 .range-cols{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:8px}
 .rcol{background:var(–surface2);border-radius:6px;padding:6px 4px;text-align:center}
 .rcol-ltr{font-family:‘Bebas Neue’,sans-serif;font-size:1rem}
 .rcol-ltr.lB{color:var(–cB)}.rcol-ltr.lI{color:var(–cI)}.rcol-ltr.lN{color:var(–cN)}.rcol-ltr.lG{color:var(–cG)}.rcol-ltr.lO{color:var(–cO)}
 .rcol-val{font-size:.58rem;color:var(–text3);font-weight:700;margin-top:2px}
 
-/* ── TOGGLE ── */
+/* === TOGGLE === */
 .vrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .vrow:last-child{margin-bottom:0}
 .vrow-lbl{font-size:.82rem;font-weight:700;color:var(–text2);cursor:pointer;user-select:none;flex:1}
@@ -117,13 +117,13 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .tog input:checked+.tog-sl{background:rgba(0,184,240,.18);border-color:var(–blue)}
 .tog input:checked+.tog-sl::before{background:var(–blue);transform:translateX(18px)}
 
-/* ── PROGRESS ── */
+/* === PROGRESS === */
 .progress-wrap{display:none}
 .pbar{height:6px;background:var(–surface3);border-radius:4px;overflow:hidden;margin-top:8px}
 .pbar-fill{height:100%;background:linear-gradient(90deg,var(–accent),var(–accent2));border-radius:4px;transition:width .25s}
 .pbar-txt{text-align:center;font-size:.72rem;color:var(–text3);margin-top:5px;font-weight:700}
 
-/* ── FILTER TABS ── */
+/* === FILTER TABS === */
 .ftabs{display:flex;gap:6px;margin-bottom:12px;align-items:center;flex-wrap:wrap}
 .ftab{background:var(–surface2);border:1.5px solid var(–border);color:var(–text2);border-radius:var(–rsm);padding:6px 14px;font-family:‘Barlow’,sans-serif;font-weight:700;font-size:.78rem;cursor:pointer;transition:all .15s}
 .ftab:hover{border-color:var(–border2);color:var(–text)}
@@ -131,7 +131,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .ftab.f90.active{background:rgba(245,200,0,.08);border-color:var(–cN);color:var(–cN)}
 .ftab.f75.active{background:rgba(0,223,168,.08);border-color:var(–green);color:var(–green)}
 
-/* ── CARTELAS GRID ── */
+/* === CARTELAS GRID === */
 .ct-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px}
 @media(max-width:600px){.ct-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}}
 .ct-card{background:var(–surface2);border:1.5px solid var(–border);border-radius:var(–rsm);padding:10px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
@@ -156,12 +156,12 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .ct-cell.free{background:var(–surface3);color:var(–text2);font-size:.5rem}
 .ct-foot{display:flex;justify-content:space-between;font-size:.6rem;color:var(–text3)}
 
-/* ── PAGINAÇÃO ── */
+/* === PAGINACAO === */
 .pager{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;flex-wrap:wrap}
 .pager-info{font-size:.75rem;color:var(–text3);font-weight:700}
 .pager-pg{font-size:.75rem;font-weight:800;color:var(–accent);min-width:60px;text-align:center}
 
-/* ── MODAL CARTELA ── */
+/* === MODAL CARTELA === */
 .fs-cartela{background:var(–surface2);border:1.5px solid var(–border);border-radius:var(–rsm);padding:14px;margin:12px 0}
 .fs-hdr{display:grid;grid-template-columns:repeat(5,1fr);margin-bottom:4px}
 .fs-hdr-cell{font-family:‘Bebas Neue’,sans-serif;font-size:1.7rem;text-align:center;padding:6px 2px;line-height:1}
@@ -179,12 +179,12 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .fs-cell.nG{color:var(–cG);border-color:rgba(255,140,0,.4)}
 .fs-cell.nO{color:var(–cO);border-color:rgba(200,80,255,.4)}
 
-/* ── EMPTY ── */
+/* === EMPTY === */
 .empty-st{text-align:center;padding:50px 20px;color:var(–text3);grid-column:1/-1}
 .empty-st .ei{font-size:3rem;margin-bottom:10px}
 .empty-st p{font-size:.85rem;font-weight:600}
 
-/* ── TOAST ── */
+/* === TOAST === */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(–surface2);border:1.5px solid var(–accent);color:var(–text);padding:10px 22px;border-radius:var(–rsm);font-weight:700;font-size:.88rem;z-index:2000;transition:transform .3s;box-shadow:0 4px 20px rgba(0,0,0,.5);white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 </style>
@@ -312,9 +312,17 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     </div>
   </div>
 
+  <!-- Paginação superior -->
+  <div class="pager" id="pagerTop" style="display:none;margin-bottom:12px">
+    <button class="btn btn-ghost btn-sm" id="btnPrevTop">← Ant</button>
+    <span class="pager-pg" id="pagerPgTop"></span>
+    <button class="btn btn-ghost btn-sm" id="btnNextTop">Próx →</button>
+    <span class="pager-info" id="pagerInfoTop"></span>
+  </div>
+
   <div class="ct-grid" id="ctGrid"></div>
 
-  <!-- Paginação -->
+  <!-- Paginação inferior -->
   <div class="pager" id="pager" style="display:none">
     <button class="btn btn-ghost btn-sm" id="btnPrev">← Ant</button>
     <span class="pager-pg" id="pagerPg"></span>
@@ -351,7 +359,7 @@ const RANGES = {
 const STORAGE_KEY = 'ibbi_banco_cartelas_v2';
 const PG_DEFAULT = 20;
 
-// ── STATE ──
+// --- STATE ---
 let banco = {g90:{}, g75:{}};
 let sigs = {g90:new Set(), g75:new Set()};
 let modoAtivo = 90;
@@ -360,7 +368,7 @@ let currentPage = 1;
 let perPage = PG_DEFAULT;
 let currentCtId = null;
 
-// ── HELPERS ──
+// --- HELPERS ---
 const $ = id => document.getElementById(id);
 const mKey = m => m===90?'g90':'g75';
 const showToast = msg => {
@@ -368,7 +376,7 @@ const showToast = msg => {
   setTimeout(()=>t.classList.remove('show'),2800);
 };
 
-// ── MODO ──
+// --- MODO ---
 function setModo(m) {
   modoAtivo = m;
   $('modoBtn90').className = 'modo-btn' + (m===90?' active-90':'');
@@ -386,7 +394,7 @@ function renderFaixas() {
 }
 renderFaixas();
 
-// ── GERAÇÃO ──
+// --- GERAÇÃO ---
 function generateOne(freeCenter) {
   const ranges = RANGES[modoAtivo];
   const numeros = {};
@@ -487,7 +495,7 @@ async function gerarCartelas() {
 }
 $('btnGerar').addEventListener('click', gerarCartelas);
 
-// ── LISTA FILTRADA ──
+// --- LISTA FILTRADA ---
 function getListaFiltrada() {
   let lista = [];
   if(currentFilter==='todas'||currentFilter==='90')
@@ -497,7 +505,7 @@ function getListaFiltrada() {
   return lista;
 }
 
-// ── RENDER ──
+// --- RENDER ---
 function renderCartelas() {
   const lista = getListaFiltrada();
   const total = lista.length;
@@ -522,12 +530,26 @@ function renderCartelas() {
 
   // Paginação
   const pager = $('pager');
-  if(totalPages <= 1) { pager.style.display='none'; return; }
+  const pagerTop = $('pagerTop');
+  if(totalPages <= 1) {
+    pager.style.display='none';
+    pagerTop.style.display='none';
+    return;
+  }
+  const pgTxt = `${currentPage} / ${totalPages}`;
+  const infoTxt = `${start+1}–${Math.min(start+perPage,total)} de ${total}`;
+  // inferior
   pager.style.display='flex';
-  $('pagerPg').textContent = `${currentPage} / ${totalPages}`;
-  $('pagerInfo').textContent = `${start+1}–${Math.min(start+perPage,total)} de ${total}`;
-  $('btnPrev').disabled = currentPage<=1;
-  $('btnNext').disabled = currentPage>=totalPages;
+  $('pagerPg').textContent=pgTxt;
+  $('pagerInfo').textContent=infoTxt;
+  $('btnPrev').disabled=currentPage<=1;
+  $('btnNext').disabled=currentPage>=totalPages;
+  // superior
+  pagerTop.style.display='flex';
+  $('pagerPgTop').textContent=pgTxt;
+  $('pagerInfoTop').textContent=infoTxt;
+  $('btnPrevTop').disabled=currentPage<=1;
+  $('btnNextTop').disabled=currentPage>=totalPages;
 }
 
 function renderCard(c) {
@@ -546,12 +568,14 @@ function renderCard(c) {
   </div>`;
 }
 
-// ── PAGINAÇÃO ──
-$('btnPrev').addEventListener('click',()=>{ if(currentPage>1){currentPage--;renderCartelas();} });
-$('btnNext').addEventListener('click',()=>{ currentPage++;renderCartelas(); });
+// --- PAGINAÇÃO ---
+$('btnPrev').addEventListener('click',()=>{ if(currentPage>1){currentPage--;renderCartelas();window.scrollTo(0,0);} });
+$('btnNext').addEventListener('click',()=>{ currentPage++;renderCartelas();window.scrollTo(0,0); });
+$('btnPrevTop').addEventListener('click',()=>{ if(currentPage>1){currentPage--;renderCartelas();} });
+$('btnNextTop').addEventListener('click',()=>{ currentPage++;renderCartelas(); });
 $('perPageSel').addEventListener('change',()=>{ perPage=parseInt($('perPageSel').value); currentPage=1; renderCartelas(); });
 
-// ── FILTER TABS ──
+// --- FILTER TABS ---
 document.querySelectorAll('.ftab').forEach(tab=>{
   tab.addEventListener('click',()=>{
     document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));
@@ -562,7 +586,7 @@ document.querySelectorAll('.ftab').forEach(tab=>{
   });
 });
 
-// ── MODAL ──
+// --- MODAL ---
 function openModal(id) {
   const key = id.startsWith('G90')?'g90':'g75';
   const c = banco[key][id]; if(!c) return;
@@ -605,7 +629,7 @@ $('btnMCtExcluir').addEventListener('click',()=>{
   showToast('Cartela removida');
 });
 
-// ── STATS ──
+// --- STATS ---
 function updateStats() {
   const n90=Object.keys(banco.g90).length;
   const n75=Object.keys(banco.g75).length;
@@ -616,7 +640,7 @@ function updateStats() {
   $('cntBtn75').textContent=n75+' cartelas';
 }
 
-// ── EXPORT ──
+// --- EXPORT ---
 $('btnExport').addEventListener('click',()=>{
   const n=Object.keys(banco.g90).length+Object.keys(banco.g75).length;
   if(!n){showToast('Banco vazio');return;}
@@ -628,7 +652,7 @@ $('btnExport').addEventListener('click',()=>{
   showToast(`Exportado: G90(${Object.keys(banco.g90).length}) G75(${Object.keys(banco.g75).length})`);
 });
 
-// ── LIMPAR ──
+// --- LIMPAR ---
 $('btnLimpar90').addEventListener('click',()=>{
   const n=Object.keys(banco.g90).length; if(!n)return;
   if(!confirm(`Excluir todas as ${n} cartelas G90?`))return;
@@ -640,7 +664,7 @@ $('btnLimpar75').addEventListener('click',()=>{
   banco.g75={};sigs.g75.clear();saveStorage();updateStats();renderCartelas();showToast('G75 limpo');
 });
 
-// ── STORAGE ──
+// --- STORAGE ---
 function saveStorage() {
   try{localStorage.setItem(STORAGE_KEY,JSON.stringify(banco));}catch(e){}
 }

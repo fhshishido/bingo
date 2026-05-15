@@ -25,7 +25,7 @@ html{background:#060608}
 body{background:#060608;background:var(--bg);color:#e4f2ff;color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 
-/* – BASE – */
+/* === BASE === */
 .btn{border:none;border-radius:var(–rsm);padding:10px 20px;font-family:‘Barlow’,sans-serif;font-weight:800;font-size:.9rem;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
 .btn:active{transform:scale(.95)}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
@@ -54,7 +54,7 @@ body{background:#060608;background:var(--bg);color:#e4f2ff;color:var(--text);fon
 .card{background:var(–surface);border:1.5px solid var(–border);border-radius:var(–radius);padding:14px}
 .card h3{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(–text3);text-transform:uppercase;margin-bottom:10px}
 
-/* – MODAL – */
+/* === MODAL === */
 .mbk{display:none;position:fixed;inset:0;background:rgba(0,0,2,.92);backdrop-filter:blur(6px);z-index:1000;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto}
 .mbk.open{display:flex}
 .modal{background:var(–surface);border:1.5px solid var(–border2);border-radius:var(–radius);width:100%;max-width:380px;padding:22px;animation:mIn .22s cubic-bezier(.2,1.4,.4,1) both;margin:auto;flex-shrink:0}
@@ -62,7 +62,7 @@ body{background:#060608;background:var(--bg);color:#e4f2ff;color:var(--text);fon
 .modal h2{font-family:‘Bebas Neue’,sans-serif;font-size:1.5rem;letter-spacing:2px;color:var(–accent);margin-bottom:14px}
 .mfoot{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
 
-/* – VIEWS – */
+/* === VIEWS === */
 .view{display:none;min-height:100vh}
 .view.active{display:block}
 .auth-bg{background:radial-gradient(ellipse at 50% 0%,#0a1e35 0%,var(–bg) 70%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -78,7 +78,7 @@ body{background:#060608;background:var(--bg);color:#e4f2ff;color:var(--text);fon
 .auth-link:hover{color:var(–accent2)}
 .vtag{font-size:.6rem;font-weight:700;color:var(–text3);text-align:center;margin-top:12px}
 
-/* – HEADER – */
+/* === HEADER === */
 .p-head{background:rgba(4,4,6,.97);border-bottom:1.5px solid var(–border);padding:10px 14px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
 .p-logo{font-family:‘Bebas Neue’,sans-serif;font-size:1.4rem;letter-spacing:3px;color:var(–accent);line-height:1}
 .p-logo span{color:var(–accent2)}
@@ -87,7 +87,7 @@ body{background:#060608;background:var(--bg);color:#e4f2ff;color:var(--text);fon
 .p-username{font-size:.75rem;font-weight:800;color:var(–accent2);white-space:nowrap;max-width:100px;overflow:hidden;text-overflow:ellipsis}
 .p-vtag{font-size:.58rem;font-weight:700;color:var(–text3)}
 
-/* – GAME BODY – */
+/* === GAME BODY === */
 .p-body{padding:10px 12px 60px;display:flex;flex-direction:column;gap:10px;max-width:480px;margin:0 auto;width:100%}
 
 /* PREMIO */
@@ -211,7 +211,7 @@ body{background:#060608;background:var(--bg);color:#e4f2ff;color:var(--text);fon
 @keyframes spin{to{transform:rotate(360deg)}}
 .ocr-status{font-size:.78rem;color:var(–text2);margin-top:8px;text-align:center;min-height:20px}
 
-/* – AJUSTE / GRID ADJUST SCREEN – */
+/* === AJUSTE / GRID ADJUST SCREEN === */
 .ajuste-wrap{position:fixed;inset:0;z-index:2000;background:var(–bg);display:flex;flex-direction:column}
 .ajuste-top{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(–surface);border-bottom:1.5px solid var(–border);gap:8px;flex-shrink:0}
 .ajuste-top h2{font-family:‘Bebas Neue’,sans-serif;font-size:1.2rem;letter-spacing:2px;color:var(–accent);margin:0}
@@ -240,13 +240,13 @@ input:-webkit-autofill,input:-webkit-autofill:focus{
 transition:background-color 9999s ease-in-out 0s;
 }
 
-/* ── SELECAO DE CARTELA (CINEMA STYLE) ── */
+/* === SELECAO DE CARTELA (CINEMA STYLE) === */
 .ct-card-sel{background:var(–surface);border:1.5px solid var(–border);border-radius:var(–rsm);padding:10px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
 .ct-card-sel:hover{border-color:var(–accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.4)}
 .ct-card-sel.ocupada{opacity:.5;cursor:not-allowed;border-color:var(–red)}
 .ct-card-sel.ocupada::before{content:‘OCUPADA’;position:absolute;inset:0;background:rgba(6,6,8,.85);display:flex;align-items:center;justify-content:center;font-family:‘Bebas Neue’;font-size:1rem;color:var(–red);letter-spacing:2px;z-index:2}
 .ct-card-sel.minha{border-color:var(–green);box-shadow:0 0 20px rgba(0,223,168,.3)}
-.ct-card-sel.minha::after{content:‘✓’;position:absolute;top:4px;right:4px;background:var(–green);color:#000;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;z-index:3}
+.ct-card-sel.minha::after{content:’\2713’;position:absolute;top:4px;right:4px;background:var(–green);color:#000;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;z-index:3}
 .ct-card-sel .ct-mini-sel{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;margin-top:6px}
 .ct-card-sel .ct-cell-sel{aspect-ratio:1;border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:‘Bebas Neue’;font-size:.55rem;background:var(–surface2);color:var(–text3);border:1px solid var(–border)}
 .ct-card-sel .ct-cell-sel.hB{color:var(–cB);border-color:rgba(0,184,240,.3);background:rgba(0,184,240,.07)}
@@ -361,8 +361,23 @@ transition:background-color 9999s ease-in-out 0s;
     <span style="font-size:.65rem;padding:4px 10px;border-radius:20px;background:rgba(245,200,0,.12);color:var(--cN);border:1px solid rgba(245,200,0,.3)">🟡 Minha</span>
   </div>
 
-  <div id="selecaoGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;max-height:60vh;overflow-y:auto;padding:4px">
-    <!-- Cartelas serão renderizadas aqui -->
+  <!-- Pager topo -->
+  <div id="selPagerTop" style="display:none;justify-content:center;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+    <button class="btn btn-ghost btn-sm" id="btnSelPrevTop">← Ant</button>
+    <span id="selPgTop" style="font-size:.75rem;font-weight:800;color:var(--accent);min-width:60px;text-align:center"></span>
+    <button class="btn btn-ghost btn-sm" id="btnSelNextTop">Próx →</button>
+    <span id="selInfoTop" style="font-size:.72rem;color:var(--text3);font-weight:700"></span>
+  </div>
+
+  <div id="selecaoGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;padding:4px">
+  </div>
+
+  <!-- Pager base -->
+  <div id="selPagerBot" style="display:none;justify-content:center;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap">
+    <button class="btn btn-ghost btn-sm" id="btnSelPrevBot">← Ant</button>
+    <span id="selPgBot" style="font-size:.75rem;font-weight:800;color:var(--accent);min-width:60px;text-align:center"></span>
+    <button class="btn btn-ghost btn-sm" id="btnSelNextBot">Próx →</button>
+    <span id="selInfoBot" style="font-size:.72rem;color:var(--text3);font-weight:700"></span>
   </div>
 
   <div style="margin-top:16px;text-align:center">
@@ -1760,17 +1775,19 @@ function getCartelaLocal(id) {
 }
 
 // Show cartela selection screen
+let selPage = 1;
+const SEL_PER_PAGE = 20;
+
 function showSelecaoCartela() {
   loadBancoLocal();
   const cartElasEvento = evData?.cartelas || {};
-
   if (!Object.keys(cartElasEvento).length) {
     showToast('Nenhuma cartela reservada neste evento');
     showView('vJogo');
     return;
   }
-
   bancoEvento = cartElasEvento;
+  selPage = 1;
   renderSelecaoGrid();
   showView('vSelecao');
 }
@@ -1781,15 +1798,23 @@ function renderSelecaoGrid() {
   if (!grid) return;
 
   const ids = Object.keys(bancoEvento);
-  if (!ids.length) {
+  const total = ids.length;
+
+  if (!total) {
     grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--text3)">
       <div style="font-size:3rem;margin-bottom:12px">🎱</div>
       <div style="font-size:1rem;font-weight:700">Nenhuma cartela reservada</div>
     </div>`;
+    updateSelPager(0, 0, 0, 0);
     return;
   }
 
-  grid.innerHTML = ids.map(cid => {
+  const totalPages = Math.max(1, Math.ceil(total / SEL_PER_PAGE));
+  if (selPage > totalPages) selPage = totalPages;
+  const start = (selPage - 1) * SEL_PER_PAGE;
+  const pagIds = ids.slice(start, start + SEL_PER_PAGE);
+
+  grid.innerHTML = pagIds.map(cid => {
     const estado = bancoEvento[cid];
     const isMinha = estado.playerId === currentUser?.uid;
     const isOcupada = estado.usada && !isMinha;
@@ -1799,7 +1824,6 @@ function renderSelecaoGrid() {
     if (isOcupada) cls += ' ocupada';
     else if (isMinha) cls += ' minha';
 
-    // Mini grid — só se tiver dados locais
     let miniHtml = '';
     if (c) {
       const cells = [];
@@ -1807,7 +1831,7 @@ function renderSelecaoGrid() {
         LETTERS.forEach(col => {
           const n = c.numeros[col][row];
           const isFree = c.freeCenter && col === 'N' && row === 2;
-          cells.push(`<div class="ct-cell-sel ${isFree?'free':'h'+col}">${isFree?'★':(n||'')}</div>`);
+          cells.push(`<div class="ct-cell-sel ${isFree?'free':'h'+col}">${isFree?'&#9733;':(n||'')}</div>`);
         });
       }
       miniHtml = `<div class="ct-mini-sel">${cells.join('')}</div>`;
@@ -1819,7 +1843,40 @@ function renderSelecaoGrid() {
       ${miniHtml}
     </div>`;
   }).join('');
+
+  updateSelPager(selPage, totalPages, total, start);
 }
+
+function updateSelPager(page, totalPages, total, start) {
+  const pTop = document.getElementById('selPagerTop');
+  const pBot = document.getElementById('selPagerBot');
+  if (totalPages <= 1) {
+    if (pTop) pTop.style.display = 'none';
+    if (pBot) pBot.style.display = 'none';
+    return;
+  }
+  const pgTxt = `${page} / ${totalPages}`;
+  const infoTxt = `${start+1}-${Math.min(start+SEL_PER_PAGE,total)} de ${total}`;
+  if (pTop) {
+    pTop.style.display = 'flex';
+    document.getElementById('selPgTop').textContent = pgTxt;
+    document.getElementById('selInfoTop').textContent = infoTxt;
+    document.getElementById('btnSelPrevTop').disabled = page <= 1;
+    document.getElementById('btnSelNextTop').disabled = page >= totalPages;
+  }
+  if (pBot) {
+    pBot.style.display = 'flex';
+    document.getElementById('selPgBot').textContent = pgTxt;
+    document.getElementById('selInfoBot').textContent = infoTxt;
+    document.getElementById('btnSelPrevBot').disabled = page <= 1;
+    document.getElementById('btnSelNextBot').disabled = page >= totalPages;
+  }
+}
+
+document.getElementById('btnSelPrevTop')?.addEventListener('click', () => { if(selPage>1){selPage--;renderSelecaoGrid();} });
+document.getElementById('btnSelNextTop')?.addEventListener('click', () => { selPage++;renderSelecaoGrid(); });
+document.getElementById('btnSelPrevBot')?.addEventListener('click', () => { if(selPage>1){selPage--;renderSelecaoGrid();window.scrollTo(0,0);} });
+document.getElementById('btnSelNextBot')?.addEventListener('click', () => { selPage++;renderSelecaoGrid();window.scrollTo(0,0); });
 
 // Select a cartela
 async function selecionarCartela(cartelaId) {

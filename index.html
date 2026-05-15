@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v5.4 - 2026-05-13 -->
+<!-- IBBI Bingo v5.5 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v5.4</title>
+<title>IBBI Bingo v5.5</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -271,7 +271,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v5.4</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v5.5</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -296,9 +296,6 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
     <span class="mode-badge" id="s2mode">90 pedras</span>
     <div class="s2-right">
       <button class="btn btn-ghost btn-sm" id="btnVoltar">&#8592; Voltar</button>
-      <button class="btn btn-ghost btn-sm" id="btnPerms">&#128101; Permissoes</button>
-      <button class="btn btn-ghost btn-sm" id="btnEditarS2">&#9881; Editar</button>
-      <button class="btn btn-yellow btn-sm" id="btnReiniciarS2">&#8635; Reiniciar</button>
       <button class="btn btn-red btn-sm" id="btnEnc">&#9940; Encerrar</button>
     </div>
   </div>
@@ -641,7 +638,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v5.4';
+const APP_VERSION = 'v5.5';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -757,6 +754,10 @@ function renderEv(){
     if(s) s.addEventListener('click',e=>{e.stopPropagation();shareEvent(id);});
     const ed=g.querySelector('[data-editid="'+id+'"]');
     if(ed) ed.addEventListener('click',e=>{e.stopPropagation();openEditFromCard(id);});
+    const pm=g.querySelector('[data-permsid="'+id+'"]');
+    if(pm) pm.addEventListener('click',e=>{e.stopPropagation();openPermsFromCard(id);});
+    const rs=g.querySelector('[data-restartid="'+id+'"]');
+    if(rs) rs.addEventListener('click',e=>{e.stopPropagation();reiniciarEvento(id);});
   });
 }
 
@@ -778,7 +779,9 @@ function cardHTML(id,ev){
       +'<div class="ev-foot">'
       +'<button class="btn btn-ghost btn-sm" data-shareid="'+id+'" title="Copiar link">&#128279; Link</button>'
       +'<button class="btn btn-ghost btn-sm" data-editid="'+id+'">&#9881; Editar</button>'
-      +'<button class="btn btn-red btn-sm" data-delid="'+id+'">&#128465; Excluir</button>'
+      +'<button class="btn btn-ghost btn-sm" data-permsid="'+id+'">&#128101; Perms</button>'
+      +'<button class="btn btn-yellow btn-sm" data-restartid="'+id+'">&#8635; Reinic</button>'
+      +'<button class="btn btn-red btn-sm" data-delid="'+id+'">&#128465; Exc</button>'
       +'</div>'
       +'</div>';
   } catch(e) {

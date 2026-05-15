@@ -1681,13 +1681,18 @@ function renderBody(){
       }
       showSelecaoCartela();
     } else {
-      // Cartela própria — abrir OCR/digitador direto
+      // Cartela própria — criar cartela em branco e mostrar na tela
       const max=evData?.maxCartelasUser||0;
       if(max>0 && cartelas.length>=max){
         showToast('Limite atingido: '+cartelas.length+'/'+max+' cartelas');
         return;
       }
-      openOcrModal();
+      const c=novaCartela();
+      cartelas.push(c);
+      cartelaIdx=cartelas.length-1;
+      saveAllCartelas();
+      renderCartela(); renderHist(); checkAutoBatida();
+      showToast('Cartela '+(cartelaIdx+1)+' de '+cartelas.length+' criada em branco!');
     }
     verificarLimiteBtn();
   });

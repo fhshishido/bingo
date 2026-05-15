@@ -1,4 +1,4 @@
-<!-- IBBI Bingo — Gerador de Cartelas v3.0 -->
+<!-- IBBI Bingo — Gerador de Cartelas v3.1 -->
 
 <!DOCTYPE html>
 
@@ -200,7 +200,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="logo-sub">Gerador de Cartelas</div>
   </div>
   <div class="g-head-right">
-    <span class="sec-lbl">v3.0</span>
+    <span class="sec-lbl">v3.1</span>
     <a href="index.html" class="btn btn-ghost btn-sm">🎲 Sorteio</a>
     <a href="player.html" class="btn btn-ghost btn-sm">🎴 Player</a>
   </div>
@@ -394,7 +394,7 @@ function renderFaixas() {
 }
 renderFaixas();
 
-// --- GERAÇÃO ---
+// --- GERACAO ---
 function generateOne(freeCenter) {
   const ranges = RANGES[modoAtivo];
   const numeros = {};
@@ -484,7 +484,7 @@ async function gerarCartelas() {
   $('qtdInput').value='';
 
   saveStorage(); updateStats();
-  // Ir para a última página do modo gerado
+  // Ir para a ultima pagina do modo gerado
   currentFilter = String(modoAtivo);
   document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));
   document.querySelector(`.ftab[data-filter="${modoAtivo}"]`).classList.add('active');
@@ -528,7 +528,7 @@ function renderCartelas() {
     document.querySelector(`[data-cid="${c.id}"]`)?.addEventListener('click',()=>openModal(c.id));
   });
 
-  // Paginação
+  // Paginacao
   const pager = $('pager');
   const pagerTop = $('pagerTop');
   if(totalPages <= 1) {
@@ -568,7 +568,7 @@ function renderCard(c) {
   </div>`;
 }
 
-// --- PAGINAÇÃO ---
+// --- PAGINACAO ---
 $('btnPrev').addEventListener('click',()=>{ if(currentPage>1){currentPage--;renderCartelas();window.scrollTo(0,0);} });
 $('btnNext').addEventListener('click',()=>{ currentPage++;renderCartelas();window.scrollTo(0,0); });
 $('btnPrevTop').addEventListener('click',()=>{ if(currentPage>1){currentPage--;renderCartelas();} });

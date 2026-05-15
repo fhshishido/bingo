@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v7.3 — 2026-05-13 -->
+<!-- IBBI Bingo Player v7.4 — 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo v7.3</title>
+<title>IBBI Bingo v7.4</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -260,7 +260,7 @@ transition:background-color 9999s ease-in-out 0s;
 
 </style>
 
-  <meta name="app-version" content="v7.3">
+  <meta name="app-version" content="v7.4">
 </head>
 <body>
 
@@ -285,7 +285,7 @@ transition:background-color 9999s ease-in-out 0s;
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &#8594;</button>
         </div>
       </div>
-      <div class="vtag">v7.3</div>
+      <div class="vtag">v7.4</div>
     </div>
   </div>
 </div>
@@ -336,7 +336,7 @@ transition:background-color 9999s ease-in-out 0s;
 ```
 
   </div>
-  <div class="vtag">v7.3</div>
+  <div class="vtag">v7.4</div>
 </div>
 
   </div>
@@ -382,7 +382,7 @@ transition:background-color 9999s ease-in-out 0s;
 
   <div style="margin-top:16px;text-align:center">
     <button class="btn btn-ghost btn-sm" id="btnVoltarSelecao">← Voltar</button>
-    <div class="vtag" style="margin-top:10px">v7.3</div>
+    <div class="vtag" style="margin-top:10px">v7.4</div>
   </div>
 </div>
 ```
@@ -398,7 +398,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">&mdash;</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v7.3</span>
+    <span class="p-vtag">v7.4</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -588,20 +588,20 @@ transition:background-color 9999s ease-in-out 0s;
 <script type="module">
 // ===== AUTO VERSION MANAGEMENT =====
 // Altere apenas esta linha ao atualizar o app
-const APP_VERSION = 'v7.3';
+const APP_VERSION = 'v7.4';
 
-// Atualiza automaticamente todos os elementos de versão na página
+// Atualiza automaticamente todos os elementos de versao na pagina
 function updateVersionDisplays() {
   document.querySelectorAll('.vtag, .p-vtag').forEach(el => {
     el.textContent = APP_VERSION;
   });
-  // Atualiza título se necessário
+  // Atualiza titulo se necessario
   const title = document.querySelector('title');
   if (title && title.textContent.includes('Bingo')) {
     title.textContent = 'IBBI Bingo ' + APP_VERSION;
   }
 }
-// Executa após DOM carregar
+// Executa apos DOM carregar
 document.addEventListener('DOMContentLoaded', updateVersionDisplays);
 // ===================================
 
@@ -893,9 +893,9 @@ function loadCartelasFromCache(){
 }
 
 
-// ══════════════════════════════════════════════════════
-//  OCR — GRADE AJUSTÁVEL INTEGRADA v7.3
-// ══════════════════════════════════════════════════════
+// ======================================================
+//  OCR - GRADE AJUSTAVEL INTEGRADA v7.4
+// ======================================================
 let _ocrNums = {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
 let _ocrDetectedFreeCenter = false;
 let _ocrCellCtx = null;
@@ -1033,7 +1033,7 @@ function ocrDetectGrid(img,cw,ch){
   let gridBottom=Math.round(th*0.96);
   for(let y=th-1;y>th*0.4;y--){ if((255-rowAvg(y))>T){gridBottom=y;break;} }
 
-  // Convert tmp → canvas coords (correct formula)
+  // Convert tmp -> canvas coords (correct formula)
   const toX=(tx)=>(tx/sc)*(cw/img.width);
   const toY=(ty)=>(ty/sc)*(ch/img.height);
 
@@ -1664,7 +1664,7 @@ $('btnBingoOk').addEventListener('click',()=>{
   if(el){el.className='batida-status bs-pend';el.textContent=' Batida enviada -- aguardando confirmacao...';}
 });
 
-// ── EDITAR PERFIL ────────────────────────────────────
+// -- EDITAR PERFIL ------------------------------------
 function openEditarPerfil(){
   if(!userProfile||!currentUser) return;
   const g=id=>document.getElementById(id);
@@ -1746,9 +1746,9 @@ document.addEventListener('DOMContentLoaded',()=>{
   });
 });
 
-// ════════════════════════════════════════════════════
+// ====================================================
 //  BANCO DE CARTELAS - SELECAO v2
-// ════════════════════════════════════════════════════
+// ====================================================
 
 const BANCO_KEY_V2 = 'ibbi_banco_cartelas_v2';
 
@@ -1889,7 +1889,7 @@ async function selecionarCartela(cartelaId) {
     return;
   }
 
-  // Já é minha — só entrar
+  // Ja e minha - so entrar
   if (estado.usada && estado.playerId === currentUser?.uid) {
     const c = getCartelaLocal(cartelaId);
     if (c) usarCartelaDoBanco(c);
@@ -1933,7 +1933,7 @@ function usarCartelaDoBanco(cartelaBanco) {
     origem: 'banco'
   };
 
-  // Marcar já sorteadas
+  // Marcar ja sorteadas
   const drawnSet = new Set(evData?.drawn || []);
   LETTERS.forEach(l => {
     c.numeros[l].forEach(n => {
@@ -1948,7 +1948,7 @@ function usarCartelaDoBanco(cartelaBanco) {
   renderCartela(); renderHist(); checkAutoBatida();
 }
 
-// Botão voltar na seleção
+// Botao voltar na selecao
 document.getElementById('btnVoltarSelecao')?.addEventListener('click', () => {
   if (!cartelas.length) {
     const c = novaCartela();
@@ -1958,12 +1958,12 @@ document.getElementById('btnVoltarSelecao')?.addEventListener('click', () => {
   showView('vJogo');
 });
 
-// Escutar atualizações em tempo real das cartelas do evento
+// Escutar atualizacoes em tempo real das cartelas do evento
 function listenCartelasUsadas() {
   onValue(fb(`bingo/eventos/${evId}/cartelas`), snap => {
     const data = snap.val() || {};
     bancoEvento = data;
-    // Re-renderizar se estiver na tela de seleção
+    // Re-renderizar se estiver na tela de selecao
     if (document.getElementById('vSelecao')?.classList.contains('active')) {
       renderSelecaoGrid();
     }

@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v3.8 - 2026-05-13 -->
+<!-- IBBI Bingo v4.0 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v3.8</title>
+<title>IBBI Bingo v4.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -271,7 +271,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v3.8</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v4.0</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -566,18 +566,11 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
 </div>
 
 <script type="module">
-// ===== AUTO VERSION MANAGEMENT =====
-const APP_VERSION = 'v3.8';
-function updateVersionDisplays() {
-  document.querySelectorAll('.vtag').forEach(el => {
-    el.textContent = APP_VERSION;
-  });
-}
-document.addEventListener('DOMContentLoaded', updateVersionDisplays);
-// ===================================
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const APP_VERSION = 'v4.0';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -589,6 +582,9 @@ const db = getDatabase(initializeApp({
   appId: "1:462709449311:web:569624eeac6fc57c0631ea"
 }));
 const fb = p => ref(db, p);
+
+// --- VERSION ---
+document.querySelectorAll('.vtag').forEach(el => { el.textContent = APP_VERSION; });
 
 // --- HELPERS ---
 const genId = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
@@ -756,9 +752,9 @@ function updateBancoInfo() {
   const key = modo===90 ? 'g90' : 'g75';
   const total = Object.keys(loadBanco()[key]||{}).length;
   $('mEvBancoInfo').innerHTML =
-    `Banco G${modo}: <strong style="color:var(--accent)">${total}</strong> cartelas &nbsp;|&nbsp; ` +
-    `Disponíveis: <strong style="color:var(--green)">${disp.length}</strong>` +
-    (disp.length===0 ? `<br><span style="color:var(--red)">&#9888;️ Banco vazio para G${modo}. Gere cartelas primeiro.</span>` : '');
+    'Banco G'+modo+': <strong style="color:var(--accent)">'+total+'</strong> cartelas &nbsp;|&nbsp; '
+    +'Disponiveis: <strong style="color:var(--green)">'+disp.length+'</strong>'
+    +(disp.length===0 ? '<br><span style="color:var(--red)">&#9888; Banco vazio para G'+modo+'. Gere cartelas primeiro.</span>' : '');
 }
 
 function toggleBancoOpts() {
@@ -1100,7 +1096,12 @@ function abrirModalEditar() {
 function toggleEBancoOpts() {
   const isBanco = $('eEvTipo').value === 'banco';
   $('eEvBancoOpts').style.display = isBanco ? 'block' : 'none';
-  if(isBanco) updateEBancoInfo();
+  if(isBanco) {
+    if(!$('eEvQtdCartelas').value) {
+      $('eEvQtdCartelas').value = Object.keys(evData?.cartelas||{}).length || '';
+    }
+    updateEBancoInfo();
+  }
 }
 
 $('eEvTipo').addEventListener('change', toggleEBancoOpts);

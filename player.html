@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v7.9 - 2026-05-13 -->
+<!-- IBBI Bingo Player v8.0 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo v7.9</title>
+<title>IBBI Bingo v8.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -260,7 +260,7 @@ transition:background-color 9999s ease-in-out 0s;
 
 </style>
 
-  <meta name="app-version" content="v7.9">
+  <meta name="app-version" content="v8.0">
 </head>
 <body>
 
@@ -285,7 +285,7 @@ transition:background-color 9999s ease-in-out 0s;
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &#8594;</button>
         </div>
       </div>
-      <div class="vtag">v7.9</div>
+      <div class="vtag">v8.0</div>
     </div>
   </div>
 </div>
@@ -334,7 +334,7 @@ transition:background-color 9999s ease-in-out 0s;
 </div>
 
   </div>
-  <div class="vtag">v7.9</div>
+  <div class="vtag">v8.0</div>
 </div>
 
   </div>
@@ -380,7 +380,7 @@ transition:background-color 9999s ease-in-out 0s;
 
   <div style="margin-top:16px;text-align:center">
     <button class="btn btn-ghost btn-sm" id="btnVoltarSelecao">← Voltar</button>
-    <div class="vtag" style="margin-top:10px">v7.9</div>
+    <div class="vtag" style="margin-top:10px">v8.0</div>
   </div>
 </div>
 ```
@@ -396,7 +396,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="gameEvNome">&mdash;</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v7.9</span>
+    <span class="p-vtag">v8.0</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div class="p-body" id="pBody"></div>
@@ -893,7 +893,7 @@ function loadCartelasFromCache(){
 
 
 // ======================================================
-//  OCR - GRADE AJUSTAVEL INTEGRADA v7.9
+//  OCR - GRADE AJUSTAVEL INTEGRADA v8.0
 // ======================================================
 let _ocrNums = {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
 let _ocrDetectedFreeCenter = false;
@@ -1342,7 +1342,7 @@ function renderBody(){
       <button class="btn btn-ghost btn-sm" id="btnScan" title="Escanear cartela">&#128247;</button>
       <button class="btn btn-red btn-icon" id="btnDelC" title="Excluir cartela">&#128465;</button>
     </div>
-    <div class="cartela-wrap">
+    <div class="cartela-wrap" id="cartelaWrap">
       <div class="cartela-hdr" id="cartelaHdr"></div>
       <div class="cartela-grid" id="cartelaGrid"></div>
     </div>
@@ -1363,6 +1363,40 @@ function renderBody(){
 
   $('btnPrev').addEventListener('click',()=>{ if(cartelaIdx>0){cartelaIdx--;renderCartela();renderHist();checkAutoBatida();} });
   $('btnNext').addEventListener('click',()=>{ if(cartelaIdx<cartelas.length-1){cartelaIdx++;renderCartela();renderHist();checkAutoBatida();} });
+
+  // Swipe horizontal para navegar entre cartelas
+  (()=>{
+    const el = $('cartelaWrap');
+    if(!el) return;
+    let startX=0, startY=0, moved=false;
+    el.addEventListener('touchstart', e=>{
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      moved = false;
+    }, {passive:true});
+    el.addEventListener('touchmove', e=>{
+      const dx = e.touches[0].clientX - startX;
+      const dy = e.touches[0].clientY - startY;
+      // Swipe predominantemente horizontal
+      if(Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10) moved = true;
+    }, {passive:true});
+    el.addEventListener('touchend', e=>{
+      if(!moved) return;
+      const dx = e.changedTouches[0].clientX - startX;
+      if(Math.abs(dx) < 50) return; // threshold minimo
+      if(dx < 0 && cartelaIdx < cartelas.length-1){
+        // Swipe esquerda = proxima
+        cartelaIdx++;
+        renderCartela(); renderHist(); checkAutoBatida();
+        showToast('Cartela '+(cartelaIdx+1)+' de '+cartelas.length);
+      } else if(dx > 0 && cartelaIdx > 0){
+        // Swipe direita = anterior
+        cartelaIdx--;
+        renderCartela(); renderHist(); checkAutoBatida();
+        showToast('Cartela '+(cartelaIdx+1)+' de '+cartelas.length);
+      }
+    }, {passive:true});
+  })();
   $('btnNovaC').addEventListener('click',()=>{
     const c=novaCartela();
     cartelas.push(c);

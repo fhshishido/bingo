@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v3.7 - 2026-05-13 -->
+<!-- IBBI Bingo v3.8 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v3.7</title>
+<title>IBBI Bingo v3.8</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -271,7 +271,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v3.7</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v3.8</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -567,7 +567,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
 
 <script type="module">
 // ===== AUTO VERSION MANAGEMENT =====
-const APP_VERSION = 'v3.7';
+const APP_VERSION = 'v3.8';
 function updateVersionDisplays() {
   document.querySelectorAll('.vtag').forEach(el => {
     el.textContent = APP_VERSION;
@@ -667,13 +667,13 @@ function renderEv(){
   ids.sort((a,b)=>{const oa=ord[eventos[a].status]??1,ob=ord[eventos[b].status]??1;return oa!==ob?oa-ob:(eventos[b].criadoEm||0)-(eventos[a].criadoEm||0);});
   g.innerHTML=ids.map(id=>cardHTML(id,eventos[id])).join('');
   ids.forEach(id=>{
-    const c=g.querySelector(`[data-evid="${id}"]`);
+    const c=g.querySelector('[data-evid="'+id+'"]');
     if(c) c.addEventListener('click',()=>openEvent(id));
-    const d=g.querySelector(`[data-delid="${id}"]`);
+    const d=g.querySelector('[data-delid="'+id+'"]');
     if(d) d.addEventListener('click',e=>{e.stopPropagation();startDel(id);});
-    const s=g.querySelector(`[data-shareid="${id}"]`);
+    const s=g.querySelector('[data-shareid="'+id+'"]');
     if(s) s.addEventListener('click',e=>{e.stopPropagation();shareEvent(id);});
-    const ed=g.querySelector(`[data-editid="${id}"]`);
+    const ed=g.querySelector('[data-editid="'+id+'"]');
     if(ed) ed.addEventListener('click',e=>{e.stopPropagation();openEditFromCard(id);});
   });
 }

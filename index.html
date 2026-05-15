@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v5.5 - 2026-05-13 -->
+<!-- IBBI Bingo v5.6 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v5.5</title>
+<title>IBBI Bingo v5.6</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -271,7 +271,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v5.5</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v5.6</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -638,7 +638,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v5.5';
+const APP_VERSION = 'v5.6';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -803,11 +803,45 @@ function startDel(id){
 function delEvent(id){ remove(fb(`bingo/eventos/${id}`)).catch(console.error); }
 
 function shareEvent(id){
+  const ev=eventos[id];
   const link=`${location.href.split('/').slice(0,-1).join('/')}/player.html?ev=${id}`;
+  $('qrEvName').textContent = esc(ev?.nome||id);
+  $('qrLinkText').textContent = link;
+  $('qrImg').src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='+encodeURIComponent(link);
+  $('mQRCode').style.display='flex';
+}
+
+// Modal QR Code: copiar link
+$('btnQRCopy')?.addEventListener('click',()=>{
+  const link=$('qrLinkText').textContent;
   navigator.clipboard.writeText(link)
     .then(()=>showToast('Link copiado!'))
-    .catch(()=>{ prompt('Copie o link:', link); });
-}
+    .catch(()=>{ prompt('Copie o link:',link); });
+});
+
+// Modal QR Code: baixar imagem
+$('btnQRDownload')?.addEventListener('click',()=>{
+  const img=$('qrImg');
+  if(!img.src) return;
+  const a=document.createElement('a');
+  a.href=img.src;
+  a.download='qr-code-bingo.png';
+  a.click();
+});
+
+// Modal QR Code: fechar
+$('btnQRClose')?.addEventListener('click',()=>{
+  $('mQRCode').style.display='none';
+  $('qrImg').src='';
+});
+
+// Fechar modal QR ao clicar no backdrop
+$('mQRCode')?.addEventListener('click',(e)=>{
+  if(e.target===$('mQRCode')){
+    $('mQRCode').style.display='none';
+    $('qrImg').src='';
+  }
+});
 
 function openEditFromCard(id){
   evId=id; evData=JSON.parse(JSON.stringify(eventos[id]));
@@ -1530,7 +1564,10 @@ function showToast(msg){
 }
 $('btnCopyLink')?.addEventListener('click',()=>{
   const link=$('playerLinkBox').textContent;
-  navigator.clipboard.writeText(link).then(()=>alert('Link copiado!')).catch(()=>alert(link));
+  $('qrEvName').textContent = esc(evData?.nome||evId||'Evento');
+  $('qrLinkText').textContent = link;
+  $('qrImg').src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='+encodeURIComponent(link);
+  $('mQRCode').style.display='flex';
 });
 
 $('btnGanhador')?.addEventListener('click',()=>{
@@ -1556,6 +1593,23 @@ function saveEv(){
   renderEv();
 }
 
+
+<!-- MODAL QR CODE -->
+<div class="mbk" id="mQRCode" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center;padding:20px">
+  <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:24px;max-width:360px;width:100%;text-align:center">
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:2px;color:var(--accent);margin-bottom:4px">Compartilhar Evento</h2>
+    <p style="font-size:.75rem;color:var(--text3);margin-bottom:16px" id="qrEvName">&mdash;</p>
+    <div style="background:#fff;border-radius:var(--rsm);padding:12px;display:inline-block;margin-bottom:16px">
+      <img id="qrImg" src="" alt="QR Code" style="width:220px;height:220px;display:block">
+    </div>
+    <div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--rsm);padding:10px 12px;font-size:.78rem;color:var(--text2);word-break:break-all;margin-bottom:16px;text-align:left;font-family:monospace" id="qrLinkText">&mdash;</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost" id="btnQRCopy" style="flex:1">&#128203; Copiar</button>
+      <button class="btn btn-acc" id="btnQRDownload" style="flex:1">&#11123; Baixar QR</button>
+    </div>
+    <button class="btn btn-ghost btn-sm" id="btnQRClose" style="margin-top:12px;width:100%">Fechar</button>
+  </div>
+</div>
 
 </script>
 

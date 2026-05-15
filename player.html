@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v8.6 - 2026-05-13 -->
+<!-- IBBI Bingo Player v8.7 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo v8.6</title>
+<title>IBBI Bingo v8.7</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -258,7 +258,7 @@ transition:background-color 9999s ease-in-out 0s;
 .ct-card-sel .ct-id-sel{font-family:'Bebas Neue';font-size:.9rem;color:var(--accent);letter-spacing:1px;text-align:center}
 .ct-card-sel .ct-mode-sel{font-size:.55rem;font-weight:800;padding:1px 4px;border-radius:3px;background:rgba(0,184,240,.12);color:var(--accent);text-align:center;margin-top:2px}
 
-/* === SELECAO: ESTILOS ADICIONAIS v8.6 === */
+/* === SELECAO: ESTILOS ADICIONAIS v8.7 === */
 .ct-card-sel .sel-hint{position:absolute;inset:0;background:rgba(0,184,240,.9);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:1.1rem;color:#000;letter-spacing:2px;z-index:4;animation:none;pointer-events:none;opacity:0;transition:opacity .2s}
 .ct-card-sel:active{transform:scale(.97)}
 
@@ -282,7 +282,7 @@ transition:background-color 9999s ease-in-out 0s;
 
 </style>
 
-  <meta name="app-version" content="v8.6">
+  <meta name="app-version" content="v8.7">
 </head>
 <body>
 
@@ -307,7 +307,7 @@ transition:background-color 9999s ease-in-out 0s;
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &#8594;</button>
         </div>
       </div>
-      <div class="vtag">v8.6</div>
+      <div class="vtag">v8.7</div>
     </div>
   </div>
 </div>
@@ -356,7 +356,7 @@ transition:background-color 9999s ease-in-out 0s;
 </div>
 
   </div>
-  <div class="vtag">v8.6</div>
+  <div class="vtag">v8.7</div>
 </div>
 
   </div>
@@ -443,7 +443,7 @@ transition:background-color 9999s ease-in-out 0s;
 
   <div style="margin-top:16px;text-align:center">
     <button class="btn btn-ghost btn-sm" id="btnVoltarSelecao">← Voltar</button>
-    <div class="vtag" style="margin-top:10px">v8.6</div>
+    <div class="vtag" style="margin-top:10px">v8.7</div>
   </div>
 </div>
 
@@ -458,7 +458,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="p-logo">B<span>I</span>NGO</div>
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname">Preview da Cartela</div>
-    <span class="p-vtag">v8.6</span>
+    <span class="p-vtag">v8.7</span>
   </div>
   <div class="p-body" style="padding-top:20px">
     <div id="previewCardWrap" style="max-width:420px;margin:0 auto;width:100%">
@@ -479,7 +479,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="p-logo">B<span>I</span>NGO</div>
     <div class="ibbi-badge">IBBI</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v8.6</span>
+    <span class="p-vtag">v8.7</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div id="gameEvBar" style="background:var(--surface);border-bottom:1.5px solid var(--border);padding:8px 14px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1px;color:var(--accent)">&mdash;</div>
@@ -1063,7 +1063,7 @@ function loadCartelasFromCache(){
 
 
 // ======================================================
-//  OCR - GRADE AJUSTAVEL INTEGRADA v8.6
+//  OCR - GRADE AJUSTAVEL INTEGRADA v8.7
 // ======================================================
 let _ocrNums = {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
 let _ocrDetectedFreeCenter = false;
@@ -1439,6 +1439,20 @@ function distributeByRange(nums, mode){
 
 
 function confirmOcr(){
+  // Verificar duplicata — comparar numeros com cartelas existentes
+  const ocrNumsFlat=[];
+  LETTERS.forEach(l=>{ _ocrNums[l].forEach(n=>{ if(n!==null&&n!==undefined) ocrNumsFlat.push(n); }); });
+  ocrNumsFlat.sort((a,b)=>a-b);
+  for(let i=0;i<cartelas.length;i++){
+    const existing=cartelas[i];
+    const exNums=[];
+    LETTERS.forEach(l=>{ (existing.numeros?.[l]||[]).forEach(n=>{ if(n!==null&&n!==undefined) exNums.push(n); }); });
+    exNums.sort((a,b)=>a-b);
+    if(exNums.length===ocrNumsFlat.length && exNums.every((v,idx)=>v===ocrNumsFlat[idx])){
+      showToast('Cartela ja existe! Numeros identicos a cartela '+(i+1));
+      return;
+    }
+  }
   const c=novaCartela();
   c.numeros=JSON.parse(JSON.stringify(_ocrNums));
   c.freeCenter=_ocrDetectedFreeCenter;
@@ -2060,6 +2074,17 @@ function getCartelaLocal(id) {
   return { id, modo: key==='g90'?90:75, ...c };
 }
 
+// Cria uma cartela placeholder para preview mesmo sem bancoLocal
+function getCartelaForPreview(id) {
+  // 1. Tentar buscar do bancoLocal (tem os numeros)
+  const c = getCartelaLocal(id);
+  if (c) return c;
+  // 2. Criar cartela placeholder com numeros vazios
+  const key = id.startsWith('G90') ? 'g90' : 'g75';
+  const numeros = { B:[null,null,null,null,null], I:[null,null,null,null,null], N:[null,null,null,null,null], G:[null,null,null,null,null], O:[null,null,null,null,null] };
+  return { id, modo: key==='g90'?90:75, numeros, freeCenter: true, marcados: [] };
+}
+
 // Show cartela selection screen
 let selPage = 1;
 const SEL_PER_PAGE = 20;
@@ -2145,8 +2170,8 @@ function renderSelecaoGrid() {
 
 // 1 toque abre preview da cartela
 function onSelecaoTap(el, cid) {
-  const c = getCartelaLocal(cid);
-  if (!c) { showToast('Cartela nao encontrada no banco local'); return; }
+  const c = getCartelaForPreview(cid);
+  if (!c) { showToast('Cartela nao encontrada'); return; }
   previewCartelaId = cid;
   renderPreviewCartela(c);
   showView('vPreview');
@@ -2282,9 +2307,10 @@ function renderPreviewCartela(c) {
 
   // Grid 5x5
   let cellsHtml = '';
+  const nums = c.numeros || { B:[null,null,null,null,null], I:[null,null,null,null,null], N:[null,null,null,null,null], G:[null,null,null,null,null], O:[null,null,null,null,null] };
   for(let row=0; row<5; row++){
     LETTERS.forEach((col, ci) => {
-      const n = c.numeros[col][row];
+      const n = nums[col]?.[row];
       const isFree = c.freeCenter && col === 'N' && row === 2;
       let cls = 'pg-cell';
       if(isFree) cls += ' free-cell';

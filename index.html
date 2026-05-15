@@ -657,22 +657,30 @@ function renderEv(){
     if(c) c.addEventListener('click',()=>openEvent(id));
     const d=g.querySelector(`[data-delid="${id}"]`);
     if(d) d.addEventListener('click',e=>{e.stopPropagation();startDel(id);});
+    const s=g.querySelector(`[data-shareid="${id}"]`);
+    if(s) s.addEventListener('click',e=>{e.stopPropagation();shareEvent(id);});
+    const ed=g.querySelector(`[data-editid="${id}"]`);
+    if(ed) ed.addEventListener('click',e=>{e.stopPropagation();openEditFromCard(id);});
   });
 }
 
 function cardHTML(id,ev){
   const premios=sortP(ev.premios);
-  const ganhos=premios.filter(p=>p.ganhador&&p.ganhador.length).length;
+  const ganhos=premios.filter(p=>p.ganhadores&&p.ganhadores.length).length;
   const drawn=(ev.drawn||[]).length,mode=ev.mode||90,pct=Math.round(drawn/mode*100);
   const stLbl={ativo:'Novo',andamento:'Em andamento',encerrado:'Encerrado'}[ev.status]||'Novo';
   const bc={ativo:'bg',andamento:'ba',encerrado:'be'}[ev.status]||'bg';
   const pc={ativo:'pp-g',andamento:'pp-a',encerrado:'pp-e'}[ev.status]||'pp-g';
-  const tipoTag=ev.tipoCartela==='livre'?'🃏 Cartela Livre':'🎴 Banco';
+  const tipoTag=ev.tipoCartela==='livre'?'Cartela Livre':'Banco';
   return `<div class="ev-card st-${ev.status||'ativo'}" data-evid="${id}">
     <div class="ev-head"><div class="ev-title">${esc(ev.nome)}</div><span class="badge ${bc}">${stLbl}</span></div>
-    <div class="ev-meta"><span>🎱 ${mode} pedras</span><span>🏆 ${ganhos}/${premios.length} prêmios</span><span>${tipoTag}</span><span>📅 ${fmtTs(ev.criadoEm)}</span>${ev.status==='encerrado'?`<span>⛔ ${fmtTs(ev.encerradoEm)}</span>`:''}</div>
+    <div class="ev-meta"><span>${mode} pedras</span><span>${ganhos}/${premios.length} premios</span><span>${tipoTag}</span><span>${fmtTs(ev.criadoEm)}</span>${ev.status==='encerrado'?`<span>${fmtTs(ev.encerradoEm)}</span>`:''}</div>
     <div class="ev-prog"><div class="ev-prog-bar ${pc}" style="width:${pct}%"></div></div>
-    <div class="ev-foot"><button class="btn btn-red btn-sm" data-delid="${id}">🗑️ Excluir</button></div>
+    <div class="ev-foot">
+      <button class="btn btn-ghost btn-sm" data-shareid="${id}" title="Copiar link do player">&#128279; Link</button>
+      <button class="btn btn-ghost btn-sm" data-editid="${id}">&#9881; Editar</button>
+      <button class="btn btn-red btn-sm" data-delid="${id}">&#128465; Excluir</button>
+    </div>
   </div>`;
 }
 
@@ -687,6 +695,29 @@ function startDel(id){
   else if(confirm(`Excluir "${ev.nome}"? Irreversível.`)) delEvent(id);
 }
 function delEvent(id){ remove(fb(`bingo/eventos/${id}`)).catch(console.error); }
+
+function shareEvent(id){
+  const link=`${location.href.split('/').slice(0,-1).join('/')}/player.html?ev=${id}`;
+  navigator.clipboard.writeText(link)
+    .then(()=>showToast('Link copiado!'))
+    .catch(()=>{ prompt('Copie o link:', link); });
+}
+
+function openEditFromCard(id){
+  // Carrega o evento no sorteio temporariamente so para abrir o modal de edicao
+  evId=id; evData=JSON.parse(JSON.stringify(eventos[id]));
+  const premios=sortP(evData.premios);
+  curPrizeId=premios[0]?.id||null;
+  // Popular modal Editar
+  $('eEvNome').value=evData.nome||'';
+  $('eEvSE').value=''; $('eEvSX').value='';
+  $('eEvErr').style.display='none';
+  $('ePrizeList').innerHTML='';
+  premios.forEach(p=>addEPrize(p.nome,p.regra||'cheia'));
+  $('btnEncerrarEvt').disabled=evData.status==='encerrado';
+  openM('mEditar');
+  setTimeout(()=>$('eEvNome').focus(),80);
+}
 
 // --- NOVO EVENTO ---
 // --- BANCO DE CARTELAS (localStorage) ---

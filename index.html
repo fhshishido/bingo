@@ -882,9 +882,7 @@ function reiniciarEvento(id){
         showToast('Evento reiniciado! Pedras, batidas e ganhadores apagados.');
         if(id===evId){ pedras=[]; updatePainel(); checkPremio(); }
         renderS(false);
-      });
-    });
-  }).catch(e=>{console.error(e);showToast('Erro ao reiniciar: '+e.message);});
+      }).catch(e=>{console.error(e);showToast('Erro ao reiniciar: '+e.message);});
 }
 
 function openEditFromCard(id){

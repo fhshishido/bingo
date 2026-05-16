@@ -649,7 +649,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, push, remove, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, push, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const APP_VERSION = 'v6.7';
 
@@ -1221,7 +1221,8 @@ function rejeitarBatida(bid){
 }
 
 function removeWinner(prizeId,idx){
-  if(!confirm('Remover este ganhador?'))return;
+  if(!confirm('Remover este ganhador? A cartela voltara a participar no player.'))return;
+  const removido=evData.premios[prizeId].ganhadores[idx];
   evData.premios[prizeId].ganhadores.splice(idx,1);
   if(!evData.premios[prizeId].ganhadores.length) evData.premios[prizeId].ganhoEm=null;
   // Salvar no Firebase e atualizar modal
@@ -1231,7 +1232,19 @@ function removeWinner(prizeId,idx){
   if(!evData.premios[prizeId].ganhadores.length){
     tasks.push(set(fb(`bingo/eventos/${evId}/premios/${prizeId}/ganhoEm`), null));
   }
-  Promise.all(tasks).then(()=>{
+  // Notificar o player que o vencedor foi removido
+  // Buscar playerId nas batidas confirmadas
+  get(fb(`bingo/eventos/${evId}/batidas`)).then(snap=>{
+    const batidas=snap.val()||{};
+    const bConfirmada=Object.values(batidas).find(b=>b.status==='confirmada'&&b.cartelaId===removido?.cartelaId);
+    if(bConfirmada?.playerId){
+      tasks.push(update(fb(`bingo/eventos/${evId}/brincantes/${bConfirmada.playerId}`),{
+        bingoConfirmado:false,
+        premioGanho:null
+      }));
+    }
+    return Promise.all(tasks);
+  }).catch(()=>Promise.all(tasks)).then(()=>{
     saveEv(); renderS(false);
     // Atualizar modal de ganhadores se estiver aberto
     const cp=sortP(evData?.premios).find(p=>p.id===prizeId);

@@ -752,7 +752,19 @@ function _onSelecaoTapGlobal(el, cid){
     <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:4px;color:#FFD700;text-shadow:0 0 20px #FFD700;margin-bottom:8px">B I N G O !</h2>
     <div id="bingoOuroPremio" style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:6px">Premio confirmado!</div>
     <div id="bingoOuroData" style="font-size:.8rem;color:var(--text3);margin-bottom:20px">--</div>
+    <button class="btn btn-acc" id="btnVerCartelaBatida" style="width:100%;margin-bottom:8px;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;padding:12px 30px">👁 VER CARTELA</button>
     <button class="btn" id="btnBingoOuroFechar" style="background:linear-gradient(90deg,#FFD700,#FFA500);color:#000;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;padding:12px 30px;border:none;border-radius:var(--rsm);width:100%">FECHAR</button>
+  </div>
+</div>
+
+<!-- MODAL: REATIVAR CARTELA (gestor removeu vencedor) -->
+<div class="mbk" id="mReativar">
+  <div class="modal" style="max-width:380px;text-align:center;background:linear-gradient(180deg,#1a1a1a 0%,#2a0000 100%);border:2px solid var(--accent)">
+    <div style="font-size:3rem;margin:10px 0">⚠️</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:3px;color:var(--accent);margin-bottom:8px">VENCEDOR REMOVIDO</h2>
+    <div id="reativarMsg" style="font-size:.9rem;color:var(--text);margin-bottom:8px">O gestor removeu o vencedor. Sua cartela voltara a participar.</div>
+    <div style="font-size:.78rem;color:var(--text3);margin-bottom:20px">Toque OK para continuar jogando.</div>
+    <button class="btn btn-acc" id="btnReativarOk" style="width:100%;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;padding:12px 30px">OK — CONTINUAR</button>
   </div>
 </div>
 
@@ -818,6 +830,7 @@ let _lastSaveTime=0;
 let _numpadCtx=null;
 let _numpadVal='';
 let curPrizeId=null; // ID do premio atual — atualizado por getCurrentPremio
+let _cartelaParaReativar=null; // Cartela a reativar quando gestor remove vencedor
 
 // -- AUTH STATE --
 onAuthStateChanged(auth, async user=>{
@@ -1033,12 +1046,11 @@ function continuarJogo(ev){
     if(data?.bingoConfirmado){
       const pg=data?.premioGanho;
       const premioMsg=pg?`Premio #${pg.ordem} — ${pg.nome||'Bingo'}`:'Premio confirmado';
-      // Marcar cartela atual como 'batida' e registrar premio
-      const ativas=getCartelasAtivas();
-      const c=ativas[cartelaIdx];
-      if(c && c.status!=='batida'){
-        c.status='batida';
-        c.premioGanho={nome:pg?.nome||'Bingo',ordem:pg?.ordem||1,ts:Date.now()};
+      // Encontrar cartela que bateu (a que tem o ID correspondente ou a atual)
+      const cBatida=cartelas.find(c=>c.status==='batida')||cartelas[cartelaIdx];
+      if(cBatida && cBatida.status!=='batida'){
+        cBatida.status='batida';
+        cBatida.premioGanho={nome:pg?.nome||'Bingo',ordem:pg?.ordem||1,ts:Date.now()};
         saveAllCartelas();
         // Modal dourado de CONFIRMACAO
         $('bingoOuroPremio').textContent=premioMsg;
@@ -1049,7 +1061,17 @@ function continuarJogo(ev){
         // Resetar idx e re-renderizar (cartela sai da paginacao)
         cartelaIdx=0;
         renderCartela(); renderHist(); checkAutoBatida();
-        showToast('🏆 BINGO! Cartela '+c.id+' bateu!');
+        showToast('🏆 BINGO! Cartela '+cBatida.id+' bateu!');
+      }
+    }
+    // Verificar se bingo foi DESFEITO pelo gestor (vencedor removido)
+    if(data && data.bingoConfirmado===false && data.premioGanho===null){
+      // Gestor removeu o vencedor - reativar cartela
+      const cBatida=cartelas.find(c=>c.status==='batida');
+      if(cBatida){
+        _cartelaParaReativar=cBatida;
+        $('reativarMsg').textContent='O gestor removeu o vencedor do premio. Sua cartela '+cBatida.id+' voltara a participar.';
+        openM('mReativar');
       }
     }
     // Sorteio foi reiniciado — brincante zerado no Firebase
@@ -1067,15 +1089,24 @@ function continuarJogo(ev){
     }
 
     if(data?.cartelas && !justSaved){
+      // Preservar status='batida' local ao fazer merge com dados do Firebase
       const novo=Object.entries(data.cartelas)
         .map(([fbId,c])=>ensureNumerosFormat({fbId,...c}))
         .sort((a,b)=>a.criadaEm-b.criadaEm);
       if(novo.length){
+        // Merge: preservar status='batida' e premioGanho das cartelas locais
+        novo.forEach(cNovo=>{
+          const cLocal=cartelas.find(c=>c.id===cNovo.id);
+          if(cLocal && cLocal.status==='batida'){
+            cNovo.status='batida';
+            cNovo.premioGanho=cLocal.premioGanho;
+          }
+        });
         if(cartelaIdx>=novo.length) cartelaIdx=Math.max(0,novo.length-1);
         cartelas=novo;
         try{
           const obj={};
-          cartelas.forEach(c=>{obj[c.fbId]={id:c.id,numeros:c.numeros,marcados:c.marcados||[],freeCenter:c.freeCenter||false,autoMarcar:c.autoMarcar!==false,criadaEm:c.criadaEm};});
+          cartelas.forEach(c=>{obj[c.fbId]={id:c.id,status:c.status||'ativa',premioGanho:c.premioGanho||null,numeros:c.numeros,marcados:c.marcados||[],freeCenter:c.freeCenter||false,autoMarcar:c.autoMarcar!==false,criadaEm:c.criadaEm};});
           localStorage.setItem(`bingo_cartelas_${evId}_${currentUser.uid}`,JSON.stringify({cartelas:obj,cartelaIdx,savedAt:Date.now()}));
         }catch(e){}
       }
@@ -1260,6 +1291,29 @@ function initOcr(){
   // Fechar modal BINGO dourado
   on('btnBingoOuroFechar','click',()=>{
     closeM('mBingoOuro');
+  });
+  // Ver cartela batida (abre view de cartelas batidas)
+  on('btnVerCartelaBatida','click',()=>{
+    closeM('mBingoOuro');
+    $('batidasEvName').textContent=evData?.nome||'Cartelas Batidas';
+    renderCartelasBatidas();
+    showView('vBatidas');
+  });
+  // Reativar cartela (gestor removeu vencedor)
+  on('btnReativarOk','click',()=>{
+    closeM('mReativar');
+    if(_cartelaParaReativar){
+      _cartelaParaReativar.status='ativa';
+      _cartelaParaReativar.premioGanho=null;
+      _cartelaParaReativar=null;
+      // Limpar sessionStorage de aviso de batida para essa cartela
+      try{ Object.keys(sessionStorage).forEach(k=>{ if(k.startsWith('batida_')) sessionStorage.removeItem(k); }); }catch(e){}
+      saveAllCartelas();
+      cartelaIdx=0;
+      renderCartela(); renderHist(); checkAutoBatida();
+      renderCartelasBatidas();
+      showToast('Cartela reativada! Continue jogando.');
+    }
   });
   // Ver cartelas batidas
   on('btnVerBatidas','click',()=>{

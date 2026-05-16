@@ -2477,11 +2477,6 @@ function renderMiniCartela(c,containerId){
 // REMOVIDO: aplicarBloqueioBingo e liberarBloqueioBingo
 // Agora cartelas batidas saem da paginacao via c.status='batida'
 // e sao exibidas na view vBatidas
-      const done=pr.ganhadores&&pr.ganhadores.length>0;
-      premioLabel.innerHTML=`&#127881; Premio: ${pr.nome||'--'} (${pr.regra==='cheia'?'Cheia':'Linha Dupla'}) <span style="color:${done?'var(--green)':'var(--text3)'};">${done?'&#10004; Confirmado':'Pendente'}</span>`;
-    }
-  }
-}
 
 function updateSelPager(page, totalPages, total, start) {
   const pTop = document.getElementById('selPagerTop');

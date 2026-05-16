@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v9.6 - 2026-05-13 -->
+<!-- IBBI Bingo Player v9.7 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo v9.6</title>
+<title>IBBI Bingo v9.7</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -170,6 +170,10 @@ body{background:#060608;background:var(--bg);color:#e4f2ff;color:var(--text);fon
 .bingo-btn{width:100%;padding:18px;font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:4px;border:none;border-radius:var(--radius);cursor:pointer;transition:all .2s;background:linear-gradient(135deg,#f5c800,#ff8c00);color:#000;box-shadow:0 4px 20px rgba(245,200,0,.3)}
 .bingo-btn:hover{filter:brightness(1.08)}
 .bingo-btn.pulsing{animation:bpulse 1s ease-in-out infinite}
+.bingo-btn.confirmado{background:linear-gradient(135deg,#FFD700,#FFA500);box-shadow:0 0 30px rgba(255,215,0,.6),0 0 60px rgba(255,215,0,.3);animation:bglow 1.5s ease-in-out infinite}
+@keyframes bglow{0%,100%{box-shadow:0 0 20px rgba(255,215,0,.5),0 0 40px rgba(255,215,0,.2)}50%{box-shadow:0 0 40px rgba(255,215,0,.8),0 0 80px rgba(255,215,0,.4)}}
+#mBingoOuro .modal{border:2px solid #FFD700;box-shadow:0 0 50px rgba(255,215,0,.3)}
+#bingoOuroPremio{color:#FFD700;font-weight:800}
 @keyframes bpulse{0%,100%{box-shadow:0 4px 20px rgba(245,200,0,.3)}50%{box-shadow:0 0 50px rgba(245,200,0,.9),0 0 100px rgba(245,200,0,.2)}}
 
 /* BATIDA STATUS */
@@ -258,7 +262,7 @@ transition:background-color 9999s ease-in-out 0s;
 .ct-card-sel .ct-id-sel{font-family:'Bebas Neue';font-size:.9rem;color:var(--accent);letter-spacing:1px;text-align:center}
 .ct-card-sel .ct-mode-sel{font-size:.55rem;font-weight:800;padding:1px 4px;border-radius:3px;background:rgba(0,184,240,.12);color:var(--accent);text-align:center;margin-top:2px}
 
-/* === SELECAO: ESTILOS ADICIONAIS v9.6 === */
+/* === SELECAO: ESTILOS ADICIONAIS v9.7 === */
 .ct-card-sel .sel-hint{position:absolute;inset:0;background:rgba(0,184,240,.9);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:1.1rem;color:#000;letter-spacing:2px;z-index:4;animation:none;pointer-events:none;opacity:0;transition:opacity .2s}
 .ct-card-sel:active{transform:scale(.97)}
 
@@ -282,7 +286,7 @@ transition:background-color 9999s ease-in-out 0s;
 
 </style>
 
-  <meta name="app-version" content="v9.6">
+  <meta name="app-version" content="v9.7">
 </head>
 <body>
 
@@ -307,7 +311,7 @@ transition:background-color 9999s ease-in-out 0s;
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &#8594;</button>
         </div>
       </div>
-      <div class="vtag">v9.6</div>
+      <div class="vtag">v9.7</div>
     </div>
   </div>
 </div>
@@ -356,7 +360,7 @@ transition:background-color 9999s ease-in-out 0s;
 </div>
 
   </div>
-  <div class="vtag">v9.6</div>
+  <div class="vtag">v9.7</div>
 </div>
 
   </div>
@@ -443,7 +447,7 @@ transition:background-color 9999s ease-in-out 0s;
 
   <div style="margin-top:16px;text-align:center">
     <button class="btn btn-ghost btn-sm" id="btnVoltarSelecao">← Voltar</button>
-    <div class="vtag" style="margin-top:10px">v9.6</div>
+    <div class="vtag" style="margin-top:10px">v9.7</div>
   </div>
 </div>
 
@@ -458,7 +462,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="p-logo">B<span>I</span>NGO</div>
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname">Preview da Cartela</div>
-    <span class="p-vtag">v9.6</span>
+    <span class="p-vtag">v9.7</span>
   </div>
   <div class="p-body" style="padding-top:20px">
     <div id="previewCardWrap" style="max-width:420px;margin:0 auto;width:100%">
@@ -479,7 +483,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="p-logo">B<span>I</span>NGO</div>
     <div class="ibbi-badge">IBBI</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v9.6</span>
+    <span class="p-vtag">v9.7</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div id="gameEvBar" style="background:var(--surface);border-bottom:1.5px solid var(--border);padding:8px 14px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1px;color:var(--accent)">&mdash;</div>
@@ -673,6 +677,17 @@ transition:background-color 9999s ease-in-out 0s;
       <button class="btn btn-red btn-sm" id="ocrCellClear">Limpar</button>
       <button class="btn btn-ghost btn-sm" id="ocrCellCancel">Cancelar</button>
     </div>
+  </div>
+</div>
+
+<!-- MODAL: BINGO CONFIRMADO -->
+<div class="mbk" id="mBingoOuro">
+  <div class="modal" style="max-width:380px;text-align:center;background:linear-gradient(180deg,#1a1a1a 0%,#2a1a00 100%);border:2px solid #FFD700">
+    <div style="font-size:4rem;margin:10px 0;text-shadow:0 0 30px #FFD700,0 0 60px #FFD700">🏆</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:4px;color:#FFD700;text-shadow:0 0 20px #FFD700;margin-bottom:8px">B I N G O !</h2>
+    <div id="bingoOuroPremio" style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:6px">Premio confirmado!</div>
+    <div id="bingoOuroData" style="font-size:.8rem;color:var(--text3);margin-bottom:20px">--</div>
+    <button class="btn" id="btnBingoOuroFechar" style="background:linear-gradient(90deg,#FFD700,#FFA500);color:#000;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;padding:12px 30px;border:none;border-radius:var(--rsm);width:100%">FECHAR</button>
   </div>
 </div>
 
@@ -953,6 +968,18 @@ function continuarJogo(ev){
       bingoBloqueado=true;
       const pg=data?.premioGanho;
       const premioMsg=pg?`Premio #${pg.ordem} — ${pg.nome||'Bingo'}`:'Premio confirmado';
+      // Modal dourado
+      $('bingoOuroPremio').textContent=premioMsg;
+      $('bingoOuroData').textContent=pg?.ts?new Date(pg.ts).toLocaleString('pt-BR'):new Date().toLocaleString('pt-BR');
+      openM('mBingoOuro');
+      // Vibração
+      try{ navigator.vibrate([200,100,200,100,400]); }catch(e){}
+      // Botao BINGO dourado
+      const btnBingo=$('btnBingo');
+      if(btnBingo){ btnBingo.classList.remove('pulsing'); btnBingo.classList.add('confirmado'); btnBingo.textContent='BINGO CONFIRMADO!'; }
+      // Label do premio atualizado
+      const premioLabel=$('premioLabel');
+      if(premioLabel && pg){ premioLabel.innerHTML=`&#127881; Premio: ${pg.nome} <span style="color:var(--green)">| &#10004; Confirmado</span>`; }
       showToast('BINGO CONFIRMADO! '+premioMsg);
       aplicarBloqueioBingo();
       renderCartela();
@@ -1081,7 +1108,7 @@ function loadCartelasFromCache(){
 
 
 // ======================================================
-//  OCR - GRADE AJUSTAVEL INTEGRADA v9.6
+//  OCR - GRADE AJUSTAVEL INTEGRADA v9.7
 // ======================================================
 let _ocrNums = {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
 let _ocrDetectedFreeCenter = false;
@@ -1157,6 +1184,10 @@ function initOcr(){
   });
   on('btnOcrNovaFoto','click',()=>{
     closeM('mOcr');
+  });
+  // Fechar modal BINGO dourado
+  on('btnBingoOuroFechar','click',()=>{
+    closeM('mBingoOuro');
   });
   /* Reset OCR — hidden, now done via Limpar
   on('btnOcrNovaFoto','click',()=>{
@@ -2272,6 +2303,18 @@ function liberarBloqueioBingo(){
   const btnDel=$('btnDelC'); if(btnDel) btnDel.style.display='';
   const lock=$('cartela-nav')?.querySelector('.bingo-lock-msg');
   if(lock) lock.remove();
+  // Restaurar botao BINGO
+  const btnBingo=$('btnBingo');
+  if(btnBingo){ btnBingo.classList.remove('confirmado'); btnBingo.textContent='BINGO'; }
+  // Restaurar label do premio
+  const premioLabel=$('premioLabel');
+  if(premioLabel && evData){
+    const pr=sortP(evData.premios).find(p=>p.id===curPrizeId);
+    if(pr){
+      const done=pr.ganhadores&&pr.ganhadores.length>0;
+      premioLabel.innerHTML=`&#127881; Premio: ${pr.nome||'--'} (${pr.regra==='cheia'?'Cheia':'Linha Dupla'}) <span style="color:${done?'var(--green)':'var(--text3)'};">${done?'&#10004; Confirmado':'Pendente'}</span>`;
+    }
+  }
 }
 
 function updateSelPager(page, totalPages, total, start) {

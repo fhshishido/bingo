@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v6.4 - 2026-05-13 -->
+<!-- IBBI Bingo v6.5 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v6.4</title>
+<title>IBBI Bingo v6.5</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -271,7 +271,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v6.4</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v6.5</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -651,7 +651,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v6.4';
+const APP_VERSION = 'v6.5';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -1224,17 +1224,21 @@ function removeWinner(prizeId,idx){
   if(!confirm('Remover este ganhador?'))return;
   evData.premios[prizeId].ganhadores.splice(idx,1);
   if(!evData.premios[prizeId].ganhadores.length) evData.premios[prizeId].ganhoEm=null;
-  // Salvar no Firebase
-  set(fb(`bingo/eventos/${evId}/premios/${prizeId}/ganhadores`), evData.premios[prizeId].ganhadores);
+  // Salvar no Firebase e atualizar modal
+  const tasks=[
+    set(fb(`bingo/eventos/${evId}/premios/${prizeId}/ganhadores`), evData.premios[prizeId].ganhadores)
+  ];
   if(!evData.premios[prizeId].ganhadores.length){
-    set(fb(`bingo/eventos/${evId}/premios/${prizeId}/ganhoEm`), null);
+    tasks.push(set(fb(`bingo/eventos/${evId}/premios/${prizeId}/ganhoEm`), null));
   }
-  saveEv(); renderS(false);
-  // Atualizar modal de ganhadores se estiver aberto
-  const cp=sortP(evData?.premios).find(p=>p.id===prizeId);
-  if($('mWin')?.style.display!=='none' && cp){
-    renderGanhadoresPremio(cp);
-  }
+  Promise.all(tasks).then(()=>{
+    saveEv(); renderS(false);
+    // Atualizar modal de ganhadores se estiver aberto
+    const cp=sortP(evData?.premios).find(p=>p.id===prizeId);
+    if($('mWin')?.style.display!=='none' && cp){
+      renderGanhadoresPremio(cp);
+    }
+  });
 }
 function dividirPremio(prizeId){ alert('Prêmio dividido entre todos os ganhadores confirmados.'); }
 function escolherVencedor(prizeId){

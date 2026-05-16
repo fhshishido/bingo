@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v6.2 - 2026-05-13 -->
+<!-- IBBI Bingo v6.3 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v6.2</title>
+<title>IBBI Bingo v6.3</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -271,7 +271,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v6.2</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v6.3</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -651,7 +651,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v6.2';
+const APP_VERSION = 'v6.3';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -862,6 +862,7 @@ function reiniciarEvento(id){
   const tasks=[];
   tasks.push(remove(fb('bingo/eventos/'+id+'/sorteados')));
   tasks.push(remove(fb('bingo/eventos/'+id+'/batidas')));
+  tasks.push(remove(fb('bingo/eventos/'+id+'/brincantes')));
   Object.keys(ev.premios||{}).forEach(pid=>{
     tasks.push(set(fb('bingo/eventos/'+id+'/premios/'+pid+'/ganhadores'),[]));
     tasks.push(set(fb('bingo/eventos/'+id+'/premios/'+pid+'/ganhoEm'),null));
@@ -1196,15 +1197,20 @@ function confirmarBatida(bid,b){
   console.log('=== CONFIRMAR BATIDA ===');
   console.log('Premio:', curPrizeId, 'Ganhador:', ganhador);
   console.log('Path:', ganhadoresPath);
+  // Salvar premio ganho no brincante (para o player saber)
+  const premioInfo={ordem:cp.ordem,nome:cp.nome,regra:cp.regra,ts:Date.now()};
+  const brincantePath=`bingo/eventos/${evId}/brincantes/${b.playerId||b.uid||'anon'}`;
   Promise.all([
     set(fb(ganhadoresPath), ev.premios[curPrizeId].ganhadores),
     set(fb(ganhoEmPath), Date.now()),
-    update(fb(`bingo/eventos/${evId}/batidas/${bid}`),{status:'confirmada'})
+    update(fb(`bingo/eventos/${evId}/batidas/${bid}`),{status:'confirmada'}),
+    set(fb(brincantePath+'/premioGanho'), premioInfo),
+    set(fb(brincantePath+'/bingoConfirmado'), true)
   ]).then(()=>{
-    console.log('OK: Ganhadores salvos no Firebase');
+    console.log('OK: Ganhadores e premio salvos no Firebase');
   }).catch(e=>{
-    console.error('ERRO ao salvar ganhadores:', e);
-    alert('Erro ao salvar ganhador: '+e.message);
+    console.error('ERRO ao salvar:', e);
+    alert('Erro ao salvar: '+e.message);
   });
   soundConfirm(); renderS(false);
 }

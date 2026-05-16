@@ -2040,7 +2040,8 @@ cartelaPremioGanho=null;
 
 function checkAutoBatida(){
   // Se cartela ja bateu e foi confirmada, nao verifica mais
-  if(cartelaPremioGanho) return;
+  // (mas permite declarar bingo em outras cartelas)
+  if(bingoBloqueado) return;
   const c=cartelas[cartelaIdx]; if(!c)return;
   const p=getCurrentPremio(); if(!p)return;
   const allNums=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
@@ -2083,22 +2084,26 @@ function onBingoClick(){
   $('mBingoTxt').textContent=`Declarar BINGO com a cartela ${c.id} (${nome})?\nO operador ira confirmar.`;
   openM('mBingo');
 }
-$('btnBingoCancel').addEventListener('click',()=>closeM('mBingo'));
-$('btnBingoOk').addEventListener('click',()=>{
-  closeM('mBingo');
-  const c=cartelas[cartelaIdx]; if(!c||!currentUser)return;
-  const p=getCurrentPremio();
-  const nome=userProfile?.apelido||userProfile?.nome||currentUser.email;
-  const batidaId=genId();
-  set(fb(`bingo/eventos/${evId}/batidas/${batidaId}`),{
-    playerId:currentUser.uid, playerNome:nome,
-    cartelaId:c.id, premioId:p?.id||null,
-    tipo:'manual', status:'pendente', timestamp:Date.now()
+function initBingoModalHandlers(){
+  const bc=$('btnBingoCancel'); if(bc) bc.addEventListener('click',()=>closeM('mBingo'));
+  const bo=$('btnBingoOk'); if(!bo) return;
+  bo.addEventListener('click',()=>{
+    closeM('mBingo');
+    const c=cartelas[cartelaIdx]; if(!c||!currentUser)return;
+    const p=getCurrentPremio();
+    const nome=userProfile?.apelido||userProfile?.nome||currentUser.email;
+    const batidaId=genId();
+    set(fb(`bingo/eventos/${evId}/batidas/${batidaId}`),{
+      playerId:currentUser.uid, playerNome:nome,
+      cartelaId:c.id, premioId:p?.id||null,
+      tipo:'manual', status:'pendente', timestamp:Date.now()
+    });
+    update(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),{batidaStatus:'pendente'});
+    const el=$('batidaStatusEl');
+    if(el){el.className='batida-status bs-pend';el.textContent=' Batida enviada -- aguardando confirmacao...';}
   });
-  update(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),{batidaStatus:'pendente'});
-  const el=$('batidaStatusEl');
-  if(el){el.className='batida-status bs-pend';el.textContent=' Batida enviada -- aguardando confirmacao...';}
-});
+}
+initBingoModalHandlers();
 
 // -- EDITAR PERFIL ------------------------------------
 function openEditarPerfil(){

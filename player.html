@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v9.9 - 2026-05-13 -->
+<!-- IBBI Bingo Player v9.13 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo v9.9</title>
+<title>IBBI Bingo v9.13</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -262,7 +262,7 @@ transition:background-color 9999s ease-in-out 0s;
 .ct-card-sel .ct-id-sel{font-family:'Bebas Neue';font-size:.9rem;color:var(--accent);letter-spacing:1px;text-align:center}
 .ct-card-sel .ct-mode-sel{font-size:.55rem;font-weight:800;padding:1px 4px;border-radius:3px;background:rgba(0,184,240,.12);color:var(--accent);text-align:center;margin-top:2px}
 
-/* === SELECAO: ESTILOS ADICIONAIS v9.9 === */
+/* === SELECAO: ESTILOS ADICIONAIS v9.13 === */
 .ct-card-sel .sel-hint{position:absolute;inset:0;background:rgba(0,184,240,.9);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:1.1rem;color:#000;letter-spacing:2px;z-index:4;animation:none;pointer-events:none;opacity:0;transition:opacity .2s}
 .ct-card-sel:active{transform:scale(.97)}
 
@@ -286,7 +286,7 @@ transition:background-color 9999s ease-in-out 0s;
 
 </style>
 
-  <meta name="app-version" content="v9.9">
+  <meta name="app-version" content="v9.13">
 </head>
 <body>
 
@@ -311,7 +311,7 @@ transition:background-color 9999s ease-in-out 0s;
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &#8594;</button>
         </div>
       </div>
-      <div class="vtag">v9.9</div>
+      <div class="vtag">v9.13</div>
     </div>
   </div>
 </div>
@@ -360,7 +360,7 @@ transition:background-color 9999s ease-in-out 0s;
 </div>
 
   </div>
-  <div class="vtag">v9.9</div>
+  <div class="vtag">v9.13</div>
 </div>
 
   </div>
@@ -447,7 +447,7 @@ transition:background-color 9999s ease-in-out 0s;
 
   <div style="margin-top:16px;text-align:center">
     <button class="btn btn-ghost btn-sm" id="btnVoltarSelecao">← Voltar</button>
-    <div class="vtag" style="margin-top:10px">v9.9</div>
+    <div class="vtag" style="margin-top:10px">v9.13</div>
   </div>
 </div>
 
@@ -462,7 +462,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="p-logo">B<span>I</span>NGO</div>
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname">Preview da Cartela</div>
-    <span class="p-vtag">v9.9</span>
+    <span class="p-vtag">v9.13</span>
   </div>
   <div class="p-body" style="padding-top:20px">
     <div id="previewCardWrap" style="max-width:420px;margin:0 auto;width:100%">
@@ -483,7 +483,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="p-logo">B<span>I</span>NGO</div>
     <div class="ibbi-badge">IBBI</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v9.9</span>
+    <span class="p-vtag">v9.13</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div id="gameEvBar" style="background:var(--surface);border-bottom:1.5px solid var(--border);padding:8px 14px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1px;color:var(--accent)">&mdash;</div>
@@ -1120,7 +1120,7 @@ function loadCartelasFromCache(){
 
 
 // ======================================================
-//  OCR - GRADE AJUSTAVEL INTEGRADA v9.9
+//  OCR - GRADE AJUSTAVEL INTEGRADA v9.13
 // ======================================================
 let _ocrNums = {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
 let _ocrDetectedFreeCenter = false;
@@ -1202,11 +1202,11 @@ function initOcr(){
     closeM('mBingoOuro');
   });
   // Modal BATIDA: ir para cartela
-  on('btnBatidaIr','click',()=>{
-    closeM('mBatida');
-    showView('vJogo');
-    renderCartela(); renderHist(); updateCartelasInfo();
-  });
+  const btnBatida=$('btnBatidaIr');
+  if(btnBatida){
+    btnBatida.addEventListener('click',()=>{closeM('mBatida');renderCartela();renderHist();updateCartelasInfo();});
+    btnBatida.addEventListener('touchstart',(e)=>{e.preventDefault();closeM('mBatida');renderCartela();renderHist();updateCartelasInfo();},{passive:false});
+  }
   /* Reset OCR — hidden, now done via Limpar
   on('btnOcrNovaFoto','click',()=>{
     _ocrImg=null; _ocrRot=0; _ocrGrid=null; _ocrEvBound=false;
@@ -1790,7 +1790,11 @@ function renderBody(){
 
   $('btnDelC')?.addEventListener('click',()=>{ const c=cartelas[cartelaIdx]; if(!c)return; $('mDelTxt').textContent=`Excluir a cartela ${c.id}? Nao pode ser desfeito.`; openM('mDelCartela'); });
   $('togAuto')?.addEventListener('change',()=>{ if(cartelas[cartelaIdx]){cartelas[cartelaIdx].autoMarcar=$('togAuto').checked;saveAllCartelas();} });
-  const btnBingoEl=$('btnBingo'); if(btnBingoEl) btnBingoEl.addEventListener('click',onBingoClick);
+  const btnBingoEl=$('btnBingo');
+  if(btnBingoEl){
+    btnBingoEl.addEventListener('click',onBingoClick);
+    btnBingoEl.addEventListener('touchstart',(e)=>{e.preventDefault();onBingoClick();},{passive:false});
+  }
   $('pLastBall')?.addEventListener('click',onTapLastBall);
   $('btnSair')?.addEventListener('click',async()=>{ await signOut(auth); });
   $('btnEditarPerfil')?.addEventListener('click',()=>openEditarPerfil());
@@ -2038,35 +2042,48 @@ function renderHist(){
 // Guardar qual premio a cartela bateu
 cartelaPremioGanho=null;
 
+// Guardar quais cartelas ja bateram para nao avisar repetido
+let cartelasQueBateram=new Set();
+
 function checkAutoBatida(){
-  // Se cartela ja bateu e foi confirmada, nao verifica mais
-  // (mas permite declarar bingo em outras cartelas)
   if(bingoBloqueado) return;
-  const c=cartelas[cartelaIdx]; if(!c)return;
-  const p=getCurrentPremio(); if(!p)return;
-  const allNums=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
-  const completa=allNums.length>=(c.freeCenter?24:25);
-  const btn=$('btnBingo'); if(!btn)return;
-  if(!completa){btn.classList.remove('pulsing');return;}
-  const marcados=new Set(c.marcados||[]);
-  const bateu=p.regra==='cheia'?allNums.every(n=>marcados.has(n)):checkLD(c,marcados);
-  bateu?btn.classList.add('pulsing'):btn.classList.remove('pulsing');
-  if(bateu){
-    sndBingo();
-    // Som + vibracao na batida
-    try{ navigator.vibrate([200,100,200,100,400]); }catch(e){}
-    // Guardar premio ganho
-    cartelaPremioGanho={ordem:p.ordem,nome:p.nome,id:p.id};
-    // Mostrar modal de BATIDA
-    $('batidaPremio').textContent='Sua cartela bateu! Premio: '+p.nome;
-    $('batidaInfo').textContent='Aperte BINGO para o gestor confirmar';
-    openM('mBatida');
-    // Navegar para pagina principal
-    const vJogo=document.getElementById('vJogo');
-    if(vJogo && !vJogo.classList.contains('active')){
-      showView('vJogo');
-      renderCartela(); renderHist(); updateCartelasInfo();
+  const p=getCurrentPremio(); if(!p) return;
+  const btn=$('btnBingo');
+  let algumaBateu=false;
+  // Verificar TODAS as cartelas, nao so a atual
+  for(let i=0;i<cartelas.length;i++){
+    const c=cartelas[i];
+    if(!c||cartelasQueBateram.has(c.id)) continue;
+    const allNums=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
+    if(allNums.length<(c.freeCenter?24:25)) continue;
+    const marcados=new Set(c.marcados||[]);
+    const bateu=p.regra==='cheia'?allNums.every(n=>marcados.has(n)):checkLD(c,marcados);
+    if(bateu){
+      cartelasQueBateram.add(c.id);
+      cartelaPremioGanho={ordem:p.ordem,nome:p.nome,id:p.id};
+      sndBingo();
+      try{ navigator.vibrate([200,100,200,100,400]); }catch(e){}
+      // Se nao for a cartela atual, navegar para ela
+      if(i!==cartelaIdx){
+        cartelaIdx=i;
+        showView('vJogo');
+        renderCartela();
+        renderHist();
+        updateCartelasInfo();
+      }
+      const bp=$('batidaPremio'); if(bp) bp.textContent='Cartela '+c.id+' bateu! Premio: '+p.nome;
+      const bi=$('batidaInfo'); if(bi) bi.textContent='Toque BINGO para declarar';
+      openM('mBatida');
+      if(btn) btn.classList.add('pulsing');
+      algumaBateu=true;
+      break; // avisa uma de cada vez
     }
+  }
+  if(!algumaBateu && btn && !btn.classList.contains('confirmado')){
+    btn.classList.remove('pulsing');
+    btn.classList.remove('confirmado');
+    btn.textContent='BINGO';
+    btn.disabled=false;
   }
 }
 function checkLD(c,marcados){
@@ -2078,18 +2095,26 @@ function checkLD(c,marcados){
   return false;
 }
 function onBingoClick(){
-  const c=cartelas[cartelaIdx]; if(!c)return;
-  const p=getCurrentPremio();
-  const nome=userProfile?.apelido||userProfile?.nome||currentUser.email;
-  $('mBingoTxt').textContent=`Declarar BINGO com a cartela ${c.id} (${nome})?\nO operador ira confirmar.`;
+  const c=cartelas[cartelaIdx]; if(!c) return;
+  const nome=userProfile?.apelido||userProfile?.nome||currentUser?.email;
+  const mBingoTxt=$('mBingoTxt');
+  if(mBingoTxt) mBingoTxt.textContent='Declarar BINGO com a cartela '+c.id+' ('+(nome||'')+')? O operador ira confirmar.';
   openM('mBingo');
 }
 function initBingoModalHandlers(){
-  const bc=$('btnBingoCancel'); if(bc) bc.addEventListener('click',()=>closeM('mBingo'));
-  const bo=$('btnBingoOk'); if(!bo) return;
-  bo.addEventListener('click',()=>{
+  const bc=$('btnBingoCancel');
+  const bo=$('btnBingoOk');
+  if(bc){
+    bc.addEventListener('click',()=>closeM('mBingo'));
+    bc.addEventListener('touchstart',(e)=>{e.preventDefault();closeM('mBingo');},{passive:false});
+  }
+  if(bo){
+    bo.addEventListener('click',enviarBatida);
+    bo.addEventListener('touchstart',(e)=>{e.preventDefault();enviarBatida();},{passive:false});
+  }
+  function enviarBatida(){
     closeM('mBingo');
-    const c=cartelas[cartelaIdx]; if(!c||!currentUser)return;
+    const c=cartelas[cartelaIdx]; if(!c||!currentUser) return;
     const p=getCurrentPremio();
     const nome=userProfile?.apelido||userProfile?.nome||currentUser.email;
     const batidaId=genId();
@@ -2099,9 +2124,10 @@ function initBingoModalHandlers(){
       tipo:'manual', status:'pendente', timestamp:Date.now()
     });
     update(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),{batidaStatus:'pendente'});
+    showToast('BINGO declarado! Aguardando confirmacao do gestor.');
     const el=$('batidaStatusEl');
     if(el){el.className='batida-status bs-pend';el.textContent=' Batida enviada -- aguardando confirmacao...';}
-  });
+  }
 }
 initBingoModalHandlers();
 
@@ -2342,6 +2368,7 @@ function aplicarBloqueioBingo(){
 function liberarBloqueioBingo(){
   bingoBloqueado=false;
   cartelaPremioGanho=null;
+  cartelasQueBateram=new Set();
   const btnNova=$('btnNovaC'); if(btnNova) btnNova.style.display='';
   const btnDel=$('btnDelC'); if(btnDel) btnDel.style.display='';
   const lock=$('cartela-nav')?.querySelector('.bingo-lock-msg');

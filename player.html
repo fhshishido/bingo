@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v9.8 - 2026-05-13 -->
+<!-- IBBI Bingo Player v9.9 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo v9.8</title>
+<title>IBBI Bingo v9.9</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -262,7 +262,7 @@ transition:background-color 9999s ease-in-out 0s;
 .ct-card-sel .ct-id-sel{font-family:'Bebas Neue';font-size:.9rem;color:var(--accent);letter-spacing:1px;text-align:center}
 .ct-card-sel .ct-mode-sel{font-size:.55rem;font-weight:800;padding:1px 4px;border-radius:3px;background:rgba(0,184,240,.12);color:var(--accent);text-align:center;margin-top:2px}
 
-/* === SELECAO: ESTILOS ADICIONAIS v9.8 === */
+/* === SELECAO: ESTILOS ADICIONAIS v9.9 === */
 .ct-card-sel .sel-hint{position:absolute;inset:0;background:rgba(0,184,240,.9);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:1.1rem;color:#000;letter-spacing:2px;z-index:4;animation:none;pointer-events:none;opacity:0;transition:opacity .2s}
 .ct-card-sel:active{transform:scale(.97)}
 
@@ -286,7 +286,7 @@ transition:background-color 9999s ease-in-out 0s;
 
 </style>
 
-  <meta name="app-version" content="v9.8">
+  <meta name="app-version" content="v9.9">
 </head>
 <body>
 
@@ -311,7 +311,7 @@ transition:background-color 9999s ease-in-out 0s;
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &#8594;</button>
         </div>
       </div>
-      <div class="vtag">v9.8</div>
+      <div class="vtag">v9.9</div>
     </div>
   </div>
 </div>
@@ -360,7 +360,7 @@ transition:background-color 9999s ease-in-out 0s;
 </div>
 
   </div>
-  <div class="vtag">v9.8</div>
+  <div class="vtag">v9.9</div>
 </div>
 
   </div>
@@ -447,7 +447,7 @@ transition:background-color 9999s ease-in-out 0s;
 
   <div style="margin-top:16px;text-align:center">
     <button class="btn btn-ghost btn-sm" id="btnVoltarSelecao">← Voltar</button>
-    <div class="vtag" style="margin-top:10px">v9.8</div>
+    <div class="vtag" style="margin-top:10px">v9.9</div>
   </div>
 </div>
 
@@ -462,7 +462,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="p-logo">B<span>I</span>NGO</div>
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname">Preview da Cartela</div>
-    <span class="p-vtag">v9.8</span>
+    <span class="p-vtag">v9.9</span>
   </div>
   <div class="p-body" style="padding-top:20px">
     <div id="previewCardWrap" style="max-width:420px;margin:0 auto;width:100%">
@@ -483,7 +483,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="p-logo">B<span>I</span>NGO</div>
     <div class="ibbi-badge">IBBI</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v9.8</span>
+    <span class="p-vtag">v9.9</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div id="gameEvBar" style="background:var(--surface);border-bottom:1.5px solid var(--border);padding:8px 14px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1px;color:var(--accent)">&mdash;</div>
@@ -790,11 +790,11 @@ onAuthStateChanged(auth, async user=>{
 });
 
 // -- LOGIN --
-$('btnIrCadastro').addEventListener('click',()=>{ hideErr('loginErr'); showView('vCadastro'); setTimeout(()=>$('cadEmail').focus(),200); });
-$('btnIrLogin').addEventListener('click',()=>{ hideErr('cadErr'); showView('vLogin'); setTimeout(()=>$('loginEmail').focus(),200); });
+$('btnIrCadastro')?.addEventListener('click',()=>{ hideErr('loginErr'); showView('vCadastro'); setTimeout(()=>$('cadEmail')?.focus(),200); });
+$('btnIrLogin')?.addEventListener('click',()=>{ hideErr('cadErr'); showView('vLogin'); setTimeout(()=>$('loginEmail')?.focus(),200); });
 
-$('loginSenha').addEventListener('keydown',e=>{ if(e.key==='Enter') $('btnLogin').click(); });
-$('btnLogin').addEventListener('click', async()=>{
+$('loginSenha')?.addEventListener('keydown',e=>{ if(e.key==='Enter') $('btnLogin')?.click(); });
+$('btnLogin')?.addEventListener('click', async()=>{
   const email=$('loginEmail').value.trim();
   const senha=$('loginSenha').value;
   hideErr('loginErr'); $('resetOk').classList.remove('show');
@@ -808,7 +808,7 @@ $('btnLogin').addEventListener('click', async()=>{
   }
 });
 
-$('btnEsqueceuSenha').addEventListener('click',async()=>{
+$('btnEsqueceuSenha')?.addEventListener('click',async()=>{
   const email=$('loginEmail').value.trim();
   if(!email){showErr('loginErr','Digite seu e-mail acima primeiro.');return;}
   hideErr('loginErr');
@@ -819,8 +819,8 @@ $('btnEsqueceuSenha').addEventListener('click',async()=>{
 });
 
 // -- CADASTRO --
-$('cadSenhaConf').addEventListener('keydown',e=>{ if(e.key==='Enter') $('btnCadastrar').click(); });
-$('btnCadastrar').addEventListener('click', async()=>{
+$('cadSenhaConf')?.addEventListener('keydown',e=>{ if(e.key==='Enter') $('btnCadastrar')?.click(); });
+$('btnCadastrar')?.addEventListener('click', async()=>{
   const email=$('cadEmail').value.trim();
   const senha=$('cadSenha').value;
   const senhaConf=$('cadSenhaConf').value;
@@ -1120,7 +1120,7 @@ function loadCartelasFromCache(){
 
 
 // ======================================================
-//  OCR - GRADE AJUSTAVEL INTEGRADA v9.8
+//  OCR - GRADE AJUSTAVEL INTEGRADA v9.9
 // ======================================================
 let _ocrNums = {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
 let _ocrDetectedFreeCenter = false;
@@ -1659,8 +1659,8 @@ function renderBody(){
     </div>
   `;
 
-  $('btnPrev').addEventListener('click',()=>{ if(cartelaIdx>0){cartelaIdx--;renderCartela();renderHist();checkAutoBatida();} });
-  $('btnNext').addEventListener('click',()=>{ if(cartelaIdx<cartelas.length-1){cartelaIdx++;renderCartela();renderHist();checkAutoBatida();} });
+  $('btnPrev')?.addEventListener('click',()=>{ if(cartelaIdx>0){cartelaIdx--;renderCartela();renderHist();checkAutoBatida();} });
+  $('btnNext')?.addEventListener('click',()=>{ if(cartelaIdx<cartelas.length-1){cartelaIdx++;renderCartela();renderHist();checkAutoBatida();} });
 
   // Swipe horizontal para navegar entre cartelas
   (()=>{
@@ -1758,7 +1758,7 @@ function renderBody(){
   }
   updateCartelasInfo();
 
-  $('btnNovaC').addEventListener('click',()=>{
+  $('btnNovaC')?.addEventListener('click',()=>{
     const _isBanco=(evData?.tipoCartela||'livre')==='banco';
     if(_isBanco){
       // Verificar limite antes de abrir selecao
@@ -1788,14 +1788,14 @@ function renderBody(){
   });
 
 
-  $('btnDelC').addEventListener('click',()=>{ const c=cartelas[cartelaIdx]; if(!c)return; $('mDelTxt').textContent=`Excluir a cartela ${c.id}? Nao pode ser desfeito.`; openM('mDelCartela'); });
-  $('togAuto').addEventListener('change',()=>{ if(cartelas[cartelaIdx]){cartelas[cartelaIdx].autoMarcar=$('togAuto').checked;saveAllCartelas();} });
-  $('btnBingo').addEventListener('click',onBingoClick);
-  $('pLastBall').addEventListener('click',onTapLastBall);
-  $('btnSair').addEventListener('click',async()=>{ await signOut(auth); });
-  $('btnEditarPerfil').addEventListener('click',()=>openEditarPerfil());
+  $('btnDelC')?.addEventListener('click',()=>{ const c=cartelas[cartelaIdx]; if(!c)return; $('mDelTxt').textContent=`Excluir a cartela ${c.id}? Nao pode ser desfeito.`; openM('mDelCartela'); });
+  $('togAuto')?.addEventListener('change',()=>{ if(cartelas[cartelaIdx]){cartelas[cartelaIdx].autoMarcar=$('togAuto').checked;saveAllCartelas();} });
+  const btnBingoEl=$('btnBingo'); if(btnBingoEl) btnBingoEl.addEventListener('click',onBingoClick);
+  $('pLastBall')?.addEventListener('click',onTapLastBall);
+  $('btnSair')?.addEventListener('click',async()=>{ await signOut(auth); });
+  $('btnEditarPerfil')?.addEventListener('click',()=>openEditarPerfil());
   
-  $('btnPuxarAuto').addEventListener('click',()=>puxarAutomatico());
+  $('btnPuxarAuto')?.addEventListener('click',()=>puxarAutomatico());
   renderEmptyState();
   initNumpad();
   initOcr();
@@ -1954,9 +1954,9 @@ function initNumpad(){
       updateNumpadDisplay();
     });
   });
-  $('npBksp').addEventListener('click',()=>{ _numpadVal=_numpadVal.slice(0,-1); updateNumpadDisplay(); });
-  $('btnNumpadCancel').addEventListener('click',()=>{ closeM('mNumpad'); _numpadCtx=null; _numpadVal=''; });
-  $('npOk').addEventListener('click',()=>{
+  $('npBksp')?.addEventListener('click',()=>{ _numpadVal=_numpadVal.slice(0,-1); updateNumpadDisplay(); });
+  $('btnNumpadCancel')?.addEventListener('click',()=>{ closeM('mNumpad'); _numpadCtx=null; _numpadVal=''; });
+  $('npOk')?.addEventListener('click',()=>{
     if(!_numpadCtx||!_numpadVal)return;
     const n=parseInt(_numpadVal);
     const mode=evData?.mode||90;
@@ -1999,12 +1999,12 @@ function remNum(num,letter,row){
 }
 
 // MODAL LISTENERS
-$('btnAddCancel').addEventListener('click',()=>{closeM('mAddNum');pendingAdd=null;});
-$('btnAddOk').addEventListener('click',()=>{if(pendingAdd)addNum(pendingAdd.n,pendingAdd.letter);closeM('mAddNum');pendingAdd=null;});
-$('btnRemCancel').addEventListener('click',()=>{closeM('mRemNum');pendingRem=null;});
-$('btnRemOk').addEventListener('click',()=>{if(pendingRem)remNum(pendingRem.num,pendingRem.letter,pendingRem.row);closeM('mRemNum');pendingRem=null;});
-$('btnDelCancel').addEventListener('click',()=>closeM('mDelCartela'));
-$('btnDelOk').addEventListener('click',()=>{
+$('btnAddCancel')?.addEventListener('click',()=>{closeM('mAddNum');pendingAdd=null;});
+$('btnAddOk')?.addEventListener('click',()=>{if(pendingAdd)addNum(pendingAdd.n,pendingAdd.letter);closeM('mAddNum');pendingAdd=null;});
+$('btnRemCancel')?.addEventListener('click',()=>{closeM('mRemNum');pendingRem=null;});
+$('btnRemOk')?.addEventListener('click',()=>{if(pendingRem)remNum(pendingRem.num,pendingRem.letter,pendingRem.row);closeM('mRemNum');pendingRem=null;});
+$('btnDelCancel')?.addEventListener('click',()=>closeM('mDelCartela'));
+$('btnDelOk')?.addEventListener('click',()=>{
   closeM('mDelCartela');
   cartelas.splice(cartelaIdx,1);
   cartelaIdx=Math.max(0,cartelas.length-1);

@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v9.15 - 2026-05-13 -->
+<!-- IBBI Bingo Player v9.16 - 2026-05-13 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo v9.15</title>
+<title>IBBI Bingo v9.16</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -262,7 +262,7 @@ transition:background-color 9999s ease-in-out 0s;
 .ct-card-sel .ct-id-sel{font-family:'Bebas Neue';font-size:.9rem;color:var(--accent);letter-spacing:1px;text-align:center}
 .ct-card-sel .ct-mode-sel{font-size:.55rem;font-weight:800;padding:1px 4px;border-radius:3px;background:rgba(0,184,240,.12);color:var(--accent);text-align:center;margin-top:2px}
 
-/* === SELECAO: ESTILOS ADICIONAIS v9.15 === */
+/* === SELECAO: ESTILOS ADICIONAIS v9.16 === */
 .ct-card-sel .sel-hint{position:absolute;inset:0;background:rgba(0,184,240,.9);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:1.1rem;color:#000;letter-spacing:2px;z-index:4;animation:none;pointer-events:none;opacity:0;transition:opacity .2s}
 .ct-card-sel:active{transform:scale(.97)}
 
@@ -286,7 +286,7 @@ transition:background-color 9999s ease-in-out 0s;
 
 </style>
 
-  <meta name="app-version" content="v9.15">
+  <meta name="app-version" content="v9.16">
 </head>
 <body>
 
@@ -311,7 +311,7 @@ transition:background-color 9999s ease-in-out 0s;
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &#8594;</button>
         </div>
       </div>
-      <div class="vtag">v9.15</div>
+      <div class="vtag">v9.16</div>
     </div>
   </div>
 </div>
@@ -360,7 +360,7 @@ transition:background-color 9999s ease-in-out 0s;
 </div>
 
   </div>
-  <div class="vtag">v9.15</div>
+  <div class="vtag">v9.16</div>
 </div>
 
   </div>
@@ -447,7 +447,7 @@ transition:background-color 9999s ease-in-out 0s;
 
   <div style="margin-top:16px;text-align:center">
     <button class="btn btn-ghost btn-sm" id="btnVoltarSelecao">← Voltar</button>
-    <div class="vtag" style="margin-top:10px">v9.15</div>
+    <div class="vtag" style="margin-top:10px">v9.16</div>
   </div>
 </div>
 
@@ -462,7 +462,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="p-logo">B<span>I</span>NGO</div>
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname">Preview da Cartela</div>
-    <span class="p-vtag">v9.15</span>
+    <span class="p-vtag">v9.16</span>
   </div>
   <div class="p-body" style="padding-top:20px">
     <div id="previewCardWrap" style="max-width:420px;margin:0 auto;width:100%">
@@ -483,7 +483,8 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="p-logo">B<span>I</span>NGO</div>
     <div class="ibbi-badge">IBBI</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v9.15</span>
+    <button class="btn btn-sm" id="btnVerBatidas" style="display:none;background:rgba(255,215,0,.15);color:#FFD700;border:1.5px solid rgba(255,215,0,.3);font-family:'Bebas Neue';letter-spacing:1px">🏆 <span id="batidasCount">0</span></button>
+    <span class="p-vtag">v9.17</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div id="gameEvBar" style="background:var(--surface);border-bottom:1.5px solid var(--border);padding:8px 14px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1px;color:var(--accent)">&mdash;</div>
@@ -512,6 +513,28 @@ transition:background-color 9999s ease-in-out 0s;
         <button class="btn btn-ghost btn-sm" id="btnAjusteReset">&#128260; Resetar</button>
         <span style="font-size:.68rem;color:var(--text3);flex:1;text-align:center;padding-top:4px">Arraste a grade &bull; Arraste os cantos para redimensionar</span>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- =============== VIEW: CARTELAS BATIDAS =============== -->
+<div class="view" id="vBatidas">
+  <div class="p-head">
+    <div class="p-logo">B<span>I</span>NGO</div>
+    <div class="ibbi-badge">IBBI</div>
+    <div class="p-evname" id="batidasEvName">Cartelas Batidas</div>
+    <span class="p-vtag">v9.17</span>
+  </div>
+  <div class="p-body" style="padding-top:20px">
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;color:#FFD700">🏆 Cartelas Batidas</div>
+      <div style="font-size:.78rem;color:var(--text2);margin-top:4px" id="batidasSub">Cartelas que ja bateram neste evento</div>
+    </div>
+    <div id="batidasLista" style="display:flex;flex-direction:column;gap:10px">
+      <!-- Lista de cartelas batidas renderizada aqui -->
+    </div>
+    <div style="text-align:center;margin-top:20px">
+      <button class="btn btn-ghost" id="btnBatidasVoltar" style="width:100%">← Voltar ao Jogo</button>
     </div>
   </div>
 </div>
@@ -687,27 +710,39 @@ transition:background-color 9999s ease-in-out 0s;
     <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:4px;color:var(--green);text-shadow:0 0 20px var(--green);margin-bottom:8px">BATIDA!</h2>
     <div id="batidaPremio" style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:6px">Sua cartela bateu!</div>
     <div id="batidaInfo" style="font-size:.85rem;color:var(--text3);margin-bottom:20px">Aperte BINGO para confirmar</div>
-    <button class="btn btn-acc" id="btnBatidaIr" onclick="closeM('mBatida')" style="width:100%;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;padding:12px 30px">IR PARA CARTELA</button>
+    <button class="btn btn-acc" id="btnBatidaIr" onclick="_fecharModalGlobal('mBatida')" style="width:100%;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;padding:12px 30px">IR PARA CARTELA</button>
   </div>
 </div>
 
 <!-- FUNCOES GLOBAIS para onclick inline -->
 <script>
 function _enviarBatidaGlobal(){
-  document.getElementById('mBingo')?.classList.remove('open');
-  var c=window._cartelas;var u=window._user;
-  if(!c||!u||!window._evId) return;
+  console.log('_enviarBatidaGlobal INICIO');
+  var m=document.getElementById('mBingo'); if(m) m.classList.remove('open');
+  var c=window._cartelaAtual;var u=window._userGlobal;var ev=window._evIdGlobal;
+  // Validar que a cartela ainda esta ativa
+  if(c && c.status==='batida'){ console.log('Cartela ja batida'); return; }
+  console.log('cartela:',!!c,'user:',!!u,'ev:',ev);
+  if(!c||!u||!ev){ console.log('FALTA dados'); return; }
   var batidaId='B'+Date.now();
-  var db=window._db;
-  if(db){
-    db.ref('bingo/eventos/'+window._evId+'/batidas/'+batidaId).set({
-      playerId:u.uid,playerNome:u.displayName||u.email,cartelaId:c.id,
-      premioId:window._premioId,tipo:'manual',status:'pendente',timestamp:Date.now()
-    });
-    db.ref('bingo/eventos/'+window._evId+'/brincantes/'+u.uid).update({batidaStatus:'pendente'});
-  }
+  var premioId=window._premioIdGlobal;
+  var nome=(window._profileGlobal?.apelido)||(window._profileGlobal?.nome)||u.email;
+  console.log('Enviando batida',batidaId,'para',ev);
+  // Usar fetch direto para o Firebase REST API (mesma URL do módulo)
+  var base='https://domino-fa285-default-rtdb.firebaseio.com';
+  var path='/bingo/eventos/'+ev+'/batidas/'+batidaId+'.json';
+  fetch(base+path,{method:'PUT',body:JSON.stringify({
+    playerId:u.uid,playerNome:nome||'',cartelaId:c.id||'',
+    premioId:premioId||null,tipo:'manual',status:'pendente',timestamp:Date.now()
+  })}).then(function(){ console.log('Batida enviada!'); var t=document.getElementById('cnToast');if(t){t.textContent='BINGO enviado! Aguardando gestor.';t.style.opacity='1';setTimeout(function(){if(t)t.style.opacity='0';},3000);} }).catch(function(e){ console.error('Erro:',e); });
+  // Atualizar brincante
+  fetch(base+'/bingo/eventos/'+ev+'/brincantes/'+u.uid+'.json',{method:'PATCH',body:JSON.stringify({batidaStatus:'pendente'})});
 }
 function _fecharModalGlobal(id){ document.getElementById(id)?.classList.remove('open'); }
+function _onSelecaoTapGlobal(el, cid){ 
+  // Encontrar o módulo e chamar a função se disponível
+  if(window._onSelecaoTapModule) window._onSelecaoTapModule(el, cid);
+}
 </script>
 
 <!-- MODAL: BINGO CONFIRMADO (gestor confirmou) -->
@@ -776,12 +811,13 @@ const evId = params.get('ev');
 let evData=null, currentUser=null, userProfile=null;
 let previewCartelaId=null;
 let cartelas=[], cartelaIdx=0;
-let bingoBloqueado=false; // true quando bingo confirmado — bloqueia edicao
+// bingoBloqueado REMOVIDO — agora usamos c.status='batida' para cartelas que bateram
 let pendingAdd=null, pendingRem=null;
 let toastTimer=null;
 let _lastSaveTime=0;
 let _numpadCtx=null;
 let _numpadVal='';
+let curPrizeId=null; // ID do premio atual — atualizado por getCurrentPremio
 
 // -- AUTH STATE --
 onAuthStateChanged(auth, async user=>{
@@ -994,35 +1030,40 @@ function continuarJogo(ev){
     const justSaved=age<2000;
 
     // Verificar se bingo foi confirmado pelo gestor
-    if(data?.bingoConfirmado && !bingoBloqueado){
-      bingoBloqueado=true;
+    if(data?.bingoConfirmado){
       const pg=data?.premioGanho;
       const premioMsg=pg?`Premio #${pg.ordem} — ${pg.nome||'Bingo'}`:'Premio confirmado';
-      // Modal dourado de CONFIRMACAO (sem som/vibracao, ja foram na batida)
-      $('bingoOuroPremio').textContent=premioMsg;
-      $('bingoOuroData').textContent=pg?.ts?new Date(pg.ts).toLocaleString('pt-BR'):new Date().toLocaleString('pt-BR');
-      openM('mBingoOuro');
-      // Botao BINGO = CARTELA VENCEDORA (nao clicavel)
-      const btnBingo=$('btnBingo');
-      if(btnBingo){ btnBingo.classList.remove('pulsing'); btnBingo.classList.add('confirmado'); btnBingo.textContent='🏆 CARTELA VENCEDORA'; btnBingo.disabled=true; btnBingo.onclick=null; }
-      // Header dourado curto: "🏆 P1: Bingo Cheia"
-      const bingoTitle=$('bingoTitle');
-      if(bingoTitle && pg){ bingoTitle.innerHTML=`<span style="color:#FFD700">&#127942; P${pg.ordem}:</span> ${pg.nome}`; }
-      // Label do premio atualizado
-      const premioLabel=$('premioLabel');
-      if(premioLabel && pg){ premioLabel.innerHTML=`&#127881; Premio: ${pg.nome} <span style="color:var(--green)">| &#10004; Confirmado</span>`; }
-      showToast('BINGO CONFIRMADO! '+premioMsg);
-      aplicarBloqueioBingo();
-      renderCartela();
+      // Marcar cartela atual como 'batida' e registrar premio
+      const ativas=getCartelasAtivas();
+      const c=ativas[cartelaIdx];
+      if(c && c.status!=='batida'){
+        c.status='batida';
+        c.premioGanho={nome:pg?.nome||'Bingo',ordem:pg?.ordem||1,ts:Date.now()};
+        saveAllCartelas();
+        // Modal dourado de CONFIRMACAO
+        $('bingoOuroPremio').textContent=premioMsg;
+        $('bingoOuroData').textContent=pg?.ts?new Date(pg.ts).toLocaleString('pt-BR'):new Date().toLocaleString('pt-BR');
+        openM('mBingoOuro');
+        // Atualizar contador e lista
+        renderCartelasBatidas();
+        // Resetar idx e re-renderizar (cartela sai da paginacao)
+        cartelaIdx=0;
+        renderCartela(); renderHist(); checkAutoBatida();
+        showToast('🏆 BINGO! Cartela '+c.id+' bateu!');
+      }
     }
     // Sorteio foi reiniciado — brincante zerado no Firebase
     if(!data && !justSaved && cartelas.length>0){
-      bingoBloqueado=false;
-      cartelas.forEach(c=>{ c.marcados=[]; });
+      // Resetar todas as cartelas para 'ativa'
+      cartelas.forEach(c=>{ c.status='ativa'; c.premioGanho=null; c.marcados=[]; });
+      // Limpar avisos de batida do sessionStorage
+      try{ Object.keys(sessionStorage).forEach(k=>{ if(k.startsWith('batida_')) sessionStorage.removeItem(k); }); }catch(e){}
       try{ localStorage.removeItem('bingo_cartelas_'+evId+'_'+currentUser.uid); }catch(e){}
       saveAllCartelas();
+      cartelaIdx=0;
       renderCartela(); renderHist();
-      showToast('Sorteio reiniciado. Cartelas desmarcadas.');
+      renderCartelasBatidas();
+      showToast('Sorteio reiniciado. Cartelas desmarcadas e reativadas.');
     }
 
     if(data?.cartelas && !justSaved){
@@ -1092,7 +1133,7 @@ $('btnCadastrarEvento')?.addEventListener('click', async()=>{
 });
 function novaCartela(){
   const mode=evData?.mode||90;
-  return{id:gerarCartelaId(mode),fbId:genId(),
+  return{id:gerarCartelaId(mode),fbId:genId(),status:'ativa',premioGanho:null,
     numeros:{B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]},
     marcados:[],freeCenter:false,autoMarcar:true,criadaEm:Date.now()};
 }
@@ -1101,7 +1142,7 @@ function gerarCartelaId(mode){ return `${mode}-B${String(Math.floor(Math.random(
 function saveAllCartelas(){
   if(!evId||!currentUser)return;
   const obj={};
-  cartelas.forEach(c=>{ obj[c.fbId]={id:c.id,numeros:c.numeros,marcados:c.marcados||[],freeCenter:c.freeCenter||false,autoMarcar:c.autoMarcar!==false,criadaEm:c.criadaEm}; });
+  cartelas.forEach(c=>{ obj[c.fbId]={id:c.id,status:c.status||'ativa',premioGanho:c.premioGanho||null,numeros:c.numeros,marcados:c.marcados||[],freeCenter:c.freeCenter||false,autoMarcar:c.autoMarcar!==false,criadaEm:c.criadaEm}; });
   const nome=userProfile?.apelido||userProfile?.nome||currentUser.email;
   _lastSaveTime=Date.now();
   try{
@@ -1139,7 +1180,7 @@ function loadCartelasFromCache(){
 
 
 // ======================================================
-//  OCR - GRADE AJUSTAVEL INTEGRADA v9.15
+//  OCR - GRADE AJUSTAVEL INTEGRADA v9.16
 // ======================================================
 let _ocrNums = {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
 let _ocrDetectedFreeCenter = false;
@@ -1219,6 +1260,16 @@ function initOcr(){
   // Fechar modal BINGO dourado
   on('btnBingoOuroFechar','click',()=>{
     closeM('mBingoOuro');
+  });
+  // Ver cartelas batidas
+  on('btnVerBatidas','click',()=>{
+    $('batidasEvName').textContent=evData?.nome||'Cartelas Batidas';
+    renderCartelasBatidas();
+    showView('vBatidas');
+  });
+  on('btnBatidasVoltar','click',()=>{
+    showView('vJogo');
+    renderCartela(); renderHist();
   });
   /* Reset OCR — hidden, now done via Limpar
   on('btnOcrNovaFoto','click',()=>{
@@ -1616,15 +1667,23 @@ function puxarAutomatico(){
 function renderEmptyState(){
   const hdr=$('cartelaHdr'), grid=$('cartelaGrid');
   const cnId=$('cnId'), cnPg=$('cnPg');
+  const batidasCount=cartelas.filter(c=>c.status==='batida').length;
   if(cnId) cnId.textContent='--';
-  if(cnPg) cnPg.textContent='Nenhuma cartela';
+  if(cnPg) cnPg.textContent=batidasCount>0?'Todas as cartelas bateram':'Nenhuma cartela';
   if(hdr) hdr.innerHTML='';
   if(grid){
-    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:24px 10px;color:var(--text3)">
-      <div style="font-size:2rem;margin-bottom:8px">?</div>
-      <div style="font-size:.88rem;font-weight:700;margin-bottom:4px">Nenhuma cartela</div>
-      <div style="font-size:.78rem">Toque em <strong style="color:var(--accent)">+ Nova</strong> para criar sua cartela</div>
-    </div>`;
+    const msg=batidasCount>0
+      ?`<div style="grid-column:1/-1;text-align:center;padding:24px 10px;color:var(--text3)">
+          <div style="font-size:2rem;margin-bottom:8px">🏆</div>
+          <div style="font-size:.88rem;font-weight:700;margin-bottom:4px">Todas as suas cartelas bateram!</div>
+          <div style="font-size:.78rem">Toque em <strong style="color:#FFD700">🏆 Cartelas Batidas</strong> para ver</div>
+        </div>`
+      :`<div style="grid-column:1/-1;text-align:center;padding:24px 10px;color:var(--text3)">
+          <div style="font-size:2rem;margin-bottom:8px">?</div>
+          <div style="font-size:.88rem;font-weight:700;margin-bottom:4px">Nenhuma cartela ativa</div>
+          <div style="font-size:.78rem">Toque em <strong style="color:var(--accent)">+ Nova</strong> para criar sua cartela no OCR</div>
+        </div>`;
+    grid.innerHTML=msg;
   }
   if($('togFree'))$('togFree').checked=false;
   if($('togAuto'))$('togAuto').checked=true;
@@ -1673,7 +1732,7 @@ function renderBody(){
   `;
 
   $('btnPrev')?.addEventListener('click',()=>{ if(cartelaIdx>0){cartelaIdx--;renderCartela();renderHist();checkAutoBatida();} });
-  $('btnNext')?.addEventListener('click',()=>{ if(cartelaIdx<cartelas.length-1){cartelaIdx++;renderCartela();renderHist();checkAutoBatida();} });
+  $('btnNext')?.addEventListener('click',()=>{ const ativas=getCartelasAtivas(); if(cartelaIdx<ativas.length-1){cartelaIdx++;renderCartela();renderHist();checkAutoBatida();} });
 
   // Swipe horizontal para navegar entre cartelas
   (()=>{
@@ -1695,16 +1754,17 @@ function renderBody(){
       if(!moved) return;
       const dx = e.changedTouches[0].clientX - startX;
       if(Math.abs(dx) < 50) return; // threshold minimo
-      if(dx < 0 && cartelaIdx < cartelas.length-1){
+      const ativasSwipe=getCartelasAtivas();
+      if(dx < 0 && cartelaIdx < ativasSwipe.length-1){
         // Swipe esquerda = proxima
         cartelaIdx++;
         renderCartela(); renderHist(); checkAutoBatida();
-        showToast('Cartela '+(cartelaIdx+1)+' de '+cartelas.length);
+        showToast('Cartela '+(cartelaIdx+1)+' de '+ativasSwipe.length);
       } else if(dx > 0 && cartelaIdx > 0){
         // Swipe direita = anterior
         cartelaIdx--;
         renderCartela(); renderHist(); checkAutoBatida();
-        showToast('Cartela '+(cartelaIdx+1)+' de '+cartelas.length);
+        showToast('Cartela '+(cartelaIdx+1)+' de '+ativasSwipe.length);
       }
     }, {passive:true});
   })();
@@ -1830,7 +1890,9 @@ function renderPremio(){
 }
 function getCurrentPremio(){
   if(!evData?.premios)return null;
-  return Object.values(evData.premios).sort((a,b)=>a.ordem-b.ordem).find(p=>!p.ganhadores?.length)||null;
+  const p=Object.values(evData.premios).sort((a,b)=>a.ordem-b.ordem).find(p=>!p.ganhadores?.length)||null;
+  curPrizeId=p?.id||null;
+  return p;
 }
 
 // -- BALL --
@@ -1863,6 +1925,7 @@ function onTapLastBall(){
 // -- CARTELA --
 function ensureNumerosFormat(c){
   if(!c.numeros) c.numeros={};
+  if(!c.status) c.status='ativa';
   LETTERS.forEach(l=>{
     if(!Array.isArray(c.numeros[l])){
       c.numeros[l]=[null,null,null,null,null];
@@ -1872,12 +1935,22 @@ function ensureNumerosFormat(c){
   return c;
 }
 
+// Cartelas ativas (nao batidas) para paginacao
+function getCartelasAtivas(){ return cartelas.filter(c=>c.status!=='batida'); }
+function getCartelaAtualIdx(){ return getCartelasAtivas()[cartelaIdx] ? cartelaIdx : 0; }
+
 function renderCartela(){
   const hdr=$('cartelaHdr'),grid=$('cartelaGrid'); if(!hdr||!grid)return;
-  let c=cartelas[cartelaIdx]; if(!c)return;
+  const ativas=getCartelasAtivas();
+  if(!ativas.length){ renderEmptyState(); return; }
+  // Garantir idx valido dentro das ativas
+  cartelaIdx=Math.min(cartelaIdx,ativas.length-1);
+  let c=ativas[cartelaIdx]; if(!c)return;
+  // Encontrar indice real no array original para referencia
+  const realIdx=cartelas.indexOf(c);
   c=ensureNumerosFormat(c);
   $('cnId').textContent=c.id||'--';
-  $('cnPg').textContent=`Cartela ${cartelaIdx+1} de ${cartelas.length}`;
+  $('cnPg').textContent=`Cartela ${cartelaIdx+1} de ${ativas.length}${cartelas.length>ativas.length?' ('+(cartelas.length-ativas.length)+' batida'+(cartelas.length-ativas.length>1?'s':'')+')':''}`;
   if($('togFree'))$('togFree').checked=c.freeCenter||false;
   if($('togAuto'))$('togAuto').checked=c.autoMarcar!==false;
   hdr.innerHTML='';
@@ -1898,29 +1971,21 @@ function renderCartela(){
         cell.textContent='*';
       } else if(!hasNum){
         cell.className='c-cell empty-cell';
-        cell.textContent='+';
-        cell.addEventListener('click',()=>openNumpad(letter,row));
+        cell.textContent='?';
+        // Sem click — edicao so no OCR
       } else if(isDrawn||isMarked){
-        cell.className=`c-cell marked-${letter} just-marked`;
+        cell.className=`c-cell marked-${letter}`;
         cell.textContent=num;
-        cell.addEventListener('click',()=>showToast('Numero ja sorteado -- nao pode remover'));
       } else {
         cell.className=`c-cell filled-${letter}`;
         cell.textContent=num;
-        cell.title='Toque para remover';
-        cell.addEventListener('click',()=>onFilledCell(num,letter,row));
       }
       grid.appendChild(cell);
     });
   }
 }
-function onEmptyCell(letter,row){ if(bingoBloqueado){showToast('Cartela bloqueada -- Bingo confirmado');return;} openNumpad(letter,row); }
-function onFilledCell(num,letter,row){
-  if(bingoBloqueado){showToast('Cartela bloqueada -- Bingo confirmado');return;}
-  pendingRem={num,letter,row};
-  $('mRemTxt').textContent=`Remover o numero ${num} (coluna ${letter}) da cartela?`;
-  openM('mRemNum');
-}
+// EDICAO DESATIVADA na tela principal — numeros so podem ser alterados no OCR
+// function onEmptyCell e onFilledCell removidos — cartela principal eh somente leitura
 
 // -- NUMPAD --
 function colRange(letter, mode){
@@ -2048,58 +2113,48 @@ function renderHist(){
 }
 
 // -- BATIDA --
-// Guardar qual premio a cartela bateu
-cartelaPremioGanho=null;
-
-// Guardar quais cartelas ja bateram para nao avisar repetido
-let cartelasQueBateram=new Set();
-
 // Bridge: expor variaveis para funcoes globais
 function syncGlobals(){
-  window._cartelas=cartelas[cartelaIdx];
-  window._user=currentUser;
-  window._evId=evId;
-  window._db=null;
-  var ev=evData;
-  if(ev){
-    var premios=Object.entries(ev.premios||{}).map(([id,v])=>({id,...v}));
-    premios.sort((a,b)=>(a.ordem||0)-(b.ordem||0));
-    window._premioId=premios.find(pr=>pr.id===curPrizeId)?.id;
-  }
+  const ativas=getCartelasAtivas();
+  window._cartelaAtual=ativas[cartelaIdx]||null;
+  window._userGlobal=currentUser;
+  window._evIdGlobal=evId;
+  window._profileGlobal=userProfile;
+  window._premioIdGlobal=curPrizeId;
 }
 setInterval(syncGlobals,500);
 
 function checkAutoBatida(){
-  if(bingoBloqueado) return;
   const p=getCurrentPremio(); if(!p) return;
   const btn=$('btnBingo');
   let algumaBateu=false;
-  // Verificar TODAS as cartelas
-  for(let i=0;i<cartelas.length;i++){
-    const c=cartelas[i]; if(!c) continue;
-    const allNums=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
-    if(allNums.length<(c.freeCenter?24:25)) continue;
+  const ativas=getCartelasAtivas();
+  // Verificar SOMENTE cartelas ativas (nao batidas)
+  for(let i=0;i<ativas.length;i++){
+    const c=ativas[i]; if(!c) continue;
     const marcados=new Set(c.marcados||[]);
-    const bateu=p.regra==='cheia'?allNums.every(n=>marcados.has(n)):checkLD(c,marcados);
+    let bateu=false;
+    if(p.regra==='cheia'){
+      const allNums=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
+      bateu=allNums.every(n=>marcados.has(n));
+    } else {
+      bateu=checkLD(c,marcados);
+    }
     if(bateu){
       algumaBateu=true;
-      // Se primeira vez que bateu, avisar
-      if(!cartelasQueBateram.has(c.id)){
-        cartelasQueBateram.add(c.id);
-        cartelaPremioGanho={ordem:p.ordem,nome:p.nome,id:p.id};
+      // Aviso de batida (somente uma vez por cartela)
+      const jaAvisou=sessionStorage.getItem('batida_'+c.id);
+      if(!jaAvisou){
+        sessionStorage.setItem('batida_'+c.id,'1');
         sndBingo();
         try{ navigator.vibrate([200,100,200,100,400]); }catch(e){}
-        // Navegar para cartela que bateu
-        if(i!==cartelaIdx){ cartelaIdx=i; showView('vJogo'); renderCartela(); renderHist(); updateCartelasInfo(); }
-        // Mostrar modal
+        if(i!==cartelaIdx){ cartelaIdx=i; renderCartela(); renderHist(); }
         var m=$('mBatida'); if(m){ var bp=$('batidaPremio');if(bp)bp.textContent='Cartela '+c.id+' bateu! Premio: '+p.nome; var bi=$('batidaInfo');if(bi)bi.textContent='Toque BINGO para declarar'; m.classList.add('open');}
       }
-      // Pulsar botao se ainda nao confirmado
-      if(btn && !btn.classList.contains('confirmado')) btn.classList.add('pulsing');
+      if(btn) btn.classList.add('pulsing');
     }
   }
-  // Se nenhuma bateu, parar de pulsar
-  if(!algumaBateu && btn && !btn.classList.contains('confirmado')) btn.classList.remove('pulsing');
+  if(!algumaBateu && btn) btn.classList.remove('pulsing');
 }
 function checkLD(c,marcados){
   for(let row=0;row<5;row++){if(LETTERS.every((l,col)=>{ if(c.freeCenter&&row===2&&col===2)return true; const n=c.numeros[l][row]; return n!==null&&n!==undefined&&marcados.has(n); }))return true;}
@@ -2110,11 +2165,12 @@ function checkLD(c,marcados){
   return false;
 }
 function onBingoClick(){
-  var c=cartelas[cartelaIdx]; if(!c) return;
-  var nome=userProfile?.apelido||userProfile?.nome||currentUser?.email;
-  var txt=$('mBingoTxt');
+  const ativas=getCartelasAtivas();
+  const c=ativas[cartelaIdx]; if(!c) return;
+  const nome=userProfile?.apelido||userProfile?.nome||currentUser?.email;
+  const txt=$('mBingoTxt');
   if(txt) txt.textContent='Declarar BINGO com a cartela '+c.id+' ('+(nome||'')+')? O operador ira confirmar.';
-  var m=$('mBingo'); if(m) m.classList.add('open');
+  const m=$('mBingo'); if(m) m.classList.add('open');
 }
 // -- EDITAR PERFIL ------------------------------------
 function openEditarPerfil(){
@@ -2330,11 +2386,13 @@ function onSelecaoTap(el, cid) {
 }
 // Tornar acessivel via onclick inline
 window.onSelecaoTap = onSelecaoTap;
+window.selecionarCartela = selecionarCartela;
 
 // Enviar batida BINGO — funcao global para onclick inline
 window.enviarBatida = function(){
   closeM('mBingo');
-  const c=cartelas[cartelaIdx]; if(!c||!currentUser) return;
+  const ativas=getCartelasAtivas();
+  const c=ativas[cartelaIdx]; if(!c||!currentUser) return;
   const p=getCurrentPremio();
   const nome=userProfile?.apelido||userProfile?.nome||currentUser.email;
   const batidaId=genId();
@@ -2349,44 +2407,76 @@ window.enviarBatida = function(){
   if(el){el.className='batida-status bs-pend';el.textContent=' Batida enviada -- aguardando confirmacao...';}
 };
 
-// Bloquear edicao quando bingo confirmado
-function aplicarBloqueioBingo(){
-  const btnNova=$('btnNovaC'); if(btnNova) btnNova.style.display='none';
-  const btnDel=$('btnDelC'); if(btnDel) btnDel.style.display='none';
-  const nav=$('cartela-nav');
-  if(nav && !nav.querySelector('.bingo-lock-msg')){
-    const lock=document.createElement('div');
-    lock.className='bingo-lock-msg';
-    lock.style.cssText='grid-column:1/-1;text-align:center;font-size:.65rem;font-weight:800;color:var(--green);padding:4px;background:rgba(0,223,168,.15);border-radius:var(--rsm);margin-top:4px';
-    lock.textContent='BINGO CONFIRMADO — Cartela bloqueada';
-    nav.appendChild(lock);
+// -- CARTELAS BATIDAS VIEW --
+function renderCartelasBatidas(){
+  const lista=$('batidasLista'); if(!lista) return;
+  const batidas=cartelas.filter(c=>c.status==='batida');
+  $('batidasCount').textContent=batidas.length;
+  const btn=$('btnVerBatidas');
+  if(btn) btn.style.display=batidas.length>0?'inline-flex':'none';
+  if(!batidas.length){
+    lista.innerHTML='<div style="text-align:center;padding:40px 20px;color:var(--text3)"><div style="font-size:2.5rem;margin-bottom:10px">🏆</div><div style="font-size:.9rem;font-weight:700">Nenhuma cartela batida ainda</div><div style="font-size:.78rem;margin-top:6px">Quando uma cartela bater, aparecera aqui</div></div>';
+    return;
   }
-  // Mostrar header dourado com premio
-  const bingoTitle=$('bingoTitle');
-  if(bingoTitle && cartelaPremioGanho){
-    bingoTitle.innerHTML=`<span style="color:#FFD700">&#127942; P${cartelaPremioGanho.ordem}:</span> ${cartelaPremioGanho.nome}`;
-    bingoTitle.style.display='block';
-  }
+  lista.innerHTML='';
+  batidas.forEach((c,idx)=>{
+    const pg=c.premioGanho;
+    const data=pg?.ts?new Date(pg.ts).toLocaleString('pt-BR'):'--';
+    const card=document.createElement('div');
+    card.style.cssText='background:var(--surface);border:1.5px solid rgba(255,215,0,.3);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .2s';
+    card.innerHTML=`<div style="padding:12px 14px;display:flex;align-items:center;gap:10px">
+      <div style="font-size:1.8rem;flex-shrink:0">🏆</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-family:'Bebas Neue';font-size:1.1rem;color:#FFD700;letter-spacing:1px">${esc(c.id)}</div>
+        <div style="font-size:.8rem;color:var(--text);font-weight:700;margin-top:2px">${pg?esc(pg.nome):'Premio ganho'}</div>
+        <div style="font-size:.7rem;color:var(--text3);margin-top:2px">${data}</div>
+      </div>
+      <div style="font-size:1.2rem;color:var(--text3);flex-shrink:0">▼</div>
+    </div>
+    <div class="batida-expand" style="display:none;border-top:1px solid var(--border);padding:10px">
+      <div id="batida-grid-${idx}" style="max-width:300px;margin:0 auto"></div>
+    </div>`;
+    const expand=card.querySelector('.batida-expand');
+    const arrow=card.querySelector('div:last-child');
+    card.addEventListener('click',()=>{
+      const isOpen=expand.style.display==='block';
+      expand.style.display=isOpen?'none':'block';
+      arrow.textContent=isOpen?'▼':'▲';
+      if(!isOpen) renderMiniCartela(c,`batida-grid-${idx}`);
+    });
+    lista.appendChild(card);
+  });
 }
-function liberarBloqueioBingo(){
-  bingoBloqueado=false;
-  cartelaPremioGanho=null;
-  cartelasQueBateram=new Set();
-  const btnNova=$('btnNovaC'); if(btnNova) btnNova.style.display='';
-  const btnDel=$('btnDelC'); if(btnDel) btnDel.style.display='';
-  const lock=$('cartela-nav')?.querySelector('.bingo-lock-msg');
-  if(lock) lock.remove();
-  // Restaurar botao BINGO
-  const btnBingo=$('btnBingo');
-  if(btnBingo){ btnBingo.classList.remove('confirmado'); btnBingo.disabled=false; btnBingo.textContent='BINGO'; }
-  // Esconder header dourado
-  const bingoTitle=$('bingoTitle');
-  if(bingoTitle) bingoTitle.style.display='none';
-  // Restaurar label do premio
-  const premioLabel=$('premioLabel');
-  if(premioLabel && evData){
-    const pr=sortP(evData.premios).find(p=>p.id===curPrizeId);
-    if(pr){
+function renderMiniCartela(c,containerId){
+  const el=document.getElementById(containerId); if(!el) return;
+  const drawnSet=new Set(evData?.drawn||[]);
+  const marcados=new Set(c.marcados||[]);
+  let html='<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px">';
+  LETTERS.forEach(l=>{
+    html+=`<div style="text-align:center;font-family:'Bebas Neue';font-size:1.1rem;padding:4px;background:rgba(255,215,0,.15);color:#FFD700;border-radius:4px 4px 0 0">${l}</div>`;
+  });
+  for(let row=0;row<5;row++){
+    LETTERS.forEach((letter,col)=>{
+      const isFree=c.freeCenter&&row===2&&col===2;
+      const num=(c.numeros[letter]||[])[row];
+      const hasNum=num!==null&&num!==undefined;
+      const isMkd=hasNum&&marcados.has(num);
+      const isDrawn=hasNum&&drawnSet.has(num);
+      let cls='',style='';
+      if(isFree){ cls='*'; style='background:var(--surface3);color:var(--text2)'; }
+      else if(!hasNum){ cls=''; style='background:var(--surface2)' }
+      else if(isMkd){ cls=num; style=`background:var(--c${letter});color:#000;font-weight:800`; }
+      else { cls=num; style=`color:var(--c${letter})`; }
+      html+=`<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:1rem;border:1.5px solid var(--border);border-radius:4px;${style}">${cls}</div>`;
+    });
+  }
+  html+='</div>';
+  el.innerHTML=html;
+}
+
+// REMOVIDO: aplicarBloqueioBingo e liberarBloqueioBingo
+// Agora cartelas batidas saem da paginacao via c.status='batida'
+// e sao exibidas na view vBatidas
       const done=pr.ganhadores&&pr.ganhadores.length>0;
       premioLabel.innerHTML=`&#127881; Premio: ${pr.nome||'--'} (${pr.regra==='cheia'?'Cheia':'Linha Dupla'}) <span style="color:${done?'var(--green)':'var(--text3)'};">${done?'&#10004; Confirmado':'Pendente'}</span>`;
     }

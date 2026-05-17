@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v9.17 - 2026-05-16 -->
+<!-- IBBI Bingo Player v9.19 - 2026-05-16 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo v9.17</title>
+<title>IBBI Bingo v9.19</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -262,7 +262,7 @@ transition:background-color 9999s ease-in-out 0s;
 .ct-card-sel .ct-id-sel{font-family:'Bebas Neue';font-size:.9rem;color:var(--accent);letter-spacing:1px;text-align:center}
 .ct-card-sel .ct-mode-sel{font-size:.55rem;font-weight:800;padding:1px 4px;border-radius:3px;background:rgba(0,184,240,.12);color:var(--accent);text-align:center;margin-top:2px}
 
-/* === SELECAO: ESTILOS ADICIONAIS v9.17 === */
+/* === SELECAO: ESTILOS ADICIONAIS v9.19 === */
 .ct-card-sel .sel-hint{position:absolute;inset:0;background:rgba(0,184,240,.9);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:1.1rem;color:#000;letter-spacing:2px;z-index:4;animation:none;pointer-events:none;opacity:0;transition:opacity .2s}
 .ct-card-sel:active{transform:scale(.97)}
 
@@ -286,7 +286,7 @@ transition:background-color 9999s ease-in-out 0s;
 
 </style>
 
-  <meta name="app-version" content="v9.17">
+  <meta name="app-version" content="v9.19">
 </head>
 <body>
 
@@ -311,7 +311,7 @@ transition:background-color 9999s ease-in-out 0s;
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &#8594;</button>
         </div>
       </div>
-      <div class="vtag">v9.17</div>
+      <div class="vtag">v9.19</div>
     </div>
   </div>
 </div>
@@ -360,7 +360,7 @@ transition:background-color 9999s ease-in-out 0s;
 </div>
 
   </div>
-  <div class="vtag">v9.17</div>
+  <div class="vtag">v9.19</div>
 </div>
 
   </div>
@@ -447,7 +447,7 @@ transition:background-color 9999s ease-in-out 0s;
 
   <div style="margin-top:16px;text-align:center">
     <button class="btn btn-ghost btn-sm" id="btnVoltarSelecao">← Voltar</button>
-    <div class="vtag" style="margin-top:10px">v9.17</div>
+    <div class="vtag" style="margin-top:10px">v9.19</div>
   </div>
 </div>
 
@@ -462,7 +462,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="p-logo">B<span>I</span>NGO</div>
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname">Preview da Cartela</div>
-    <span class="p-vtag">v9.17</span>
+    <span class="p-vtag">v9.19</span>
   </div>
   <div class="p-body" style="padding-top:20px">
     <div id="previewCardWrap" style="max-width:420px;margin:0 auto;width:100%">
@@ -484,7 +484,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="ibbi-badge">IBBI</div>
     <div class="p-username" id="gameUserName"></div>
     <button class="btn btn-sm" id="btnVerBatidas" style="display:none;background:rgba(255,215,0,.15);color:#FFD700;border:1.5px solid rgba(255,215,0,.3);font-family:'Bebas Neue';letter-spacing:1px">🏆 <span id="batidasCount">0</span></button>
-    <span class="p-vtag">v9.17</span>
+    <span class="p-vtag">v9.19</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div id="gameEvBar" style="background:var(--surface);border-bottom:1.5px solid var(--border);padding:8px 14px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1px;color:var(--accent)">&mdash;</div>
@@ -523,7 +523,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="p-logo">B<span>I</span>NGO</div>
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="batidasEvName">Cartelas Batidas</div>
-    <span class="p-vtag">v9.17</span>
+    <span class="p-vtag">v9.19</span>
   </div>
   <div class="p-body" style="padding-top:20px">
     <div style="text-align:center;margin-bottom:16px">
@@ -1046,19 +1046,18 @@ function continuarJogo(ev){
     if(data?.bingoConfirmado){
       const pg=data?.premioGanho;
       const premioMsg=pg?`Premio #${pg.ordem} — ${pg.nome||'Bingo'}`:'Premio confirmado';
-      // Encontrar cartela que bateu (a que tem o ID correspondente ou a atual)
-      const cBatida=cartelas.find(c=>c.status==='batida')||cartelas[cartelaIdx];
-      if(cBatida && cBatida.status!=='batida'){
+      // Usar ultimaCartelaBatida para identificar a cartela correta (fix multiplas batidas)
+      const cid=data?.ultimaCartelaBatida;
+      const cBatida=cid?cartelas.find(c=>c.id===cid):cartelas[cartelaIdx];
+      if(cBatida && cBatida.status==='ativa'){
         cBatida.status='batida';
-        cBatida.premioGanho={nome:pg?.nome||'Bingo',ordem:pg?.ordem||1,ts:Date.now()};
+        cBatida.premioGanho={nome:pg?.nome||'Bingo',ordem:pg?.ordem||1,ts:Date.now(),divididoCom:pg?.divididoCom||null};
         saveAllCartelas();
         // Modal dourado de CONFIRMACAO
         $('bingoOuroPremio').textContent=premioMsg;
         $('bingoOuroData').textContent=pg?.ts?new Date(pg.ts).toLocaleString('pt-BR'):new Date().toLocaleString('pt-BR');
         openM('mBingoOuro');
-        // Atualizar contador e lista
         renderCartelasBatidas();
-        // Resetar idx e re-renderizar (cartela sai da paginacao)
         cartelaIdx=0;
         renderCartela(); renderHist(); checkAutoBatida();
         showToast('🏆 BINGO! Cartela '+cBatida.id+' bateu!');
@@ -1066,12 +1065,49 @@ function continuarJogo(ev){
     }
     // Verificar se bingo foi DESFEITO pelo gestor (vencedor removido)
     if(data && data.bingoConfirmado===false && data.premioGanho===null){
-      // Gestor removeu o vencedor - reativar cartela
-      const cBatida=cartelas.find(c=>c.status==='batida');
-      if(cBatida){
-        _cartelaParaReativar=cBatida;
-        $('reativarMsg').textContent='O gestor removeu o vencedor do premio. Sua cartela '+cBatida.id+' voltara a participar.';
+      // Gestor removeu o vencedor - reativar qualquer cartela nao ativa
+      const cNaoAtiva=cartelas.find(c=>c.status!=='ativa');
+      if(cNaoAtiva){
+        _cartelaParaReativar=cNaoAtiva;
+        $('reativarMsg').textContent='O gestor removeu o vencedor. Sua cartela '+cNaoAtiva.id+' voltara a participar.';
         openM('mReativar');
+      }
+    }
+    // Verificar se premio foi DIVIDIDO
+    if(data?.dividido && data?.divididoCom?.length){
+      const cid=data?.ultimaCartelaBatida;
+      const cDiv=cid?cartelas.find(c=>c.id===cid):cartelas.find(c=>c.status==='ativa');
+      if(cDiv && cDiv.status==='ativa'){
+        const pg=data?.premioGanho;
+        cDiv.status='dividido';
+        cDiv.premioGanho={nome:pg?.nome||'Premio',ordem:pg?.ordem||1,ts:Date.now(),divididoCom:data.divididoCom};
+        saveAllCartelas();
+        renderCartelasBatidas();
+        cartelaIdx=0;
+        renderCartela(); renderHist();
+        showToast('🏆 Cartela '+cDiv.id+' bateu! Premio dividido.');
+      }
+    }
+    // Verificar se GANHOU APOSTA (escolhido entre divididos)
+    if(data?.ganhouAposta===true){
+      const cAposta=cartelas.find(c=>c.status==='dividido'||c.status==='ativa');
+      if(cAposta && cAposta.status!=='ganhou_aposta'){
+        cAposta.status='ganhou_aposta';
+        cAposta.premioGanho={...cAposta.premioGanho||{},ganhouAposta:true};
+        saveAllCartelas();
+        renderCartelasBatidas();
+        showToast('🎉 Cartela '+cAposta.id+' ganhou a aposta!');
+      }
+    }
+    // Verificar se PERDEU APOSTA (nao escolhido entre divididos)
+    if(data?.perdeuAposta===true){
+      const cPerda=cartelas.find(c=>c.status==='dividido'||c.status==='ativa');
+      if(cPerda && cPerda.status!=='perdeu_aposta'){
+        cPerda.status='perdeu_aposta';
+        cPerda.premioGanho={...cPerda.premioGanho||{},perdeuAposta:true};
+        saveAllCartelas();
+        renderCartelasBatidas();
+        showToast('😞 Cartela '+cPerda.id+' perdeu a aposta.');
       }
     }
     // Sorteio foi reiniciado — brincante zerado no Firebase
@@ -1094,11 +1130,11 @@ function continuarJogo(ev){
         .map(([fbId,c])=>ensureNumerosFormat({fbId,...c}))
         .sort((a,b)=>a.criadaEm-b.criadaEm);
       if(novo.length){
-        // Merge: preservar status='batida' e premioGanho das cartelas locais
+        // Merge: preservar status e premioGanho das cartelas locais
         novo.forEach(cNovo=>{
           const cLocal=cartelas.find(c=>c.id===cNovo.id);
-          if(cLocal && cLocal.status==='batida'){
-            cNovo.status='batida';
+          if(cLocal && cLocal.status!=='ativa'){
+            cNovo.status=cLocal.status;
             cNovo.premioGanho=cLocal.premioGanho;
           }
         });
@@ -1211,7 +1247,7 @@ function loadCartelasFromCache(){
 
 
 // ======================================================
-//  OCR - GRADE AJUSTAVEL INTEGRADA v9.17
+//  OCR - GRADE AJUSTAVEL INTEGRADA v9.19
 // ======================================================
 let _ocrNums = {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
 let _ocrDetectedFreeCenter = false;
@@ -1306,7 +1342,7 @@ function initOcr(){
       _cartelaParaReativar.status='ativa';
       _cartelaParaReativar.premioGanho=null;
       _cartelaParaReativar=null;
-      // Limpar sessionStorage de aviso de batida para essa cartela
+      // Limpar sessionStorage de avisos
       try{ Object.keys(sessionStorage).forEach(k=>{ if(k.startsWith('batida_')) sessionStorage.removeItem(k); }); }catch(e){}
       saveAllCartelas();
       cartelaIdx=0;
@@ -1315,6 +1351,11 @@ function initOcr(){
       showToast('Cartela reativada! Continue jogando.');
     }
   });
+  // Limpar todos os status finais ao reiniciar evento
+  window._clearAllStatus=()=>{
+    cartelas.forEach(c=>{ c.status='ativa'; c.premioGanho=null; });
+    try{ Object.keys(sessionStorage).forEach(k=>{ if(k.startsWith('batida_')) sessionStorage.removeItem(k); }); }catch(e){}
+  };
   // Ver cartelas batidas
   on('btnVerBatidas','click',()=>{
     $('batidasEvName').textContent=evData?.nome||'Cartelas Batidas';
@@ -1721,15 +1762,15 @@ function puxarAutomatico(){
 function renderEmptyState(){
   const hdr=$('cartelaHdr'), grid=$('cartelaGrid');
   const cnId=$('cnId'), cnPg=$('cnPg');
-  const batidasCount=cartelas.filter(c=>c.status==='batida').length;
+  const foraCount=cartelas.filter(c=>c.status!=='ativa').length;
   if(cnId) cnId.textContent='--';
-  if(cnPg) cnPg.textContent=batidasCount>0?'Todas as cartelas bateram':'Nenhuma cartela';
+  if(cnPg) cnPg.textContent=foraCount>0?'Todas as cartelas finalizaram':'Nenhuma cartela';
   if(hdr) hdr.innerHTML='';
   if(grid){
-    const msg=batidasCount>0
+    const msg=foraCount>0
       ?`<div style="grid-column:1/-1;text-align:center;padding:24px 10px;color:var(--text3)">
           <div style="font-size:2rem;margin-bottom:8px">🏆</div>
-          <div style="font-size:.88rem;font-weight:700;margin-bottom:4px">Todas as suas cartelas bateram!</div>
+          <div style="font-size:.88rem;font-weight:700;margin-bottom:4px">Todas as suas cartelas finalizaram!</div>
           <div style="font-size:.78rem">Toque em <strong style="color:#FFD700">🏆 Cartelas Batidas</strong> para ver</div>
         </div>`
       :`<div style="grid-column:1/-1;text-align:center;padding:24px 10px;color:var(--text3)">
@@ -1989,8 +2030,8 @@ function ensureNumerosFormat(c){
   return c;
 }
 
-// Cartelas ativas (nao batidas) para paginacao
-function getCartelasAtivas(){ return cartelas.filter(c=>c.status!=='batida'); }
+// Cartelas ativas (participando do jogo) — filtra batida, dividido, ganhou_aposta, perdeu_aposta
+function getCartelasAtivas(){ return cartelas.filter(c=>c.status==='ativa'); }
 function getCartelaAtualIdx(){ return getCartelasAtivas()[cartelaIdx] ? cartelaIdx : 0; }
 
 function renderCartela(){
@@ -2462,27 +2503,46 @@ window.enviarBatida = function(){
 };
 
 // -- CARTELAS BATIDAS VIEW --
+// Status visual para cartelas finalizadas
+const STATUS_META={
+  batida:{icon:'🏆',label:'Bateu!',color:'#FFD700',border:'rgba(255,215,0,.3)'},
+  dividido:{icon:'🏆',label:'Premio Dividido',color:'#FFA500',border:'rgba(255,165,0,.3)'},
+  ganhou_aposta:{icon:'🎉',label:'Ganhou a Aposta!',color:'var(--green)',border:'rgba(0,223,168,.3)'},
+  perdeu_aposta:{icon:'😞',label:'Perdeu Aposta',color:'var(--red)',border:'rgba(255,82,82,.3)'}
+};
 function renderCartelasBatidas(){
   const lista=$('batidasLista'); if(!lista) return;
-  const batidas=cartelas.filter(c=>c.status==='batida');
-  $('batidasCount').textContent=batidas.length;
+  const finalizadas=cartelas.filter(c=>c.status!=='ativa');
+  $('batidasCount').textContent=finalizadas.length;
   const btn=$('btnVerBatidas');
-  if(btn) btn.style.display=batidas.length>0?'inline-flex':'none';
-  if(!batidas.length){
-    lista.innerHTML='<div style="text-align:center;padding:40px 20px;color:var(--text3)"><div style="font-size:2.5rem;margin-bottom:10px">🏆</div><div style="font-size:.9rem;font-weight:700">Nenhuma cartela batida ainda</div><div style="font-size:.78rem;margin-top:6px">Quando uma cartela bater, aparecera aqui</div></div>';
+  if(btn) btn.style.display=finalizadas.length>0?'inline-flex':'none';
+  if(!finalizadas.length){
+    lista.innerHTML='<div style="text-align:center;padding:40px 20px;color:var(--text3)"><div style="font-size:2.5rem;margin-bottom:10px">🏆</div><div style="font-size:.9rem;font-weight:700">Nenhuma cartela finalizada ainda</div><div style="font-size:.78rem;margin-top:6px">Quando uma cartela bater, aparecera aqui</div></div>';
     return;
   }
   lista.innerHTML='';
-  batidas.forEach((c,idx)=>{
+  finalizadas.forEach((c,idx)=>{
     const pg=c.premioGanho;
+    const meta=STATUS_META[c.status]||STATUS_META.batida;
     const data=pg?.ts?new Date(pg.ts).toLocaleString('pt-BR'):'--';
+    // Observacao contextual
+    let obs='';
+    if(c.status==='dividido' && pg?.divididoCom?.length){
+      const outros=pg.divididoCom.filter(n=>n!==(userProfile?.apelido||userProfile?.nome));
+      if(outros.length) obs='Dividido com: '+outros.join(', ');
+    } else if(c.status==='ganhou_aposta'){
+      obs='Ganhou a aposta!';
+    } else if(c.status==='perdeu_aposta'){
+      obs='Perdeu a aposta';
+    }
     const card=document.createElement('div');
-    card.style.cssText='background:var(--surface);border:1.5px solid rgba(255,215,0,.3);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .2s';
+    card.style.cssText=`background:var(--surface);border:1.5px solid ${meta.border};border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .2s`;
     card.innerHTML=`<div style="padding:12px 14px;display:flex;align-items:center;gap:10px">
-      <div style="font-size:1.8rem;flex-shrink:0">🏆</div>
+      <div style="font-size:1.8rem;flex-shrink:0">${meta.icon}</div>
       <div style="flex:1;min-width:0">
-        <div style="font-family:'Bebas Neue';font-size:1.1rem;color:#FFD700;letter-spacing:1px">${esc(c.id)}</div>
-        <div style="font-size:.8rem;color:var(--text);font-weight:700;margin-top:2px">${pg?esc(pg.nome):'Premio ganho'}</div>
+        <div style="font-family:'Bebas Neue';font-size:1.1rem;color:${meta.color};letter-spacing:1px">${esc(c.id)}</div>
+        <div style="font-size:.8rem;color:${meta.color};font-weight:700;margin-top:2px">${esc(meta.label)} — ${pg?esc(pg.nome):'Premio'}</div>
+        ${obs?`<div style="font-size:.72rem;color:var(--text3);margin-top:3px;font-style:italic">${esc(obs)}</div>`:''}
         <div style="font-size:.7rem;color:var(--text3);margin-top:2px">${data}</div>
       </div>
       <div style="font-size:1.2rem;color:var(--text3);flex-shrink:0">▼</div>

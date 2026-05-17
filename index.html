@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v6.7 - 2026-05-16 -->
+<!-- IBBI Bingo v6.9 - 2026-05-17 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v6.7</title>
+<title>IBBI Bingo v6.9</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -271,7 +271,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v6.7</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v6.9</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -651,7 +651,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v6.7';
+const APP_VERSION = 'v6.9';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -1206,9 +1206,10 @@ function confirmarBatida(bid,b){
     set(fb(ganhoEmPath), Date.now()),
     update(fb(`bingo/eventos/${evId}/batidas/${bid}`),{status:'confirmada'}),
     set(fb(brincantePath+'/premioGanho'), premioInfo),
-    set(fb(brincantePath+'/bingoConfirmado'), true)
+    set(fb(brincantePath+'/bingoConfirmado'), true),
+    set(fb(brincantePath+'/ultimaCartelaBatida'), b.cartelaId||'')
   ]).then(()=>{
-    console.log('OK: Ganhadores e premio salvos no Firebase');
+    console.log('OK: Ganhadores, premio e ultimaCartelaBatida salvos no Firebase');
   }).catch(e=>{
     console.error('ERRO ao salvar:', e);
     alert('Erro ao salvar: '+e.message);
@@ -1225,43 +1226,112 @@ function removeWinner(prizeId,idx){
   const removido=evData.premios[prizeId].ganhadores[idx];
   evData.premios[prizeId].ganhadores.splice(idx,1);
   if(!evData.premios[prizeId].ganhadores.length) evData.premios[prizeId].ganhoEm=null;
-  // Salvar no Firebase e atualizar modal
-  const tasks=[
-    set(fb(`bingo/eventos/${evId}/premios/${prizeId}/ganhadores`), evData.premios[prizeId].ganhadores)
-  ];
-  if(!evData.premios[prizeId].ganhadores.length){
-    tasks.push(set(fb(`bingo/eventos/${evId}/premios/${prizeId}/ganhoEm`), null));
-  }
-  // Notificar o player que o vencedor foi removido
-  // Buscar playerId nas batidas confirmadas
-  get(fb(`bingo/eventos/${evId}/batidas`)).then(snap=>{
-    const batidas=snap.val()||{};
-    const bConfirmada=Object.values(batidas).find(b=>b.status==='confirmada'&&b.cartelaId===removido?.cartelaId);
-    if(bConfirmada?.playerId){
-      tasks.push(update(fb(`bingo/eventos/${evId}/brincantes/${bConfirmada.playerId}`),{
-        bingoConfirmado:false,
-        premioGanho:null
-      }));
-    }
-    return Promise.all(tasks);
-  }).catch(()=>Promise.all(tasks)).then(()=>{
-    saveEv(); renderS(false);
-    // Atualizar modal de ganhadores se estiver aberto
-    const cp=sortP(evData?.premios).find(p=>p.id===prizeId);
-    if($('mWin')?.style.display!=='none' && cp){
-      renderGanhadoresPremio(cp);
+  const pri=evData.premios[prizeId];
+  // Salvar premio atualizado
+  const basePath=`bingo/eventos/${evId}/premios/${prizeId}`;
+  const updates={};
+  updates[basePath+'/ganhadores']=pri.ganhadores;
+  if(!pri.ganhadores.length) updates[basePath+'/ganhoEm']=null;
+  update(fb('/'),updates).then(()=>{
+    // Notificar o player que o vencedor foi removido
+    if(removido?.cartelaId){
+      get(fb(`bingo/eventos/${evId}/batidas`)).then(snap=>{
+        const batidas=snap.val()||{};
+        const bConfirmada=Object.values(batidas).find(b=>b.status==='confirmada'&&b.cartelaId===removido.cartelaId);
+        if(bConfirmada?.playerId){
+          return update(fb(`bingo/eventos/${evId}/brincantes/${bConfirmada.playerId}`),{
+            bingoConfirmado:false,
+            premioGanho:null
+          });
+        }
+      }).catch(()=>{}).finally(()=>{
+        saveEv(); renderS(false);
+        // Sempre atualizar a lista de ganhadores no modal
+        const cp=sortP(evData?.premios).find(p=>p.id===prizeId);
+        if(cp) renderGanhadoresPremio(cp);
+      });
+    } else {
+      saveEv(); renderS(false);
+      const cp=sortP(evData?.premios).find(p=>p.id===prizeId);
+      if(cp) renderGanhadoresPremio(cp);
     }
   });
 }
-function dividirPremio(prizeId){ alert('Prêmio dividido entre todos os ganhadores confirmados.'); }
+function dividirPremio(prizeId){
+  const g=evData.premios[prizeId].ganhadores; if(!g?.length)return;
+  if(!confirm(`Dividir premio entre ${g.length} ganhador(es)?`))return;
+  const nomes=g.map(w=>w.nome);
+  // Buscar batidas confirmadas para notificar cada player
+  get(fb(`bingo/eventos/${evId}/batidas`)).then(snap=>{
+    const batidas=snap.val()||{};
+    const confirmadas=Object.values(batidas).filter(b=>b.status==='confirmada');
+    const tasks=[];
+    g.forEach(ganhador=>{
+      const batida=confirmadas.find(b=>b.cartelaId===ganhador.cartelaId);
+      if(batida?.playerId){
+        const outros=nomes.filter(n=>n!==ganhador.nome);
+        tasks.push(update(fb(`bingo/eventos/${evId}/brincantes/${batida.playerId}`),{
+          dividido:true,
+          divididoCom:nomes,
+          premioGanho:{ordem:evData.premios[prizeId].ordem,nome:evData.premios[prizeId].nome,ts:Date.now()},
+          ultimaCartelaBatida:ganhador.cartelaId
+        }));
+      }
+    });
+    return Promise.all(tasks);
+  }).then(()=>{
+    alert('Premio dividido! Todos os ganhadores foram notificados.');
+  }).catch(e=>{
+    console.error('Erro ao dividir:',e);
+    alert('Erro ao notificar ganhadores.');
+  });
+}
 function escolherVencedor(prizeId){
   const g=evData.premios[prizeId].ganhadores; if(!g?.length)return;
   const names=g.map((w,i)=>`${i+1}. ${w.nome} (${w.cartelaId})`).join('\n');
   const escolha=prompt(`Escolha o vencedor (1-${g.length}):\n${names}`);
   const idx=parseInt(escolha)-1;
-  if(isNaN(idx)||idx<0||idx>=g.length){alert('Escolha inválida.');return;}
-  evData.premios[prizeId].ganhadores=[g[idx]];
-  saveEv(); renderS(false);
+  if(isNaN(idx)||idx<0||idx>=g.length){alert('Escolha invalida.');return;}
+  const escolhido=g[idx];
+  const naoEscolhidos=g.filter((_,i)=>i!==idx);
+  // Buscar batidas confirmadas para notificar
+  get(fb(`bingo/eventos/${evId}/batidas`)).then(snap=>{
+    const batidas=snap.val()||{};
+    const confirmadas=Object.values(batidas).filter(b=>b.status==='confirmada');
+    const tasks=[];
+    // Notificar ESCOLHIDO: ganhou aposta
+    const bEsc=confirmadas.find(b=>b.cartelaId===escolhido.cartelaId);
+    if(bEsc?.playerId){
+      tasks.push(update(fb(`bingo/eventos/${evId}/brincantes/${bEsc.playerId}`),{
+        ganhouAposta:true,
+        perdeuAposta:null,
+        dividido:null,
+        divididoCom:null
+      }));
+    }
+    // Notificar NAO ESCOLHIDOS: perderam aposta
+    naoEscolhidos.forEach(ne=>{
+      const bNe=confirmadas.find(b=>b.cartelaId===ne.cartelaId);
+      if(bNe?.playerId){
+        tasks.push(update(fb(`bingo/eventos/${evId}/brincantes/${bNe.playerId}`),{
+          perdeuAposta:true,
+          ganhouAposta:null,
+          dividido:null,
+          divididoCom:null
+        }));
+      }
+    });
+    // Atualizar lista de ganhadores no premio
+    evData.premios[prizeId].ganhadores=[escolhido];
+    tasks.push(set(fb(`bingo/eventos/${evId}/premios/${prizeId}/ganhadores`),[escolhido]));
+    return Promise.all(tasks);
+  }).then(()=>{
+    saveEv(); renderS(false);
+    alert(escolhido.nome+' foi escolhido como vencedor!');
+  }).catch(e=>{
+    console.error('Erro ao escolher vencedor:',e);
+    alert('Erro ao notificar.');
+  });
 }
 
 $('btnDraw')?.addEventListener('click',()=>{

@@ -1,0 +1,813 @@
+<!-- IBBI Bingo Jogar v1.0 -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>IBBI Jogar v1.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060608;--surface:#0f0f14;--surface2:#161620;--surface3:#1e1e2a;--border:#252535;--border2:#323248;--accent:#00b8f0;--accent2:#00dfa8;--red:#f06060;--green:#00dfa8;--text:#e4f2ff;--text2:#7090b0;--text3:#3a5068;--radius:12px;--rsm:8px;--cB:#00b8f0;--cI:#00dfa8;--cN:#f5c800;--cG:#ff8c00;--cO:#c850ff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+.btn{border:none;border-radius:var(--rsm);padding:10px 20px;font-family:'Barlow',sans-serif;font-weight:800;font-size:.9rem;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.btn:active{transform:scale(.95)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-acc{background:linear-gradient(135deg,var(--accent),#0090c8);color:#000;font-weight:900;box-shadow:0 4px 14px rgba(0,184,240,.28)}
+.btn-acc:hover:not(:disabled){filter:brightness(1.1)}
+.btn-ghost{background:var(--surface2);color:var(--text2);border:1.5px solid var(--border)}
+.btn-ghost:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.btn-red{background:rgba(240,96,96,.1);color:var(--red);border:1.5px solid rgba(240,96,96,.3)}
+.btn-sm{padding:6px 12px;font-size:.78rem}
+.btn-icon{padding:6px 10px;font-size:1rem;min-width:36px}
+.btn-full{width:100%;padding:13px}
+.conn{font-size:.7rem;font-weight:700;padding:4px 10px;border-radius:20px;border:1px solid;white-space:nowrap}
+.conn.on{color:var(--green);border-color:var(--green);background:rgba(0,223,168,.1)}
+.conn.off{color:var(--red);border-color:var(--red);background:rgba(240,96,96,.1)}
+
+.view{display:none;min-height:100vh}
+.view.active{display:block}
+.auth-bg{background:radial-gradient(ellipse at 50% 0%,#0a1e35 0%,var(--bg) 70%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.auth-box{width:100%;max-width:380px}
+.auth-logo{font-family:'Bebas Neue',sans-serif;font-size:4.5rem;letter-spacing:6px;color:var(--accent);text-shadow:0 0 40px rgba(0,184,240,.4);text-align:center;line-height:1}
+.auth-logo span{color:var(--accent2)}
+.auth-ibbi{text-align:center;margin-bottom:6px}
+.auth-ibbi span{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.58rem;font-weight:900;letter-spacing:2px;padding:2px 8px;border-radius:4px;text-transform:uppercase}
+.auth-card{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);padding:24px}
+.auth-card-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;color:var(--accent);margin-bottom:16px}
+.auth-link{color:var(--accent);font-size:.82rem;font-weight:700;cursor:pointer;text-decoration:underline;background:none;border:none;padding:0;font-family:'Barlow',sans-serif}
+.err{color:var(--red);font-size:.8rem;font-weight:700;margin-top:8px;padding:8px 12px;background:rgba(240,96,96,.08);border:1px solid rgba(240,96,96,.25);border-radius:var(--rsm);display:none}
+.err.show{display:block}
+.ok-msg{color:var(--green);font-size:.8rem;font-weight:700;margin-top:8px;padding:8px 12px;background:rgba(0,223,168,.08);border:1px solid rgba(0,223,168,.25);border-radius:var(--rsm);display:none}
+.ok-msg.show{display:block}
+.vtag{font-size:.6rem;font-weight:700;color:var(--text3);text-align:center;margin-top:12px}
+
+/* HEADER */
+.p-head{background:rgba(4,4,6,.97);border-bottom:1.5px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.p-logo{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:3px;color:var(--accent);line-height:1}
+.p-logo span{color:var(--accent2)}
+.p-username{font-size:.75rem;font-weight:800;color:var(--accent2);white-space:nowrap;max-width:100px;overflow:hidden;text-overflow:ellipsis}
+.p-vtag{font-size:.58rem;font-weight:700;color:var(--text3)}
+
+/* GAME BODY */
+.p-body{padding:10px 12px 60px;display:flex;flex-direction:column;gap:10px;max-width:480px;margin:0 auto;width:100%}
+
+/* PREMIO */
+.premio-info{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rsm);padding:9px 14px}
+.pi-nome{font-size:.92rem;font-weight:800;color:var(--text)}
+.pi-regra{font-size:.72rem;color:var(--accent);font-weight:700;margin-top:2px}
+.pi-empty{font-size:.82rem;color:var(--text3);font-weight:600}
+
+/* BALL */
+.p-last-ball{display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:border-color .3s,box-shadow .3s}
+.p-last-ball.new-ball{border-color:var(--accent);box-shadow:0 0 20px rgba(0,184,240,.2)}
+.plb-hint{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase}
+.plb-tap{font-size:.72rem;color:var(--text2);margin-top:2px}
+.pbig{width:96px;height:96px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;line-height:1;user-select:none;transition:all .3s}
+.pbig .pbl{font-size:1.1rem;opacity:.8}.pbig .pbn{font-size:2.8rem}
+.pbig.lB{background:radial-gradient(circle at 32% 30%,#d8f6ff,#00b8f0 55%,#005a80);color:#000;box-shadow:0 0 24px rgba(0,184,240,.5)}
+.pbig.lI{background:radial-gradient(circle at 32% 30%,#ccfff0,#00dfa8 55%,#005040);color:#000;box-shadow:0 0 24px rgba(0,223,168,.5)}
+.pbig.lN{background:radial-gradient(circle at 32% 30%,#fffbe0,#f5c800 55%,#806000);color:#000;box-shadow:0 0 24px rgba(245,200,0,.5)}
+.pbig.lG{background:radial-gradient(circle at 32% 30%,#fff0d8,#ff8c00 55%,#804000);color:#000;box-shadow:0 0 24px rgba(255,140,0,.5)}
+.pbig.lO{background:radial-gradient(circle at 32% 30%,#f8d8ff,#c850ff 55%,#600080);color:#000;box-shadow:0 0 24px rgba(200,80,255,.5)}
+.pbig.empty-ball{background:var(--surface2);color:var(--text3);box-shadow:none}
+.pbig.pop{animation:bpop .35s cubic-bezier(.15,1.6,.35,1) both}
+@keyframes bpop{from{transform:scale(.4);opacity:0}}
+
+/* CARTELA NAV */
+.cartela-nav{display:flex;align-items:center;gap:6px}
+.cn-info{text-align:center;flex:1}
+.cn-id{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--accent);letter-spacing:1px}
+.cn-pg{font-size:.7rem;color:var(--text3);font-weight:700;margin-top:1px}
+.cn-toast{font-size:.72rem;color:var(--green);font-weight:700;height:16px;text-align:center;margin-top:2px;transition:opacity .3s}
+
+/* CARTELA */
+.cartela-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.cartela-hdr{display:grid;grid-template-columns:repeat(5,1fr)}
+.ch-cell{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;text-align:center;padding:8px 4px;line-height:1}
+.ch-cell.lB{background:rgba(0,184,240,.2);color:#00b8f0}
+.ch-cell.lI{background:rgba(0,223,168,.2);color:#00dfa8}
+.ch-cell.lN{background:rgba(245,200,0,.2);color:#f5c800}
+.ch-cell.lG{background:rgba(255,140,0,.2);color:#ff8c00}
+.ch-cell.lO{background:rgba(200,80,255,.2);color:#c850ff}
+.cartela-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:6px}
+.c-cell{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.3rem;cursor:pointer;transition:all .2s;border:1.5px solid var(--border);background:var(--surface2);user-select:none}
+.c-cell.empty-cell{color:var(--text3);font-size:.85rem;border-style:dashed;border-color:var(--border2)}
+.c-cell.free-cell{background:var(--surface3);color:var(--text2);font-size:.9rem;cursor:default}
+.c-cell.filled-B{color:#00b8f0;border-color:rgba(0,184,240,.4);background:rgba(0,184,240,.07)}
+.c-cell.filled-I{color:#00dfa8;border-color:rgba(0,223,168,.4);background:rgba(0,223,168,.07)}
+.c-cell.filled-N{color:#f5c800;border-color:rgba(245,200,0,.4);background:rgba(245,200,0,.07)}
+.c-cell.filled-G{color:#ff8c00;border-color:rgba(255,140,0,.4);background:rgba(255,140,0,.07)}
+.c-cell.filled-O{color:#c850ff;border-color:rgba(200,80,255,.4);background:rgba(200,80,255,.07)}
+.c-cell.marked-B{background:#00b8f0;color:#000;border-color:#00b8f0}
+.c-cell.marked-I{background:#00dfa8;color:#000;border-color:#00dfa8}
+.c-cell.marked-N{background:#f5c800;color:#000;border-color:#f5c800}
+.c-cell.marked-G{background:#ff8c00;color:#000;border-color:#ff8c00}
+.c-cell.marked-O{background:#c850ff;color:#000;border-color:#c850ff}
+.c-cell.just-marked{animation:cellpop .35s cubic-bezier(.15,1.6,.35,1) both}
+@keyframes cellpop{from{transform:scale(.55)}}
+
+/* OPTS */
+.cartela-opts{display:flex;flex-wrap:wrap;gap:10px;padding:0 2px}
+.tog-row{display:flex;align-items:center;gap:7px;font-size:.82rem;font-weight:700;color:var(--text2);cursor:pointer;user-select:none}
+.tog{position:relative;width:38px;height:20px;flex-shrink:0}
+.tog input{opacity:0;width:0;height:0}
+.tog-sl{position:absolute;inset:0;border-radius:20px;cursor:pointer;background:var(--surface2);border:1.5px solid var(--border);transition:.2s}
+.tog-sl::before{content:'';position:absolute;width:12px;height:12px;background:var(--text3);border-radius:50%;top:2px;left:2px;transition:.2s}
+.tog input:checked+.tog-sl{background:rgba(0,184,240,.18);border-color:#00b8f0}
+.tog input:checked+.tog-sl::before{background:#00b8f0;transform:translateX(18px)}
+
+/* BINGO BTN */
+.bingo-btn{width:100%;padding:18px;font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:4px;border:none;border-radius:var(--radius);cursor:pointer;transition:all .2s;background:linear-gradient(135deg,#f5c800,#ff8c00);color:#000;box-shadow:0 4px 20px rgba(245,200,0,.3)}
+.bingo-btn:hover{filter:brightness(1.08)}
+.bingo-btn.pulsing{animation:bpulse 1s ease-in-out infinite}
+.bingo-btn.confirmado{background:linear-gradient(135deg,#FFD700,#FFA500);box-shadow:0 0 30px rgba(255,215,0,.6);animation:bglow 1.5s ease-in-out infinite}
+@keyframes bglow{0%,100%{box-shadow:0 0 20px rgba(255,215,0,.5)}50%{box-shadow:0 0 40px rgba(255,215,0,.8)}}
+@keyframes bpulse{0%,100%{box-shadow:0 4px 20px rgba(245,200,0,.3)}50%{box-shadow:0 0 50px rgba(245,200,0,.9)}}
+
+/* BATIDA STATUS */
+.batida-status{text-align:center;padding:12px 16px;border-radius:var(--rsm);font-weight:800;font-size:.88rem;display:none}
+.bs-pend{display:block!important;background:rgba(245,200,0,.1);color:var(--cN);border:1px solid rgba(245,200,0,.3)}
+.bs-conf{display:block!important;background:rgba(0,223,168,.1);color:var(--green);border:1px solid rgba(0,223,168,.3)}
+.bs-rej{display:block!important;background:rgba(240,96,96,.1);color:var(--red);border:1px solid rgba(240,96,96,.3);animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+/* HISTORY */
+.p-hist-title{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase}
+.p-hist-strip{display:flex;flex-wrap:wrap;gap:5px}
+.ph-ball{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;line-height:1;cursor:pointer;transition:transform .15s,opacity .15s;box-shadow:0 2px 5px rgba(0,0,0,.4)}
+.ph-ball:active{transform:scale(.88)}
+.ph-ball .phl{font-size:.48rem;opacity:.75}.ph-ball .phn{font-size:.92rem}
+.ph-ball.lB{background:radial-gradient(circle at 32% 30%,#d8f6ff,#00b8f0 55%,#005a80);color:#000}
+.ph-ball.lI{background:radial-gradient(circle at 32% 30%,#ccfff0,#00dfa8 55%,#005040);color:#000}
+.ph-ball.lN{background:radial-gradient(circle at 32% 30%,#fffbe0,#f5c800 55%,#806000);color:#000}
+.ph-ball.lG{background:radial-gradient(circle at 32% 30%,#fff0d8,#ff8c00 55%,#804000);color:#000}
+.ph-ball.lO{background:radial-gradient(circle at 32% 30%,#f8d8ff,#c850ff 55%,#600080);color:#000}
+.ph-ball.in-cartela{box-shadow:0 0 0 2.5px #fff,0 0 0 4.5px var(--green)}
+.ph-ball.marked{opacity:.4;cursor:default}
+
+/* MODALS */
+.mbk{display:none;position:fixed;inset:0;background:rgba(0,0,2,.92);backdrop-filter:blur(6px);z-index:1000;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto}
+.mbk.open{display:flex}
+.modal{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);width:100%;max-width:380px;padding:22px;margin:auto;flex-shrink:0;animation:mIn .22s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes mIn{from{transform:scale(.88);opacity:0}}
+.modal h2{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:2px;color:var(--accent);margin-bottom:14px}
+.mfoot{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+
+/* NOT FOUND */
+.not-found{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:30px;background:var(--bg)}
+.nf-icon{font-size:3.5rem;margin-bottom:14px}
+.nf-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--text2);letter-spacing:2px;margin-bottom:8px}
+.nf-sub{font-size:.85rem;color:var(--text3);line-height:1.6}
+
+/* CARTELAS BATIDAS */
+.batida-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .2s;margin-bottom:10px}
+.batida-card:hover{border-color:var(--accent)}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface3);color:var(--text);padding:10px 20px;border-radius:var(--rsm);font-size:.82rem;font-weight:700;z-index:2000;opacity:0;transition:all .3s;white-space:nowrap;border:1px solid var(--border2)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30px #161620 inset!important;-webkit-text-fill-color:#e4f2ff!important;transition:background-color 9999s ease-in-out 0s}
+</style>
+<meta name="app-version" content="v1.0">
+</head>
+<body>
+
+<!-- ===== VIEW: LOGIN ===== -->
+<div class="view active" id="vLogin">
+  <div class="auth-bg">
+    <div class="auth-box">
+      <div class="auth-logo">B<span>I</span>NGO</div>
+      <div class="auth-ibbi"><span>IBBI</span></div>
+      <div class="auth-card">
+        <div class="auth-card-title">Entrar</div>
+        <div class="fg"><label>E-mail</label><input class="inp" type="email" id="loginEmail" placeholder="seu@email.com" autocomplete="email"></div>
+        <div class="fg"><label>Senha</label><input class="inp" type="password" id="loginSenha" placeholder="Sua senha" autocomplete="current-password"></div>
+        <div class="err" id="loginErr"></div>
+        <button class="btn btn-acc btn-full" id="btnLogin">Entrar</button>
+        <div style="text-align:center;margin-top:14px;display:flex;flex-direction:column;gap:8px">
+          <button class="auth-link" id="btnEsqueceuSenha">Esqueci minha senha</button>
+          <div class="ok-msg" id="resetOk">E-mail enviado!</div>
+          <div style="color:var(--text3);font-size:.8rem">Nao tem conta?</div>
+          <button class="auth-link" id="btnIrCadastro">Cadastrar</button>
+        </div>
+      </div>
+      <div class="vtag">v1.0</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VIEW: CADASTRO ===== -->
+<div class="view" id="vCadastro">
+  <div class="auth-bg" style="align-items:flex-start;padding-top:30px">
+    <div class="auth-box">
+      <div class="auth-logo" style="font-size:3rem">B<span>I</span>NGO</div>
+      <div class="auth-ibbi"><span>IBBI</span></div>
+      <div class="auth-card">
+        <div class="auth-card-title">Cadastro</div>
+        <div class="fg"><label>E-mail *</label><input class="inp" type="email" id="cadEmail" placeholder="seu@email.com" autocomplete="email"></div>
+        <div class="fg"><label>Senha * (min. 6)</label><input class="inp" type="password" id="cadSenha" placeholder="Crie uma senha" autocomplete="new-password"></div>
+        <div class="fg"><label>Confirmar Senha *</label><input class="inp" type="password" id="cadSenhaConf" placeholder="Repita" autocomplete="new-password"></div>
+        <div class="divider"></div>
+        <div class="fg"><label>Nome completo *</label><input class="inp" type="text" id="cadNome" placeholder="Seu nome" maxlength="60" autocomplete="name"></div>
+        <div class="fg"><label>Apelido</label><input class="inp" type="text" id="cadApelido" placeholder="Ex: joao123" maxlength="30" autocapitalize="off"></div>
+        <div style="background:var(--surface2);border:1.5px solid var(--border2);border-radius:var(--rsm);padding:12px;margin-top:10px;margin-bottom:4px">
+          <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;user-select:none">
+            <input type="checkbox" id="chkTermos" style="margin-top:3px;flex-shrink:0;accent-color:var(--accent);width:18px;height:18px">
+            <span style="font-size:.77rem;color:var(--text2);line-height:1.5">Declaro que sou responsavel pela conferencia dos numeros da minha cartela.</span>
+          </label>
+        </div>
+        <div class="err" id="cadErr"></div>
+        <button class="btn btn-acc btn-full" id="btnCadastrar" style="margin-top:8px">Criar Conta</button>
+        <div style="text-align:center;margin-top:12px"><button class="auth-link" id="btnIrLogin">Ja tenho conta</button></div>
+      </div>
+      <div class="vtag">v1.0</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VIEW: AGUARDANDO ===== -->
+<div class="view" id="vAguardando">
+  <div class="auth-bg">
+    <div class="auth-box" style="max-width:380px;text-align:center">
+      <div class="auth-logo">B<span>I</span>NGO</div>
+      <div class="auth-ibbi"><span>IBBI</span></div>
+      <div class="auth-card">
+        <div style="font-size:2.5rem;margin-bottom:12px">&#9203;</div>
+        <div style="font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:8px">Aguardando Inicio</div>
+        <div style="font-size:.85rem;color:var(--text2);margin-bottom:16px">O organizador ainda nao iniciou nenhuma rodada. Aguarde...</div>
+        <div style="font-size:.78rem;color:var(--text3);padding:10px;background:var(--surface2);border-radius:var(--rsm)">Esta tela atualiza automaticamente.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VIEW: NOT FOUND ===== -->
+<div class="view" id="vNotFound">
+  <div class="not-found">
+    <div class="nf-icon">&#127921;</div>
+    <div class="nf-title">Evento nao encontrado</div>
+    <div class="nf-sub" id="nfMsg">Este evento nao existe ou foi excluido.</div>
+    <button class="btn btn-ghost" style="margin-top:16px" onclick="window.location.href='player.html'">Voltar ao Hub</button>
+  </div>
+</div>
+
+<!-- ===== VIEW: JOGO ===== -->
+<div class="view" id="vJogo">
+  <div class="p-head">
+    <div class="p-logo">B<span>I</span>NGO</div>
+    <div style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase">IBBI</div>
+    <div class="p-username" id="gameUserName"></div>
+    <button class="btn btn-sm" id="btnVerBatidas" style="display:none;background:rgba(255,215,0,.15);color:#FFD700;border:1.5px solid rgba(255,215,0,.3);font-family:'Bebas Neue';letter-spacing:1px">&#127942; <span id="batidasCount">0</span></button>
+    <span class="p-vtag">v1.0</span>
+    <span class="conn off" id="pConn">&#9679;</span>
+  </div>
+  <div id="gameEvBar" style="background:var(--surface);border-bottom:1.5px solid var(--border);padding:8px 14px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1px;color:var(--accent)">&mdash;</div>
+  <div class="p-body" id="pBody"></div>
+</div>
+
+<!-- ===== VIEW: CARTELAS BATIDAS ===== -->
+<div class="view" id="vBatidas">
+  <div class="p-head">
+    <div class="p-logo">B<span>I</span>NGO</div>
+    <div style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase">IBBI</div>
+    <div class="p-username" id="batidasUserName">Cartelas Batidas</div>
+    <span class="p-vtag">v1.0</span>
+  </div>
+  <div class="p-body" style="padding-top:20px">
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;color:#FFD700">&#127942; Cartelas Batidas</div>
+      <div style="font-size:.78rem;color:var(--text2);margin-top:4px">Cartelas que ja bateram neste evento</div>
+    </div>
+    <div id="batidasLista" style="display:flex;flex-direction:column;gap:10px"></div>
+    <div style="text-align:center;margin-top:20px">
+      <button class="btn btn-ghost btn-full" onclick="showView('vJogo')">&larr; Voltar ao Jogo</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Adicionar numero -->
+<div class="mbk" id="mAddNum"><div class="modal"><h2 id="mAddTitle">Adicionar?</h2><p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mAddTxt"></p><div class="mfoot"><button class="btn btn-ghost" onclick="closeM('mAddNum');pendingAdd=null">Cancelar</button><button class="btn btn-acc" onclick="confirmAdd()">Adicionar</button></div></div></div>
+<!-- MODAL: Declarar BINGO -->
+<div class="mbk" id="mBingo"><div class="modal"><h2>&#127881; Declarar BINGO?</h2><p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mBingoTxt"></p><div class="mfoot"><button class="btn btn-ghost" onclick="closeM('mBingo')">Cancelar</button><button class="btn" onclick="enviarBatida()" style="background:linear-gradient(135deg,#f5c800,#ff8c00);color:#000;font-weight:900;font-family:'Barlow',sans-serif;border:none;border-radius:var(--rsm);padding:9px 18px;cursor:pointer;font-size:.9rem">&#127881; Confirmar!</button></div></div></div>
+<!-- MODAL: Excluir cartela -->
+<div class="mbk" id="mDelCartela"><div class="modal"><h2>Excluir Cartela?</h2><p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mDelTxt"></p><div class="mfoot"><button class="btn btn-ghost" onclick="closeM('mDelCartela')">Cancelar</button><button class="btn btn-red" onclick="confirmDel()">&#128465; Excluir</button></div></div></div>
+<!-- MODAL: Batida detectada -->
+<div class="mbk" id="mBatida"><div class="modal" style="max-width:380px;text-align:center;background:linear-gradient(180deg,#1a1a1a 0%,#2a1a00 100%);border:2px solid var(--green)"><div style="font-size:4rem;margin:10px 0">&#127919;</div><h2 style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:4px;color:var(--green);margin-bottom:8px">BATIDA!</h2><div id="batidaPremio" style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:6px">Sua cartela bateu!</div><div id="batidaInfo" style="font-size:.85rem;color:var(--text3);margin-bottom:20px">Aperte BINGO para confirmar</div><button class="btn btn-acc" onclick="closeM('mBatida')" style="width:100%;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;padding:12px 30px">IR PARA CARTELA</button></div></div>
+<!-- MODAL: Bingo confirmado (ouro) -->
+<div class="mbk" id="mBingoOuro"><div class="modal" style="max-width:380px;text-align:center;background:linear-gradient(180deg,#1a1a1a 0%,#2a1a00 100%);border:2px solid #FFD700"><div style="font-size:4rem;margin:10px 0">&#127942;</div><h2 style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:4px;color:#FFD700;margin-bottom:8px">B I N G O !</h2><div id="bingoOuroPremio" style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:6px">Premio confirmado!</div><div id="bingoOuroData" style="font-size:.8rem;color:var(--text3);margin-bottom:20px">--</div><button class="btn btn-acc" onclick="closeM('mBingoOuro');showView('vBatidas');renderCartelasBatidas()" style="width:100%;margin-bottom:8px;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;padding:12px 30px">&#128065; VER CARTELA</button><button class="btn" onclick="closeM('mBingoOuro')" style="background:linear-gradient(90deg,#FFD700,#FFA500);color:#000;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;padding:12px 30px;border:none;border-radius:var(--rsm);width:100%">FECHAR</button></div></div>
+<!-- MODAL: Reativar cartela -->
+<div class="mbk" id="mReativar"><div class="modal" style="max-width:380px;text-align:center;background:linear-gradient(180deg,#1a1a1a 0%,#2a0000 100%);border:2px solid var(--accent)"><div style="font-size:3rem;margin:10px 0">&#9888;</div><h2 style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:3px;color:var(--accent);margin-bottom:8px">VENCEDOR REMOVIDO</h2><div style="font-size:.9rem;color:var(--text);margin-bottom:8px">O gestor removeu o vencedor. Sua cartela voltara a participar.</div><div style="font-size:.78rem;color:var(--text3);margin-bottom:20px">Toque OK para continuar.</div><button class="btn btn-acc" onclick="reativarCartela()" style="width:100%;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;padding:12px 30px">OK</button></div></div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, update, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
+  authDomain: "domino-fa285.firebaseapp.com",
+  databaseURL: "https://domino-fa285-default-rtdb.firebaseio.com",
+  projectId: "domino-fa285",
+  storageBucket: "domino-fa285.firebasestorage.app",
+  messagingSenderId: "462709449311",
+  appId: "1:462709449311:web:569624eeac6fc57c0631ea"
+});
+const db = getDatabase(app);
+const auth = getAuth(app);
+const fb = p => ref(db, p);
+
+const $ = id => document.getElementById(id);
+const showView = id => { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); $(id)?.classList.add('active'); };
+const showErr = (id, msg) => { const el = $(id); if(el){el.textContent=msg;el.style.display='block';} };
+const hideErr = id => { const el=$(id);if(el)el.style.display='none'; };
+const showToast = msg => { const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000); };
+const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const genId = () => Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const LETTERS = ['B','I','N','G','O'];
+function getLetter(n,mode){ return LETTERS[Math.min(Math.floor((n-1)/(mode/5)),4)]; }
+function colRange(letter,mode){ const idx=LETTERS.indexOf(letter),size=mode/5;return{min:Math.floor(idx*size)+1,max:Math.floor((idx+1)*size)}; }
+function friendlyAuthError(code){
+  const msgs={'auth/invalid-email':'E-mail invalido.','auth/user-not-found':'E-mail nao cadastrado.','auth/wrong-password':'Senha incorreta.','auth/email-already-in-use':'E-mail ja cadastrado.','auth/weak-password':'Senha muito fraca.','auth/too-many-requests':'Muitas tentativas.','auth/network-request-failed':'Erro de conexao.','auth/invalid-credential':'E-mail ou senha incorretos.'};
+  return msgs[code]||'Erro: '+code;
+}
+
+// -- URL --
+const params = new URLSearchParams(window.location.search);
+const evId = params.get('ev');
+
+// -- STATE --
+let evData=null, bingoData=null, currentUser=null, userProfile=null;
+let cartelas=[], cartelaIdx=0;
+let pendingAdd=null, pendingRem=null;
+let curPrizeId=null;
+let _cartelaParaReativar=null;
+let _lastSaveTime=0;
+let toastTimer=null;
+
+// -- AUDIO --
+const AC = new (window.AudioContext||window.webkitAudioContext)();
+function tone(freq,dur,type='sine',vol=0.25){try{const o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(vol,AC.currentTime);g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+dur);o.start();o.stop(AC.currentTime+dur);}catch(e){}}
+const sndMark = ()=>tone(880,.1,'sine',.15);
+const sndNew = ()=>tone(660,.15,'sine',.2);
+const sndBingo = ()=>[523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.25,'triangle',.4),i*130));
+const sndReject = ()=>tone(200,.5,'sawtooth',.3);
+const sndConfirm = ()=>[523,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.2,'sine',.35),i*140));
+
+// -- AUTH --
+onAuthStateChanged(auth, async user => {
+  if(user){
+    currentUser=user;
+    const snap=await get(fb(`bingo/usuarios/${user.uid}`));
+    userProfile=snap.val()||{nome:user.displayName||user.email};
+    if(evId) await initJogo();
+    else { $('nfMsg').textContent='Nenhum evento especificado.'; showView('vNotFound'); }
+  } else {
+    currentUser=null;userProfile=null;
+    showView('vLogin');
+  }
+});
+
+// -- LOGIN / CADASTRO --
+$('btnIrCadastro')?.addEventListener('click',()=>{hideErr('loginErr');hideErr('cadErr');showView('vCadastro');setTimeout(()=>$('cadEmail')?.focus(),200);});
+$('btnIrLogin')?.addEventListener('click',()=>{hideErr('loginErr');hideErr('cadErr');showView('vLogin');setTimeout(()=>$('loginEmail')?.focus(),200);});
+$('loginSenha')?.addEventListener('keydown',e=>{if(e.key==='Enter')$('btnLogin')?.click();});
+$('btnLogin')?.addEventListener('click',async()=>{
+  const email=$('loginEmail').value.trim(),senha=$('loginSenha').value;
+  hideErr('loginErr');$('resetOk').classList.remove('show');
+  if(!email||!senha){showErr('loginErr','Preencha e-mail e senha.');return;}
+  $('btnLogin').disabled=true;$('btnLogin').textContent='Entrando...';
+  try{await signInWithEmailAndPassword(auth,email,senha);}
+  catch(e){$('btnLogin').disabled=false;$('btnLogin').textContent='Entrar';showErr('loginErr',friendlyAuthError(e.code));}
+});
+$('btnEsqueceuSenha')?.addEventListener('click',async()=>{
+  const email=$('loginEmail').value.trim();if(!email){showErr('loginErr','Digite seu e-mail.');return;}
+  try{await sendPasswordResetEmail(auth,email);$('resetOk').classList.add('show');}
+  catch(e){showErr('loginErr',friendlyAuthError(e.code));}
+});
+$('cadSenhaConf')?.addEventListener('keydown',e=>{if(e.key==='Enter')$('btnCadastrar')?.click();});
+$('btnCadastrar')?.addEventListener('click',async()=>{
+  const email=$('cadEmail').value.trim(),senha=$('cadSenha').value,senhaConf=$('cadSenhaConf').value;
+  const nome=$('cadNome').value.trim(),apelido=$('cadApelido').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'')||'';
+  hideErr('cadErr');
+  if(!email){showErr('cadErr','Digite e-mail.');return;}if(!senha||senha.length<6){showErr('cadErr','Senha min 6.');return;}
+  if(senha!==senhaConf){showErr('cadErr','Senhas nao coincidem.');return;}if(!nome){showErr('cadErr','Digite nome.');return;}
+  if(!$('chkTermos').checked){showErr('cadErr','Aceite os termos.');return;}
+  $('btnCadastrar').disabled=true;
+  try{
+    const cred=await createUserWithEmailAndPassword(auth,email,senha);
+    await updateProfile(cred.user,{displayName:nome});
+    await set(fb(`bingo/usuarios/${cred.user.uid}`),{nome,email,apelido:apelido||null,criadoEm:Date.now()});
+  }catch(e){$('btnCadastrar').disabled=false;showErr('cadErr',friendlyAuthError(e.code));}
+});
+
+// -- CONNECTIVITY --
+onValue(fb('.info/connected'),s=>{const on=s.val(),d=$('pConn');if(d){d.textContent=on?'online':'offline';d.className='conn '+(on?'on':'off');}});
+
+// -- INIT JOGO --
+async function initJogo(){
+  const snap=await get(fb('bingo/eventos/'+evId));
+  const ev=snap.val();
+  if(!ev){showView('vNotFound');return;}
+  evData=ev;
+  $('gameUserName').textContent=userProfile?.apelido||userProfile?.nome||currentUser?.email;
+  $('batidasUserName').textContent=userProfile?.apelido||userProfile?.nome||currentUser?.email;
+  
+  // Verificar permissao
+  const permSnap=await get(fb('bingo/eventos/'+evId+'/permissoes/'+currentUser.uid));
+  const perm=permSnap.val();
+  if(perm?.status==='pendente'){
+    showView('vAguardando');
+    onValue(fb('bingo/eventos/'+evId+'/permissoes/'+currentUser.uid),s=>{
+      const p=s.val();if(p?.status==='aprovado')initJogoAprovado();
+    });
+    return;
+  }
+  if(perm?.status==='rejeitado'){$('nfMsg').textContent='Rejeitado.';showView('vNotFound');return;}
+  
+  await initJogoAprovado();
+}
+
+async function initJogoAprovado(){
+  // Carregar cartelas do localStorage
+  loadCartelasFromCache();
+  
+  // Carregar bingo ativo
+  const bingoId=evData?.bingoAtivoId;
+  if(!bingoId){showView('vAguardando');listenEvento();return;}
+  
+  const bingoSnap=await get(fb('bingo/eventos/'+evId+'/bingos/'+bingoId));
+  bingoData=bingoSnap.val();
+  if(!bingoData){showView('vAguardando');listenEvento();return;}
+  
+  continuarJogo();
+}
+
+function continuarJogo(){
+  showView('vJogo');
+  renderBody();
+  renderPremio();renderBall();renderCartela();renderHist();checkAutoBatida();renderCartelasBatidas();
+  
+  const tipoLabel=evData?.tipoCartela==='banco'?' | Banco':' | Propria';
+  $('gameEvBar').textContent=(evData?.nome||'Evento')+' > #'+(bingoData?.ordem||'?')+' '+(bingoData?.nome||'--')+tipoLabel;
+  
+  // Listeners
+  listenEvento();
+  const bingoId=evData?.bingoAtivoId;
+  if(bingoId){
+    onValue(fb(`bingo/eventos/${evId}/bingos/${bingoId}`),snap=>{
+      const b=snap.val();if(!b)return;
+      const newBall=bingoData&&b.lastDrawn!==bingoData.lastDrawn;
+      const wasReset=bingoData&&(bingoData.drawn||[]).length>0&&(b.drawn||[]).length===0;
+      bingoData=b;
+      if(wasReset){
+        cartelas.forEach(c=>{c.marcados=[];c.status='ativa';c.premioGanho=null;});
+        saveAllCartelas();renderCartela();renderHist();showToast('Sorteio reiniciado.');
+      }
+      if(newBall)onNewBall();
+      renderPremio();renderBall();renderHist();checkAutoBatida();
+    });
+  }
+  
+  let _fbFirst=true;
+  onValue(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),snap=>{
+    const data=snap.val();const age=Date.now()-_lastSaveTime;const justSaved=age<2000;
+    
+    if(data?.bingoConfirmado){
+      const pg=data?.premioGanho;
+      const cid=data?.ultimaCartelaBatida;
+      const cBatida=cid?cartelas.find(c=>c.id===cid):cartelas[cartelaIdx];
+      if(cBatida&&cBatida.status==='ativa'){
+        cBatida.status='batida';
+        cBatida.premioGanho={nome:pg?.nome||'Bingo',ordem:pg?.ordem||1,ts:Date.now()};
+        saveAllCartelas();
+        $('bingoOuroPremio').textContent=pg?'Premio #'+pg.ordem+' - '+pg.nome:'Premio confirmado!';
+        $('bingoOuroData').textContent=new Date().toLocaleString('pt-BR');
+        openM('mBingoOuro');sndConfirm();
+        renderCartelasBatidas();cartelaIdx=0;renderCartela();renderHist();checkAutoBatida();
+      }
+    }
+    if(data&&data.bingoConfirmado===false&&data.premioGanho===null){
+      const cNaoAtiva=cartelas.find(c=>c.status!=='ativa');
+      if(cNaoAtiva){_cartelaParaReativar=cNaoAtiva;openM('mReativar');}
+    }
+    if(data?.cartelas&&!justSaved){
+      const novo=Object.entries(data.cartelas).map(([fbId,c])=>ensureNumerosFormat({fbId,...c}));
+      novo.forEach(cNovo=>{const cLocal=cartelas.find(c=>c.id===cNovo.id);if(cLocal&&cLocal.status!=='ativa'){cNovo.status=cLocal.status;cNovo.premioGanho=cLocal.premioGanho;}});
+      if(novo.length){cartelas=novo;cartelaIdx=Math.min(cartelaIdx,cartelas.length-1);}
+    }
+    if(!data&&!justSaved&&cartelas.length>0){
+      cartelas.forEach(c=>{c.status='ativa';c.premioGanho=null;c.marcados=[];});
+      saveAllCartelas();cartelaIdx=0;renderCartela();renderHist();showToast('Sorteio reiniciado.');
+    }
+    const bs=data?.batidaStatus;
+    const el=$('batidaStatusEl');
+    if(el){el.className='batida-status';if(bs==='pendente'){el.className='batida-status bs-pend';el.textContent=' Batida enviada...';}else if(bs==='confirmada'){el.className='batida-status bs-conf';el.textContent=' BINGO CONFIRMADO!';sndConfirm();}else if(bs==='rejeitada'){el.className='batida-status bs-rej';el.textContent=' Batida rejeitada.';sndReject();setTimeout(()=>{if($('batidaStatusEl'))$('batidaStatusEl').style.display='none';},4000);}else{el.style.display='none';}}
+    
+    const doRender=()=>{if(!$('cartelaGrid')){setTimeout(doRender,100);return;}if(!cartelas.length)renderEmptyState();else{renderCartela();renderHist();checkAutoBatida();}};
+    doRender();_fbFirst=false;
+  });
+}
+
+function listenEvento(){
+  onValue(fb(`bingo/eventos/${evId}`),snap=>{
+    const ev2=snap.val();if(!ev2)return;
+    const oldBingoId=evData?.bingoAtivoId;
+    evData=ev2;
+    if(ev2.bingoAtivoId&&ev2.bingoAtivoId!==oldBingoId){
+      get(fb(`bingo/eventos/${evId}/bingos/${ev2.bingoAtivoId}`)).then(s=>{
+        bingoData=s.val();showToast('Nova rodada iniciada!');
+        renderPremio();renderBall();renderHist();checkAutoBatida();
+      });
+    }
+  });
+}
+
+// -- RENDER BODY --
+function renderBody(){
+  $('pBody').innerHTML=`
+    <div class="premio-info" id="premioInfo"><div class="pi-empty">Carregando...</div></div>
+    <div class="p-last-ball" id="pLastBall" onclick="onTapLastBall()">
+      <div class="plb-hint">Ultima pedra</div>
+      <div class="pbig empty-ball" id="pBigBall"><span class="pbl" id="pBallL"></span><span class="pbn" id="pBallN">--</span></div>
+      <div class="plb-tap" id="pBallHint">Aguardando sorteio...</div>
+    </div>
+    <div class="cartela-nav">
+      <button class="btn btn-ghost btn-icon" onclick="prevCartela()">&larr;</button>
+      <div class="cn-info">
+        <div class="cn-id" id="cnId">--</div>
+        <div class="cn-pg" id="cnPg">Cartela 1 de 1</div>
+        <div class="cn-toast" id="cnToast"></div>
+      </div>
+      <button class="btn btn-ghost btn-icon" onclick="nextCartela()">&rarr;</button>
+      <button class="btn btn-red btn-icon" onclick="delCartela()" title="Excluir">&#128465;</button>
+    </div>
+    <div class="cartela-wrap" id="cartelaWrap">
+      <div class="cartela-hdr" id="cartelaHdr"></div>
+      <div class="cartela-grid" id="cartelaGrid"></div>
+    </div>
+    <div class="cartela-opts">
+      <label class="tog-row"><label class="tog"><input type="checkbox" id="togAuto" checked onchange="toggleAuto()"><span class="tog-sl"></span></label>Marcar automatico</label>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="puxarAuto()" style="width:100%;color:var(--accent2);border-color:rgba(0,223,168,.3)">&#9889; Puxar Automatico</button>
+    <div class="batida-status" id="batidaStatusEl"></div>
+    <button class="bingo-btn" id="btnBingo" onclick="onBingoClick()">BINGO!</button>
+    <div class="p-hist-title">Numeros sorteados</div>
+    <div class="p-hist-strip" id="pHistStrip"></div>
+    <div style="margin-top:14px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" onclick="window.location.href='player.html'">&#8592; Hub</button>
+      <button class="btn btn-ghost btn-sm" onclick="window.location.href='cartelas.html?ev=${evId}'">&#127921; Cartelas</button>
+      <button class="btn btn-ghost btn-sm" onclick="sair()">Sair</button>
+    </div>`;
+  renderEmptyState();
+  
+  // Swipe
+  const el=$('cartelaWrap');if(!el)return;
+  let sx=0,sy=0,moved=false;
+  el.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;moved=false;},{passive:true});
+  el.addEventListener('touchmove',e=>{const dx=e.touches[0].clientX-sx,dy=e.touches[0].clientY-sy;if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>10)moved=true;},{passive:true});
+  el.addEventListener('touchend',e=>{if(!moved)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)<50)return;const ativas=getAtivas();if(dx<0&&cartelaIdx<ativas.length-1){cartelaIdx++;renderCartela();renderHist();checkAutoBatida();showToast('Cartela '+(cartelaIdx+1)+'/'+ativas.length);}else if(dx>0&&cartelaIdx>0){cartelaIdx--;renderCartela();renderHist();checkAutoBatida();showToast('Cartela '+(cartelaIdx+1)+'/'+ativas.length);}},{passive:true});
+}
+
+// -- PREMIO --
+function renderPremio(){
+  const el=$('premioInfo');if(!el||!bingoData?.premios)return;
+  const p=getCurrentPremio();
+  if(p)el.innerHTML=`<div class="pi-nome">#${p.ordem} - ${esc(p.nome)}</div><div class="pi-regra">${p.regra==='cheia'?'Cartela Cheia':'Linha/Coluna/Diagonal'}</div>`;
+  else el.innerHTML='<div class="pi-empty">Nenhum premio ativo</div>';
+}
+function getCurrentPremio(){
+  if(!bingoData?.premios)return null;
+  const premios=Object.values(bingoData.premios).sort((a,b)=>a.ordem-b.ordem);
+  const p=premios.find(pr=>!pr.fechado&&!pr.ganhadores?.length)||premios.find(pr=>!pr.fechado)||null;
+  curPrizeId=p?.id||null;return p;
+}
+
+// -- BALL --
+function renderBall(){
+  const ball=$('pBigBall'),hint=$('pBallHint');if(!ball)return;
+  const n=bingoData?.lastDrawn,mode=evData?.mode||90;
+  if(n){const l=getLetter(n,mode);$('pBallL').textContent=l;$('pBallN').textContent=n;ball.className=`pbig l${l}`;if(hint)hint.textContent='Toque para adicionar';}
+  else{$('pBallL').textContent='';$('pBallN').textContent='--';ball.className='pbig empty-ball';if(hint)hint.textContent='Aguardando...';}
+}
+function onNewBall(){
+  sndNew();const ball=$('pBigBall');if(ball){ball.classList.remove('pop');void ball.offsetWidth;ball.classList.add('pop');}
+  const lb=$('pLastBall');if(lb){lb.classList.add('new-ball');setTimeout(()=>lb.classList.remove('new-ball'),2000);}
+  const n=bingoData?.lastDrawn,mode=evData?.mode||90;if(!n)return;
+  let changed=false;
+  cartelas.forEach(c=>{if(!c.autoMarcar)return;const all=Object.values(c.numeros).flat().filter(v=>v!=null);if(all.includes(n)&&!(c.marcados||[]).includes(n)){c.marcados=c.marcados||[];c.marcados.push(n);changed=true;sndMark();}});
+  if(changed){saveAllCartelas();renderCartela();renderHist();checkAutoBatida();}
+}
+function onTapLastBall(){
+  const n=bingoData?.lastDrawn,mode=evData?.mode||90;if(!n)return;
+  const l=getLetter(n,mode),c=cartelas[cartelaIdx];if(!c)return;
+  const all=Object.values(c.numeros).flat().filter(v=>v!=null);
+  if(!all.includes(n)){showToast('Numero nao esta na cartela');return;}
+  if((c.marcados||[]).includes(n)){showToast('Ja marcado');return;}
+  pendingAdd={n,letter:l};$('mAddTitle').textContent=`Adicionar ${l}${n}?`;
+  $('mAddTxt').textContent=`Adicionar ${n} (coluna ${l}) a cartela ${c.id}?`;
+  openM('mAddNum');
+}
+window.onTapLastBall=onTapLastBall;
+window.confirmAdd=function(){if(pendingAdd)addNum(pendingAdd.n,pendingAdd.letter);closeM('mAddNum');pendingAdd=null;};
+function addNum(n,letter){const c=cartelas[cartelaIdx];if(!c)return;if((c.marcados||[]).includes(n))return;c.marcados=c.marcados||[];c.marcados.push(n);saveAllCartelas();renderCartela();renderHist();sndMark();checkAutoBatida();}
+
+// -- CARTELA --
+function ensureNumerosFormat(c){if(!c.numeros)c.numeros={};LETTERS.forEach(l=>{if(!Array.isArray(c.numeros[l]))c.numeros[l]=[null,null,null,null,null];while(c.numeros[l].length<5)c.numeros[l].push(null);});return c;}
+function getAtivas(){return cartelas.filter(c=>c.status==='ativa');}
+
+function renderCartela(){
+  const hdr=$('cartelaHdr'),grid=$('cartelaGrid');if(!hdr||!grid)return;
+  const ativas=getAtivas();
+  if(!ativas.length){renderEmptyState();return;}
+  cartelaIdx=Math.min(cartelaIdx,ativas.length-1);
+  let c=ativas[cartelaIdx];if(!c)return;c=ensureNumerosFormat(c);
+  $('cnId').textContent=c.id||'--';
+  const fora=cartelas.length-ativas.length;
+  $('cnPg').textContent=`Cartela ${cartelaIdx+1}/${ativas.length}${fora>0?' ('+fora+' batida'+(fora>1?'s':'')+')':''}`;
+  hdr.innerHTML='';LETTERS.forEach(l=>{const d=document.createElement('div');d.className='ch-cell l'+l;d.textContent=l;hdr.appendChild(d);});
+  grid.innerHTML='';const drawnSet=new Set(bingoData?.drawn||[]);const marcados=new Set(c.marcados||[]);
+  for(let row=0;row<5;row++){LETTERS.forEach((letter,col)=>{const isFree=c.freeCenter&&row===2&&col===2;const num=(c.numeros[letter]||[])[row];const hasNum=num!=null;const isM=hasNum&&marcados.has(num);const d=document.createElement('div');
+  if(isFree){d.className='c-cell free-cell';d.textContent='*';}
+  else if(!hasNum){d.className='c-cell empty-cell';d.textContent='?';}
+  else if(isM){d.className='c-cell marked-'+letter;d.textContent=num;}
+  else{d.className='c-cell filled-'+letter;d.textContent=num;}
+  grid.appendChild(d);});}
+}
+
+function renderEmptyState(){
+  const hdr=$('cartelaHdr'),grid=$('cartelaGrid'),cnId=$('cnId'),cnPg=$('cnPg');
+  const fora=cartelas.filter(c=>c.status!=='ativa').length;
+  if(cnId)cnId.textContent='--';if(cnPg)cnPg.textContent=fora>0?'Todas finalizaram':'Nenhuma cartela';
+  if(hdr)hdr.innerHTML='';if(grid)grid.innerHTML=fora>0
+    ?`<div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--text3)"><div style="font-size:2rem">&#127942;</div><div style="font-size:.88rem;font-weight:700;margin-top:8px">Todas as cartelas finalizaram!</div></div>`
+    :`<div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--text3)"><div style="font-size:2rem">?</div><div style="font-size:.88rem;font-weight:700;margin-top:8px">Nenhuma cartela ativa</div><div style="font-size:.78rem">Va em Cartelas para criar</div></div>`;
+}
+
+window.prevCartela=function(){if(cartelaIdx>0){cartelaIdx--;renderCartela();renderHist();checkAutoBatida();}};
+window.nextCartela=function(){const ativas=getAtivas();if(cartelaIdx<ativas.length-1){cartelaIdx++;renderCartela();renderHist();checkAutoBatida();}};
+window.delCartela=function(){const c=cartelas[cartelaIdx];if(!c)return;$('mDelTxt').textContent=`Excluir cartela ${c.id}?`;openM('mDelCartela');};
+window.confirmDel=function(){closeM('mDelCartela');cartelas.splice(cartelaIdx,1);cartelaIdx=Math.max(0,cartelas.length-1);saveAllCartelas();if(!cartelas.length)renderEmptyState();else{renderCartela();renderHist();}showToast('Cartela excluida');};
+window.toggleAuto=function(){const c=cartelas[cartelaIdx];if(c){c.autoMarcar=$('togAuto').checked;saveAllCartelas();}};
+
+// -- HISTORY --
+function renderHist(){
+  const strip=$('pHistStrip');if(!strip||!evData)return;
+  const c=cartelas[cartelaIdx];const cNums=new Set(c?Object.values(c.numeros).flat().filter(v=>v!=null):[]);
+  const marcados=new Set(c?.marcados||[]);const mode=evData?.mode||90;
+  strip.innerHTML='';
+  [...(bingoData?.drawn||[])].reverse().forEach(n=>{
+    const l=getLetter(n,mode),inC=cNums.has(n),isM=marcados.has(n);
+    const d=document.createElement('div');d.className='ph-ball l'+l+(inC?' in-cartela':'')+(isM?' marked':'');
+    d.innerHTML=`<span class="phl">${l}</span><span class="phn">${n}</span>`;
+    if(!isM)d.addEventListener('click',()=>{if(inC)addNum(n,l);});
+    strip.appendChild(d);
+  });
+}
+
+// -- PUXAR AUTO --
+window.puxarAuto=function(){
+  const c=cartelas[cartelaIdx];if(!c)return;
+  const drawnSet=new Set(bingoData?.drawn||[]);
+  const allNums=Object.values(c.numeros).flat().filter(v=>v!=null);
+  if(!allNums.length){showToast('Cartela vazia');return;}
+  let count=0;
+  allNums.forEach(n=>{if(drawnSet.has(n)&&!(c.marcados||[]).includes(n)){c.marcados=c.marcados||[];c.marcados.push(n);count++;}});
+  if(count>0){saveAllCartelas();renderCartela();renderHist();checkAutoBatida();sndMark();showToast(count+' numero(s) marcados');}
+  else showToast('Nenhum novo');
+};
+
+// -- BATIDA --
+function checkAutoBatida(){
+  const p=getCurrentPremio();if(!p)return;
+  const btn=$('btnBingo');let algumaBateu=false;
+  const ativas=getAtivas();
+  for(let i=0;i<ativas.length;i++){
+    const c=ativas[i];if(!c)continue;
+    const marcados=new Set(c.marcados||[]);let bateu=false;
+    if(p.regra==='cheia'){const all=Object.values(c.numeros).flat().filter(v=>v!=null);bateu=all.every(n=>marcados.has(n));}
+    else{bateu=checkLD(c,marcados);}
+    if(bateu){
+      algumaBateu=true;
+      const avisoKey='batida_'+c.id+'_p'+(p?.id||'none');
+      if(!sessionStorage.getItem(avisoKey)){
+        sessionStorage.setItem(avisoKey,'1');sndBingo();
+        try{navigator.vibrate([200,100,200,100,400]);}catch(e){}
+        if(i!==cartelaIdx){cartelaIdx=i;renderCartela();renderHist();}
+        $('batidaPremio').textContent='Cartela '+c.id+' bateu! Premio: '+p.nome;
+        openM('mBatida');
+      }
+      if(btn)btn.classList.add('pulsing');
+    }
+  }
+  if(!algumaBateu&&btn)btn.classList.remove('pulsing');
+}
+function checkLD(c,marcados){
+  for(let row=0;row<5;row++){if(LETTERS.every((l,col)=>{if(c.freeCenter&&row===2&&col===2)return true;const n=c.numeros[l][row];return n!=null&&marcados.has(n);}))return true;}
+  for(let col=0;col<5;col++){const l=LETTERS[col];if(c.numeros[l].every((n,row)=>{if(c.freeCenter&&row===2&&col===2)return true;return n!=null&&marcados.has(n);}))return true;}
+  for(const d of[[[0,0],[1,1],[2,2],[3,3],[4,4]],[[0,4],[1,3],[2,2],[3,1],[4,0]]]){if(d.every(([r,col])=>{if(c.freeCenter&&r===2&&col===2)return true;const n=c.numeros[LETTERS[col]][r];return n!=null&&marcados.has(n);}))return true;}
+  return false;
+}
+
+window.onBingoClick=function(){
+  const ativas=getAtivas();const c=ativas[cartelaIdx];if(!c)return;
+  const nome=userProfile?.apelido||userProfile?.nome||currentUser?.email;
+  $('mBingoTxt').textContent='Declarar BINGO com a cartela '+c.id+' ('+nome+')?';
+  openM('mBingo');
+};
+
+window.enviarBatida=function(){
+  closeM('mBingo');
+  const ativas=getAtivas();const c=ativas[cartelaIdx];if(!c||!currentUser)return;
+  const p=getCurrentPremio();const nome=userProfile?.apelido||userProfile?.nome||currentUser.email;
+  const batidaId=genId();
+  set(fb('bingo/eventos/'+evId+'/batidas/'+batidaId),{
+    playerId:currentUser.uid,playerNome:nome,cartelaId:c.id,premioId:p?.id||null,
+    tipo:'manual',status:'pendente',timestamp:Date.now()
+  });
+  update(fb('bingo/eventos/'+evId+'/brincantes/'+currentUser.uid),{batidaStatus:'pendente'});
+  showToast('BINGO declarado! Aguardando gestor.');
+  const el=$('batidaStatusEl');if(el){el.className='batida-status bs-pend';el.textContent=' Batida enviada...';}
+};
+
+window.reativarCartela=function(){
+  closeM('mReativar');
+  if(_cartelaParaReativar){
+    _cartelaParaReativar.status='ativa';_cartelaParaReativar.premioGanho=null;
+    _cartelaParaReativar=null;
+    try{Object.keys(sessionStorage).forEach(k=>{if(k.startsWith('batida_'))sessionStorage.removeItem(k);});}catch(e){}
+    saveAllCartelas();cartelaIdx=0;renderCartela();renderHist();checkAutoBatida();
+    showToast('Cartela reativada!');
+  }
+};
+
+// -- CARTELAS BATIDAS --
+const STATUS_META={
+  batida:{icon:'&#127942;',label:'Bateu!',color:'#FFD700'},
+  dividido:{icon:'&#127942;',label:'Premio Dividido',color:'#FFA500'},
+  ganhou_aposta:{icon:'&#127881;',label:'Ganhou Aposta!',color:'var(--green)'},
+  perdeu_aposta:{icon:'&#128542;',label:'Perdeu Aposta',color:'var(--red)'}
+};
+function renderCartelasBatidas(){
+  const lista=$('batidasLista');if(!lista)return;
+  const finalizadas=cartelas.filter(c=>c.status!=='ativa');
+  $('batidasCount').textContent=finalizadas.length;
+  const btn=$('btnVerBatidas');if(btn)btn.style.display=finalizadas.length>0?'inline-flex':'none';
+  if(!finalizadas.length){lista.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)"><div style="font-size:2.5rem">&#127942;</div><div style="font-size:.9rem;font-weight:700;margin-top:8px">Nenhuma cartela batida ainda</div></div>';return;}
+  lista.innerHTML='';
+  finalizadas.forEach(c=>{
+    const meta=STATUS_META[c.status]||STATUS_META.batida;
+    const card=document.createElement('div');
+    card.style.cssText='background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .2s;margin-bottom:10px';
+    card.innerHTML=`<div style="padding:12px 14px;display:flex;align-items:center;gap:10px"><div style="font-size:1.8rem;flex-shrink:0">${meta.icon}</div><div style="flex:1;min-width:0"><div style="font-family:'Bebas Neue';font-size:1.1rem;color:${meta.color};letter-spacing:1px">${esc(c.id)}</div><div style="font-size:.8rem;color:${meta.color};font-weight:700">${meta.label}</div></div></div>`;
+    lista.appendChild(card);
+  });
+}
+$('btnVerBatidas')?.addEventListener('click',()=>{renderCartelasBatidas();showView('vBatidas');});
+
+// -- SAVE/LOAD --
+function saveAllCartelas(){
+  if(!evId||!currentUser)return;
+  const obj={};
+  cartelas.forEach(c=>{obj[c.fbId]={id:c.id,status:c.status||'ativa',premioGanho:c.premioGanho||null,numeros:c.numeros,marcados:c.marcados||[],freeCenter:c.freeCenter||false,autoMarcar:c.autoMarcar!==false,criadaEm:c.criadaEm};});
+  const nome=userProfile?.apelido||userProfile?.nome||currentUser.email;
+  _lastSaveTime=Date.now();
+  try{localStorage.setItem('bingo_cartelas_'+evId+'_'+currentUser.uid,JSON.stringify({cartelas:obj,cartelaIdx,savedAt:Date.now()}));}catch(e){}
+  get(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}/batidaStatus`)).then(snap=>{
+    const bs=snap.val();
+    set(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),{cartelas:obj,nome,uid:currentUser.uid,...(bs?{batidaStatus:bs}:{})});
+  }).catch(()=>{set(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),{cartelas:obj,nome,uid:currentUser.uid});});
+}
+
+function loadCartelasFromCache(){
+  if(!evId||!currentUser)return false;
+  try{
+    const raw=localStorage.getItem('bingo_cartelas_'+evId+'_'+currentUser.uid);
+    if(!raw)return false;
+    const {cartelas:obj,cartelaIdx:idx}=JSON.parse(raw);
+    if(!obj||!Object.keys(obj).length)return false;
+    cartelas=Object.entries(obj).map(([fbId,c])=>ensureNumerosFormat({fbId,...c})).sort((a,b)=>a.criadaEm-b.criadaEm);
+    cartelaIdx=Math.min(idx||0,cartelas.length-1);
+    return cartelas.length>0;
+  }catch(e){return false;}
+}
+
+// -- HELPERS --
+function openM(id){$(id)?.classList.add('open');}
+window.closeM=function(id){$(id)?.classList.remove('open');};
+window.showView=showView;
+
+window.sair=async function(){
+  await signOut(auth);
+  window.location.href='player.html';
+};
+
+</script>
+</body>
+</html>

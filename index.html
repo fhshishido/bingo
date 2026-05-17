@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v6.9 - 2026-05-17 -->
+<!-- IBBI Bingo v6.10 - 2026-05-17 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v6.9</title>
+<title>IBBI Bingo v6.10</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -134,6 +134,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .pchip.curr{background:rgba(0,184,240,.1);border-color:var(--accent);color:var(--accent)}
 .pchip.won{background:rgba(0,223,168,.08);border-color:rgba(0,223,168,.35);color:var(--green)}
 .pchip.pend{color:var(--text2)}
+.pchip.closed{background:rgba(255,82,82,.08);border-color:rgba(255,82,82,.35);color:var(--red);opacity:.7}
 .pc-ord{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;line-height:1}
 .pc-name{font-size:.8rem;font-weight:700}
 .pc-win{font-size:.68rem;font-weight:600;opacity:.85}
@@ -271,7 +272,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v6.9</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v6.10</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -651,7 +652,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v6.9';
+const APP_VERSION = 'v6.10';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -866,6 +867,7 @@ function reiniciarEvento(id){
   Object.keys(ev.premios||{}).forEach(pid=>{
     tasks.push(set(fb('bingo/eventos/'+id+'/premios/'+pid+'/ganhadores'),[]));
     tasks.push(set(fb('bingo/eventos/'+id+'/premios/'+pid+'/ganhoEm'),null));
+    tasks.push(set(fb('bingo/eventos/'+id+'/premios/'+pid+'/fechado'),false));
   });
   const upd={};
   upd['drawn']=[]; upd['lastDrawn']=null; upd['status']='ativo';
@@ -1040,7 +1042,7 @@ function sortP(obj){
 function loadSorteio(id){
   evId=id; evData=JSON.parse(JSON.stringify(eventos[id]));
   const premios=sortP(evData.premios);
-  curPrizeId=premios.find(p=>!p.ganhadores?.length)?.id||premios[0]?.id||null;
+  curPrizeId=premios.find(p=>!p.fechado&&!p.ganhadores?.length)?.id||premios.find(p=>!p.fechado)?.id||null;
   // update player link
   const link=`${location.href.split('/').slice(0,-1).join('/')}/player.html?ev=${id}`;
   $('playerLinkBox').textContent=link;
@@ -1062,18 +1064,37 @@ function loadSorteio(id){
 function renderS(animated){
   const ev=evData; if(!ev)return;
   const enc=ev.status==='encerrado';
+  const cp=premios.find(p=>p.id===curPrizeId);
+  const premioFechado=cp?.fechado===true;
   $('s2name').textContent=ev.nome; $('s2mode').textContent=ev.mode+' pedras';
   if(enc){$('encBox').style.display='block';$('encInfo').textContent='Encerrado em '+fmtTs(ev.encerradoEm);$('btnDraw').disabled=true;$('btnEnc').style.display='none';}
-  else{$('encBox').style.display='none';$('btnDraw').disabled=(ev.drawn||[]).length>=ev.mode;$('btnEnc').style.display='';}
+  else{
+    $('encBox').style.display='none';
+    // Desabilitar sorteio se premio atual estiver fechado ou todas pedras sorteadas
+    $('btnDraw').disabled= premioFechado || (ev.drawn||[]).length>=ev.mode;
+    $('btnEnc').style.display='';
+    // Se premio fechado, mostrar aviso
+    if(premioFechado && $('btnDraw').disabled){
+      // Botao ja desabilitado, visual extra no cp
+    }
+  }
 
   // prize chips
   const premios=sortP(ev.premios);
   const ps=$('prizesScroll'); ps.innerHTML='';
   premios.forEach(p=>{
     const hasWinners=p.ganhadores?.length>0;
-    const cls=hasWinners?'won':p.id===curPrizeId?'curr':'pend';
+    const isFechado=p.fechado===true;
+    let cls;
+    if(isFechado) cls='closed';
+    else if(hasWinners) cls='won';
+    else if(p.id===curPrizeId) cls='curr';
+    else cls='pend';
     const chip=document.createElement('div'); chip.className='pchip '+cls;
-    chip.innerHTML=`<span class="pc-ord">${p.ordem}</span><div><div class="pc-name">${esc(p.nome)}</div>${hasWinners?`<div class="pc-win">&#127941; ${p.ganhadores.length} ganhador(es)</div>`:''}</div>`;
+    let statusHtml='';
+    if(isFechado) statusHtml=`<div class="pc-win">&#128274; Fechado</div>`;
+    else if(hasWinners) statusHtml=`<div class="pc-win">&#127941; ${p.ganhadores.length} ganhador(es)</div>`;
+    chip.innerHTML=`<span class="pc-ord">${p.ordem}</span><div><div class="pc-name">${esc(p.nome)}</div>${statusHtml}</div>`;
     chip.addEventListener('click',()=>{curPrizeId=p.id;renderS(false);});
     ps.appendChild(chip);
   });
@@ -1099,8 +1120,10 @@ function renderS(animated){
         btn.addEventListener('click',()=>removeWinner(cp.id,parseInt(btn.dataset.idx)));
       });
       $('winnersActions').innerHTML=`
+        <button class="btn btn-red btn-sm" id="btnFecharPremio">&#10004; Fechar Prêmio</button>
         <button class="btn btn-green btn-sm" id="btnDividir">&#129309; Dividir Prêmio</button>
         <button class="btn btn-yellow btn-sm" id="btnEscolher">&#127942; Escolher Um</button>`;
+      $('winnersActions').querySelector('#btnFecharPremio')?.addEventListener('click',()=>fecharPremio(cp.id));
       $('winnersActions').querySelector('#btnDividir')?.addEventListener('click',()=>dividirPremio(cp.id));
       $('winnersActions').querySelector('#btnEscolher')?.addEventListener('click',()=>escolherVencedor(cp.id));
     } else { $('winnersCard').style.display='none'; }
@@ -1254,6 +1277,36 @@ function removeWinner(prizeId,idx){
       saveEv(); renderS(false);
       const cp=sortP(evData?.premios).find(p=>p.id===prizeId);
       if(cp) renderGanhadoresPremio(cp);
+    }
+  });
+}
+function fecharPremio(prizeId){
+  const p=evData.premios[prizeId]; if(!p)return;
+  if(!confirm(`Fechar o premio "${p.nome}"? Nao sera mais possivel sortear para este premio.`))return;
+  // Marcar premio como fechado
+  set(fb(`bingo/eventos/${evId}/premios/${prizeId}/fechado`),true).then(()=>{
+    evData.premios[prizeId].fechado=true;
+    // Avancar para proximo premio nao fechado
+    const premios=sortP(evData.premios);
+    const proximo=premios.find(pr=>!pr.fechado&&!pr.ganhadores?.length);
+    if(proximo){
+      curPrizeId=proximo.id;
+      renderS(false);
+      showToast(`Premio "${p.nome}" fechado. Proximo: #${proximo.ordem} ${proximo.nome}`);
+    } else {
+      // Verificar se ainda ha premios nao fechados com ganhadores
+      const aindaAtivo=premios.find(pr=>!pr.fechado);
+      if(aindaAtivo){
+        curPrizeId=aindaAtivo.id;
+        renderS(false);
+        showToast(`Premio "${p.nome}" fechado.`);
+      } else {
+        // Todos os premios fechados — encerrar evento
+        curPrizeId=null;
+        evData.status='encerrado'; evData.encerradoEm=Date.now();
+        saveEv(); renderS(false);
+        showToast('Todos os premios foram fechados. Evento encerrado!');
+      }
     }
   });
 }
@@ -1687,7 +1740,7 @@ $('btnEditarSalvar')?.addEventListener('click',()=>{
   });
   evData.premios = novosPremios;
   const premios=sortP(evData.premios);
-  curPrizeId=premios.find(p=>!p.ganhadores?.length)?.id||premios[0]?.id||null;
+  curPrizeId=premios.find(p=>!p.fechado&&!p.ganhadores?.length)?.id||premios.find(p=>!p.fechado)?.id||null;
 
   saveEv(); closeM('mEditar'); renderS(false);
   showToast('Evento atualizado');

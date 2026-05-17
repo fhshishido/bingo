@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v9.19 - 2026-05-16 -->
+<!-- IBBI Bingo Player v9.20 - 2026-05-16 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo v9.19</title>
+<title>IBBI Bingo v9.20</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -262,7 +262,7 @@ transition:background-color 9999s ease-in-out 0s;
 .ct-card-sel .ct-id-sel{font-family:'Bebas Neue';font-size:.9rem;color:var(--accent);letter-spacing:1px;text-align:center}
 .ct-card-sel .ct-mode-sel{font-size:.55rem;font-weight:800;padding:1px 4px;border-radius:3px;background:rgba(0,184,240,.12);color:var(--accent);text-align:center;margin-top:2px}
 
-/* === SELECAO: ESTILOS ADICIONAIS v9.19 === */
+/* === SELECAO: ESTILOS ADICIONAIS v9.20 === */
 .ct-card-sel .sel-hint{position:absolute;inset:0;background:rgba(0,184,240,.9);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:1.1rem;color:#000;letter-spacing:2px;z-index:4;animation:none;pointer-events:none;opacity:0;transition:opacity .2s}
 .ct-card-sel:active{transform:scale(.97)}
 
@@ -286,7 +286,7 @@ transition:background-color 9999s ease-in-out 0s;
 
 </style>
 
-  <meta name="app-version" content="v9.19">
+  <meta name="app-version" content="v9.20">
 </head>
 <body>
 
@@ -311,7 +311,7 @@ transition:background-color 9999s ease-in-out 0s;
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &#8594;</button>
         </div>
       </div>
-      <div class="vtag">v9.19</div>
+      <div class="vtag">v9.20</div>
     </div>
   </div>
 </div>
@@ -360,7 +360,7 @@ transition:background-color 9999s ease-in-out 0s;
 </div>
 
   </div>
-  <div class="vtag">v9.19</div>
+  <div class="vtag">v9.20</div>
 </div>
 
   </div>
@@ -447,7 +447,7 @@ transition:background-color 9999s ease-in-out 0s;
 
   <div style="margin-top:16px;text-align:center">
     <button class="btn btn-ghost btn-sm" id="btnVoltarSelecao">← Voltar</button>
-    <div class="vtag" style="margin-top:10px">v9.19</div>
+    <div class="vtag" style="margin-top:10px">v9.20</div>
   </div>
 </div>
 
@@ -462,7 +462,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="p-logo">B<span>I</span>NGO</div>
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname">Preview da Cartela</div>
-    <span class="p-vtag">v9.19</span>
+    <span class="p-vtag">v9.20</span>
   </div>
   <div class="p-body" style="padding-top:20px">
     <div id="previewCardWrap" style="max-width:420px;margin:0 auto;width:100%">
@@ -484,7 +484,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="ibbi-badge">IBBI</div>
     <div class="p-username" id="gameUserName"></div>
     <button class="btn btn-sm" id="btnVerBatidas" style="display:none;background:rgba(255,215,0,.15);color:#FFD700;border:1.5px solid rgba(255,215,0,.3);font-family:'Bebas Neue';letter-spacing:1px">🏆 <span id="batidasCount">0</span></button>
-    <span class="p-vtag">v9.19</span>
+    <span class="p-vtag">v9.20</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div id="gameEvBar" style="background:var(--surface);border-bottom:1.5px solid var(--border);padding:8px 14px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1px;color:var(--accent)">&mdash;</div>
@@ -523,7 +523,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="p-logo">B<span>I</span>NGO</div>
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="batidasEvName">Cartelas Batidas</div>
-    <span class="p-vtag">v9.19</span>
+    <span class="p-vtag">v9.20</span>
   </div>
   <div class="p-body" style="padding-top:20px">
     <div style="text-align:center;margin-bottom:16px">
@@ -966,10 +966,10 @@ async function initGame(){
   renderBody();
 
   if(loadCartelasFromCache()){
-    renderCartela(); renderHist();
+    renderCartela(); renderHist(); renderCartelasBatidas();
     showToast('Carregando...');
   } else {
-    renderEmptyState();
+    renderEmptyState(); renderCartelasBatidas();
   }
 
   const snap=await get(fb('bingo/eventos/'+evId));
@@ -1074,18 +1074,22 @@ function continuarJogo(ev){
       }
     }
     // Verificar se premio foi DIVIDIDO
-    if(data?.dividido && data?.divididoCom?.length){
-      const cid=data?.ultimaCartelaBatida;
-      const cDiv=cid?cartelas.find(c=>c.id===cid):cartelas.find(c=>c.status==='ativa');
-      if(cDiv && cDiv.status==='ativa'){
-        const pg=data?.premioGanho;
-        cDiv.status='dividido';
-        cDiv.premioGanho={nome:pg?.nome||'Premio',ordem:pg?.ordem||1,ts:Date.now(),divididoCom:data.divididoCom};
-        saveAllCartelas();
-        renderCartelasBatidas();
-        cartelaIdx=0;
-        renderCartela(); renderHist();
-        showToast('🏆 Cartela '+cDiv.id+' bateu! Premio dividido.');
+    if(data?.dividido && data?.divididoCom){
+      // Firebase retorna arrays como objetos {0:'Joao',1:'Maria'} — converter
+      const dCom=Array.isArray(data.divididoCom)?data.divididoCom:Object.values(data.divididoCom);
+      if(dCom.length){
+        const cid=data?.ultimaCartelaBatida;
+        const cDiv=cid?cartelas.find(c=>c.id===cid):cartelas.find(c=>c.status==='ativa');
+        if(cDiv && cDiv.status==='ativa'){
+          const pg=data?.premioGanho;
+          cDiv.status='dividido';
+          cDiv.premioGanho={nome:pg?.nome||'Premio',ordem:pg?.ordem||1,ts:Date.now(),divididoCom:dCom};
+          saveAllCartelas();
+          renderCartelasBatidas();
+          cartelaIdx=0;
+          renderCartela(); renderHist();
+          showToast('🏆 Cartela '+cDiv.id+' bateu! Premio dividido.');
+        }
       }
     }
     // Verificar se GANHOU APOSTA (escolhido entre divididos)
@@ -1112,9 +1116,9 @@ function continuarJogo(ev){
     }
     // Sorteio foi reiniciado — brincante zerado no Firebase
     if(!data && !justSaved && cartelas.length>0){
-      // Resetar todas as cartelas para 'ativa'
+      // Resetar TODOS os status (batida, dividido, ganhou_aposta, perdeu_aposta)
       cartelas.forEach(c=>{ c.status='ativa'; c.premioGanho=null; c.marcados=[]; });
-      // Limpar avisos de batida do sessionStorage
+      _cartelaParaReativar=null;
       try{ Object.keys(sessionStorage).forEach(k=>{ if(k.startsWith('batida_')) sessionStorage.removeItem(k); }); }catch(e){}
       try{ localStorage.removeItem('bingo_cartelas_'+evId+'_'+currentUser.uid); }catch(e){}
       saveAllCartelas();
@@ -1247,7 +1251,7 @@ function loadCartelasFromCache(){
 
 
 // ======================================================
-//  OCR - GRADE AJUSTAVEL INTEGRADA v9.19
+//  OCR - GRADE AJUSTAVEL INTEGRADA v9.20
 // ======================================================
 let _ocrNums = {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
 let _ocrDetectedFreeCenter = false;
@@ -1985,7 +1989,9 @@ function renderPremio(){
 }
 function getCurrentPremio(){
   if(!evData?.premios)return null;
-  const p=Object.values(evData.premios).sort((a,b)=>a.ordem-b.ordem).find(p=>!p.ganhadores?.length)||null;
+  const premios=Object.values(evData.premios).sort((a,b)=>a.ordem-b.ordem);
+  // Primeiro premio nao fechado sem ganhadores, ou primeiro nao fechado
+  const p=premios.find(pr=>!pr.fechado&&!pr.ganhadores?.length)||premios.find(pr=>!pr.fechado)||null;
   curPrizeId=p?.id||null;
   return p;
 }

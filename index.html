@@ -1056,8 +1056,19 @@ async function abrirJogo(bingoId){
         return;
       }
     }
+    // Ativa o bingo: seta bingoAtivoId no evento e status='jogando' no bingo
+    const updates = {};
+    updates[`bingo/eventos/${evId}/bingoAtivoId`] = bingoId;
+    updates[`bingo/eventos/${evId}/bingos/${bingoId}/status`] = 'jogando';
+    if(!ev.bingos?.[bingoId]?.iniciadoEm){
+      updates[`bingo/eventos/${evId}/bingos/${bingoId}/iniciadoEm`] = Date.now();
+    }
+    await update(ref(db), updates);
+    showToast(`Bingo "${ev.bingos?.[bingoId]?.nome || bingoId}" iniciado!`);
   } catch(e) {
-    console.error('Erro ao verificar conflito:', e);
+    console.error('Erro ao ativar bingo:', e);
+    showToast('Erro ao iniciar bingo');
+    return;
   }
   const url = `jogo.html?ev=${evId}&bingo=${bingoId}`;
   window.open(url, '_blank');

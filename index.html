@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v10.0 - 2026-05-18 - Unico login no Hub, heranca de sessao -->
+<!-- IBBI Bingo v11.0 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v10.0</title>
+<title>IBBI Bingo v11.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -289,7 +289,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 .win-inp::placeholder{color:var(--text3)}
 
 </style>
-  <meta name="app-version" content="v10.0">
+  <meta name="app-version" content="v11.0">
 </head>
 <body>
 
@@ -336,6 +336,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <button class="btn btn-ghost btn-sm" id="btnS2Voltar">← Voltar</button>
       <button class="btn btn-ghost btn-sm" id="btnS2Perms">👥 Permissões</button>
       <button class="btn btn-blue btn-sm" id="btnS2Edit">⚙ Editar Evento</button>
+      <button class="btn btn-sm" id="btnS2Premios" style="background:rgba(255,215,0,.12);color:#FFD700;border:1.5px solid rgba(255,215,0,.3)">🏆 Prêmios</button>
       <button class="btn btn-yellow btn-sm" id="btnS2Reiniciar">↻ Reiniciar Evento</button>
       <button class="btn btn-red btn-sm" id="btnS2Encerrar">⛔ Encerrar Evento</button>
     </div>
@@ -630,7 +631,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v10.0';
+const APP_VERSION = 'v11.0';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -1406,6 +1407,36 @@ $('btnS2Perms')?.addEventListener('click',()=>{
   brincantesUnsub = onValue(fb('bingo/eventos/'+evId+'/brincantes'),snap=>{ brincantesData=snap.val()||{}; renderPermsLista(); });
   showScreen('s3');
 });
+
+// VER PREMIOS — Historico de ganhadores do evento
+$('btnS2Premios')?.addEventListener('click', async ()=>{
+  if(!evId) return;
+  let html = '';
+  try {
+    const snap = await get(fb('bingo/eventos/'+evId+'/historico'));
+    const hist = snap.val();
+    if(!hist || !Object.keys(hist).length){
+      html = '<div style="text-align:center;padding:30px;color:var(--text3)"><div style="font-size:2.5rem">&#127942;</div><div style="font-size:.9rem;font-weight:700;margin-top:8px">Nenhum premio distribuido ainda</div></div>';
+    } else {
+      const sorted = Object.values(hist).sort((a,b)=>b.ts-a.ts);
+      html = '<div style="max-height:50vh;overflow-y:auto">';
+      sorted.forEach(h=>{
+        const regraLabel = h.premioRegra==='cheia' ? 'Cartela Cheia' : 'Linha/Col/Diag';
+        html += '<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rsm);padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px">'+
+          '<div style="font-size:2rem">&#127942;</div>'+
+          '<div style="flex:1;min-width:0">'+
+          '<div style="font-family:Bebas Neue;font-size:1rem;color:#FFD700;letter-spacing:1px">'+esc(h.premioNome)+'</div>'+
+          '<div style="font-size:.75rem;color:var(--text2)">Rodada #'+h.bingoOrdem+' '+esc(h.bingoNome)+' | '+regraLabel+'</div>'+
+          '<div style="font-size:.78rem;color:var(--text)"><strong>'+esc(h.playerNome)+'</strong> — Cartela '+esc(h.cartelaId)+'</div>'+
+          '<div style="font-size:.65rem;color:var(--text3)">'+new Date(h.ts).toLocaleString('pt-BR')+'</div>'+
+          '</div></div>';
+      });
+      html += '</div>';
+    }
+  } catch(e) { html = '<div style="color:var(--red);text-align:center;padding:20px">Erro ao carregar historico</div>'; }
+  openModal('🏆 Historico de Premios', html, '<button class="btn btn-ghost" onclick="closeModal()">Fechar</button>');
+});
+
 $('btnS3Voltar')?.addEventListener('click',()=>{
   if(permsUnsub){permsUnsub();permsUnsub=null;}
   if(brincantesUnsub){brincantesUnsub();brincantesUnsub=null;}
@@ -1652,7 +1683,22 @@ function showToast(msg){
   setTimeout(()=>t.remove(),2500);
 }
 
-</script>
-
-</body>
-</html>
+// Modal generico
+function openModal(title, bodyHtml, footHtml){
+  let el=document.getElementById('mGeneric');
+  if(!el){
+    el=document.createElement('div');
+    el.id='mGeneric';
+    el.className='mbk';
+    el.style.cssText='display:none;position:fixed;inset:0;background:rgba(0,0,2,.9);z-index:4000;align-items:center;justify-content:center;padding:16px';
+    el.innerHTML='<div style="background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);width:100%;max-width:480px;padding:22px;margin:auto;max-height:80vh;display:flex;flex-direction:column"><h2 id="mGenTitle" style="font-family:Bebas Neue,sans-serif;font-size:1.5rem;letter-spacing:2px;color:var(--accent);margin-bottom:14px;flex-shrink:0"></h2><div id="mGenBody" style="overflow-y:auto;flex:1"></div><div id="mGenFoot" style="margin-top:18px;display:flex;gap:8px;justify-content:flex-end;flex-shrink:0"></div></div>';
+    document.body.appendChild(el);
+  }
+  document.getElementById('mGenTitle').textContent=title;
+  document.getElementById('mGenBody').innerHTML=bodyHtml;
+  document.getElementById('mGenFoot').innerHTML=footHtml||'<button class="btn btn-ghost" onclick="closeModal()">Fechar</button>';
+  el.style.display='flex';
+}
+function closeModal(){
+  const el=document.getElementById('mGeneric');
+  if(el) el.style.display='none';

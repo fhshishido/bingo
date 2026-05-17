@@ -1,5 +1,7 @@
-<!-- IBBI Bingo v7.0 - Evento -> N Bingos -> N Premios -->
+<!-- IBBI Bingo v7.0 - 2026-05-17 - Refatoração: Evento -> Bingos -> Prêmios -->
+
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -7,7 +9,15 @@
 <title>IBBI Bingo v7.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#060608;--surface:#0f0f14;--surface2:#161620;--surface3:#1e1e2a;--border:#252535;--border2:#323248;--accent:#00b8f0;--accent2:#00dfa8;--red:#f06060;--green:#00dfa8;--blue:#00b8f0;--text:#e4f2ff;--text2:#7090b0;--text3:#3a5068;--radius:12px;--rsm:8px;--cB:#00b8f0;--cI:#00dfa8;--cN:#f5c800;--cG:#ff8c00;--cO:#c850ff}
+:root{
+  --bg:#060608;--surface:#0f0f14;--surface2:#161620;--surface3:#1e1e2a;
+  --border:#252535;--border2:#323248;
+  --accent:#00b8f0;--accent2:#00dfa8;
+  --red:#f06060;--green:#00dfa8;--blue:#00b8f0;
+  --text:#e4f2ff;--text2:#7090b0;--text3:#3a5068;
+  --radius:12px;--rsm:8px;
+  --cB:#00b8f0;--cI:#00dfa8;--cN:#f5c800;--cG:#ff8c00;--cO:#c850ff;
+}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:5px}
@@ -29,6 +39,8 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .btn-green:hover{background:rgba(0,223,168,.22)}
 .btn-blue{background:rgba(0,184,240,.1);color:var(--blue);border:1.5px solid rgba(0,184,240,.3)}
 .btn-blue:hover{background:rgba(0,184,240,.22)}
+.btn-yellow{background:rgba(245,200,0,.12);color:var(--cN);border:1.5px solid rgba(245,200,0,.3)}
+.btn-yellow:hover{background:rgba(245,200,0,.22)}
 .btn-sm{padding:6px 12px;font-size:.78rem}
 .btn-lg{padding:14px 32px;font-size:1.1rem}
 .conn{font-size:.7rem;font-weight:700;padding:4px 12px;border-radius:20px;border:1px solid;white-space:nowrap}
@@ -48,6 +60,40 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .bg{background:rgba(0,223,168,.12);color:var(--green);border:1px solid rgba(0,223,168,.3)}
 .ba{background:rgba(0,184,240,.12);color:var(--accent);border:1px solid rgba(0,184,240,.3)}
 .be{background:rgba(68,104,128,.12);color:var(--text3);border:1px solid var(--border)}
+
+/* === BINGO CARDS (dentro do evento) === */
+.bingos-section{margin-top:18px}
+.bingos-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px;flex-wrap:wrap}
+.bingos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.bingo-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px;position:relative;overflow:hidden;cursor:pointer;transition:all .2s}
+.bingo-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 6px 22px rgba(0,0,0,.4)}
+.bingo-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.bingo-card.st-pendente::before{background:var(--text2);opacity:.5}
+.bingo-card.st-jogando::before{background:var(--green);box-shadow:0 0 12px var(--green)}
+.bingo-card.st-encerrado::before{background:var(--text3);opacity:.5}
+.bingo-card.st-encerrado{opacity:.75}
+.bingo-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.bingo-card-title{font-size:1rem;font-weight:800;color:var(--text);line-height:1.2}
+.bingo-card-ord{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--accent);line-height:1}
+.bingo-card-meta{margin-top:8px;display:flex;flex-wrap:wrap;gap:8px;font-size:.74rem;color:var(--text2)}
+.bingo-card-prog{margin-top:10px;height:4px;background:var(--surface3);border-radius:4px;overflow:hidden}
+.bingo-card-prog-bar{height:100%;border-radius:4px}
+.bingo-card-foot{margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.bingo-card-foot .btn{flex:1;min-width:0;padding:6px 8px;font-size:.7rem;justify-content:center}
+.bingo-card-foot .btn-play{flex:0 0 100%;font-size:.85rem;padding:9px 14px;background:linear-gradient(135deg,var(--green),#00b48a);color:#000;font-weight:900}
+.bingo-card-foot .btn-play:disabled{background:var(--text3);color:var(--surface);cursor:not-allowed}
+
+/* === SCREEN 2 - GESTÃO DO EVENTO === */
+#s2{background:radial-gradient(ellipse at 80% 0%,#0a1525 0%,var(--bg) 60%)}
+.s2g-head{padding:24px 22px 0;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.s2g-body{padding:18px 22px 40px;flex:1}
+.s2g-info{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px}
+.s2g-info-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:8px}
+.s2g-info-row:last-child{margin-bottom:0}
+.s2g-evname{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;letter-spacing:2px;color:var(--accent);line-height:1}
+.s2g-evstatus{font-size:.7rem;font-weight:800;padding:3px 8px;border-radius:20px}
+.s2g-actions{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.s2g-link-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rsm);padding:8px;font-size:.72rem;color:var(--text3);word-break:break-all;margin-top:8px}
 
 /* === MODALS === */
 .mbk{display:none;position:fixed;inset:0;background:rgba(0,0,2,.92);backdrop-filter:blur(5px);z-index:1000;align-items:center;justify-content:center;padding:16px}
@@ -78,6 +124,10 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .ev-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .ev-title{font-size:1.05rem;font-weight:800;color:var(--text);line-height:1.2}
 .ev-meta{margin-top:8px;display:flex;flex-wrap:wrap;gap:8px;font-size:.75rem;color:var(--text2)}
+.ev-prog{margin-top:10px;height:4px;background:var(--surface3);border-radius:4px;overflow:hidden}
+.ev-prog-bar{height:100%;border-radius:4px}
+.pp-g{background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.pp-a{background:var(--accent)}.pp-e{background:var(--text3)}
 .ev-foot{margin-top:12px;display:flex;gap:6px;justify-content:flex-end}
 .empty-st{text-align:center;padding:60px 20px;color:var(--text3)}
 .empty-st .ei{font-size:3rem;margin-bottom:12px}
@@ -90,6 +140,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .p-ord{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--accent);width:26px;flex-shrink:0;text-align:center}
 .p-inp{flex:1;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);font-family:'Barlow',sans-serif;font-size:.95rem;font-weight:600;outline:none;padding:7px 10px;border-radius:6px;transition:border-color .2s}
 .p-inp:focus{border-color:var(--accent)}
+.p-inp::placeholder{color:var(--text3)}
 .p-rm{background:none;border:none;color:var(--text3);cursor:pointer;font-size:1.1rem;padding:4px 6px;line-height:1;flex-shrink:0}
 .p-rm:hover{color:var(--red)}
 .prize-row-opts{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
@@ -98,39 +149,20 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .radio-btn:hover{border-color:var(--accent);color:var(--text)}
 .radio-btn.sel{border-color:var(--accent);color:var(--accent);background:rgba(0,184,240,.1)}
 
-/* === SCREEN 2 - LISTA DE BINGOS === */
+/* === SCREEN 2 - SORTEIO === */
 #s2{background:radial-gradient(ellipse at 80% 0%,#0a1525 0%,var(--bg) 60%)}
 .s2-head{background:rgba(4,4,6,.97);border-bottom:1.5px solid var(--border);padding:10px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
 .s2-evname{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;color:var(--accent);line-height:1}
+.mode-badge{font-size:.62rem;font-weight:800;letter-spacing:1px;padding:3px 8px;border-radius:20px;background:rgba(0,184,240,.12);color:var(--blue);border:1px solid rgba(0,184,240,.3)}
 .s2-right{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
-.s2-body{padding:18px 24px 40px;flex:1}
-
-/* bingo card */
-.bingo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
-.bingo-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px;transition:all .2s;position:relative;overflow:hidden}
-.bingo-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius) var(--radius) 0 0}
-.bingo-card.st-ativo::before{background:var(--green)}
-.bingo-card.st-encerrado::before{background:var(--text3);opacity:.5}
-.bingo-card:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3)}
-.bc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
-.bc-title{font-size:1.05rem;font-weight:800;color:var(--text);line-height:1.2}
-.bc-status{font-size:.62rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:4px;white-space:nowrap}
-.bc-status.ativo{background:rgba(0,223,168,.12);color:var(--green);border:1px solid rgba(0,223,168,.3)}
-.bc-status.encerrado{background:rgba(240,96,96,.08);color:var(--red);border:1px solid rgba(240,96,96,.25)}
-.bc-meta{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;font-size:.75rem;color:var(--text2)}
-.bc-actions{margin-top:12px;display:flex;gap:6px;flex-wrap:wrap}
-
-/* === SCREEN 3 - SORTEIO === */
-#s3{background:radial-gradient(ellipse at 80% 0%,#0a1525 0%,var(--bg) 60%)}
-.s3-head{background:rgba(4,4,6,.97);border-bottom:1.5px solid var(--border);padding:10px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
-.s3-evname{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:1px;color:var(--accent);line-height:1}
-.s3-bingoname{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;color:var(--text);line-height:1}
-.s3-right{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
-.s3-body{display:grid;grid-template-columns:1fr 290px;gap:12px;padding:12px;flex:1}
-@media(max-width:800px){.s3-body{grid-template-columns:1fr}}
+.s2-body{display:grid;grid-template-columns:1fr 290px;gap:12px;padding:12px;flex:1}
+@media(max-width:800px){.s2-body{grid-template-columns:1fr}}
+.main-col{display:flex;flex-direction:column;gap:10px}
+.side-col{display:flex;flex-direction:column;gap:10px}
 
 /* prizes panel */
 .prizes-panel{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:12px}
+.pp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .prizes-scroll{display:flex;gap:7px;overflow-x:auto;padding-bottom:3px}
 .pchip{flex-shrink:0;border-radius:var(--rsm);padding:7px 13px;display:flex;align-items:center;gap:6px;cursor:pointer;border:1.5px solid var(--border);background:var(--surface2);transition:all .2s;white-space:nowrap}
 .pchip.curr{background:rgba(0,184,240,.1);border-color:var(--accent);color:var(--accent)}
@@ -141,8 +173,18 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .pc-name{font-size:.8rem;font-weight:700}
 .pc-win{font-size:.68rem;font-weight:600;opacity:.85}
 
+/* current prize */
+.cpbox{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.cpbox-lbl{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase}
+.cpbox-name{font-size:1.15rem;font-weight:800;color:var(--text);margin-top:2px}
+.cpbox-rule{font-size:.72rem;font-weight:700;color:var(--accent);margin-top:2px}
+.cpbox-won{font-size:.82rem;color:var(--green);font-weight:700;margin-top:3px}
+.cpbox-empty{font-size:.82rem;color:var(--text3);font-weight:600;margin-top:3px}
+.cpbox-btns{display:flex;gap:6px;flex-wrap:wrap}
+
 /* ball */
 .ball-area{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.ball-lbl{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase}
 .bigball{width:130px;height:130px;border-radius:50%;background:radial-gradient(circle at 32% 30%,#d8f6ff,var(--accent) 55%,#005a80);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 40px rgba(0,184,240,.5),0 6px 20px rgba(0,0,0,.5);user-select:none;transition:background .3s}
 .bigball.empty{background:radial-gradient(circle at 32% 30%,#1c3352,var(--surface3));box-shadow:none}
 .bigball .ball-letter{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:#000;line-height:1;opacity:.75;letter-spacing:1px}
@@ -151,6 +193,22 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .bigball.empty .ball-number{font-size:1.8rem;color:var(--text3)}
 .bigball.pop{animation:bpop .35s cubic-bezier(.15,1.6,.35,1) both}
 @keyframes bpop{from{transform:scale(.45);opacity:0}}
+.bigball.lB{background:radial-gradient(circle at 32% 30%,#d8f6ff,#00b8f0 55%,#005a80);box-shadow:0 0 40px rgba(0,184,240,.6),0 6px 20px rgba(0,0,0,.5)}
+.bigball.lI{background:radial-gradient(circle at 32% 30%,#ccfff0,#00dfa8 55%,#005040);box-shadow:0 0 40px rgba(0,223,168,.6),0 6px 20px rgba(0,0,0,.5)}
+.bigball.lN{background:radial-gradient(circle at 32% 30%,#fffbe0,#f5c800 55%,#806000);box-shadow:0 0 40px rgba(245,200,0,.6),0 6px 20px rgba(0,0,0,.5)}
+.bigball.lG{background:radial-gradient(circle at 32% 30%,#fff0d8,#ff8c00 55%,#804000);box-shadow:0 0 40px rgba(255,140,0,.6),0 6px 20px rgba(0,0,0,.5)}
+.bigball.lO{background:radial-gradient(circle at 32% 30%,#f8d8ff,#c850ff 55%,#600080);box-shadow:0 0 40px rgba(200,80,255,.6),0 6px 20px rgba(0,0,0,.5)}
+.draw-ctrl{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.hstrip{display:flex;flex-wrap:wrap;gap:5px;width:100%;max-height:88px;overflow-y:auto}
+.mball{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;box-shadow:0 2px 5px rgba(0,0,0,.4);line-height:1}
+.mball .ml{font-size:.5rem;opacity:.75}.mball .mn{font-size:.95rem}
+.mball.lB{background:radial-gradient(circle at 32% 30%,#d8f6ff,#00b8f0 55%,#005a80);color:#000}
+.mball.lI{background:radial-gradient(circle at 32% 30%,#ccfff0,#00dfa8 55%,#005040);color:#000}
+.mball.lN{background:radial-gradient(circle at 32% 30%,#fffbe0,#f5c800 55%,#806000);color:#000}
+.mball.lG{background:radial-gradient(circle at 32% 30%,#fff0d8,#ff8c00 55%,#804000);color:#000}
+.mball.lO{background:radial-gradient(circle at 32% 30%,#f8d8ff,#c850ff 55%,#600080);color:#000}
+.mball.latest{animation:pgf 1.5s ease-in-out infinite}
+@keyframes pgf{0%,100%{filter:brightness(1)}50%{filter:brightness(1.35)}}
 
 /* grid */
 .grid-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:12px}
@@ -169,12 +227,43 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .nc.drawn-N{background:#f5c800;color:#000;border-color:#f5c800}
 .nc.drawn-G{background:#ff8c00;color:#000;border-color:#ff8c00}
 .nc.drawn-O{background:#c850ff;color:#000;border-color:#c850ff}
+.nc.latest{font-size:clamp(.8rem,1.3vw,1rem);animation:pgf 1.5s ease-in-out infinite}
 
 /* stats */
 .stats-g{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .sbox{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rsm);padding:9px;text-align:center}
 .sv{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:var(--accent);line-height:1}
 .sl{font-size:.66rem;font-weight:700;color:var(--text3);margin-top:2px}
+
+/* voice */
+.vrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.vrow label{font-size:.85rem;font-weight:700;cursor:pointer;user-select:none}
+.tog{position:relative;width:38px;height:20px;flex-shrink:0}
+.tog input{opacity:0;width:0;height:0}
+.tog-sl{position:absolute;inset:0;border-radius:20px;cursor:pointer;background:var(--surface2);border:1.5px solid var(--border);transition:.2s}
+.tog-sl::before{content:'';position:absolute;width:12px;height:12px;background:var(--text3);border-radius:50%;top:2px;left:2px;transition:.2s}
+.tog input:checked+.tog-sl{background:rgba(0,184,240,.18);border-color:var(--blue)}
+.tog input:checked+.tog-sl::before{background:var(--blue);transform:translateX(18px)}
+.rrow{display:flex;flex-direction:column;gap:3px;margin-bottom:7px}
+.rrow span{font-size:.7rem;font-weight:700;color:var(--text3)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.vsel{width:100%;background:var(--surface2);color:var(--text);border:1.5px solid var(--border);border-radius:var(--rsm);padding:6px 10px;font-family:'Barlow',sans-serif;font-size:.8rem;outline:none}
+
+/* history log */
+.hlog{display:flex;flex-direction:column;gap:4px;max-height:190px;overflow-y:auto}
+.lrow{display:flex;align-items:center;gap:7px;background:var(--surface2);border-radius:var(--rsm);padding:5px 8px;font-size:.78rem}
+.lnum{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;width:46px;text-align:center}
+.lnum.lB{color:#00b8f0}.lnum.lI{color:#00dfa8}.lnum.lN{color:#f5c800}.lnum.lG{color:#ff8c00}.lnum.lO{color:#c850ff}
+.linfo{color:var(--text2);flex:1}.lseq{color:var(--text3);font-size:.68rem;margin-left:auto}
+
+/* fin/enc */
+.fin-bar{display:none;background:linear-gradient(90deg,#041a14,#071f1a);border:1.5px solid var(--green);border-radius:var(--radius);padding:12px 16px;text-align:center}
+.fin-bar.show{display:block}
+.fin-bar h2{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--green);letter-spacing:2px}
+.fin-bar p{color:var(--text2);font-size:.8rem;margin-top:4px}
+.enc-box{display:none;background:linear-gradient(135deg,#0a0a14,#060608);border:1.5px solid var(--accent);border-radius:var(--radius);padding:12px;text-align:center}
+.enc-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--accent);letter-spacing:2px}
+.enc-box p{font-size:.8rem;color:var(--text2);margin-top:4px}
 
 /* batidas panel */
 .batidas-panel{background:var(--surface);border:1.5px solid rgba(245,200,0,.4);border-radius:var(--radius);padding:12px;display:none}
@@ -194,203 +283,343 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .winner-item .wi-rm{background:none;border:none;color:var(--text3);cursor:pointer;font-size:.9rem}
 .winner-item .wi-rm:hover{color:var(--red)}
 .winners-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+
+win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);color:var(--text);border-radius:var(--rsm);padding:10px 14px;font-family:'Barlow',sans-serif;font-size:1rem;font-weight:700;outline:none}
+.win-inp:focus{border-color:#00ffcc}
+.win-inp::placeholder{color:var(--text3)}
+
 </style>
 </head>
 <body>
 
-<!-- =============== SCREEN 1: LISTA DE EVENTOS =============== -->
+<!-- ==================================
+     SCREEN 1 - EVENTOS
+================================== -->
+
 <div class="screen active" id="s1">
   <div class="s1-head">
-    <div>
-      <div class="logo-row">
+    <div class="logo-row">
+      <div>
         <div class="logo">B<span>I</span>NGO</div>
-        <div class="ibbi-badge">IBBI</div>
+        <div class="logo-sub">Instituto Brasileiro de Biotecnologia e Inovação</div>
       </div>
-      <div class="logo-sub">Gerenciador de Eventos</div>
+      <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
       <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v7.0</span>
-      <span class="conn off" id="connDot">&#11044;</span>
+      <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
   <div class="s1-body">
     <div class="toolbar">
-      <button class="btn btn-acc" id="btnNewEv">+ Novo Evento</button>
-      <div id="evCount" style="font-size:.8rem;color:var(--text2);font-weight:700"></div>
+      <div class="sec-lbl">Eventos</div>
+      <button class="btn btn-acc" id="btnNovoEv">+ Novo Evento</button>
     </div>
-    <div class="ev-grid" id="evGrid"></div>
+    <div class="ev-grid" id="evGrid">
+      <div class="empty-st"><div class="ei">🎱</div><p>Nenhum evento ainda.<br>Crie o primeiro!</p></div>
+    </div>
   </div>
 </div>
 
-<!-- =============== SCREEN 2: LISTA DE BINGOS DO EVENTO =============== -->
+<!-- ==================================
+     SCREEN 2 - GESTÃO DO EVENTO
+================================== -->
+
 <div class="screen" id="s2">
-  <div class="s2-head">
-    <button class="btn btn-ghost btn-sm" id="btnS2Back">&#8592; Eventos</button>
-    <div class="s2-evname" id="s2EvName">--</div>
-    <div class="s2-right">
-      <span class="badge be" id="s2BingoCount">--</span>
-      <button class="btn btn-acc btn-sm" id="btnNewBingo">+ Novo Bingo</button>
-      <button class="btn btn-red btn-sm" id="btnEncerrarEv">Encerrar Evento</button>
-      <span class="conn off" id="s2Conn">&#11044;</span>
-    </div>
-  </div>
-  <div class="s2-body">
-    <div id="bingoGrid" class="bingo-grid"></div>
-  </div>
-</div>
-
-<!-- =============== SCREEN 3: JOGO / SORTEIO =============== -->
-<div class="screen" id="s3">
-  <div class="s3-head">
-    <button class="btn btn-ghost btn-sm" id="btnS3Back">&#8592; Bingos</button>
+  <div class="s2g-head">
     <div>
-      <div class="s3-evname" id="s3EvName">--</div>
-      <div class="s3-bingoname" id="s3BingoName">--</div>
+      <div class="s2g-evname" id="s2evName">Evento</div>
+      <div style="font-size:.72rem;color:var(--text3);margin-top:4px"><span id="s2evMode">--</span> · <span id="s2evTipo">--</span></div>
     </div>
-    <div class="s3-right">
-      <span class="badge ba" id="s3ModeBadge">--</span>
-      <button class="btn btn-red btn-sm" id="btnEncerrarBingo">Encerrar Bingo</button>
-      <span class="conn off" id="s3Conn">&#11044;</span>
+    <div class="s2g-actions">
+      <button class="btn btn-ghost btn-sm" id="btnS2Voltar">← Voltar</button>
+      <button class="btn btn-ghost btn-sm" id="btnS2Perms">👥 Permissões</button>
+      <button class="btn btn-blue btn-sm" id="btnS2Edit">⚙ Editar Evento</button>
+      <button class="btn btn-yellow btn-sm" id="btnS2Reiniciar">↻ Reiniciar Evento</button>
+      <button class="btn btn-red btn-sm" id="btnS2Encerrar">⛔ Encerrar Evento</button>
     </div>
   </div>
-  <div class="s3-body">
-    <div class="main-col">
-      <!-- Prize chips -->
-      <div class="prizes-panel">
-        <div class="pp-head" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <span class="sec-lbl">PREMIOS</span>
-          <span id="cpLabel" style="font-size:.8rem;color:var(--text2);font-weight:700"></span>
-        </div>
-        <div class="prizes-scroll" id="prizeChips"></div>
+  <div class="s2g-body">
+    <!-- Info / Link / Status -->
+    <div class="s2g-info">
+      <div class="s2g-info-row">
+        <span class="s2g-evstatus" id="s2evStatusBadge">--</span>
+        <span style="font-size:.78rem;color:var(--text2)" id="s2evCreated">Criado em --</span>
+        <span style="font-size:.78rem;color:var(--text2)" id="s2evBingosResumo">0 bingos</span>
       </div>
-
-      <!-- Current prize -->
-      <div id="currentPrizeBox" style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
-        <div>
-          <div class="sec-lbl">PREMIO ATUAL</div>
-          <div id="cpName" style="font-size:1.15rem;font-weight:800;color:var(--text);margin-top:2px">--</div>
-          <div id="cpRule" style="font-size:.72rem;font-weight:700;color:var(--accent);margin-top:2px">--</div>
-        </div>
-        <div id="cpBtns" style="display:flex;gap:6px;flex-wrap:wrap"></div>
-      </div>
-
-      <!-- Ball -->
-      <div class="ball-area">
-        <div class="ball-lbl">ULTIMO SORTEADO</div>
-        <div class="bigball empty" id="bigBall">
-          <span class="ball-letter" id="ballLetter"></span>
-          <span class="ball-number" id="ballNumber">--</span>
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
-          <button class="btn btn-acc btn-lg" id="btnDraw">SORTEAR</button>
-          <button class="btn btn-ghost" id="btnLastDraw">&#9194;</button>
-          <button class="btn btn-ghost" id="btnResetDraw">&#128260;</button>
-        </div>
-        <div class="hstrip" id="drawnStrip"></div>
-      </div>
-
-      <!-- Grid -->
-      <div class="grid-wrap">
-        <div class="grid-title">CARTELA</div>
-        <div class="bingo-cols" id="bingoGridPanel"></div>
-      </div>
-
-      <!-- Batidas -->
-      <div class="batidas-panel" id="batidasPanel">
-        <div class="sec-lbl" style="margin-bottom:8px">&#127881; BINGOS DECLARADOS</div>
-        <div id="batidasList"></div>
-      </div>
-
-      <!-- Winners -->
-      <div id="winnersPanel" style="display:none;background:var(--surface);border:1.5px solid rgba(0,223,168,.3);border-radius:var(--radius);padding:12px;margin-top:10px">
-        <div class="sec-lbl" style="margin-bottom:8px">&#127942; GANHADORES CONFIRMADOS</div>
-        <div class="winners-list" id="winnersList"></div>
-        <div class="winners-actions" id="winnersActions"></div>
+      <div class="sec-lbl">📱 Link do Brincante</div>
+      <div class="s2g-link-box" id="playerLinkBox">--</div>
+      <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" id="btnCopyLink">📋 Copiar Link</button>
+        <button class="btn btn-ghost btn-sm" id="btnShowQR">🔳 Ver QR Code</button>
       </div>
     </div>
 
-    <div class="side-col">
-      <!-- Stats -->
-      <div class="card">
-        <h3>Estatisticas</h3>
-        <div class="stats-g">
-          <div class="sbox"><div class="sv" id="statTotal">--</div><div class="sl">Sorteados</div></div>
-          <div class="sbox"><div class="sv" id="statRestam">--</div><div class="sl">Restam</div></div>
-          <div class="sbox"><div class="sv" id="statPremios">--</div><div class="sl">Premios</div></div>
-          <div class="sbox"><div class="sv" id="statBatidas">--</div><div class="sl">Batidas</div></div>
-        </div>
+    <!-- Lista de Bingos -->
+    <div class="bingos-section">
+      <div class="bingos-head">
+        <div class="sec-lbl">🎯 Bingos (Rodadas)</div>
+        <button class="btn btn-acc" id="btnNovoBingo">+ Novo Bingo</button>
       </div>
-
-      <!-- Log -->
-      <div class="card">
-        <h3>Historico</h3>
-        <div class="hlog" id="drawLog"></div>
+      <div class="bingos-grid" id="bingosGrid">
+        <div class="empty-st"><div class="ei">🎯</div><p>Nenhum bingo ainda.<br>Crie a primeira rodada!</p></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- =============== MODAL: NOVO EVENTO =============== -->
+<!-- == MODALS == -->
+
+<!-- Novo Evento -->
+
 <div class="mbk" id="mNewEv">
   <div class="modal">
     <h2>Novo Evento</h2>
-    <div id="newEvErr" class="err-txt"></div>
-    <div class="fg">
-      <label>Nome do Evento</label>
-      <input type="text" id="neNome" placeholder="Ex: Festa Junina" maxlength="40">
+    <div class="fg"><label>Nome do Evento *</label><input type="text" id="mEvNome" placeholder="Ex: Bingo Festa Junina 2026" maxlength="60"></div>
+    <div class="frow">
+      <div class="fg"><label>Modo</label><select id="mEvMode"><option value="90" selected>90 pedras</option><option value="75">75 pedras</option></select></div>
+      <div class="fg"><label>Tipo de Cartela</label><select id="mEvTipo"><option value="livre" selected>Cartela Livre</option><option value="banco">Banco de Cartelas</option></select></div>
+    </div>
+    <div id="mEvBancoOpts" style="display:none">
+      <div class="fg">
+        <label>Qtde de Cartelas no Evento</label>
+        <input type="number" id="mEvQtdCartelas" min="1" max="5000" placeholder="Ex: 100" style="width:100%;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:9px 12px;font-family:'Barlow',sans-serif;font-size:.95rem;font-weight:600;outline:none;transition:border-color .2s">
+        <div id="mEvBancoInfo" style="font-size:.72rem;color:var(--text3);margin-top:6px;padding:7px 10px;background:var(--surface2);border-radius:var(--rsm);border:1px solid var(--border)">Carregando banco...</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="frow">
+      <div class="fg"><label>Senha para Entrar</label><input type="password" id="mEvSE" placeholder="Opcional"></div>
+      <div class="fg"><label>Senha para Excluir</label><input type="password" id="mEvSX" placeholder="Opcional"></div>
     </div>
     <div class="frow">
       <div class="fg">
-        <label>Tipo</label>
-        <select id="neTipo">
-          <option value="livre">Livre (jogadores proprios)</option>
-          <option value="banco">Banco (cartelas pre-geradas)</option>
-        </select>
+        <label>Max Cartelas por Usuario</label>
+        <input type="number" id="mEvMaxCart" min="0" max="100" value="0" placeholder="0 = ilimitado" style="width:100%;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:9px 12px;font-family:'Barlow',sans-serif;font-size:.95rem;font-weight:600;outline:none">
+        <div style="font-size:.68rem;color:var(--text3);margin-top:4px">0 = ilimitado</div>
+      </div>
+      <div class="fg">
+        <label>Aprovacao do Gestor</label>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+          <label class="tog"><input type="checkbox" id="mEvExigeAp"><span class="tog-sl"></span></label>
+          <span style="font-size:.82rem;font-weight:700;color:var(--text2)">Exigir aprovacao</span>
+        </div>
       </div>
     </div>
+    <div class="divider"></div>
     <div class="mfoot">
-      <button class="btn btn-ghost" id="btnNeCancel">Cancelar</button>
-      <button class="btn btn-acc" id="btnNeSave">Criar Evento</button>
+      <button class="btn btn-ghost" id="btnCancelEv">Cancelar</button>
+      <button class="btn btn-acc" id="btnCreateEv">Criar Evento</button>
     </div>
   </div>
 </div>
 
-<!-- =============== MODAL: CRIAR/EDITAR BINGO =============== -->
-<div class="mbk" id="mBingo">
-  <div class="modal">
-    <h2 id="mbTitle">Novo Bingo</h2>
-    <div id="mbErr" class="err-txt"></div>
-    <div class="fg">
-      <label>Nome da Rodada</label>
-      <input type="text" id="mbNome" placeholder="Ex: Rodada 1" maxlength="30">
+<!-- Senha Entrar -->
+
+<div class="mbk" id="mSE">
+  <div class="modal" style="max-width:350px">
+    <h2>🔒 Senha de Acesso</h2>
+    <div class="fg"><label>Senha do evento</label><input type="password" id="mSEinp" placeholder="Senha..."></div>
+    <div class="err-txt" id="mSEerr">Senha incorreta.</div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnCancelSE">Cancelar</button>
+      <button class="btn btn-acc" id="btnOkSE">Entrar</button>
     </div>
+  </div>
+</div>
+
+<!-- Senha Excluir -->
+
+<div class="mbk" id="mSX">
+  <div class="modal" style="max-width:350px">
+    <h2>🗑️ Confirmar Exclusão</h2>
+    <p style="font-size:.82rem;color:var(--text2);margin-bottom:14px">Apagará o evento e todo o histórico. Irreversível.</p>
+    <div class="fg"><label>Senha de Exclusão</label><input type="password" id="mSXinp" placeholder="Senha..."></div>
+    <div class="err-txt" id="mSXerr">Senha incorreta.</div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnCancelSX">Cancelar</button>
+      <button class="btn btn-red" id="btnOkSX">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<!-- Editar Evento -->
+
+<div class="mbk" id="mEditar">
+  <div class="modal" style="max-width:480px">
+    <h2>&#9881; Editar Evento</h2>
+
+```
+<div class="fg"><label>Nome do Evento</label><input type="text" id="eEvNome" maxlength="60" placeholder="Nome do evento"></div>
+<div class="frow">
+  <div class="fg"><label>Senha para Entrar</label><input type="password" id="eEvSE" placeholder="Deixe vazio para manter"></div>
+  <div class="fg"><label>Senha para Excluir</label><input type="password" id="eEvSX" placeholder="Deixe vazio para manter"></div>
+</div>
+<div class="frow">
+  <div class="fg">
+    <label>Max Cartelas por Usuario</label>
+    <input type="number" id="eEvMaxCart" min="0" max="100" value="0" placeholder="0 = ilimitado" style="width:100%;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:9px 12px;font-family:'Barlow',sans-serif;font-size:.95rem;font-weight:600;outline:none">
+    <div style="font-size:.68rem;color:var(--text3);margin-top:4px">0 = ilimitado</div>
+  </div>
+  <div class="fg">
+    <label>Aprovacao do Gestor</label>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+      <label class="tog"><input type="checkbox" id="eEvExigeAp"><span class="tog-sl"></span></label>
+      <span style="font-size:.82rem;font-weight:700;color:var(--text2)">Exigir aprovacao</span>
+    </div>
+  </div>
+</div>
+<div class="fg">
+  <label>Tipo de Cartela</label>
+  <select id="eEvTipo" style="width:100%;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:9px 12px;font-family:'Barlow',sans-serif;font-size:.95rem;font-weight:600;outline:none">
+    <option value="livre">Cartela Livre</option>
+    <option value="banco">Banco de Cartelas</option>
+  </select>
+</div>
+
+<div id="eEvBancoOpts" style="display:none">
+  <div class="fg">
+    <label>Qtde de Cartelas no Evento</label>
+    <input type="number" id="eEvQtdCartelas" min="1" max="5000" placeholder="Ex: 100" style="width:100%;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:9px 12px;font-family:'Barlow',sans-serif;font-size:.95rem;font-weight:600;outline:none;transition:border-color .2s">
+    <div id="eEvBancoInfo" style="font-size:.72rem;color:var(--text3);margin-top:6px;padding:7px 10px;background:var(--surface2);border-radius:var(--rsm);border:1px solid var(--border)"></div>
+  </div>
+</div>
+
+<div class="err-txt" id="eEvErr" style="margin-top:10px"></div>
+<div class="mfoot">
+  <button class="btn btn-ghost" id="btnEditarCancelar">Cancelar</button>
+  <button class="btn btn-acc" id="btnEditarSalvar">✓ Salvar</button>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- Confirmar Reiniciar EVENTO -->
+
+<div class="mbk" id="mReiniciar">
+  <div class="modal" style="max-width:380px">
+    <h2>↻ Reiniciar Evento?</h2>
+    <p style="font-size:.85rem;color:var(--text2);margin-bottom:12px">Zera <strong>TODOS os bingos</strong>, pedras, ganhadores, batidas e cartelas dos brincantes. Irreversível.</p>
+    <div class="fg" id="mReiniciarSenhaWrap"><label>Senha de Exclusão</label><input type="password" id="mReiniciarSenha" placeholder="Confirme a senha..."></div>
+    <div class="err-txt" id="mReiniciarErr">Senha incorreta.</div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnReiniciarCancelar">Cancelar</button>
+      <button class="btn btn-yellow" id="btnReiniciarConfirmar">↻ Reiniciar agora</button>
+    </div>
+  </div>
+</div>
+
+<!-- Novo Bingo -->
+<div class="mbk" id="mNewBingo">
+  <div class="modal">
+    <h2>+ Novo Bingo</h2>
+    <div class="fg"><label>Nome do Bingo *</label><input type="text" id="mBgNome" placeholder="Ex: Rodada 1, Bingo da Cerveja..." maxlength="60"></div>
+    <div class="divider"></div>
     <div class="fg">
-      <label>Modo</label>
-      <select id="mbMode">
-        <option value="75">75 pedras</option>
-        <option value="90">90 pedras</option>
+      <label>Prêmios (em ordem)</label>
+      <div class="prize-list" id="mBgPrizeList"></div>
+      <button class="btn btn-ghost btn-sm" id="btnBgAddPrize" style="margin-top:8px;width:100%">+ Adicionar Prêmio</button>
+    </div>
+    <div class="err-txt" id="mBgErr"></div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnBgCancelar">Cancelar</button>
+      <button class="btn btn-acc" id="btnBgSalvar">Criar Bingo</button>
+    </div>
+  </div>
+</div>
+
+<!-- Editar Bingo -->
+<div class="mbk" id="mEditBingo">
+  <div class="modal">
+    <h2>⚙ Editar Bingo</h2>
+    <div class="fg"><label>Nome do Bingo</label><input type="text" id="eBgNome" maxlength="60"></div>
+    <div class="divider"></div>
+    <div class="fg">
+      <label>Prêmios</label>
+      <div style="font-size:.72rem;color:var(--text3);margin-bottom:8px">Prêmios já fechados ou com ganhadores ficam protegidos.</div>
+      <div class="prize-list" id="eBgPrizeList"></div>
+      <button class="btn btn-ghost btn-sm" id="btnEBgAddPrize" style="margin-top:8px;width:100%">+ Adicionar Prêmio</button>
+    </div>
+    <div class="err-txt" id="eBgErr"></div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnEBgCancelar">Cancelar</button>
+      <button class="btn btn-acc" id="btnEBgSalvar">✓ Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reiniciar Bingo -->
+<div class="mbk" id="mReinBingo">
+  <div class="modal" style="max-width:380px">
+    <h2>↻ Reiniciar Bingo?</h2>
+    <p style="font-size:.85rem;color:var(--text2);margin-bottom:12px" id="mReinBingoTxt">Zera pedras, batidas e ganhadores deste bingo. Cartelas dos brincantes são apagadas. Irreversível.</p>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnReinBgCancelar">Cancelar</button>
+      <button class="btn btn-yellow" id="btnReinBgConfirmar">↻ Reiniciar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Excluir Bingo -->
+<div class="mbk" id="mDelBingo">
+  <div class="modal" style="max-width:380px">
+    <h2>🗑️ Excluir Bingo?</h2>
+    <p style="font-size:.85rem;color:var(--text2);margin-bottom:12px" id="mDelBingoTxt">Histórico será perdido. Irreversível.</p>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnDelBgCancelar">Cancelar</button>
+      <button class="btn btn-red" id="btnDelBgConfirmar">🗑️ Excluir</button>
+    </div>
+  </div>
+</div>
+
+<!-- QR Code -->
+<div class="mbk" id="mQR">
+  <div class="modal" style="max-width:340px;text-align:center">
+    <h2>🔳 QR Code</h2>
+    <p style="font-size:.78rem;color:var(--text2);margin-bottom:14px">Compartilhe com os participantes</p>
+    <div id="qrBox" style="display:flex;justify-content:center;background:#fff;padding:14px;border-radius:8px;margin-bottom:14px"></div>
+    <div class="mfoot" style="justify-content:center">
+      <button class="btn btn-acc btn-sm" id="btnQRDownload">⬇ Baixar PNG</button>
+      <button class="btn btn-ghost btn-sm" id="btnQRClose">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Screen 3 - Permissoes -->
+
+<div class="screen" id="s3">
+  <div class="s2-head">
+    <div class="s2-evname" id="s3name">Permissoes</div>
+    <span class="mode-badge" id="s3count">0 jogadores</span>
+    <div class="s2-right">
+      <button class="btn btn-ghost btn-sm" id="btnS3Voltar">&#8592; Voltar</button>
+    </div>
+  </div>
+  <div style="padding:12px;flex:1;display:flex;flex-direction:column;gap:10px;max-width:680px;margin:0 auto;width:100%">
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <input type="text" id="permsBusca" placeholder="Buscar por nome ou ID..." style="flex:1;min-width:140px;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:7px 10px;font-family:'Barlow',sans-serif;font-size:.88rem;outline:none">
+      <select id="permsFiltro" style="background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:7px 10px;font-family:'Barlow',sans-serif;font-size:.82rem;outline:none">
+        <option value="todos">Todos</option>
+        <option value="pendente">Pendentes</option>
+        <option value="aprovado">Aprovados</option>
+        <option value="rejeitado">Rejeitados</option>
+        <option value="sem_cadastro">Sem cadastro</option>
       </select>
     </div>
-    <div class="fg">
-      <label>Premios</label>
-      <div id="mbPrizeList" class="prize-list"></div>
-      <button class="btn btn-ghost btn-sm" id="btnMbAddPrize" style="margin-top:8px">+ Adicionar Premio</button>
+    <div id="permsLista" style="display:flex;flex-direction:column;gap:8px;flex:1;overflow-y:auto;padding-right:4px"></div>
+    <div id="permsPager" style="display:none;justify-content:center;align-items:center;gap:8px;margin-top:4px">
+      <button class="btn btn-ghost btn-sm" id="btnPermsPrev">&#8592; Ant</button>
+      <span id="permsPg" style="font-size:.75rem;font-weight:800;color:var(--accent);min-width:60px;text-align:center"></span>
+      <button class="btn btn-ghost btn-sm" id="btnPermsNext">Prox &#8594;</button>
     </div>
-    <div class="mfoot">
-      <button class="btn btn-ghost" id="btnMbCancel">Cancelar</button>
-      <button class="btn btn-acc" id="btnMbSave">Salvar Bingo</button>
-    </div>
-  </div>
-</div>
-
-<!-- =============== MODAL: GANHADORES =============== -->
-<div class="mbk" id="mWin">
-  <div class="modal">
-    <h2 id="mWinTitle">Ganhadores</h2>
-    <div class="winners-list" id="mWinList"></div>
-    <div class="winners-actions" id="mWinActions"></div>
-    <div class="mfoot">
-      <button class="btn btn-ghost" id="btnWinClose">Fechar</button>
+    <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rsm);padding:10px;margin-top:4px">
+      <div style="font-size:.68rem;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Cadastrar Manualmente</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input type="text" id="permsManNome" placeholder="Nome do jogador" style="flex:1;min-width:120px;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:7px 10px;font-family:'Barlow',sans-serif;font-size:.88rem;outline:none">
+        <input type="number" id="permsManQtd" min="1" max="100" value="1" style="width:70px;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:7px 10px;font-family:'Barlow',sans-serif;font-size:.88rem;outline:none;text-align:center">
+        <button class="btn btn-acc btn-sm" id="btnPermsCadastrar">+ Cadastrar</button>
+      </div>
     </div>
   </div>
 </div>
@@ -400,649 +629,1012 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION='v7.0';
-console.log('=== IBBI Bingo',APP_VERSION,'===');
+const APP_VERSION = 'v7.0';
 
-const db=getDatabase(initializeApp({
-  apiKey:"AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
-  authDomain:"domino-fa285.firebaseapp.com",
-  databaseURL:"https://domino-fa285-default-rtdb.firebaseio.com",
-  projectId:"domino-fa285",
-  storageBucket:"domino-fa285.firebasestorage.app",
-  messagingSenderId:"462709449311",
-  appId:"1:462709449311:web:569624eeac6fc57c0631ea"
+const db = getDatabase(initializeApp({
+  apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
+  authDomain: "domino-fa285.firebaseapp.com",
+  databaseURL: "https://domino-fa285-default-rtdb.firebaseio.com",
+  projectId: "domino-fa285",
+  storageBucket: "domino-fa285.firebasestorage.app",
+  messagingSenderId: "462709449311",
+  appId: "1:462709449311:web:569624eeac6fc57c0631ea"
 }));
-const fb=p=>ref(db,p);
-const $=id=>document.getElementById(id);
-const openM=id=>$(id).classList.add('open');
-const closeM=id=>$(id).classList.remove('open');
-const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const genId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-const fmtTs=ts=>{if(!ts)return'-';const d=new Date(ts);return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})};
-const sortP=p=>Object.values(p||{}).sort((a,b)=>(a.ordem||0)-(b.ordem||0));
+const fb = p => ref(db, p);
 
-// ========== STATE ==========
-let eventos={};
-let evData=null, evId=null;
-let bingoData=null, bingoId=null;
-let curPrizeId=null;
-let drawnSet=new Set();
+// --- VERSION ---
+document.querySelectorAll('.vtag').forEach(el => { el.textContent = APP_VERSION; });
 
-// ========== NAVIGATION ==========
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  $(id).classList.add('active');
-  window.scrollTo(0,0);
+// --- HELPERS ---
+const genId = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const fmtTs = ts => { if(!ts) return '-'; const d=new Date(ts); return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); };
+const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const $ = id => document.getElementById(id);
+const openM = id => $(id).classList.add('open');
+const closeM = id => $(id).classList.remove('open');
+const showScreen = id => { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); };
+
+// --- BINGO LETTERS ---
+const LETTERS = ['B','I','N','G','O'];
+function getLetter(n, mode) { return LETTERS[Math.min(Math.floor((n-1)/(mode/5)),4)]; }
+function ballLabel(n, mode) { return getLetter(n,mode)+' '+n; }
+function getColRange(li, mode) { const s=mode/5; return {start:li*s+1, end:(li+1)*s}; }
+
+// --- AUDIO ---
+const AC = new (window.AudioContext||window.webkitAudioContext)();
+function playTone(freq, dur, type='sine', vol=0.3) {
+  try {
+    const o=AC.createOscillator(), g=AC.createGain();
+    o.connect(g); g.connect(AC.destination);
+    o.type=type; o.frequency.value=freq;
+    g.gain.setValueAtTime(vol,AC.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+dur);
+    o.start(); o.stop(AC.currentTime+dur);
+  } catch(e){}
 }
+function soundMark()  { playTone(880,.12,'sine',.2); }
+function soundBingo() { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,.2,'triangle',.4),i*120)); }
+function soundAlert() { [440,550,440,550].forEach((f,i)=>setTimeout(()=>playTone(f,.15,'square',.35),i*150)); }
+function soundReject(){ playTone(200,.4,'sawtooth',.3); }
+function soundConfirm(){ [523,784].forEach((f,i)=>setTimeout(()=>playTone(f,.25,'sine',.35),i*150)); }
 
-// ========== TELA S1: LISTA DE EVENTOS ==========
-function renderEv(){
-  const g=$('evGrid');
-  const ids=Object.keys(eventos).filter(k=>k!=='_perm');
-  $('evCount').textContent=ids.length+' evento'+(ids.length!==1?'s':'');
-  if(!ids.length){
-    g.innerHTML='<div class="empty-st"><div class="ei">&#127921;</div><p>Nenhum evento ainda.</p><p style="font-size:.78rem;margin-top:4px">Crie o primeiro evento para comecar.</p></div>';
-    return;
-  }
-  g.innerHTML=ids.map(id=>{
-    const ev=eventos[id];
-    const bingos=ev?.bingos||{};
-    const bingoIds=Object.keys(bingos);
-    const ativos=bingoIds.filter(bid=>bingos[bid]?.status==='ativo').length;
-    const encerrados=bingoIds.filter(bid=>bingos[bid]?.status==='encerrado').length;
-    const totalPremios=bingoIds.reduce((sum,bid)=>sum+Object.keys(bingos[bid]?.premios||{}).length,0);
-    return `<div class="ev-card ${ev?.status==='encerrado'?'st-encerrado':'st-ativo'}" onclick="window._openEv('${id}')">
-      <div class="ev-head">
-        <div class="ev-title">${esc(ev?.nome||id)}</div>
-        ${ev?.status==='encerrado'?'<span class="badge be">Encerrado</span>':(ativos?'<span class="badge bg">Em andamento</span>':'<span class="badge ba">Ativo</span>')}
-      </div>
-      <div class="ev-meta">
-        <span>${bingoIds.length} bingo${bingoIds.length!==1?'s':''}</span>
-        <span>${ativos} ativo${ativos!==1?'s':''}</span>
-        <span>${encerrados} encerrado${encerrados!==1?'s':''}</span>
-        <span>${totalPremios} premio${totalPremios!==1?'s':''}</span>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// Abrir evento -> vai para tela s2 (lista de bingos)
-window._openEv=id=>{
-  evId=id;
-  evData=eventos[id]?JSON.parse(JSON.stringify(eventos[id])):null;
-  if(!evData)return;
-  $('s2EvName').textContent=evData.nome||'--';
-  renderBingos();
-  showScreen('s2');
-};
-
-// ========== TELA S2: LISTA DE BINGOS ==========
-function renderBingos(){
-  if(!evData)return;
-  const bingos=evData.bingos||{};
-  const ids=Object.keys(bingos).sort((a,b)=>(bingos[a].ordem||0)-(bingos[b].ordem||0));
-  const hasAtivo=ids.some(id=>bingos[id]?.status==='ativo');
-  $('btnNewBingo').disabled=hasAtivo;
-  $('btnNewBingo').title=hasAtivo?'Encerre o bingo ativo para criar novo':'Criar novo bingo';
-  $('s2BingoCount').textContent=ids.length+' bingo'+(ids.length!==1?'s':'');
-
-  if(!ids.length){
-    $('bingoGrid').innerHTML='<div class="empty-st" style="grid-column:1/-1"><div class="ei">&#127922;</div><p>Nenhum bingo neste evento.</p><p style="font-size:.78rem;margin-top:4px">Clique "+ Novo Bingo" para comecar.</p></div>';
-    return;
-  }
-
-  $('bingoGrid').innerHTML=ids.map(id=>{
-    const b=bingos[id];
-    const premios=Object.keys(b.premios||{}).length;
-    const drawn=(b.drawn||[]).length;
-    const ganhadores=Object.values(b.premios||{}).reduce((sum,p)=>sum+(p.ganhadores?.length||0),0);
-    const isAtivo=b.status==='ativo';
-    return `<div class="bingo-card st-${isAtivo?'ativo':'encerrado'}">
-      <div class="bc-head">
-        <div>
-          <div class="bc-title">#${b.ordem||'?'} ${esc(b.nome||'--')}</div>
-          <div class="bc-meta">
-            <span>${b.mode||'?'} pedras</span>
-            <span>${drawn} sorteadas</span>
-            <span>${premios} premio${premios!==1?'s':''}</span>
-            ${ganhadores?`<span style="color:var(--green)">${ganhadores} ganh.</span>`:''}
-          </div>
-        </div>
-        <span class="bc-status ${isAtivo?'ativo':'encerrado'}">${isAtivo?'ATIVO':'ENCERRADO'}</span>
-      </div>
-      <div class="bc-actions">
-        ${isAtivo?`<button class="btn btn-acc btn-sm" onclick="window._jogarBingo('${id}')">&#9654; JOGAR</button>`:`<button class="btn btn-ghost btn-sm" onclick="window._verBingo('${id}')">&#128065; Ver</button>`}
-        ${isAtivo?`<button class="btn btn-red btn-sm" onclick="window._encerrarBingo('${id}')">&#9632; Encerrar</button>`:`<button class="btn btn-green btn-sm" onclick="window._reiniciarBingo('${id}')">&#8635; Reiniciar</button>`}
-        <button class="btn btn-blue btn-sm" onclick="window._editarBingo('${id}')">&#9998; Editar</button>
-        <button class="btn btn-red btn-sm" onclick="window._excluirBingo('${id}')">&#128465; Excluir</button>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// ========== BINGO ACTIONS ==========
-window._jogarBingo=id=>{
-  bingoId=id;
-  bingoData=evData?.bingos?.[id]?JSON.parse(JSON.stringify(evData.bingos[id])):null;
-  if(!bingoData)return;
-  $('s3EvName').textContent=evData?.nome||'--';
-  $('s3BingoName').textContent='#'+(bingoData.ordem||'?')+' '+(bingoData.nome||'--');
-  $('s3ModeBadge').textContent=(bingoData.mode||75)+' pedras';
-  curPrizeId=sortP(bingoData.premios).find(p=>!p.fechado)?.id||null;
-  renderS();
-  showScreen('s3');
-};
-
-window._verBingo=id=>{
-  bingoId=id;
-  bingoData=evData?.bingos?.[id]?JSON.parse(JSON.stringify(evData.bingos[id])):null;
-  if(!bingoData)return;
-  curPrizeId=sortP(bingoData.premios).find(p=>!p.fechado)?.id||null;
-  renderS();
-  showScreen('s3');
-};
-
-window._encerrarBingo=id=>{
-  const b=evData?.bingos?.[id]; if(!b)return;
-  if(!confirm('Encerrar o bingo "'+(b.nome||'--')+'"?'))return;
-  const premios=sortP(b.premios);
-  const naoFechados=premios.filter(p=>!p.fechado).length;
-  if(naoFechados && !confirm('Ainda ha '+naoFechados+' premio(s) nao fechado(s). Encerrar mesmo assim?'))return;
-
-  const updates={};
-  updates['bingo/eventos/'+evId+'/bingos/'+id+'/status']='encerrado';
-  updates['bingo/eventos/'+evId+'/bingos/'+id+'/encerradoEm']=Date.now();
-
-  // Fechar premios pendentes
-  premios.forEach(p=>{
-    if(!p.fechado){
-      updates['bingo/eventos/'+evId+'/bingos/'+id+'/premios/'+p.id+'/fechado']=true;
-    }
-  });
-
-  update(fb('/'),updates).then(()=>{
-    evData.bingos[id].status='encerrado';
-    evData.bingos[id].encerradoEm=Date.now();
-    // Atualizar bingoAtual
-    const ativos=Object.keys(evData.bingos).filter(bid=>evData.bingos[bid]?.status==='ativo'&&bid!==id);
-    if(!ativos.length){
-      set(fb('bingo/eventos/'+evId+'/bingoAtual'),null);
-    }
-    renderBingos();
-  });
-};
-
-window._reiniciarBingo=id=>{
-  const b=evData?.bingos?.[id]; if(!b)return;
-  if(!confirm('Reiniciar "'+(b.nome||'--')+'"? Todos os numeros sorteados e ganhadores serao apagados.'))return;
-
-  const hasAtivo=Object.keys(evData.bingos||{}).some(bid=>evData.bingos[bid]?.status==='ativo'&&bid!==id);
-  if(hasAtivo && !confirm('Ainda ha outro bingo ativo. Ao reiniciar este, ele se tornara o unico ativo. Continuar?'))return;
-
-  const updates={};
-  updates['bingo/eventos/'+evId+'/bingos/'+id+'/drawn']=[];
-  updates['bingo/eventos/'+evId+'/bingos/'+id+'/status']='ativo';
-  updates['bingo/eventos/'+evId+'/bingos/'+id+'/encerradoEm']=null;
-  updates['bingo/eventos/'+evId+'/bingoAtual']=id;
-
-  sortP(b.premios).forEach(p=>{
-    updates['bingo/eventos/'+evId+'/bingos/'+id+'/premios/'+p.id+'/ganhadores']=[];
-    updates['bingo/eventos/'+evId+'/bingos/'+id+'/premios/'+p.id+'/ganhoEm']=null;
-    updates['bingo/eventos/'+evId+'/bingos/'+id+'/premios/'+p.id+'/fechado']=false;
-  });
-
-  update(fb('/'),updates).then(()=>{
-    evData.bingos[id].drawn=[];
-    evData.bingos[id].status='ativo';
-    evData.bingos[id].encerradoEm=null;
-    sortP(evData.bingos[id].premios).forEach(p=>{
-      p.ganhadores=[];p.ganhoEm=null;p.fechado=false;
-    });
-    evData.bingoAtual=id;
-    renderBingos();
-  });
-};
-
-window._excluirBingo=id=>{
-  const b=evData?.bingos?.[id]; if(!b)return;
-  if(!confirm('Excluir "'+(b.nome||'--')+'" permanentemente?'))return;
-  remove(fb('bingo/eventos/'+evId+'/bingos/'+id)).then(()=>{
-    delete evData.bingos[id];
-    if(evData.bingoAtual===id){
-      const prox=Object.keys(evData.bingos).find(bid=>evData.bingos[bid]?.status==='ativo');
-      set(fb('bingo/eventos/'+evId+'/bingoAtual'),prox||null);
-      evData.bingoAtual=prox||null;
-    }
-    renderBingos();
-  });
-};
-
-window._editarBingo=id=>{
-  const b=evData?.bingos?.[id]; if(!b)return;
-  $('mbTitle').textContent='Editar Bingo';
-  $('mbNome').value=b.nome||'';
-  $('mbMode').value=b.mode||75;
-  $('btnMbSave').dataset.editId=id;
-  openM('mBingo');
-};
-
-// ========== CRIAR BINGO ==========
-let editingBingoId=null;
-
-function openCreateBingo(){
-  editingBingoId=null;
-  $('mbTitle').textContent='Novo Bingo';
-  $('mbNome').value='';
-  $('mbMode').value=75;
-  $('mbErr').style.display='none';
-  renderMbPrizes([{nome:'Bingo Cheia',regra:'cheia'},{nome:'Linha Dupla',regra:'linha'}]);
-  openM('mBingo');
-}
-
-function renderMbPrizes(list){
-  $('mbPrizeList').innerHTML=list.map((p,i)=>`
-    <div class="prize-row" data-idx="${i}">
-      <div class="prize-row-top">
-        <span class="p-ord">#${i+1}</span>
-        <input class="p-inp" placeholder="Nome do premio" value="${esc(p.nome||'')}">
-        <button class="p-rm" onclick="window._rmMbPrize(${i})" ${list.length<=1?'style="visibility:hidden"':''}>&#128465;</button>
-      </div>
-      <div class="prize-row-opts">
-        <span class="regra-lbl">Regra:</span>
-        <span class="radio-btn ${p.regra==='cheia'?'sel':''}" onclick="window._selMbRegra(this,'cheia')">Cartela Cheia</span>
-        <span class="radio-btn ${p.regra==='linha'?'sel':''}" onclick="window._selMbRegra(this,'linha')">Linha/Col/Diag</span>
-      </div>
-    </div>
-  `).join('');
-}
-
-window._rmMbPrize=idx=>{
-  const rows=document.querySelectorAll('#mbPrizeList .prize-row');
-  if(rows.length<=1)return;
-  const list=[];
-  rows.forEach((r,i)=>{
-    if(i!==idx)list.push({nome:r.querySelector('.p-inp').value,regra:r.querySelector('.radio-btn.sel')?.dataset?.regra||'cheia'});
-  });
-  renderMbPrizes(list);
-};
-
-window._selMbRegra=(el,regra)=>{
-  el.closest('.prize-row-opts').querySelectorAll('.radio-btn').forEach(b=>b.classList.remove('sel'));
-  el.classList.add('sel');
-  el.dataset.regra=regra;
-};
-
-$('btnMbAddPrize').addEventListener('click',()=>{
-  const rows=document.querySelectorAll('#mbPrizeList .prize-row');
-  const list=[];
-  rows.forEach(r=>list.push({nome:r.querySelector('.p-inp').value,regra:r.querySelector('.radio-btn.sel')?.dataset?.regra||'cheia'}));
-  list.push({nome:'',regra:'cheia'});
-  renderMbPrizes(list);
-});
-
-$('btnMbSave').addEventListener('click',()=>{
-  const nome=$('mbNome').value.trim();
-  if(!nome){$('mbErr').textContent='Informe o nome do bingo';$('mbErr').style.display='block';return;}
-  const mode=parseInt($('mbMode').value);
-  const rows=document.querySelectorAll('#mbPrizeList .prize-row');
-  if(!rows.length){$('mbErr').textContent='Adicione pelo menos um premio';$('mbErr').style.display='block';return;}
-
-  const premios={};
-  let ordem=1;
-  rows.forEach(r=>{
-    const n=r.querySelector('.p-inp').value.trim();
-    const regra=r.querySelector('.radio-btn.sel')?.dataset?.regra||'cheia';
-    if(n){
-      const pid='p'+ordem;
-      premios[pid]={id:pid,ordem:ordem,nome:n,regra:regra,ganhadores:[],ganhoEm:null,fechado:false};
-      ordem++;
-    }
-  });
-  if(ordem===1){$('mbErr').textContent='Adicione pelo menos um premio com nome';$('mbErr').style.display='block';return;}
-
-  const bid=editingBingoId||genId();
-  const existingPremios=editingBingoId&&evData?.bingos?.[editingBingoId]?.premios?evData.bingos[editingBingoId].premios:{};
-
-  // Preservar ganhadores de premios existentes ao editar
-  Object.keys(premios).forEach(pid=>{
-    const oldP=existingPremios[pid];
-    if(oldP){
-      premios[pid].ganhadores=oldP.ganhadores||[];
-      premios[pid].ganhoEm=oldP.ganhoEm||null;
-      premios[pid].fechado=oldP.fechado||false;
-    }
-  });
-
-  // Calcular ordem
-  const bingos=evData?.bingos||{};
-  const maxOrd=Math.max(0,...Object.values(bingos).map(b=>b.ordem||0));
-  const bingoOrd=editingBingoId?(bingos[editingBingoId]?.ordem||maxOrd+1):(maxOrd+1);
-
-  const bingoObj={
-    nome,mode,premios,
-    status:editingBingoId?(bingos[editingBingoId]?.status||'ativo'):'ativo',
-    ordem:bingoOrd,
-    criadoEm:editingBingoId?(bingos[editingBingoId]?.criadoEm||Date.now()):Date.now(),
-    encerradoEm:editingBingoId?bingos[editingBingoId]?.encerradoEm:null,
-    drawn:editingBingoId?(bingos[editingBingoId]?.drawn||[]):[]
-  };
-
-  set(fb('bingo/eventos/'+evId+'/bingos/'+bid),bingoObj).then(()=>{
-    closeM('mBingo');
-    // Se novo bingo, atualizar bingoAtual se nao houver ativo
-    if(!editingBingoId){
-      const hasAtivo=Object.keys(bingos).some(bid=>bingos[bid]?.status==='ativo');
-      if(!hasAtivo){
-        set(fb('bingo/eventos/'+evId+'/bingoAtual'),bid);
-      }
-    }
-  });
-});
-
-$('btnMbCancel').addEventListener('click',()=>closeM('mBingo'));
-
-// ========== TELA S3: JOGO / SORTEIO ==========
-function renderS(){
-  const b=bingoData; if(!b)return;
-  const enc=b.status==='encerrado';
-  const premios=sortP(b.premios);
-  const cp=premios.find(p=>p.id===curPrizeId);
-
-  // Prize chips
-  const ps=$('prizeChips'); ps.innerHTML='';
-  premios.forEach(p=>{
-    const hasWinners=p.ganhadores?.length>0;
-    const isFechado=p.fechado===true;
-    let cls='';
-    if(isFechado) cls='closed';
-    else if(hasWinners) cls='won';
-    else if(p.id===curPrizeId) cls='curr';
-    else cls='pend';
-    const chip=document.createElement('div');
-    chip.className='pchip '+cls;
-    let statusHtml='';
-    if(isFechado) statusHtml='<span style="font-size:.7rem;margin-left:4px">&#128274;</span>';
-    else if(hasWinners) statusHtml='<span style="font-size:.7rem;margin-left:4px">&#127941; '+p.ganhadores.length+'</span>';
-    chip.innerHTML='<span class="pc-ord">#'+p.ordem+'</span><span class="pc-name">'+esc(p.nome)+'</span>'+statusHtml;
-    chip.addEventListener('click',()=>{curPrizeId=p.id;renderS();});
-    ps.appendChild(chip);
-  });
-
-  // Current prize
-  if(cp){
-    $('cpName').textContent='#'+cp.ordem+' '+cp.nome;
-    $('cpRule').textContent=cp.regra==='cheia'?'Cartela Cheia':'Linha/Coluna/Diagonal';
-    $('cpLabel').textContent=premios.indexOf(cp)+1+' / '+premios.length;
-    const done=cp.ganhadores&&cp.ganhadores.length>0;
-    $('cpBtns').innerHTML=done?
-      '<button class="btn btn-yellow btn-sm" onclick="window._showWinners()">&#127942; '+cp.ganhadores.length+' ganh.</button>':
-      '<span style="font-size:.78rem;color:var(--text3)">Aguardando bingo...</span>';
-  }else{
-    $('cpName').textContent='--';
-    $('cpRule').textContent='--';
-    $('cpLabel').textContent='--';
-    $('cpBtns').innerHTML='';
-  }
-
-  // Big ball
-  const drawn=b.drawn||[];
-  const last=drawn.length?drawn[drawn.length-1]:null;
-  const bb=$('bigBall');
-  if(last){
-    const l=last<=15?'B':last<=30?'I':last<=45?'N':last<=60?'G':'O';
-    bb.className='bigball pop l'+l;
-    $('ballLetter').textContent=l;
-    $('ballNumber').textContent=last;
-    setTimeout(()=>bb.classList.remove('pop'),400);
-  }else{
-    bb.className='bigball empty';
-    $('ballLetter').textContent='';
-    $('ballNumber').textContent='--';
-  }
-
-  // Draw button
-  $('btnDraw').disabled=enc||!cp||cp.fechado||(drawn.length>=(b.mode||75));
-  $('btnDraw').textContent=enc?'Encerrado':(!cp||cp.fechado)?'Premio Fechado':'SORTEAR';
-
-  // Drawn strip
-  $('drawnStrip').innerHTML=drawn.map(n=>{
-    const l=n<=15?'B':n<=30?'I':n<=45?'N':n<=60?'G':'O';
-    return '<span style="display:inline-block;padding:3px 8px;border-radius:4px;font-size:.8rem;font-family:Bebas Neue;background:var(--surface2);margin:2px">'+n+'</span>';
-  }).join('');
-
-  // Grid
-  renderGrid(b);
-
-  // Stats
-  $('statTotal').textContent=drawn.length;
-  $('statRestam').textContent=(b.mode||75)-drawn.length;
-  $('statPremios').textContent=premios.length;
-
-  // Batidas
-  renderBatidas();
-
-  // Winners
-  const totalWinners=premios.reduce((s,p)=>s+(p.ganhadores?.length||0),0);
-  $('statBatidas').textContent=totalWinners;
-  if(totalWinners>0){
-    $('winnersPanel').style.display='block';
-    $('winnersList').innerHTML=premios.filter(p=>p.ganhadores?.length).map(p=>{
-      return p.ganhadores.map((g,i)=>'<div class="winner-item"><span class="wi-id">#'+p.ordem+'</span><span class="wi-name">'+esc(g.nome)+'</span><span style="font-size:.7rem;color:var(--text3)">Cartela '+esc(g.cartelaId)+'</span></div>').join('');
-    }).join('');
-    $('winnersActions').innerHTML='<button class="btn btn-yellow btn-sm" onclick="window._showWinners()">&#127942; Ver Ganhadores</button>';
-  }else{
-    $('winnersPanel').style.display='none';
-  }
-}
-
-function renderGrid(b){
-  const drawn=b.drawn||[];
-  const mode=b.mode||75;
-  const ranges=mode===90?
-    {B:[1,18],I:[19,36],N:[37,54],G:[55,72],O:[73,90]}:
-    {B:[1,15],I:[16,30],N:[31,45],G:[46,60],O:[61,75]};
-  const cols=['B','I','N','G','O'];
-  $('bingoGridPanel').innerHTML=cols.map(c=>{
-    const r=ranges[c];
-    const nums=[];
-    for(let i=r[0];i<=r[1];i++)nums.push(i);
-    return '<div><div class="bingo-col-hdr l'+c+'">'+c+'</div><div class="bingo-col-nums">'+nums.map(n=>{
-      const isDrawn=drawn.includes(n);
-      const isLast=drawn.length&&drawn[drawn.length-1]===n;
-      return '<div class="nc'+(isDrawn?' drawn-'+c:'')+(isLast?' latest':'')+'">'+n+'</div>';
-    }).join('')+'</div></div>';
-  }).join('');
-}
-
-function renderBatidas(){
-  if(!evData?.batidas){
-    $('batidasPanel').classList.remove('show');
-    return;
-  }
-  // Filtrar batidas pendentes
-  const pendentes=Object.entries(evData.batidas).filter(([_,b])=>b.status==='pendente');
-  if(!pendentes.length){$('batidasPanel').classList.remove('show');return;}
-  $('batidasPanel').classList.add('show');
-  $('batidasList').innerHTML=pendentes.map(([bid,b])=>`
-    <div class="batida-card">
-      <div class="batida-card-top">
-        <div>
-          <div class="batida-nome">${esc(b.playerNome||'Anonimo')}</div>
-          <div class="batida-id">${esc(b.cartelaId||'?')}</div>
-        </div>
-        <span class="batida-tipo">${b.tipo||'manual'}</span>
-      </div>
-      <div class="batida-btns">
-        <button class="btn btn-green btn-sm" onclick="window._confBatida('${bid}')">&#10004; Confirmar</button>
-        <button class="btn btn-red btn-sm" onclick="window._rejBatida('${bid}')">&#10008; Rejeitar</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-// ========== SORTEIO ==========
-function draw(){
-  if(!bingoData||!curPrizeId)return;
-  const b=bingoData;
-  const mode=b.mode||75;
-  const drawn=b.drawn||[];
-  if(drawn.length>=mode)return;
-  let n;
-  do{n=Math.floor(Math.random()*mode)+1;}while(drawn.includes(n));
-  drawn.push(n);
-  set(fb('bingo/eventos/'+evId+'/bingos/'+bingoId+'/drawn'),drawn);
-  // Log
-  const l=n<=15?'B':n<=30?'I':n<=45?'N':n<=60?'G':'O';
-  const logEl=document.createElement('div');
-  logEl.className='lrow';
-  logEl.innerHTML='<span class="lnum l'+l+'">'+n+'</span><span class="linfo">'+l+'</span><span class="lseq">#'+drawn.length+'</span>';
-  const hlog=$('drawLog');
-  hlog.insertBefore(logEl,hlog.firstChild);
-  while(hlog.children.length>50)hlog.removeChild(hlog.lastChild);
-}
-
-// ========== BATIDAS ==========
-window._confBatida=bid=>{
-  const b=evData?.batidas?.[bid]; if(!b)return;
-  confirmarBatida(bid,b);
-};
-window._rejBatida=bid=>{
-  update(fb('bingo/eventos/'+evId+'/batidas/'+bid),{status:'rejeitada'});
-};
-
-function confirmarBatida(bid,b){
-  if(!evData||!bingoData||!curPrizeId)return;
-  const bp='bingo/eventos/'+evId+'/bingos/'+bingoId+'/premios/'+curPrizeId;
-  if(!bingoData.premios[curPrizeId].ganhadores)bingoData.premios[curPrizeId].ganhadores=[];
-  bingoData.premios[curPrizeId].ganhadores.push({nome:b.playerNome||'Anonimo',cartelaId:b.cartelaId||'',ts:Date.now()});
-  const cp=bingoData.premios[curPrizeId];
-  const premioInfo={ordem:cp.ordem,nome:cp.nome,regra:cp.regra,ts:Date.now()};
-  const brincantePath='bingo/eventos/'+evId+'/brincantes/'+(b.playerId||b.uid||'anon');
-  Promise.all([
-    set(fb(bp+'/ganhadores'),bingoData.premios[curPrizeId].ganhadores),
-    set(fb(bp+'/ganhoEm'),Date.now()),
-    update(fb('bingo/eventos/'+evId+'/batidas/'+bid),{status:'confirmada'}),
-    set(fb(brincantePath+'/premioGanho'),premioInfo),
-    set(fb(brincantePath+'/bingoConfirmado'),true),
-    set(fb(brincantePath+'/ultimaCartelaBatida'),b.cartelaId||'')
-  ]).catch(e=>console.error(e));
-  renderS();
-}
-
-// ========== GANHADORES ==========
-window._showWinners=()=>{
-  const premios=sortP(bingoData?.premios);
-  const totalWinners=premios.reduce((s,p)=>s+(p.ganhadores?.length||0),0);
-  if(!totalWinners)return;
-  $('mWinTitle').textContent='Ganhadores ('+totalWinners+')';
-  $('mWinList').innerHTML=premios.filter(p=>p.ganhadores?.length).map(p=>{
-    return p.ganhadores.map((g,i)=>`<div class="winner-item"><span class="wi-id">#${p.ordem}</span><span class="wi-name">${esc(g.nome)}</span><span style="font-size:.7rem;color:var(--text3)">${esc(g.cartelaId)}</span></div>`).join('');
-  }).join('');
-  const ativos=premios.filter(p=>p.ganhadores?.length>0&&!p.fechado);
-  $('mWinActions').innerHTML=ativos.length?`<button class="btn btn-red btn-sm" onclick="window._fecharPremioWin()">&#10004; Fechar Premio</button>`:'';
-  openM('mWin');
-};
-
-window._fecharPremioWin=()=>{
-  closeM('mWin');
-  const premios=sortP(bingoData?.premios);
-  const ativo=premios.find(p=>p.ganhadores?.length>0&&!p.fechado);
-  if(ativo){
-    set(fb('bingo/eventos/'+evId+'/bingos/'+bingoId+'/premios/'+ativo.id+'/fechado'),true).then(()=>{
-      bingoData.premios[ativo.id].fechado=true;
-      const prox=premios.find(p=>!p.fechado);
-      if(prox)curPrizeId=prox.id;
-      renderS();
-    });
-  }
-};
-
-// ========== ENCERRAR EVENTO ==========
-$('btnEncerrarEv').addEventListener('click',()=>{
-  if(!evData)return;
-  if(!confirm('Encerrar o evento "'+(evData.nome||'--')+'"? TODOS os bingos serao encerrados.'))return;
-  const updates={};
-  updates['bingo/eventos/'+evId+'/status']='encerrado';
-  updates['bingo/eventos/'+evId+'/encerradoEm']=Date.now();
-  updates['bingo/eventos/'+evId+'/bingoAtual']=null;
-  Object.keys(evData.bingos||{}).forEach(bid=>{
-    updates['bingo/eventos/'+evId+'/bingos/'+bid+'/status']='encerrado';
-    updates['bingo/eventos/'+evId+'/bingos/'+bid+'/encerradoEm']=Date.now();
-  });
-  update(fb('/'),updates);
-});
-
-// ========== FIREBASE LISTENERS ==========
-// Eventos
-onValue(fb('bingo/eventos'),snap=>{
-  const val=snap.val();
-  eventos=val||{};
-  try{localStorage.setItem('ibbi_eventos_cache',JSON.stringify(eventos));}catch(e){}
-  renderEv();
-  if(evId&&eventos[evId]){
-    evData=JSON.parse(JSON.stringify(eventos[evId]));
-    if(bingoId&&evData.bingos?.[bingoId]){
-      bingoData=JSON.parse(JSON.stringify(evData.bingos[bingoId]));
-      renderS();
-    }
-    // Se estamos na tela s2, re-renderizar bingos
-    if(document.querySelector('#s2.active')) renderBingos();
-  }
-});
-
-// Conectividade
+// --- CONNECTIVITY ---
 onValue(fb('.info/connected'),s=>{
   const on=s.val();
-  ['connDot','s2Conn','s3Conn'].forEach(id=>{
-    const d=$(id); if(d){d.textContent=on?'online':'offline';d.className='conn '+(on?'on':'off');}
+  const d=$('connDot');
+  if(d){d.textContent=on?'⬤ online':'⬤ offline'; d.className='conn '+(on?'on':'off');}
+});
+
+// --- DETECT MODE ---
+
+// ====================================================
+//  OPERATOR STATE
+// ====================================================
+let eventos={}, evId=null, evData=null;
+let pendingOpenId=null, pendingDelId=null;
+let pendingBatidaId=null;
+
+try {
+  const evRef = fb('bingo/eventos');
+  onValue(evRef, snap=>{
+    const val=snap.val();
+    eventos=val||{};
+    try { localStorage.setItem('ibbi_eventos_cache', JSON.stringify(eventos)); } catch(e){}
+    renderEv();
+    if(evId && eventos[evId]){
+      evData = JSON.parse(JSON.stringify(eventos[evId]));
+      if(typeof renderGestao === 'function') renderGestao();
+    }
+  });
+} catch(e) {
+  console.error('ERRO ao criar listener:', e);
+}
+
+// Carregar cache imediatamente enquanto Firebase nao responde
+try {
+  const cache = localStorage.getItem('ibbi_eventos_cache');
+  console.log('Cache:', cache ? 'sim ('+cache.length+' chars)' : 'vazio');
+  if(cache) { eventos=JSON.parse(cache); renderEv(); }
+} catch(e){ console.log('Cache erro:',e); }
+
+// --- SCREEN 1 ---
+function renderEv(){
+  const g=$('evGrid'), ids=Object.keys(eventos);
+  if(!ids.length){g.innerHTML='<div class="empty-st"><div class="ei">&#127921;</div><p>Nenhum evento ainda.<br>Crie o primeiro!</p></div>';return;}
+  const ord={andamento:0,ativo:1,encerrado:2};
+  ids.sort((a,b)=>{const oa=ord[eventos[a]?.status]??1,ob=ord[eventos[b]?.status]??1;return oa!==ob?oa-ob:(eventos[b]?.criadoEm||0)-(eventos[a]?.criadoEm||0);});
+  try {
+    g.innerHTML=ids.map(id=>cardHTML(id,eventos[id])).join('');
+  } catch(e) {
+    console.log('renderEv erro:', e.message);
+    g.innerHTML='<div class="empty-st"><p>Erro ao carregar eventos. Veja console.</p></div>';
+    return;
+  }
+  ids.forEach(id=>{
+    const c=g.querySelector('[data-evid="'+id+'"]');
+    if(c) c.addEventListener('click',()=>openEvent(id));
+    const d=g.querySelector('[data-delid="'+id+'"]');
+    if(d) d.addEventListener('click',e=>{e.stopPropagation();startDel(id);});
+    const s=g.querySelector('[data-shareid="'+id+'"]');
+    if(s) s.addEventListener('click',e=>{e.stopPropagation();shareEvent(id);});
+    const ed=g.querySelector('[data-editid="'+id+'"]');
+    if(ed) ed.addEventListener('click',e=>{e.stopPropagation();openEditFromCard(id);});
+    const pm=g.querySelector('[data-permsid="'+id+'"]');
+    if(pm) pm.addEventListener('click',e=>{e.stopPropagation();openPermsFromCard(id);});
+  });
+}
+
+function cardHTML(id,ev){
+  try {
+    const bingos = Object.values(ev.bingos||{});
+    const totalBingos = bingos.length;
+    let totalPremios = 0, ganhos = 0;
+    bingos.forEach(b => {
+      const premios = Object.values(b.premios||{});
+      totalPremios += premios.length;
+      ganhos += premios.filter(p => p.ganhadores && p.ganhadores.length).length;
+    });
+    const mode = ev.mode || 90;
+    const stLbl={ativo:'Novo',andamento:'Em andamento',encerrado:'Encerrado'}[ev.status]||'Novo';
+    const bc={ativo:'bg',andamento:'ba',encerrado:'be'}[ev.status]||'bg';
+    const tipo=(ev.tipoCartela||'livre');
+    const tipoTag=tipo==='livre'?'Cartela Livre':'Banco';
+    const qtdTag=tipo==='banco'?'<span>'+Object.keys(ev.cartelas||{}).length+' cartelas</span>':'';
+    const ativoBingo = ev.bingoAtivoId && ev.bingos?.[ev.bingoAtivoId]
+      ? '<span style="color:var(--green)">🔴 '+esc(ev.bingos[ev.bingoAtivoId].nome||'jogando')+'</span>'
+      : '';
+    return '<div class="ev-card st-'+(ev.status||'ativo')+'" data-evid="'+id+'">'
+      +'<div class="ev-head"><div class="ev-title">'+esc(ev.nome||'')+'</div><span class="badge '+bc+'">'+stLbl+'</span></div>'
+      +'<div class="ev-meta"><span>'+mode+' pedras</span><span>'+totalBingos+' bingo(s)</span><span>'+ganhos+'/'+totalPremios+' prêmios</span><span>'+tipoTag+'</span>'+qtdTag+'<span>'+fmtTs(ev.criadoEm)+'</span>'+(ativoBingo?'<br>'+ativoBingo:'')+'</div>'
+      +'<div class="ev-foot">'
+      +'<button class="btn btn-ghost btn-sm" data-shareid="'+id+'" title="Copiar link">🔗 Link</button>'
+      +'<button class="btn btn-ghost btn-sm" data-editid="'+id+'">⚙ Editar</button>'
+      +'<button class="btn btn-ghost btn-sm" data-permsid="'+id+'">👥 Perms</button>'
+      +'<button class="btn btn-red btn-sm" data-delid="'+id+'">🗑️ Exc</button>'
+      +'</div>'
+      +'</div>';
+  } catch(e) {
+    console.log('cardHTML erro id='+id+':', e.message);
+    return '<div class="ev-card" data-evid="'+id+'"><div class="ev-head"><div class="ev-title">'+id+'</div></div></div>';
+  }
+}
+
+function openEvent(id){
+  const ev=eventos[id]; if(!ev)return;
+  if(ev.senhaEntrar){pendingOpenId=id;$('mSEinp').value='';$('mSEerr').style.display='none';openM('mSE');setTimeout(()=>$('mSEinp').focus(),80);}
+  else loadGestaoEvento(id);
+}
+function startDel(id){
+  const ev=eventos[id]; if(!ev)return; pendingDelId=id;
+  if(ev.senhaExcluir){$('mSXinp').value='';$('mSXerr').style.display='none';openM('mSX');setTimeout(()=>$('mSXinp').focus(),80);}
+  else if(confirm(`Excluir "${ev.nome}"? Irreversível.`)) delEvent(id);
+}
+function delEvent(id){ remove(fb(`bingo/eventos/${id}`)).catch(console.error); }
+
+function shareEvent(id){
+  const link=`${location.href.split('/').slice(0,-1).join('/')}/player.html?ev=${id}`;
+  // Copia para o clipboard
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(link)
+      .then(()=>showToast('Link copiado!'))
+      .catch(()=>{ prompt('Copie o link:',link); });
+  } else {
+    prompt('Copie o link:',link);
+  }
+}
+
+function openEditFromCard(id){
+  evId = id;
+  evData = JSON.parse(JSON.stringify(eventos[id]));
+  abrirModalEditar();
+}
+
+function openPermsFromCard(id){
+  evId = id;
+  evData = JSON.parse(JSON.stringify(eventos[id]));
+  $('btnS2Perms')?.click();
+}
+
+// --- NOVO EVENTO ---
+// --- BANCO DE CARTELAS (localStorage) ---
+const BANCO_KEY = 'ibbi_banco_cartelas_v2';
+function loadBanco() {
+  try { return JSON.parse(localStorage.getItem(BANCO_KEY)) || {g90:{},g75:{}}; }
+  catch(e) { return {g90:{},g75:{}}; }
+}
+function saveBanco(b) {
+  try { localStorage.setItem(BANCO_KEY, JSON.stringify(b)); } catch(e){}
+}
+function bancoDisponiveis(modo, eventosBanco) {
+  // Cartelas do banco que ainda nao foram reservadas por nenhum evento ativo
+  const banco = loadBanco();
+  const key = modo===90 ? 'g90' : 'g75';
+  const usadas = new Set();
+  Object.values(eventosBanco||{}).forEach(ev => {
+    if(ev.status!=='encerrado' && ev.tipoCartela==='banco' && ev.mode===modo) {
+      Object.keys(ev.cartelas||{}).forEach(cid => usadas.add(cid));
+    }
+  });
+  return Object.keys(banco[key]).filter(id => !usadas.has(id));
+}
+
+function updateBancoInfo() {
+  const modo = parseInt($('mEvMode').value);
+  const disp = bancoDisponiveis(modo, eventos);
+  const key = modo===90 ? 'g90' : 'g75';
+  const total = Object.keys(loadBanco()[key]||{}).length;
+  $('mEvBancoInfo').innerHTML =
+    'Banco G'+modo+': <strong style="color:var(--accent)">'+total+'</strong> cartelas &nbsp;|&nbsp; '
+    +'Disponiveis: <strong style="color:var(--green)">'+disp.length+'</strong>'
+    +(disp.length===0 ? '<br><span style="color:var(--red)">&#9888; Banco vazio para G'+modo+'. Gere cartelas primeiro.</span>' : '');
+}
+
+function toggleBancoOpts() {
+  const isBanco = $('mEvTipo').value === 'banco';
+  $('mEvBancoOpts').style.display = isBanco ? 'block' : 'none';
+  if(isBanco) updateBancoInfo();
+}
+$('mEvTipo').addEventListener('change', toggleBancoOpts);
+$('mEvMode').addEventListener('change', () => { if($('mEvTipo').value==='banco') updateBancoInfo(); });
+
+$('btnNovoEv').addEventListener('click',()=>{
+  $('mEvNome').value=''; $('mEvMode').value='90'; $('mEvTipo').value='livre';
+  $('mEvSE').value=''; $('mEvSX').value=''; $('mEvQtdCartelas').value='';
+  $('mEvMaxCart').value='0'; $('mEvExigeAp').checked=false;
+  $('mEvBancoOpts').style.display='none';
+  openM('mNewEv'); setTimeout(()=>$('mEvNome').focus(),80);
+});
+$('btnCancelEv').addEventListener('click',()=>closeM('mNewEv'));
+
+$('btnCreateEv').addEventListener('click',()=>{
+  const nome=$('mEvNome').value.trim();
+  if(!nome){alert('Digite o nome do evento.');return;}
+  const mode=parseInt($('mEvMode').value);
+  const tipoCartela=$('mEvTipo').value;
+  const se=$('mEvSE').value.trim(), sx=$('mEvSX').value.trim();
+
+  // --- Reserva de cartelas do banco ---
+  let cartelasReservadas = {};
+  if(tipoCartela==='banco') {
+    const qtd = parseInt($('mEvQtdCartelas').value)||0;
+    if(qtd<1){alert('Informe a quantidade de cartelas para o evento.');return;}
+    const disp = bancoDisponiveis(mode, eventos);
+    if(qtd > disp.length){
+      alert(`Cartelas insuficientes no banco G${mode}.\nDisponíveis: ${disp.length}\nSolicitadas: ${qtd}\n\nGere mais cartelas no Gerador.`);
+      return;
+    }
+    disp.slice(0, qtd).forEach(cid => {
+      cartelasReservadas[cid] = {usada: false, jogador: null, ts: null};
+    });
+  }
+
+  const id = genId();
+  const evObj = {
+    nome, mode, tipoCartela,
+    senhaEntrar: se||null, senhaExcluir: sx||null,
+    maxCartelasUser: parseInt($('mEvMaxCart').value)||0,
+    exigeAprovacao: $('mEvExigeAp').checked,
+    criadoEm: Date.now(),
+    encerradoEm: null,
+    status: 'ativo',
+    bingoAtivoId: null,
+    bingos: {} // Bingos serão adicionados depois, dentro da gestão do evento
+  };
+  if(tipoCartela==='banco') evObj.cartelas = cartelasReservadas;
+  set(fb(`bingo/eventos/${id}`), evObj)
+    .then(()=>{
+      closeM('mNewEv');
+      showToast('Evento criado! Agora crie os bingos (rodadas).');
+      // Abre direto a gestão do evento recém-criado
+      eventos[id] = evObj;
+      loadGestaoEvento(id);
+    })
+    .catch(e=>{console.error(e);alert('Erro: '+e.message);});
+});
+
+$('btnCancelSE').addEventListener('click',()=>closeM('mSE'));
+$('btnOkSE').addEventListener('click',()=>{
+  const ev=eventos[pendingOpenId]; if(!ev)return;
+  if($('mSEinp').value!==ev.senhaEntrar){$('mSEerr').style.display='block';return;}
+  closeM('mSE'); loadGestaoEvento(pendingOpenId);
+});
+$('mSEinp').addEventListener('keydown',e=>{if(e.key==='Enter')$('btnOkSE').click();});
+$('btnCancelSX').addEventListener('click',()=>closeM('mSX'));
+$('btnOkSX').addEventListener('click',()=>{
+  const ev=eventos[pendingDelId]; if(!ev)return;
+  if($('mSXinp').value!==ev.senhaExcluir){$('mSXerr').style.display='block';return;}
+  closeM('mSX'); delEvent(pendingDelId);
+});
+$('mSXinp').addEventListener('keydown',e=>{if(e.key==='Enter')$('btnOkSX').click();});
+
+// ====================================================
+//  SCREEN 2 - SORTEIO
+// ====================================================
+function sortP(obj){
+  if(!obj)return[];
+  return Object.entries(obj).map(([id,p])=>({id,...p})).sort((a,b)=>a.ordem-b.ordem);
+}
+
+// ====================================================
+//  SCREEN 2 - GESTÃO DO EVENTO (lista de bingos)
+// ====================================================
+let bingoActionTarget = null; // bingoId-alvo de modal Reiniciar/Excluir bingo
+
+function loadGestaoEvento(id){
+  evId = id;
+  evData = JSON.parse(JSON.stringify(eventos[id]));
+
+  // Player link
+  const link = `${location.href.split('/').slice(0,-1).join('/')}/player.html?ev=${id}`;
+  $('playerLinkBox').textContent = link;
+
+  renderGestao();
+  showScreen('s2');
+}
+
+function renderGestao(){
+  const ev = evData; if(!ev) return;
+  $('s2evName').textContent = ev.nome || 'Evento';
+  $('s2evMode').textContent = (ev.mode || 90) + ' pedras';
+  $('s2evTipo').textContent = ev.tipoCartela === 'banco' ? 'Banco de Cartelas' : 'Cartela Livre';
+
+  const stLbl = {ativo:'Novo', andamento:'Em andamento', encerrado:'Encerrado'}[ev.status] || 'Novo';
+  const bc = {ativo:'bg', andamento:'ba', encerrado:'be'}[ev.status] || 'bg';
+  $('s2evStatusBadge').textContent = stLbl;
+  $('s2evStatusBadge').className = 's2g-evstatus '+bc;
+  $('s2evCreated').textContent = 'Criado em '+fmtTs(ev.criadoEm);
+
+  const bingos = Object.values(ev.bingos||{});
+  const enc = bingos.filter(b=>b.status==='encerrado').length;
+  $('s2evBingosResumo').textContent = `${bingos.length} bingo(s) · ${enc} encerrado(s)`;
+
+  // Encerrar evento se já estiver encerrado
+  $('btnS2Encerrar').disabled = ev.status === 'encerrado';
+
+  renderBingosLista();
+}
+
+function renderBingosLista(){
+  const ev = evData; if(!ev) return;
+  const grid = $('bingosGrid');
+  const bingos = sortP(ev.bingos||{});
+  if(!bingos.length){
+    grid.innerHTML = '<div class="empty-st"><div class="ei">🎯</div><p>Nenhum bingo ainda.<br>Crie a primeira rodada!</p></div>';
+    return;
+  }
+  const bingoAtivo = ev.bingoAtivoId;
+  const evMode = ev.mode || 90;
+  grid.innerHTML = bingos.map(b => bingoCardHTML(b, bingoAtivo, evMode)).join('');
+
+  // Bind eventos
+  bingos.forEach(b => {
+    const card = grid.querySelector(`[data-bingoid="${b.id}"]`);
+    if(!card) return;
+    card.querySelector('[data-act="play"]')?.addEventListener('click', e=>{ e.stopPropagation(); abrirJogo(b.id); });
+    card.querySelector('[data-act="edit"]')?.addEventListener('click', e=>{ e.stopPropagation(); abrirEditarBingo(b.id); });
+    card.querySelector('[data-act="restart"]')?.addEventListener('click', e=>{ e.stopPropagation(); confirmReinBingo(b.id); });
+    card.querySelector('[data-act="del"]')?.addEventListener('click', e=>{ e.stopPropagation(); confirmDelBingo(b.id); });
+    // Clique no corpo do card também abre o jogo (se válido)
+    card.addEventListener('click', ()=>{
+      if(b.status === 'encerrado') return; // visualização rápida: nada (ou poderia abrir em modo leitura)
+      abrirJogo(b.id);
+    });
+  });
+}
+
+function bingoCardHTML(b, bingoAtivoId, evMode){
+  const st = b.status || 'pendente';
+  const stLbl = {pendente:'Pendente', jogando:'Jogando', encerrado:'Encerrado'}[st] || 'Pendente';
+  const stCls = {pendente:'be', jogando:'bg', encerrado:'be'}[st] || 'be';
+  const premios = sortP(b.premios||{});
+  const ganhos = premios.filter(p=>p.ganhadores && p.ganhadores.length).length;
+  const drawn = (b.drawn||[]).length;
+  const pct = Math.round(drawn / evMode * 100);
+  const progCls = {pendente:'pp-a', jogando:'pp-g', encerrado:'pp-e'}[st] || 'pp-a';
+
+  // Pode jogar: status != encerrado, e (nenhum bingo ativo OU este é o ativo)
+  const podeJogar = st !== 'encerrado' && (!bingoAtivoId || bingoAtivoId === b.id);
+  const playLabel = st === 'jogando' ? '▶ Continuar' : '▶ Jogar';
+  const playDisabledAttr = podeJogar ? '' : 'disabled';
+  const blockedMsg = !podeJogar && st !== 'encerrado' ? '<div style="font-size:.68rem;color:var(--cN);margin-top:6px">⚠ Outro bingo em jogo</div>' : '';
+
+  return `<div class="bingo-card st-${st}" data-bingoid="${b.id}">
+    <div class="bingo-card-head">
+      <div>
+        <div class="bingo-card-title">${esc(b.nome||'Bingo')}</div>
+        <div style="font-size:.72rem;color:var(--text3);margin-top:2px">Ordem #${b.ordem||1}</div>
+      </div>
+      <span class="badge ${stCls}">${stLbl}</span>
+    </div>
+    <div class="bingo-card-meta">
+      <span>${ganhos}/${premios.length} prêmios</span>
+      <span>${drawn}/${evMode} pedras</span>
+    </div>
+    <div class="bingo-card-prog"><div class="bingo-card-prog-bar ${progCls}" style="width:${pct}%"></div></div>
+    ${blockedMsg}
+    <div class="bingo-card-foot">
+      <button class="btn btn-play" data-act="play" ${playDisabledAttr}>${playLabel}</button>
+      <button class="btn btn-ghost" data-act="edit">⚙ Editar</button>
+      <button class="btn btn-yellow" data-act="restart">↻ Reiniciar</button>
+      <button class="btn btn-red" data-act="del">🗑️ Excluir</button>
+    </div>
+  </div>`;
+}
+
+function abrirJogo(bingoId){
+  if(!evId || !bingoId) return;
+  // Verifica conflito: outro bingo em jogo
+  const ev = evData;
+  if(ev.bingoAtivoId && ev.bingoAtivoId !== bingoId){
+    const outro = ev.bingos?.[ev.bingoAtivoId];
+    if(outro && outro.status === 'jogando'){
+      showToast(`Encerre ou reinicie o bingo "${outro.nome}" antes.`);
+      return;
+    }
+  }
+  const url = `jogo.html?ev=${evId}&bingo=${bingoId}`;
+  window.open(url, '_blank');
+}
+
+// -------- VOLTAR --------
+$('btnS2Voltar')?.addEventListener('click',()=>{
+  evId=null; evData=null;
+  showScreen('s1');
+});
+
+// -------- COPIAR LINK / QR --------
+$('btnCopyLink')?.addEventListener('click',()=>{
+  const txt = $('playerLinkBox').textContent;
+  navigator.clipboard?.writeText(txt).then(()=>showToast('Link copiado!')).catch(()=>showToast('Erro ao copiar.'));
+});
+
+$('btnShowQR')?.addEventListener('click',()=>{
+  const link = $('playerLinkBox').textContent;
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + encodeURIComponent(link);
+  $('qrBox').innerHTML = `<img src="${qrUrl}" alt="QR Code" style="width:240px;height:240px;display:block">`;
+  openM('mQR');
+});
+$('btnQRClose')?.addEventListener('click',()=>closeM('mQR'));
+$('btnQRDownload')?.addEventListener('click',()=>{
+  const img = $('qrBox').querySelector('img');
+  if(!img) return;
+  fetch(img.src).then(r=>r.blob()).then(blob=>{
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'qr-bingo.png';
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 1500);
   });
 });
 
-// ========== UI LISTENERS ==========
-$('btnNewEv').addEventListener('click',()=>{
-  $('neNome').value='';
-  $('newEvErr').style.display='none';
-  openM('mNewEv');
+// -------- ENCERRAR EVENTO --------
+$('btnS2Encerrar')?.addEventListener('click',()=>{
+  if(!evData) return;
+  if(!confirm('Encerrar este evento? O histórico será preservado.')) return;
+  update(fb(`bingo/eventos/${evId}`), {
+    status: 'encerrado',
+    encerradoEm: Date.now(),
+    bingoAtivoId: null
+  }).then(()=>showToast('Evento encerrado.'));
 });
 
-$('btnNeCancel').addEventListener('click',()=>closeM('mNewEv'));
+// -------- REINICIAR EVENTO --------
+$('btnS2Reiniciar')?.addEventListener('click',()=>{
+  if(!evData) return;
+  $('mReiniciarSenha').value = '';
+  $('mReiniciarErr').style.display = 'none';
+  $('mReiniciarSenhaWrap').style.display = evData?.senhaExcluir ? 'block' : 'none';
+  openM('mReiniciar');
+  if(evData?.senhaExcluir) setTimeout(()=>$('mReiniciarSenha').focus(), 80);
+});
 
-$('btnNeSave').addEventListener('click',()=>{
-  const nome=$('neNome').value.trim();
-  if(!nome){$('newEvErr').textContent='Informe o nome do evento';$('newEvErr').style.display='block';return;}
-  const tipo=$('neTipo').value;
-  const id=push(fb('bingo/eventos')).key;
-  set(fb('bingo/eventos/'+id),{
-    nome,tipo,status:'ativo',bingos:{},bingoAtual:null,criadoEm:Date.now()
+$('btnReiniciarCancelar')?.addEventListener('click',()=>closeM('mReiniciar'));
+$('btnReiniciarConfirmar')?.addEventListener('click', async ()=>{
+  if(evData?.senhaExcluir){
+    if($('mReiniciarSenha').value !== evData.senhaExcluir){
+      $('mReiniciarErr').style.display = 'block';
+      return;
+    }
+  }
+  closeM('mReiniciar');
+  await reiniciarEventoAtual();
+});
+
+async function reiniciarEventoAtual(){
+  const ev = evData; if(!ev) return;
+  const tasks = [];
+  // Reinicia cada bingo
+  const bingos = ev.bingos || {};
+  Object.keys(bingos).forEach(bid => {
+    const premios = bingos[bid].premios || {};
+    Object.keys(premios).forEach(pid => {
+      tasks.push(set(fb(`bingo/eventos/${evId}/bingos/${bid}/premios/${pid}/ganhadores`), []));
+      tasks.push(set(fb(`bingo/eventos/${evId}/bingos/${bid}/premios/${pid}/ganhoEm`), null));
+      tasks.push(set(fb(`bingo/eventos/${evId}/bingos/${bid}/premios/${pid}/fechado`), false));
+    });
+    tasks.push(update(fb(`bingo/eventos/${evId}/bingos/${bid}`), {
+      drawn: [], lastDrawn: null, status: 'pendente',
+      iniciadoEm: null, encerradoEm: null, batidas: null
+    }));
+  });
+  // Reinicia evento
+  tasks.push(update(fb(`bingo/eventos/${evId}`), {
+    status: 'ativo', encerradoEm: null, bingoAtivoId: null,
+    brincantes: null
+  }));
+  // Libera cartelas reservadas
+  if(ev.cartelas){
+    const novas = {};
+    Object.keys(ev.cartelas).forEach(cid => {
+      novas[cid] = {usada:false, jogador:null, playerId:null, ts:null};
+    });
+    tasks.push(set(fb(`bingo/eventos/${evId}/cartelas`), novas));
+  }
+  Promise.all(tasks).then(()=>showToast('Evento reiniciado.')).catch(e=>{
+    console.error(e); showToast('Erro: '+e.message);
+  });
+}
+
+// ====================================================
+//  BINGOS - CRUD
+// ====================================================
+
+function addBgPrize(listId, nome='', regra='cheia', readonly=false){
+  const list = $(listId);
+  const n = list.children.length + 1;
+  const row = document.createElement('div');
+  row.className = 'prize-row';
+  if(readonly) row.dataset.readonly='1';
+  row.innerHTML = `<div class="prize-row-top">
+    <span class="p-ord">${n}</span>
+    <input class="p-inp" type="text" placeholder="Nome do prêmio..." maxlength="60" value="${esc(nome)}" ${readonly?'readonly':''}>
+    ${readonly ? '<span style="font-size:.65rem;color:var(--cN);padding:4px 8px;background:rgba(245,200,0,.1);border-radius:6px">🔒 Protegido</span>' : '<button class="p-rm" type="button">✕</button>'}
+  </div>
+  <div class="prize-row-opts">
+    <div class="regra-lbl">Regra de Batida</div>
+    <button type="button" class="radio-btn ${regra==='cheia'?'sel':''}" data-regra="cheia" ${readonly?'disabled':''}>Cartela Cheia</button>
+    <button type="button" class="radio-btn ${regra==='linhaDiagonal'?'sel':''}" data-regra="linhaDiagonal" ${readonly?'disabled':''}>Linha / Coluna / Diagonal</button>
+  </div>`;
+  if(!readonly){
+    row.querySelector('.p-rm').addEventListener('click', ()=>{ row.remove(); reindexBgPrizes(listId); });
+    row.querySelectorAll('.radio-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        row.querySelectorAll('.radio-btn').forEach(b=>b.classList.remove('sel'));
+        btn.classList.add('sel');
+      });
+    });
+  }
+  list.appendChild(row);
+}
+
+function reindexBgPrizes(listId){
+  document.querySelectorAll(`#${listId} .prize-row`).forEach((r,i)=>{
+    r.querySelector('.p-ord').textContent = i+1;
+  });
+}
+
+// -- NOVO BINGO --
+$('btnNovoBingo')?.addEventListener('click',()=>{
+  if(!evData) return;
+  const proximaOrdem = Object.values(evData.bingos||{}).length + 1;
+  $('mBgNome').value = `Rodada ${proximaOrdem}`;
+  $('mBgErr').style.display='none';
+  $('mBgPrizeList').innerHTML='';
+  addBgPrize('mBgPrizeList');
+  addBgPrize('mBgPrizeList');
+  openM('mNewBingo');
+  setTimeout(()=>$('mBgNome').focus(),80);
+});
+
+$('btnBgCancelar')?.addEventListener('click',()=>closeM('mNewBingo'));
+$('btnBgAddPrize')?.addEventListener('click',()=>addBgPrize('mBgPrizeList'));
+
+$('btnBgSalvar')?.addEventListener('click',()=>{
+  const nome = $('mBgNome').value.trim();
+  if(!nome){ $('mBgErr').textContent='Digite o nome do bingo.'; $('mBgErr').style.display='block'; return; }
+  const rows = document.querySelectorAll('#mBgPrizeList .prize-row');
+  const premios = [];
+  rows.forEach(row => {
+    const n = row.querySelector('.p-inp').value.trim();
+    if(!n) return;
+    const regra = row.querySelector('.radio-btn.sel')?.dataset.regra || 'cheia';
+    premios.push({nome:n, regra, ordem:premios.length+1, ganhadores:[], ganhoEm:null, fechado:false});
+  });
+  if(!premios.length){ $('mBgErr').textContent='Adicione ao menos um prêmio.'; $('mBgErr').style.display='block'; return; }
+
+  const bingoId = genId();
+  const proximaOrdem = Object.values(evData.bingos||{}).length + 1;
+  const premiosObj = {};
+  premios.forEach(p => { premiosObj[genId()] = p; });
+  const bingo = {
+    nome, ordem: proximaOrdem, status: 'pendente',
+    criadoEm: Date.now(), iniciadoEm: null, encerradoEm: null,
+    drawn: [], lastDrawn: null,
+    premios: premiosObj,
+    batidas: null
+  };
+  set(fb(`bingo/eventos/${evId}/bingos/${bingoId}`), bingo).then(()=>{
+    closeM('mNewBingo');
+    showToast('Bingo "'+nome+'" criado.');
+  }).catch(e=>{
+    $('mBgErr').textContent='Erro: '+e.message;
+    $('mBgErr').style.display='block';
+  });
+});
+
+// -- EDITAR BINGO --
+let editBingoId = null;
+
+function abrirEditarBingo(bingoId){
+  const b = evData?.bingos?.[bingoId]; if(!b) return;
+  editBingoId = bingoId;
+  $('eBgNome').value = b.nome || '';
+  $('eBgErr').style.display='none';
+  $('eBgPrizeList').innerHTML = '';
+  const premios = sortP(b.premios);
+  premios.forEach(p => {
+    // Premio protegido se tem ganhadores ou está fechado
+    const readonly = (p.ganhadores && p.ganhadores.length > 0) || p.fechado === true;
+    addBgPrize('eBgPrizeList', p.nome, p.regra || 'cheia', readonly);
+    // Guarda o ID original do prêmio no row
+    const lastRow = $('eBgPrizeList').lastElementChild;
+    lastRow.dataset.pid = p.id;
+  });
+  if(!premios.length) addBgPrize('eBgPrizeList');
+  openM('mEditBingo');
+}
+
+$('btnEBgCancelar')?.addEventListener('click',()=>closeM('mEditBingo'));
+$('btnEBgAddPrize')?.addEventListener('click',()=>addBgPrize('eBgPrizeList'));
+
+$('btnEBgSalvar')?.addEventListener('click',()=>{
+  if(!editBingoId) return;
+  const b = evData.bingos[editBingoId]; if(!b) return;
+  const nome = $('eBgNome').value.trim();
+  if(!nome){ $('eBgErr').textContent='Digite o nome.'; $('eBgErr').style.display='block'; return; }
+
+  const rows = document.querySelectorAll('#eBgPrizeList .prize-row');
+  const novosPremios = {};
+  let ordem = 0;
+  rows.forEach(row => {
+    const n = row.querySelector('.p-inp').value.trim();
+    if(!n) return;
+    ordem++;
+    const regra = row.querySelector('.radio-btn.sel')?.dataset.regra || 'cheia';
+    const pid = row.dataset.pid || genId();
+    // Se já existia, preserva ganhadores/fechado
+    const antigo = pid && b.premios && b.premios[pid] ? b.premios[pid] : null;
+    novosPremios[pid] = {
+      nome: n, regra, ordem,
+      ganhadores: antigo?.ganhadores || [],
+      ganhoEm: antigo?.ganhoEm || null,
+      fechado: antigo?.fechado || false
+    };
+  });
+  if(!Object.keys(novosPremios).length){ $('eBgErr').textContent='Adicione ao menos um prêmio.'; $('eBgErr').style.display='block'; return; }
+
+  update(fb(`bingo/eventos/${evId}/bingos/${editBingoId}`), {
+    nome, premios: novosPremios
   }).then(()=>{
-    closeM('mNewEv');
-    evId=id;
-    evData={nome,tipo,status:'ativo',bingos:{},bingoAtual:null,criadoEm:Date.now()};
-    $('s2EvName').textContent=nome;
-    renderBingos();
-    showScreen('s2');
+    closeM('mEditBingo');
+    showToast('Bingo atualizado.');
+  }).catch(e=>{ $('eBgErr').textContent='Erro: '+e.message; $('eBgErr').style.display='block'; });
+});
+
+// -- REINICIAR BINGO --
+function confirmReinBingo(bingoId){
+  const b = evData?.bingos?.[bingoId]; if(!b) return;
+  bingoActionTarget = bingoId;
+  $('mReinBingoTxt').textContent = `Reiniciar o bingo "${b.nome}"? Pedras, batidas e ganhadores serão apagados. Cartelas dos brincantes neste bingo serão zeradas. Irreversível.`;
+  openM('mReinBingo');
+}
+$('btnReinBgCancelar')?.addEventListener('click',()=>closeM('mReinBingo'));
+$('btnReinBgConfirmar')?.addEventListener('click', async ()=>{
+  if(!bingoActionTarget) return;
+  const bid = bingoActionTarget;
+  closeM('mReinBingo');
+  await reiniciarBingoAtual(bid);
+  bingoActionTarget = null;
+});
+
+async function reiniciarBingoAtual(bingoId){
+  const b = evData?.bingos?.[bingoId]; if(!b) return;
+  const premios = b.premios || {};
+  const tasks = [];
+  Object.keys(premios).forEach(pid => {
+    tasks.push(set(fb(`bingo/eventos/${evId}/bingos/${bingoId}/premios/${pid}/ganhadores`), []));
+    tasks.push(set(fb(`bingo/eventos/${evId}/bingos/${bingoId}/premios/${pid}/ganhoEm`), null));
+    tasks.push(set(fb(`bingo/eventos/${evId}/bingos/${bingoId}/premios/${pid}/fechado`), false));
+  });
+  tasks.push(update(fb(`bingo/eventos/${evId}/bingos/${bingoId}`), {
+    drawn: [], lastDrawn: null, status: 'pendente',
+    iniciadoEm: null, encerradoEm: null, batidas: null
+  }));
+  if(evData.bingoAtivoId === bingoId){
+    tasks.push(update(fb(`bingo/eventos/${evId}`), {bingoAtivoId: null}));
+  }
+  // Limpa cartelas dos brincantes que estavam neste bingo
+  const brinSnap = await get(fb(`bingo/eventos/${evId}/brincantes`));
+  const brincantes = brinSnap.val() || {};
+  Object.keys(brincantes).forEach(uid => {
+    const br = brincantes[uid];
+    if(br.bingoIdAtivo === bingoId){
+      tasks.push(update(fb(`bingo/eventos/${evId}/brincantes/${uid}`), {
+        cartelasAtuais: null, batidaStatus: null, bingoConfirmado: null,
+        ultimaCartelaBatida: null, premioGanho: null, bingoIdAtivo: null
+      }));
+    }
+  });
+  Promise.all(tasks).then(()=>showToast('Bingo reiniciado.')).catch(e=>{
+    console.error(e); showToast('Erro: '+e.message);
+  });
+}
+
+// -- EXCLUIR BINGO --
+function confirmDelBingo(bingoId){
+  const b = evData?.bingos?.[bingoId]; if(!b) return;
+  bingoActionTarget = bingoId;
+  $('mDelBingoTxt').textContent = `Excluir o bingo "${b.nome}"? Toda a história (pedras, prêmios, ganhadores) será perdida. Irreversível.`;
+  openM('mDelBingo');
+}
+$('btnDelBgCancelar')?.addEventListener('click',()=>closeM('mDelBingo'));
+$('btnDelBgConfirmar')?.addEventListener('click',()=>{
+  if(!bingoActionTarget) return;
+  const bid = bingoActionTarget;
+  closeM('mDelBingo');
+  const tasks = [remove(fb(`bingo/eventos/${evId}/bingos/${bid}`))];
+  if(evData.bingoAtivoId === bid){
+    tasks.push(update(fb(`bingo/eventos/${evId}`), {bingoAtivoId: null}));
+  }
+  Promise.all(tasks).then(()=>showToast('Bingo excluído.'));
+  bingoActionTarget = null;
+});
+
+// --- PERMISSOES ---
+const PERMS_PER_PAGE = 10;
+let permsPage = 1;
+let permsData = {};
+let brincantesData = {};
+let permsUnsub = null;
+let brincantesUnsub = null;
+
+$('btnS2Perms')?.addEventListener('click',()=>{
+  if(!evId) return;
+  $('permsBusca').value=''; $('permsFiltro').value='todos'; permsPage=1;
+  $('s3name').textContent = (evData?.nome||'Evento') + ' — Permissões';
+  if(permsUnsub) permsUnsub();
+  permsUnsub = onValue(fb('bingo/eventos/'+evId+'/permissoes'),snap=>{ permsData=snap.val()||{}; renderPermsLista(); });
+  if(brincantesUnsub) brincantesUnsub();
+  brincantesUnsub = onValue(fb('bingo/eventos/'+evId+'/brincantes'),snap=>{ brincantesData=snap.val()||{}; renderPermsLista(); });
+  showScreen('s3');
+});
+$('btnS3Voltar')?.addEventListener('click',()=>{
+  if(permsUnsub){permsUnsub();permsUnsub=null;}
+  if(brincantesUnsub){brincantesUnsub();brincantesUnsub=null;}
+  showScreen('s2');
+});
+// Som de navegacao (tick suave) usando Web Audio API
+function playNavSound(){
+  try{
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    const osc=ctx.createOscillator();
+    const gain=ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type='sine'; osc.frequency.setValueAtTime(800,ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(400,ctx.currentTime+0.08);
+    gain.gain.setValueAtTime(0.15,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.08);
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime+0.08);
+  }catch(e){}
+}
+
+$('permsBusca')?.addEventListener('input',()=>{permsPage=1;renderPermsLista();});
+$('permsFiltro')?.addEventListener('change',()=>{permsPage=1;renderPermsLista();});
+$('btnPermsPrev')?.addEventListener('click',()=>{if(permsPage>1){permsPage--;playNavSound();renderPermsLista();}});
+$('btnPermsNext')?.addEventListener('click',()=>{permsPage++;playNavSound();renderPermsLista();});
+
+function renderPermsLista(){
+  const busca=($('permsBusca')?.value||'').toLowerCase().trim();
+  const filtro=$('permsFiltro')?.value||'todos';
+  const todos={};
+  Object.entries(permsData).forEach(([uid,p])=>{ todos[uid]={uid,...p,fonte:'perm'}; });
+  Object.entries(brincantesData).forEach(([uid,b])=>{
+    if(!todos[uid]) todos[uid]={uid,nome:b.nome||b.apelido||uid,fonte:'brincante',status:'sem_cadastro',qtdSolicitada:0,qtdAprovada:0};
+  });
+  let lista=Object.values(todos);
+  if(filtro==='sem_cadastro') lista=lista.filter(u=>u.status==='sem_cadastro');
+  else if(filtro!=='todos') lista=lista.filter(u=>u.status===filtro);
+  if(busca) lista=lista.filter(u=>(u.nome||'').toLowerCase().includes(busca)||(u.uid||'').toLowerCase().includes(busca));
+  const ordS={pendente:0,sem_cadastro:1,aprovado:2,rejeitado:3};
+  lista.sort((a,b)=>(ordS[a.status]??9)-(ordS[b.status]??9));
+  const total=lista.length;
+  const totalPages=Math.max(1,Math.ceil(total/PERMS_PER_PAGE));
+  if(permsPage>totalPages) permsPage=totalPages;
+  const start=(permsPage-1)*PERMS_PER_PAGE;
+  const pagina=lista.slice(start,start+PERMS_PER_PAGE);
+  const el=$('permsLista'); if(!el) return;
+  if(!total){ el.innerHTML='<div style="text-align:center;padding:30px;color:var(--text3);font-size:.85rem">Nenhum usuario encontrado</div>'; $('permsPager').style.display='none'; return; }
+  el.innerHTML=pagina.map(u=>renderPermCard(u)).join('');
+  pagina.forEach(u=>{
+    el.querySelector('[data-aprovar="'+u.uid+'"]')?.addEventListener('click',()=>aprovarUser(u.uid));
+    el.querySelector('[data-rejeitar="'+u.uid+'"]')?.addEventListener('click',()=>rejeitarUser(u.uid));
+    el.querySelector('[data-revogar="'+u.uid+'"]')?.addEventListener('click',()=>revogarUser(u.uid));
+    el.querySelector('[data-ajustar="'+u.uid+'"]')?.addEventListener('change',e=>ajustarQtd(u.uid,parseInt(e.target.value)||0));
+  });
+  const pager=$('permsPager');
+  if(totalPages<=1){pager.style.display='none';}
+  else{pager.style.display='flex';$('permsPg').textContent=permsPage+' / '+totalPages;$('btnPermsPrev').disabled=permsPage<=1;$('btnPermsNext').disabled=permsPage>=totalPages;}
+}
+
+function renderPermCard(u){
+  const stCor={pendente:'rgba(245,200,0,.12)',aprovado:'rgba(0,223,168,.08)',rejeitado:'rgba(240,96,96,.08)',sem_cadastro:'rgba(0,184,240,.06)'}[u.status]||'var(--surface2)';
+  const stBrd={pendente:'rgba(245,200,0,.4)',aprovado:'rgba(0,223,168,.35)',rejeitado:'rgba(240,96,96,.3)',sem_cadastro:'rgba(0,184,240,.3)'}[u.status]||'var(--border)';
+  const stTxt={pendente:'#f5c800',aprovado:'#00dfa8',rejeitado:'#f06060',sem_cadastro:'#00b8f0'}[u.status]||'var(--text3)';
+  const stLbl={pendente:'Pendente',aprovado:'Aprovado',rejeitado:'Rejeitado',sem_cadastro:'Sem cadastro'}[u.status]||u.status;
+  const max=evData?.maxCartelasUser||0;
+  const cartUsadas=Object.keys(evData?.cartelas||{}).filter(cid=>(evData?.cartelas?.[cid]?.playerId===u.uid)).length;
+  let acoes='';
+  if(u.status==='pendente'||u.status==='sem_cadastro'){
+    acoes+='<input type="number" data-ajustar="'+u.uid+'" value="'+(u.qtdSolicitada||1)+'" min="1" max="'+(max||100)+'" style="width:52px;background:var(--surface3);border:1.5px solid var(--border2);color:var(--text);border-radius:6px;padding:4px 6px;font-size:.82rem;text-align:center;outline:none">';
+    acoes+='<button class="btn btn-green btn-sm" data-aprovar="'+u.uid+'">Aprovar</button>';
+    if(u.status==='pendente') acoes+='<button class="btn btn-red btn-sm" data-rejeitar="'+u.uid+'">Rejeitar</button>';
+  } else if(u.status==='aprovado'){
+    acoes+='<input type="number" data-ajustar="'+u.uid+'" value="'+(u.qtdAprovada||1)+'" min="1" max="'+(max||100)+'" style="width:52px;background:var(--surface3);border:1.5px solid var(--border2);color:var(--text);border-radius:6px;padding:4px 6px;font-size:.82rem;text-align:center;outline:none">';
+    acoes+='<button class="btn btn-ghost btn-sm" data-revogar="'+u.uid+'">Revogar</button>';
+  } else if(u.status==='rejeitado'){
+    acoes+='<button class="btn btn-green btn-sm" data-aprovar="'+u.uid+'">Re-Aprovar</button>';
+  }
+  return '<div style="background:'+stCor+';border:1.5px solid '+stBrd+';border-radius:var(--rsm);padding:10px">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:6px">'
+    +'<div><div style="font-size:.88rem;font-weight:800;color:var(--text)">'+esc(u.nome||u.uid)+'</div>'
+    +'<div style="font-size:.62rem;color:var(--text3);margin-top:1px">'+u.uid.slice(0,20)+'</div></div>'
+    +'<span style="font-size:.65rem;font-weight:800;padding:3px 8px;border-radius:20px;background:'+stCor+';color:'+stTxt+';border:1px solid '+stBrd+'">'+stLbl+'</span>'
+    +'</div>'
+    +'<div style="font-size:.72rem;color:var(--text2);margin-bottom:8px">'
+    +'Solicitado: <strong>'+(u.qtdSolicitada||'-')+'</strong>'
+    +' | Aprovado: <strong style="color:'+stTxt+'">'+(u.qtdAprovada||0)+'</strong>'
+    +' | Em uso: <strong>'+cartUsadas+'</strong>'
+    +(max?' | Limite: <strong>'+max+'</strong>':'')
+    +'</div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">'+acoes+'</div>'
+    +'</div>';
+}
+
+function aprovarUser(uid){
+  const u=permsData[uid]||{};
+  const el=document.querySelector('[data-ajustar="'+uid+'"]');
+  const qtd=el?parseInt(el.value)||1:(u.qtdSolicitada||1);
+  const max=evData?.maxCartelasUser||0;
+  const qtdFinal=max>0?Math.min(qtd,max):qtd;
+  const nome=u.nome||(brincantesData[uid]?.nome)||uid;
+  update(fb('bingo/eventos/'+evId+'/permissoes/'+uid),{nome,qtdAprovada:qtdFinal,status:'aprovado',qtdSolicitada:u.qtdSolicitada||qtdFinal,ts:u.ts||Date.now(),cadastradoPor:u.cadastradoPor||'gestor'});
+  showToast(nome+' aprovado com '+qtdFinal+' cartela(s)');
+}
+function rejeitarUser(uid){
+  update(fb('bingo/eventos/'+evId+'/permissoes/'+uid),{status:'rejeitado'});
+  showToast('Usuario rejeitado');
+}
+function revogarUser(uid){
+  if(!confirm('Revogar aprovacao? Nao remove cartelas ja escolhidas.'))return;
+  update(fb('bingo/eventos/'+evId+'/permissoes/'+uid),{status:'rejeitado',qtdAprovada:0});
+  showToast('Aprovacao revogada');
+}
+function ajustarQtd(uid,qtd){
+  if((permsData[uid]?.status)==='aprovado'){
+    const max=evData?.maxCartelasUser||0;
+    const qtdFinal=max>0?Math.min(qtd,max):qtd;
+    update(fb('bingo/eventos/'+evId+'/permissoes/'+uid),{qtdAprovada:qtdFinal});
+  }
+}
+$('btnPermsCadastrar')?.addEventListener('click',()=>{
+  const nome=($('permsManNome')?.value||'').trim();
+  if(!nome){showToast('Digite o nome');return;}
+  const qtd=parseInt($('permsManQtd')?.value)||1;
+  const max=evData?.maxCartelasUser||0;
+  const qtdFinal=max>0?Math.min(qtd,max):qtd;
+  const uid='manual_'+Date.now();
+  set(fb('bingo/eventos/'+evId+'/permissoes/'+uid),{nome,qtdSolicitada:qtdFinal,qtdAprovada:qtdFinal,status:'aprovado',cadastradoPor:'gestor',ts:Date.now()});
+  if($('permsManNome')) $('permsManNome').value='';
+  if($('permsManQtd')) $('permsManQtd').value='1';
+  showToast(nome+' cadastrado com '+qtdFinal+' cartela(s)');
+});
+
+// --- EDITAR EVENTO (apenas campos do evento, sem prêmios) ---
+function abrirModalEditar() {
+  if(!evData) return;
+  $('eEvNome').value = evData.nome || '';
+  $('eEvSE').value = '';
+  $('eEvSX').value = '';
+  $('eEvErr').style.display = 'none';
+  $('eEvTipo').value = evData.tipoCartela || 'livre';
+  $('eEvMaxCart').value = evData.maxCartelasUser || 0;
+  $('eEvExigeAp').checked = evData.exigeAprovacao || false;
+  toggleEBancoOpts();
+  openM('mEditar');
+  setTimeout(()=>$('eEvNome').focus(), 80);
+}
+
+function toggleEBancoOpts() {
+  const isBanco = $('eEvTipo').value === 'banco';
+  $('eEvBancoOpts').style.display = isBanco ? 'block' : 'none';
+  if(isBanco) {
+    if(!$('eEvQtdCartelas').value) {
+      $('eEvQtdCartelas').value = Object.keys(evData?.cartelas||{}).length || '';
+    }
+    updateEBancoInfo();
+  }
+}
+$('eEvTipo').addEventListener('change', toggleEBancoOpts);
+
+function updateEBancoInfo() {
+  const modo = evData?.mode || 90;
+  const atual = Object.keys(evData?.cartelas||{}).length;
+  const disp = bancoDisponiveis(modo, eventos);
+  $('eEvBancoInfo').innerHTML =
+    `Atual: <strong style="color:var(--accent)">${atual}</strong> cartelas &nbsp;|&nbsp; ` +
+    `Disponíveis para add: <strong style="color:var(--green)">${disp.length}</strong>` +
+    (disp.length===0 && atual===0 ? `<br><span style="color:var(--red)">Banco vazio. Gere cartelas primeiro.</span>` : '');
+}
+$('eEvQtdCartelas')?.addEventListener('input', updateEBancoInfo);
+
+$('btnEditarCancelar')?.addEventListener('click',()=>closeM('mEditar'));
+$('btnS2Edit')?.addEventListener('click',()=>abrirModalEditar());
+
+$('btnEditarSalvar')?.addEventListener('click',()=>{
+  if(!evData) return;
+  const nome = $('eEvNome').value.trim();
+  if(!nome){ $('eEvErr').textContent='Digite o nome do evento.'; $('eEvErr').style.display='block'; return; }
+
+  const updates = {
+    nome,
+    maxCartelasUser: parseInt($('eEvMaxCart').value) || 0,
+    exigeAprovacao: $('eEvExigeAp').checked
+  };
+
+  const se = $('eEvSE').value, sx = $('eEvSX').value;
+  if(se !== '') updates.senhaEntrar = se || null;
+  if(sx !== '') updates.senhaExcluir = sx || null;
+
+  const novoTipo = $('eEvTipo').value;
+  const tipoAnterior = evData.tipoCartela || 'livre';
+
+  // Mudou de banco para livre - libera cartelas
+  if(tipoAnterior === 'banco' && novoTipo === 'livre') {
+    updates.cartelas = {};
+  }
+  updates.tipoCartela = novoTipo;
+
+  // Ajusta quantidade de cartelas se banco
+  if(novoTipo === 'banco') {
+    const novaQtd = parseInt($('eEvQtdCartelas').value) || 0;
+    if(novaQtd < 1){ $('eEvErr').textContent='Informe a quantidade de cartelas.'; $('eEvErr').style.display='block'; return; }
+    const cartelasAtuais = JSON.parse(JSON.stringify(evData.cartelas||{}));
+    const idsAtuais = Object.keys(cartelasAtuais);
+    const qtdAtual = idsAtuais.length;
+
+    if(novaQtd > qtdAtual) {
+      const faltam = novaQtd - qtdAtual;
+      const disp = bancoDisponiveis(evData.mode, eventos);
+      if(faltam > disp.length) {
+        $('eEvErr').textContent = 'Banco insuficiente. Disponíveis: '+disp.length+', necessários: '+faltam+'.';
+        $('eEvErr').style.display = 'block';
+        return;
+      }
+      disp.slice(0, faltam).forEach(cid => {
+        cartelasAtuais[cid] = {usada:false, jogador:null, playerId:null, ts:null};
+      });
+      updates.cartelas = cartelasAtuais;
+    } else if(novaQtd < qtdAtual) {
+      const livres = idsAtuais.filter(cid => !cartelasAtuais[cid].usada);
+      const aRemover = qtdAtual - novaQtd;
+      if(aRemover > livres.length) {
+        $('eEvErr').textContent = 'Não é possível remover: '+(qtdAtual-livres.length)+' cartelas já estão em uso.';
+        $('eEvErr').style.display = 'block';
+        return;
+      }
+      livres.slice(0, aRemover).forEach(cid => delete cartelasAtuais[cid]);
+      updates.cartelas = cartelasAtuais;
+    }
+  }
+
+  update(fb(`bingo/eventos/${evId}`), updates).then(()=>{
+    closeM('mEditar');
+    showToast('Evento atualizado');
+  }).catch(e=>{
+    $('eEvErr').textContent = 'Erro: '+e.message;
+    $('eEvErr').style.display = 'block';
   });
 });
 
-$('btnNewBingo').addEventListener('click',openCreateBingo);
-$('btnS2Back').addEventListener('click',()=>{evId=null;evData=null;bingoId=null;bingoData=null;showScreen('s1');});
-$('btnS3Back').addEventListener('click',()=>{bingoId=null;bingoData=null;showScreen('s2');});
-$('btnDraw').addEventListener('click',draw);
-$('btnLastDraw').addEventListener('click',()=>{
-  if(!bingoData?.drawn?.length)return;
-  const d=[...bingoData.drawn];d.pop();
-  set(fb('bingo/eventos/'+evId+'/bingos/'+bingoId+'/drawn'),d);
-});
-$('btnResetDraw').addEventListener('click',()=>{
-  if(!confirm('Reiniciar sorteio deste bingo?'))return;
-  set(fb('bingo/eventos/'+evId+'/bingos/'+bingoId+'/drawn'),[]);
-});
-$('btnEncerrarBingo').addEventListener('click',()=>{
-  if(bingoId)window._encerrarBingo(bingoId);
-});
-$('btnWinClose').addEventListener('click',()=>closeM('mWin'));
+function showToast(msg){
+  const t=document.createElement('div');
+  t.textContent=msg;
+  t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1.5px solid var(--accent);color:var(--text);padding:10px 22px;border-radius:var(--rsm);font-weight:700;font-size:.88rem;z-index:3000;box-shadow:0 4px 20px rgba(0,0,0,.5);white-space:nowrap';
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2500);
+}
 
-console.log('=== IBBI Bingo v7.0 CARREGADO ===');
 </script>
+
 </body>
 </html>

@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v6.12 - 2026-05-18 FIX const cp duplicado -->
+<!-- IBBI Bingo v6.13 - 2026-05-18 FIX const cp + ASCII clean -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v6.12</title>
+<title>IBBI Bingo v6.13</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -272,7 +272,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v6.12</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v6.13</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -293,7 +293,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
 
 <div class="screen" id="s2">
   <div class="s2-head">
-    <div class="s2-evname" id="s2name">—</div>
+    <div class="s2-evname" id="s2name">--</div>
     <span class="mode-badge" id="s2mode">90 pedras</span>
     <div class="s2-right">
       <button class="btn btn-ghost btn-sm" id="btnVoltar">&#8592; Voltar</button>
@@ -316,7 +316,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
       <div class="cpbox">
         <div>
           <div class="cpbox-lbl">Sorteando agora</div>
-          <div class="cpbox-name" id="cpName">—</div>
+          <div class="cpbox-name" id="cpName">--</div>
           <div class="cpbox-rule" id="cpRule"></div>
           <div id="cpWinner" class="cpbox-empty">Sem ganhador registrado</div>
         </div>
@@ -336,7 +336,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
         <div class="ball-lbl">Pedra sorteada</div>
         <div class="bigball empty" id="bigball">
           <span class="ball-letter" id="ballLetter"></span>
-          <span class="ball-number" id="ballNumber">—</span>
+          <span class="ball-number" id="ballNumber">--</span>
         </div>
         <div class="draw-ctrl">
           <button class="btn btn-acc" id="btnDraw" style="font-size:1rem;padding:12px 28px">🎱 Sortear</button>
@@ -362,7 +362,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
           <div class="sbox"><div class="sv" id="stD">0</div><div class="sl">Sorteadas</div></div>
           <div class="sbox"><div class="sv" id="stL">90</div><div class="sl">Restantes</div></div>
           <div class="sbox"><div class="sv" id="stP">0%</div><div class="sl">Progresso</div></div>
-          <div class="sbox"><div class="sv" id="stU">—</div><div class="sl">Última</div></div>
+          <div class="sbox"><div class="sv" id="stU">--</div><div class="sl">Última</div></div>
         </div>
       </div>
       <div class="card">
@@ -648,7 +648,7 @@ win-inp{width:100%;background:var(–surface2);border:2px solid var(–green);co
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v6.12';
+const APP_VERSION = 'v6.13';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -1296,7 +1296,7 @@ function fecharPremio(prizeId){
         renderS(false);
         showToast(`Premio "${p.nome}" fechado.`);
       } else {
-        // Todos os premios fechados — encerrar evento
+        // Todos os premios fechados -- encerrar evento
         curPrizeId=null;
         evData.status='encerrado'; evData.encerradoEm=Date.now();
         saveEv(); renderS(false);
@@ -1413,7 +1413,7 @@ let brincantesUnsub = null;
 $('btnPerms')?.addEventListener('click',()=>{
   if(!evId) return;
   $('permsBusca').value=''; $('permsFiltro').value='todos'; permsPage=1;
-  $('s3name').textContent = (evData?.nome||'Evento') + ' — Permissoes';
+  $('s3name').textContent = (evData?.nome||'Evento') + ' -- Permissoes';
   if(permsUnsub) permsUnsub();
   permsUnsub = onValue(fb('bingo/eventos/'+evId+'/permissoes'),snap=>{ permsData=snap.val()||{}; renderPermsLista(); });
   if(brincantesUnsub) brincantesUnsub();
@@ -1683,7 +1683,7 @@ $('btnEditarSalvar')?.addEventListener('click',()=>{
   const novoTipo = $('eEvTipo').value;
   const tipoAnterior = evData.tipoCartela||'livre';
 
-  // Mudou de banco para livre — liberar cartelas
+  // Mudou de banco para livre -- liberar cartelas
   if(tipoAnterior==='banco' && novoTipo==='livre') {
     evData.cartelas = {};
   }
@@ -1808,7 +1808,7 @@ $('btnCopyLink')?.addEventListener('click',()=>{
   $('mQRCode').style.display='flex';
 });
 
-// Botao Ganhadores do Premio — abre modal com lista do premio atual
+// Botao Ganhadores do Premio -- abre modal com lista do premio atual
 $('btnGanhador')?.addEventListener('click',()=>{
   const cp=sortP(evData?.premios).find(p=>p.id===curPrizeId);
   console.log('=== MODAL GANHADORES ===');
@@ -1845,7 +1845,7 @@ function renderGanhadoresPremio(cp){
 }
 $('btnCancelWin')?.addEventListener('click',()=>closeM('mWin'));
 
-// Botao Todos os Ganhadores — abre modal com todos
+// Botao Todos os Ganhadores -- abre modal com todos
 $('btnGanhadorTodos')?.addEventListener('click',()=>{
   $('mWinTodosSubtitle').textContent=evData?.nome||'Evento';
   renderTodosGanhadores();
@@ -1862,7 +1862,7 @@ function renderTodosGanhadores(){
   list.innerHTML=comGanhadores.map(p=>`
     <div style="margin-bottom:16px">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--accent);letter-spacing:1px;padding:6px 8px;background:var(--surface2);border-radius:var(--rsm);margin-bottom:6px">
-        #${p.ordem} — ${esc(p.nome)} <span style="color:var(--text3);font-size:.75rem">(${p.regra==='cheia'?'Cheia':'Linha Dupla'})</span>
+        #${p.ordem} -- ${esc(p.nome)} <span style="color:var(--text3);font-size:.75rem">(${p.regra==='cheia'?'Cheia':'Linha Dupla'})</span>
       </div>
       ${p.ganhadores.map(g=>`
         <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid var(--border2)">

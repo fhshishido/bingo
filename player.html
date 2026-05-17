@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Player v9.22 - 2026-05-16 -->
+<!-- IBBI Bingo Player v10.0 - 2026-05-16 -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo v9.22</title>
+<title>IBBI Bingo v10.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -262,7 +262,7 @@ transition:background-color 9999s ease-in-out 0s;
 .ct-card-sel .ct-id-sel{font-family:'Bebas Neue';font-size:.9rem;color:var(--accent);letter-spacing:1px;text-align:center}
 .ct-card-sel .ct-mode-sel{font-size:.55rem;font-weight:800;padding:1px 4px;border-radius:3px;background:rgba(0,184,240,.12);color:var(--accent);text-align:center;margin-top:2px}
 
-/* === SELECAO: ESTILOS ADICIONAIS v9.22 === */
+/* === SELECAO: ESTILOS ADICIONAIS v10.0 === */
 .ct-card-sel .sel-hint{position:absolute;inset:0;background:rgba(0,184,240,.9);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:1.1rem;color:#000;letter-spacing:2px;z-index:4;animation:none;pointer-events:none;opacity:0;transition:opacity .2s}
 .ct-card-sel:active{transform:scale(.97)}
 
@@ -286,7 +286,7 @@ transition:background-color 9999s ease-in-out 0s;
 
 </style>
 
-  <meta name="app-version" content="v9.22">
+  <meta name="app-version" content="v10.0">
 </head>
 <body>
 
@@ -311,7 +311,7 @@ transition:background-color 9999s ease-in-out 0s;
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &#8594;</button>
         </div>
       </div>
-      <div class="vtag">v9.22</div>
+      <div class="vtag">v10.0</div>
     </div>
   </div>
 </div>
@@ -360,7 +360,7 @@ transition:background-color 9999s ease-in-out 0s;
 </div>
 
   </div>
-  <div class="vtag">v9.22</div>
+  <div class="vtag">v10.0</div>
 </div>
 
   </div>
@@ -447,7 +447,7 @@ transition:background-color 9999s ease-in-out 0s;
 
   <div style="margin-top:16px;text-align:center">
     <button class="btn btn-ghost btn-sm" id="btnVoltarSelecao">← Voltar</button>
-    <div class="vtag" style="margin-top:10px">v9.22</div>
+    <div class="vtag" style="margin-top:10px">v10.0</div>
   </div>
 </div>
 
@@ -462,7 +462,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="p-logo">B<span>I</span>NGO</div>
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname">Preview da Cartela</div>
-    <span class="p-vtag">v9.22</span>
+    <span class="p-vtag">v10.0</span>
   </div>
   <div class="p-body" style="padding-top:20px">
     <div id="previewCardWrap" style="max-width:420px;margin:0 auto;width:100%">
@@ -484,7 +484,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="ibbi-badge">IBBI</div>
     <div class="p-username" id="gameUserName"></div>
     <button class="btn btn-sm" id="btnVerBatidas" style="display:none;background:rgba(255,215,0,.15);color:#FFD700;border:1.5px solid rgba(255,215,0,.3);font-family:'Bebas Neue';letter-spacing:1px">🏆 <span id="batidasCount">0</span></button>
-    <span class="p-vtag">v9.22</span>
+    <span class="p-vtag">v10.0</span>
     <span class="conn off" id="pConn">&#11044;</span>
   </div>
   <div id="gameEvBar" style="background:var(--surface);border-bottom:1.5px solid var(--border);padding:8px 14px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1px;color:var(--accent)">&mdash;</div>
@@ -523,7 +523,7 @@ transition:background-color 9999s ease-in-out 0s;
     <div class="p-logo">B<span>I</span>NGO</div>
     <div class="ibbi-badge">IBBI</div>
     <div class="p-evname" id="batidasEvName">Cartelas Batidas</div>
-    <span class="p-vtag">v9.22</span>
+    <span class="p-vtag">v10.0</span>
   </div>
   <div class="p-body" style="padding-top:20px">
     <div style="text-align:center;margin-bottom:16px">
@@ -820,7 +820,7 @@ const params = new URLSearchParams(window.location.search);
 const evId = params.get('ev');
 
 // -- STATE --
-let evData=null, currentUser=null, userProfile=null;
+let evData=null, bingoData=null, currentUser=null, userProfile=null;
 let previewCartelaId=null;
 let cartelas=[], cartelaIdx=0;
 // bingoBloqueado REMOVIDO — agora usamos c.status='batida' para cartelas que bateram
@@ -976,8 +976,14 @@ async function initGame(){
   const ev=snap.val();
   if(!ev){ showView('vNotFound'); return; }
   evData=ev;
+  // Ler bingoAtual e carregar dados do bingo
+  const bingoId=ev.bingoAtual;
+  if(!bingoId){ showToast('Nenhum bingo ativo neste evento.'); showView('vNotFound'); return; }
+  const bingoSnap=await get(fb('bingo/eventos/'+evId+'/bingos/'+bingoId));
+  bingoData=bingoSnap.val();
+  if(!bingoData){ showToast('Bingo nao encontrado.'); showView('vNotFound'); return; }
   const tipoLabel = ev.tipoCartela === 'banco' ? ' | Banco de Cartelas' : ' | Cartela Propria';
-      $('gameEvBar').textContent = (ev.nome || 'Evento') + tipoLabel;
+      $('gameEvBar').textContent = (ev.nome || 'Evento') + ' > #'+(bingoData.ordem||'?')+' '+(bingoData.nome||'--') + tipoLabel;
   $('gameUserName').textContent=userProfile?.apelido||userProfile?.nome||currentUser.email;
 
   // Verificar permissao
@@ -1019,12 +1025,28 @@ async function initGame(){
 function continuarJogo(ev){
   showView('vJogo');
   listenCartelasUsadas();
+  // Listener do EVENTO (para bingoAtual, permissoes, brincantes)
   onValue(fb(`bingo/eventos/${evId}`),snap2=>{
     const ev2=snap2.val(); if(!ev2)return;
-    const newBall=evData&&ev2.lastDrawn!==evData.lastDrawn;
-    // Detectar reset — drawn foi zerado
-    const wasReset=evData&&(evData.drawn||[]).length>0&&(ev2.drawn||[]).length===0;
+    const oldBingoId=evData?.bingoAtual;
     evData=ev2;
+    // Se bingoAtual mudou, recarregar
+    if(ev2.bingoAtual && ev2.bingoAtual !== oldBingoId){
+      get(fb(`bingo/eventos/${evId}/bingos/${ev2.bingoAtual}`)).then(s=>{
+        bingoData=s.val();
+        showToast('Novo bingo iniciado: #'+(bingoData?.ordem||'?')+' '+(bingoData?.nome||''));
+        renderPremio(); renderBall(); renderHist(); checkAutoBatida();
+      });
+    }
+  });
+  // Listener do BINGO (para drawn, premios, batidas)
+  const bingoId=ev.bingoAtual;
+  if(!bingoId) return;
+  onValue(fb(`bingo/eventos/${evId}/bingos/${bingoId}`),snap2=>{
+    const b=snap2.val(); if(!b)return;
+    const newBall=bingoData && b.lastDrawn !== bingoData.lastDrawn;
+    const wasReset=bingoData && (bingoData.drawn||[]).length>0 && (b.drawn||[]).length===0;
+    bingoData=b;
     if(wasReset){
       cartelas.forEach(c=>{ c.marcados=[]; });
       try{ localStorage.removeItem('bingo_cartelas_'+evId+'_'+currentUser.uid); }catch(e){}
@@ -1203,7 +1225,7 @@ $('btnCadastrarEvento')?.addEventListener('click', async()=>{
   }
 });
 function novaCartela(){
-  const mode=evData?.mode||90;
+  const mode=bingoData?.mode||90;
   return{id:gerarCartelaId(mode),fbId:genId(),status:'ativa',premioGanho:null,
     numeros:{B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]},
     marcados:[],freeCenter:false,autoMarcar:true,criadaEm:Date.now()};
@@ -1251,7 +1273,7 @@ function loadCartelasFromCache(){
 
 
 // ======================================================
-//  OCR - GRADE AJUSTAVEL INTEGRADA v9.22
+//  OCR - GRADE AJUSTAVEL INTEGRADA v10.0
 // ======================================================
 let _ocrNums = {B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]};
 let _ocrDetectedFreeCenter = false;
@@ -1419,7 +1441,7 @@ function initOcr(){
   on('ocrCellOk','click',()=>{
     if(!_ocrCellCtx||!_ocrCellVal)return;
     const n=parseInt(_ocrCellVal);
-    const mode=evData?.mode||90;
+    const mode=bingoData?.mode||90;
     const{min,max}=colRange(_ocrCellCtx.letter,mode);
     if(n<min||n>max){ updateOcrCellDisplay(); return; }
     _ocrNums[_ocrCellCtx.letter][_ocrCellCtx.row]=n;
@@ -1572,7 +1594,7 @@ async function ocrProcessar(){
   const dm=document.getElementById('ocrDupMsg'); if(dm) dm.style.display='none';
   const st=document.getElementById('ocrStatus'); if(st) st.textContent='Processando...';
   try{
-    const mode=evData?.mode||90;
+    const mode=bingoData?.mode||90;
     const off=document.createElement('canvas');
     off.width=_ocrImg.width; off.height=_ocrImg.height;
     const offCtx=off.getContext('2d');
@@ -1638,7 +1660,7 @@ function ocrConfirmar(){
 
 function renderOcrGrid(){
   const grid=document.getElementById('ocrGridEl'); if(!grid)return;
-  const mode=evData?.mode||90;
+  const mode=bingoData?.mode||90;
   grid.innerHTML=''; let valid=0;
   LETTERS.forEach(l=>{ const h=document.createElement('div'); h.className='ocr-hdr l'+l; h.textContent=l; grid.appendChild(h); });
   for(let row=0;row<5;row++){
@@ -1660,7 +1682,7 @@ function renderOcrGrid(){
 
 function openOcrCellEdit(letter,row,currentVal){
   _ocrCellCtx={letter,row}; _ocrCellVal=currentVal!=null?String(currentVal):'';
-  const mode=evData?.mode||90; const{min,max}=colRange(letter,mode);
+  const mode=bingoData?.mode||90; const{min,max}=colRange(letter,mode);
   const t=document.getElementById('mOcrCellTitle'); if(t) t.textContent='Coluna '+letter;
   const s=document.getElementById('mOcrCellSub'); if(s) s.textContent='Faixa: '+min+' a '+max;
   updateOcrCellDisplay(); openM('mOcrCell');
@@ -1668,7 +1690,7 @@ function openOcrCellEdit(letter,row,currentVal){
 
 function updateOcrCellDisplay(){
   const disp=document.getElementById('ocrCellDisplay'),hint=document.getElementById('ocrCellHint'); if(!disp)return;
-  const mode=evData?.mode||90;
+  const mode=bingoData?.mode||90;
   if(!_ocrCellVal){ disp.textContent='--'; disp.className='np-display'; if(hint)hint.textContent=''; return; }
   const n=parseInt(_ocrCellVal);
   const{min,max}=colRange(_ocrCellCtx?.letter||'B',mode);
@@ -1732,7 +1754,7 @@ function confirmOcr(){
   const c=novaCartela();
   c.numeros=JSON.parse(JSON.stringify(_ocrNums));
   c.freeCenter=_ocrDetectedFreeCenter;
-  const drawnSet=new Set(evData?.drawn||[]);
+  const drawnSet=new Set(bingoData?.drawn||[]);
   LETTERS.forEach(l=>{ c.numeros[l].forEach(n=>{ if(n&&drawnSet.has(n)){ c.marcados=c.marcados||[]; if(!c.marcados.includes(n))c.marcados.push(n); } }); });
   cartelas.push(c); cartelaIdx=cartelas.length-1;
   saveAllCartelas();
@@ -1745,7 +1767,7 @@ function confirmOcr(){
 // -- PUXAR AUTOMATICO --
 function puxarAutomatico(){
   const c=cartelas[cartelaIdx]; if(!c)return;
-  const drawnSet=new Set(evData?.drawn||[]);
+  const drawnSet=new Set(bingoData?.drawn||[]);
   const allNums=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
   if(!allNums.length){ showToast('Preencha a cartela primeiro'); return; }
   let count=0;
@@ -1982,14 +2004,14 @@ function showToast(msg){
 
 // -- PREMIO --
 function renderPremio(){
-  const el=$('premioInfo'); if(!el||!evData?.premios)return;
+  const el=$('premioInfo'); if(!el||!bingoData?.premios)return;
   const p=getCurrentPremio();
   if(p) el.innerHTML=`<div class="pi-nome">#${p.ordem} -- ${esc(p.nome)}</div><div class="pi-regra">${p.regra==='cheia'?' Cartela Cheia':' Linha / Coluna / Diagonal'}</div>`;
   else el.innerHTML='<div class="pi-empty">Nenhum premio ativo</div>';
 }
 function getCurrentPremio(){
-  if(!evData?.premios)return null;
-  const premios=Object.values(evData.premios).sort((a,b)=>a.ordem-b.ordem);
+  if(!bingoData?.premios)return null;
+  const premios=Object.values(bingoData.premios).sort((a,b)=>a.ordem-b.ordem);
   // Primeiro premio nao fechado sem ganhadores, ou primeiro nao fechado
   const p=premios.find(pr=>!pr.fechado&&!pr.ganhadores?.length)||premios.find(pr=>!pr.fechado)||null;
   curPrizeId=p?.id||null;
@@ -1999,7 +2021,7 @@ function getCurrentPremio(){
 // -- BALL --
 function renderBall(){
   const ball=$('pBigBall'),hint=$('pBallHint'); if(!ball)return;
-  const n=evData?.lastDrawn,mode=evData?.mode||90;
+  const n=bingoData?.lastDrawn,mode=bingoData?.mode||90;
   if(n){ const l=getLetter(n,mode); $('pBallL').textContent=l; $('pBallN').textContent=n; ball.className=`pbig l${l}`; if(hint)hint.textContent='Toque para adicionar a cartela ativa'; }
   else{ $('pBallL').textContent=''; $('pBallN').textContent='--'; ball.className='pbig empty-ball'; if(hint)hint.textContent='Aguardando sorteio...'; }
 }
@@ -2007,13 +2029,13 @@ function onNewBall(){
   sndNew();
   const ball=$('pBigBall'); if(ball){ball.classList.remove('pop');void ball.offsetWidth;ball.classList.add('pop');}
   const lb=$('pLastBall'); if(lb){lb.classList.add('new-ball');setTimeout(()=>lb.classList.remove('new-ball'),2000);}
-  const n=evData?.lastDrawn,mode=evData?.mode||90; if(!n)return;
+  const n=bingoData?.lastDrawn,mode=bingoData?.mode||90; if(!n)return;
   let changed=false;
   cartelas.forEach(c=>{ if(!c.autoMarcar)return; const all=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined); if(all.includes(n)&&!(c.marcados||[]).includes(n)){c.marcados=c.marcados||[];c.marcados.push(n);changed=true;sndMark();} });
   if(changed){saveAllCartelas();renderCartela();renderHist();checkAutoBatida();}
 }
 function onTapLastBall(){
-  const n=evData?.lastDrawn,mode=evData?.mode||90; if(!n)return;
+  const n=bingoData?.lastDrawn,mode=bingoData?.mode||90; if(!n)return;
   const l=getLetter(n,mode),c=cartelas[cartelaIdx]; if(!c)return;
   const all=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
   if(all.includes(n)){showToast('Ja esta na cartela');return;}
@@ -2057,7 +2079,7 @@ function renderCartela(){
   hdr.innerHTML='';
   LETTERS.forEach(l=>{ const cell=document.createElement('div'); cell.className=`ch-cell l${l}`; cell.textContent=l; hdr.appendChild(cell); });
   grid.innerHTML='';
-  const drawnSet=new Set(evData?.drawn||[]);
+  const drawnSet=new Set(bingoData?.drawn||[]);
   const marcados=new Set(c.marcados||[]);
   for(let row=0;row<5;row++){
     LETTERS.forEach((letter,col)=>{
@@ -2096,7 +2118,7 @@ function colRange(letter, mode){
 
 function openNumpad(letter, row){
   const c=cartelas[cartelaIdx]; if(!c)return;
-  const mode=evData?.mode||90;
+  const mode=bingoData?.mode||90;
   const {min,max}=colRange(letter,mode);
   _numpadCtx={letter,row}; _numpadVal='';
   $('mNumpadTitle').textContent=`Coluna ${letter}`;
@@ -2107,7 +2129,7 @@ function openNumpad(letter, row){
 
 function updateNumpadDisplay(){
   const disp=$('npDisplay'), hint=$('npHint'); if(!disp)return;
-  const mode=evData?.mode||90;
+  const mode=bingoData?.mode||90;
   if(!_numpadVal||!_numpadCtx){ disp.textContent='--'; disp.className='np-display'; if(hint)hint.textContent=''; return; }
   const n=parseInt(_numpadVal);
   const {min,max}=colRange(_numpadCtx.letter,mode);
@@ -2138,7 +2160,7 @@ function initNumpad(){
   $('npOk')?.addEventListener('click',()=>{
     if(!_numpadCtx||!_numpadVal)return;
     const n=parseInt(_numpadVal);
-    const mode=evData?.mode||90;
+    const mode=bingoData?.mode||90;
     const {min,max}=colRange(_numpadCtx.letter,mode);
     const c=cartelas[cartelaIdx]; if(!c)return;
     const allNums=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
@@ -2151,7 +2173,7 @@ function initNumpad(){
     const vals=[...filled,n].sort((a,b)=>a-b);
     while(vals.length<5)vals.push(null);
     c.numeros[letter]=vals;
-    if(new Set(evData?.drawn||[]).has(n)){ c.marcados=c.marcados||[]; if(!c.marcados.includes(n))c.marcados.push(n); }
+    if(new Set(bingoData?.drawn||[]).has(n)){ c.marcados=c.marcados||[]; if(!c.marcados.includes(n))c.marcados.push(n); }
     closeM('mNumpad'); _numpadCtx=null; _numpadVal='';
     saveAllCartelas(); renderCartela(); renderHist(); checkAutoBatida(); sndMark();
   });
@@ -2165,7 +2187,7 @@ function addNum(n,letter){
   if(filled.length>=maxSlots){showToast(`Coluna ${letter} cheia`);return;}
   const vals=[...filled,n].sort((a,b)=>a-b); while(vals.length<5)vals.push(null);
   c.numeros[letter]=vals;
-  if(evData&&new Set(evData.drawn||[]).has(n)){c.marcados=c.marcados||[];if(!c.marcados.includes(n))c.marcados.push(n);}
+  if(bingoData&&new Set(bingoData.drawn||[]).has(n)){c.marcados=c.marcados||[];if(!c.marcados.includes(n))c.marcados.push(n);}
   saveAllCartelas();renderCartela();renderHist();sndMark();checkAutoBatida();
 }
 function remNum(num,letter,row){
@@ -2201,9 +2223,9 @@ function renderHist(){
   const c=cartelas[cartelaIdx];
   const cNums=new Set(c?Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined):[]);
   const marcados=new Set(c?.marcados||[]);
-  const mode=evData.mode||90;
+  const mode=bingoData.mode||90;
   strip.innerHTML='';
-  [...(evData.drawn||[])].reverse().forEach(n=>{
+  [...(bingoData.drawn||[])].reverse().forEach(n=>{
     const l=getLetter(n,mode),inC=cNums.has(n),isMkd=marcados.has(n);
     const ball=document.createElement('div');
     ball.className=`ph-ball l${l}${inC?' in-cartela':''}${isMkd?' marked':''}`;
@@ -2469,7 +2491,7 @@ function renderSelecaoGrid() {
       onclick="onSelecaoTap(this,'${cid}')"
       ondblclick="selecionarCartela('${cid}')">
       <div class="ct-id-sel">${cid}</div>
-      <div class="ct-mode-sel">${evData?.mode||90} pedras</div>
+      <div class="ct-mode-sel">${bingoData?.mode||90} pedras</div>
       ${miniHtml}
       ${isMinha ? '<div style="position:absolute;top:4px;left:4px;background:var(--green);color:#000;font-size:.55rem;font-weight:900;padding:1px 5px;border-radius:3px">MINHA</div>' : ''}
     </div>`;
@@ -2570,7 +2592,7 @@ function renderCartelasBatidas(){
 }
 function renderMiniCartela(c,containerId){
   const el=document.getElementById(containerId); if(!el) return;
-  const drawnSet=new Set(evData?.drawn||[]);
+  const drawnSet=new Set(bingoData?.drawn||[]);
   const marcados=new Set(c.marcados||[]);
   let html='<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px">';
   LETTERS.forEach(l=>{
@@ -2807,7 +2829,7 @@ function usarCartelaDoBanco(cartelaBanco) {
   };
 
   // Marcar ja sorteadas
-  const drawnSet = new Set(evData?.drawn || []);
+  const drawnSet = new Set(bingoData?.drawn || []);
   LETTERS.forEach(l => {
     c.numeros[l].forEach(n => {
       if (n && drawnSet.has(n) && !c.marcados.includes(n)) c.marcados.push(n);

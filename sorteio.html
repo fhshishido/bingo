@@ -638,17 +638,21 @@ function renderBatidas(batidas) {
   list.innerHTML='';
   pend.forEach(([bid,b])=>{
     const card = document.createElement('div'); card.className='batida-card';
+    const temCartela = b.cartela && b.cartela.numeros;
     card.innerHTML = `
       <div class="batida-card-top">
-        <div><div class="batida-nome">${esc(b.playerNome||'Anônimo')}</div><div class="batida-id">Cartela: ${esc(b.cartelaId||'-')}</div></div>
-        <span class="batida-tipo">${b.tipo==='automatica'?'✅ Auto':'✋ Manual'}</span>
+        <div><div class="batida-nome">${esc(b.playerNome||'Anonimo')}</div><div class="batida-id">Cartela: ${esc(b.cartelaId||'-')}</div></div>
+        <span class="batida-tipo">${b.tipo==='automatica'?'&#9989; Auto':'&#9995; Manual'}</span>
       </div>
       <div class="batida-btns">
-        <button class="btn btn-red btn-sm" data-bid="${bid}">❌ Rejeitar</button>
-        <button class="btn btn-green btn-sm" data-bid="${bid}" data-confirm="1">✅ Confirmar</button>
+        <button class="btn btn-red btn-sm" data-bid="${bid}">&#10060; Rejeitar</button>
+        <button class="btn btn-green btn-sm" data-bid="${bid}" data-confirm="1">&#9989; Confirmar</button>
+        ${temCartela?'<button class="btn btn-sm" data-bid="'+bid+'" data-vercartela="1" style="background:rgba(0,184,240,.12);color:var(--accent);border:1.5px solid rgba(0,184,240,.3)">&#127921; Ver Cartela</button>':''}
       </div>`;
     card.querySelector('[data-confirm]').addEventListener('click',()=>confirmarBatida(bid,b));
-    card.querySelector('[data-bid]:not([data-confirm])').addEventListener('click',()=>rejeitarBatida(bid));
+    card.querySelector('[data-bid]:not([data-confirm]):not([data-vercartela])').addEventListener('click',()=>rejeitarBatida(bid));
+    const btnVer = card.querySelector('[data-vercartela]');
+    if(btnVer) btnVer.addEventListener('click',()=>mostrarCartelaBatida(b.cartela,b.playerNome));
     list.appendChild(card);
   });
 }
@@ -666,6 +670,15 @@ function confirmarBatida(bid, b) {
   const premioInfo = {ordem:cp.ordem, nome:cp.nome, regra:cp.regra, ts:Date.now(), bingoId};
   const basePath = `bingo/eventos/${evId}/bingos/${bingoId}/premios/${curPrizeId}`;
   const brincantePath = `bingo/eventos/${evId}/brincantes/${b.playerId||b.uid||'anon'}`;
+  // Salvar no historico do evento (persiste por todo o evento)
+  const prizeId = curPrizeId;
+  const histKey = `${bingoId}_${prizeId}_${Date.now()}`;
+  const histData = {
+    bingoId, bingoNome: bingoData?.nome||'', bingoOrdem: bingoData?.ordem||'',
+    premioId: prizeId, premioNome: cp.nome, premioOrdem: cp.ordem, premioRegra: cp.regra||'cheia',
+    playerId: b.playerId||'', playerNome: b.playerNome||'',
+    cartelaId: b.cartelaId||'', ts: Date.now()
+  };
   Promise.all([
     set(fb(basePath+'/ganhadores'), cp.ganhadores),
     set(fb(basePath+'/ganhoEm'), Date.now()),
@@ -673,7 +686,8 @@ function confirmarBatida(bid, b) {
     set(fb(brincantePath+'/premioGanho'), premioInfo),
     set(fb(brincantePath+'/bingoConfirmado'), true),
     set(fb(brincantePath+'/ultimaCartelaBatida'), b.cartelaId||''),
-    set(fb(brincantePath+'/bingoIdAtivo'), bingoId)
+    set(fb(brincantePath+'/bingoIdAtivo'), bingoId),
+    set(fb(`bingo/eventos/${evId}/historico/${histKey}`), histData)
   ]).then(()=>{
     soundConfirm();
   }).catch(e=>{
@@ -685,6 +699,66 @@ function confirmarBatida(bid, b) {
 function rejeitarBatida(bid) {
   update(fb(`bingo/eventos/${evId}/bingos/${bingoId}/batidas/${bid}`),{status:'rejeitada'});
   soundReject();
+}
+
+// MODAL GENERICO (para mostrar cartela do jogador)
+function openModal(title, bodyHtml, footHtml) {
+  let el = document.getElementById('mGeneric');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'mGeneric';
+    el.className = 'mbk';
+    el.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,2,.92);backdrop-filter:blur(5px);z-index:4000;align-items:center;justify-content:center;padding:16px';
+    el.innerHTML = '<div style="background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);width:100%;max-width:480px;padding:22px;margin:auto;max-height:85vh;display:flex;flex-direction:column;animation:mIn .22s cubic-bezier(.2,1.4,.4,1) both"><h2 id="mGenTitle" style="font-family:Bebas Neue,sans-serif;font-size:1.5rem;letter-spacing:2px;color:var(--accent);margin-bottom:14px;flex-shrink:0"></h2><div id="mGenBody" style="overflow-y:auto;flex:1"></div><div id="mGenFoot" style="margin-top:18px;display:flex;gap:8px;justify-content:flex-end;flex-shrink:0"></div></div>';
+    document.body.appendChild(el);
+  }
+  document.getElementById('mGenTitle').innerHTML = title;
+  document.getElementById('mGenBody').innerHTML = bodyHtml;
+  document.getElementById('mGenFoot').innerHTML = footHtml || '<button class="btn btn-ghost" onclick="closeModal()">Fechar</button>';
+  el.classList.add('open');
+  el.style.display = 'flex';
+}
+window.closeModal = function() {
+  const el = document.getElementById('mGeneric');
+  if(el){ el.classList.remove('open'); el.style.display = 'none'; }
+};
+
+// MOSTRAR CARTELA DE UMA BATIDA
+function mostrarCartelaBatida(cartelaData, playerNome) {
+  if(!cartelaData || !cartelaData.numeros) { showToast('Dados da cartela nao disponiveis'); return; }
+  const LETTERS = ['B','I','N','G','O'];
+  const numeros = cartelaData.numeros;
+  const marcados = new Set(cartelaData.marcados || []);
+  const freeCenter = cartelaData.freeCenter || false;
+  
+  let html = '<div style="text-align:center;margin-bottom:10px;font-weight:700;color:var(--text2)">Cartela de ' + esc(playerNome||'Jogador') + '</div>';
+  html += '<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rsm);overflow:hidden;max-width:300px;margin:0 auto">';
+  // Header
+  html += '<div style="display:grid;grid-template-columns:repeat(5,1fr)">';
+  LETTERS.forEach(l=>{
+    const colors={B:'#00b8f0',I:'#00dfa8',N:'#f5c800',G:'#ff8c00',O:'#c850ff'};
+    html += '<div style="font-family:Bebas Neue;font-size:1.5rem;text-align:center;padding:6px 2px;background:rgba('+({B:'0,184,240',I:'0,223,168',N:'245,200,0',G:'255,140,0',O:'200,80,255'}[l])+',.2);color:'+colors[l]+'">'+l+'</div>';
+  });
+  html += '</div>';
+  // Grid
+  html += '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:6px">';
+  for(let row=0; row<5; row++){
+    LETTERS.forEach((letter,col)=>{
+      const isFree = freeCenter && row===2 && col===2;
+      const num = (numeros[letter]||[])[row];
+      const hasNum = num!=null;
+      const isM = hasNum && marcados.has(num);
+      const colors={B:'#00b8f0',I:'#00dfa8',N:'#f5c800',G:'#ff8c00',O:'#c850ff'};
+      let bg='var(--surface2)'; let color='var(--text)'; let border='1.5px solid var(--border)';
+      if(isFree) { bg='var(--surface3)'; color='var(--text2)'; }
+      else if(isM) { bg=colors[letter]; color='#000'; border='1.5px solid '+colors[letter]; }
+      else if(hasNum) { bg='rgba('+({B:'0,184,240',I:'0,223,168',N:'245,200,0',G:'255,140,0',O:'200,80,255'}[l])+',.07)'; color=colors[letter]; border='1.5px solid rgba('+({B:'0,184,240',I:'0,223,168',N:'245,200,0',G:'255,140,0',O:'200,80,255'}[l])+',.4)'; }
+      html += '<div style="aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:Bebas Neue;font-size:1.2rem;background:'+bg+';color:'+color+';border:'+border+'">'+(isFree?'&#9733;':(num||''))+'</div>';
+    });
+  }
+  html += '</div></div>';
+  
+  openModal('&#127921; Cartela do Jogador', html);
 }
 
 function removeWinner(prizeId, idx) {

@@ -236,6 +236,7 @@ let evData = null, bingoData = null, currentUser = null, userProfile = null;
 let cartelas = [], cartelaIdx = 0;
 let pendingAdd = null;
 let jogoIniciado = false;
+let _cartelaQueBateu = null; // cartela que bateu (para enviar no bingo)
 
 // AUTH
 onAuthStateChanged(auth, async user => {
@@ -638,6 +639,7 @@ function checkAutoBatida() {
     else { bateu = checkLD(c, marcados); }
     if (bateu) {
       algumaBateu = true;
+      _cartelaQueBateu = c; // guarda referencia a cartela que bateu
       const avisoKey = 'batida_' + c.id + '_p' + (p?.id || 'none');
       if (!sessionStorage.getItem(avisoKey)) {
         sessionStorage.setItem(avisoKey, '1');
@@ -658,20 +660,24 @@ function checkLD(c, marcados) {
 }
 
 function onBingoClick() {
-  const c = cartelas[cartelaIdx]; if (!c) return;
+  const c = _cartelaQueBateu || cartelas[cartelaIdx];
+  if (!c) return;
   const nome = userProfile?.apelido || userProfile?.nome || currentUser?.email;
   $('mBingoTxt').textContent = 'Declarar BINGO com a cartela ' + c.id + ' (' + nome + ')?';
   openM('mBingo');
 }
 window.enviarBatida = function () {
   closeM('mBingo');
-  const c = cartelas[cartelaIdx]; if (!c || !currentUser) return;
+  const c = _cartelaQueBateu || cartelas[cartelaIdx];
+  if (!c || !currentUser) return;
   const bingoId = evData?.bingoAtivoId;
   if (!bingoId) { showToast('Nenhuma rodada ativa'); return; }
   const p = getCurrentPremio(); const nome = userProfile?.apelido || userProfile?.nome || currentUser.email;
   const batidaId = genId();
+  // Preparar dados da cartela para o sorteio visualizar
+  const cartelaData = { id: c.id, numeros: c.numeros, marcados: c.marcados || [], freeCenter: c.freeCenter || false };
   // Salvar no path correto: bingos/{bingoId}/batidas (sorteio.html escuta aqui)
-  set(fb('bingo/eventos/' + evId + '/bingos/' + bingoId + '/batidas/' + batidaId), { playerId: currentUser.uid, playerNome: nome, cartelaId: c.id, premioId: p?.id || null, tipo: 'manual', status: 'pendente', timestamp: Date.now() });
+  set(fb('bingo/eventos/' + evId + '/bingos/' + bingoId + '/batidas/' + batidaId), { playerId: currentUser.uid, playerNome: nome, cartelaId: c.id, premioId: p?.id || null, tipo: 'manual', status: 'pendente', timestamp: Date.now(), cartela: cartelaData });
   update(fb('bingo/eventos/' + evId + '/brincantes/' + currentUser.uid), { batidaStatus: 'pendente' });
   showToast('BINGO declarado!');
   const el = $('batidaStatusEl'); if (el) { el.className = 'batida-status bs-pend'; el.textContent = ' Batida enviada...'; }

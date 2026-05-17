@@ -976,8 +976,8 @@ async function initGame(){
   const ev=snap.val();
   if(!ev){ showView('vNotFound'); return; }
   evData=ev;
-  // Ler bingoAtual e carregar dados do bingo
-  const bingoId=ev.bingoAtual;
+  // Ler bingoAtivoId e carregar dados do bingo
+  const bingoId=ev.bingoAtivoId;
   if(!bingoId){ showToast('Nenhum bingo ativo neste evento.'); showView('vNotFound'); return; }
   const bingoSnap=await get(fb('bingo/eventos/'+evId+'/bingos/'+bingoId));
   bingoData=bingoSnap.val();
@@ -1025,14 +1025,14 @@ async function initGame(){
 function continuarJogo(ev){
   showView('vJogo');
   listenCartelasUsadas();
-  // Listener do EVENTO (para bingoAtual, permissoes, brincantes)
+  // Listener do EVENTO (para bingoAtivoId, permissoes, brincantes)
   onValue(fb(`bingo/eventos/${evId}`),snap2=>{
     const ev2=snap2.val(); if(!ev2)return;
-    const oldBingoId=evData?.bingoAtual;
+    const oldBingoId=evData?.bingoAtivoId;
     evData=ev2;
-    // Se bingoAtual mudou, recarregar
-    if(ev2.bingoAtual && ev2.bingoAtual !== oldBingoId){
-      get(fb(`bingo/eventos/${evId}/bingos/${ev2.bingoAtual}`)).then(s=>{
+    // Se bingoAtivoId mudou, recarregar
+    if(ev2.bingoAtivoId && ev2.bingoAtivoId !== oldBingoId){
+      get(fb(`bingo/eventos/${evId}/bingos/${ev2.bingoAtivoId}`)).then(s=>{
         bingoData=s.val();
         showToast('Novo bingo iniciado: #'+(bingoData?.ordem||'?')+' '+(bingoData?.nome||''));
         renderPremio(); renderBall(); renderHist(); checkAutoBatida();
@@ -1040,7 +1040,7 @@ function continuarJogo(ev){
     }
   });
   // Listener do BINGO (para drawn, premios, batidas)
-  const bingoId=ev.bingoAtual;
+  const bingoId=ev.bingoAtivoId;
   if(!bingoId) return;
   onValue(fb(`bingo/eventos/${evId}/bingos/${bingoId}`),snap2=>{
     const b=snap2.val(); if(!b)return;
@@ -1225,7 +1225,7 @@ $('btnCadastrarEvento')?.addEventListener('click', async()=>{
   }
 });
 function novaCartela(){
-  const mode=bingoData?.mode||90;
+  const mode=evData?.mode||90;
   return{id:gerarCartelaId(mode),fbId:genId(),status:'ativa',premioGanho:null,
     numeros:{B:[null,null,null,null,null],I:[null,null,null,null,null],N:[null,null,null,null,null],G:[null,null,null,null,null],O:[null,null,null,null,null]},
     marcados:[],freeCenter:false,autoMarcar:true,criadaEm:Date.now()};
@@ -1441,7 +1441,7 @@ function initOcr(){
   on('ocrCellOk','click',()=>{
     if(!_ocrCellCtx||!_ocrCellVal)return;
     const n=parseInt(_ocrCellVal);
-    const mode=bingoData?.mode||90;
+    const mode=evData?.mode||90;
     const{min,max}=colRange(_ocrCellCtx.letter,mode);
     if(n<min||n>max){ updateOcrCellDisplay(); return; }
     _ocrNums[_ocrCellCtx.letter][_ocrCellCtx.row]=n;
@@ -1594,7 +1594,7 @@ async function ocrProcessar(){
   const dm=document.getElementById('ocrDupMsg'); if(dm) dm.style.display='none';
   const st=document.getElementById('ocrStatus'); if(st) st.textContent='Processando...';
   try{
-    const mode=bingoData?.mode||90;
+    const mode=evData?.mode||90;
     const off=document.createElement('canvas');
     off.width=_ocrImg.width; off.height=_ocrImg.height;
     const offCtx=off.getContext('2d');
@@ -1660,7 +1660,7 @@ function ocrConfirmar(){
 
 function renderOcrGrid(){
   const grid=document.getElementById('ocrGridEl'); if(!grid)return;
-  const mode=bingoData?.mode||90;
+  const mode=evData?.mode||90;
   grid.innerHTML=''; let valid=0;
   LETTERS.forEach(l=>{ const h=document.createElement('div'); h.className='ocr-hdr l'+l; h.textContent=l; grid.appendChild(h); });
   for(let row=0;row<5;row++){
@@ -1682,7 +1682,7 @@ function renderOcrGrid(){
 
 function openOcrCellEdit(letter,row,currentVal){
   _ocrCellCtx={letter,row}; _ocrCellVal=currentVal!=null?String(currentVal):'';
-  const mode=bingoData?.mode||90; const{min,max}=colRange(letter,mode);
+  const mode=evData?.mode||90; const{min,max}=colRange(letter,mode);
   const t=document.getElementById('mOcrCellTitle'); if(t) t.textContent='Coluna '+letter;
   const s=document.getElementById('mOcrCellSub'); if(s) s.textContent='Faixa: '+min+' a '+max;
   updateOcrCellDisplay(); openM('mOcrCell');
@@ -1690,7 +1690,7 @@ function openOcrCellEdit(letter,row,currentVal){
 
 function updateOcrCellDisplay(){
   const disp=document.getElementById('ocrCellDisplay'),hint=document.getElementById('ocrCellHint'); if(!disp)return;
-  const mode=bingoData?.mode||90;
+  const mode=evData?.mode||90;
   if(!_ocrCellVal){ disp.textContent='--'; disp.className='np-display'; if(hint)hint.textContent=''; return; }
   const n=parseInt(_ocrCellVal);
   const{min,max}=colRange(_ocrCellCtx?.letter||'B',mode);
@@ -2021,7 +2021,7 @@ function getCurrentPremio(){
 // -- BALL --
 function renderBall(){
   const ball=$('pBigBall'),hint=$('pBallHint'); if(!ball)return;
-  const n=bingoData?.lastDrawn,mode=bingoData?.mode||90;
+  const n=bingoData?.lastDrawn,mode=evData?.mode||90;
   if(n){ const l=getLetter(n,mode); $('pBallL').textContent=l; $('pBallN').textContent=n; ball.className=`pbig l${l}`; if(hint)hint.textContent='Toque para adicionar a cartela ativa'; }
   else{ $('pBallL').textContent=''; $('pBallN').textContent='--'; ball.className='pbig empty-ball'; if(hint)hint.textContent='Aguardando sorteio...'; }
 }
@@ -2029,13 +2029,13 @@ function onNewBall(){
   sndNew();
   const ball=$('pBigBall'); if(ball){ball.classList.remove('pop');void ball.offsetWidth;ball.classList.add('pop');}
   const lb=$('pLastBall'); if(lb){lb.classList.add('new-ball');setTimeout(()=>lb.classList.remove('new-ball'),2000);}
-  const n=bingoData?.lastDrawn,mode=bingoData?.mode||90; if(!n)return;
+  const n=bingoData?.lastDrawn,mode=evData?.mode||90; if(!n)return;
   let changed=false;
   cartelas.forEach(c=>{ if(!c.autoMarcar)return; const all=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined); if(all.includes(n)&&!(c.marcados||[]).includes(n)){c.marcados=c.marcados||[];c.marcados.push(n);changed=true;sndMark();} });
   if(changed){saveAllCartelas();renderCartela();renderHist();checkAutoBatida();}
 }
 function onTapLastBall(){
-  const n=bingoData?.lastDrawn,mode=bingoData?.mode||90; if(!n)return;
+  const n=bingoData?.lastDrawn,mode=evData?.mode||90; if(!n)return;
   const l=getLetter(n,mode),c=cartelas[cartelaIdx]; if(!c)return;
   const all=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
   if(all.includes(n)){showToast('Ja esta na cartela');return;}
@@ -2118,7 +2118,7 @@ function colRange(letter, mode){
 
 function openNumpad(letter, row){
   const c=cartelas[cartelaIdx]; if(!c)return;
-  const mode=bingoData?.mode||90;
+  const mode=evData?.mode||90;
   const {min,max}=colRange(letter,mode);
   _numpadCtx={letter,row}; _numpadVal='';
   $('mNumpadTitle').textContent=`Coluna ${letter}`;
@@ -2129,7 +2129,7 @@ function openNumpad(letter, row){
 
 function updateNumpadDisplay(){
   const disp=$('npDisplay'), hint=$('npHint'); if(!disp)return;
-  const mode=bingoData?.mode||90;
+  const mode=evData?.mode||90;
   if(!_numpadVal||!_numpadCtx){ disp.textContent='--'; disp.className='np-display'; if(hint)hint.textContent=''; return; }
   const n=parseInt(_numpadVal);
   const {min,max}=colRange(_numpadCtx.letter,mode);
@@ -2160,7 +2160,7 @@ function initNumpad(){
   $('npOk')?.addEventListener('click',()=>{
     if(!_numpadCtx||!_numpadVal)return;
     const n=parseInt(_numpadVal);
-    const mode=bingoData?.mode||90;
+    const mode=evData?.mode||90;
     const {min,max}=colRange(_numpadCtx.letter,mode);
     const c=cartelas[cartelaIdx]; if(!c)return;
     const allNums=Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined);
@@ -2223,7 +2223,7 @@ function renderHist(){
   const c=cartelas[cartelaIdx];
   const cNums=new Set(c?Object.values(c.numeros).flat().filter(v=>v!==null&&v!==undefined):[]);
   const marcados=new Set(c?.marcados||[]);
-  const mode=bingoData.mode||90;
+  const mode=evData?.mode||90;
   strip.innerHTML='';
   [...(bingoData.drawn||[])].reverse().forEach(n=>{
     const l=getLetter(n,mode),inC=cNums.has(n),isMkd=marcados.has(n);
@@ -2491,7 +2491,7 @@ function renderSelecaoGrid() {
       onclick="onSelecaoTap(this,'${cid}')"
       ondblclick="selecionarCartela('${cid}')">
       <div class="ct-id-sel">${cid}</div>
-      <div class="ct-mode-sel">${bingoData?.mode||90} pedras</div>
+      <div class="ct-mode-sel">${evData?.mode||90} pedras</div>
       ${miniHtml}
       ${isMinha ? '<div style="position:absolute;top:4px;left:4px;background:var(--green);color:#000;font-size:.55rem;font-weight:900;padding:1px 5px;border-radius:3px">MINHA</div>' : ''}
     </div>`;

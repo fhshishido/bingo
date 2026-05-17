@@ -990,14 +990,14 @@ function renderBingosLista(){
   bingos.forEach(b => {
     const card = grid.querySelector(`[data-bingoid="${b.id}"]`);
     if(!card) return;
-    card.querySelector('[data-act="play"]')?.addEventListener('click', e=>{ e.stopPropagation(); abrirJogo(b.id); });
+    card.querySelector('[data-act="play"]')?.addEventListener('click', async e=>{ e.stopPropagation(); await abrirJogo(b.id); });
     card.querySelector('[data-act="edit"]')?.addEventListener('click', e=>{ e.stopPropagation(); abrirEditarBingo(b.id); });
     card.querySelector('[data-act="restart"]')?.addEventListener('click', e=>{ e.stopPropagation(); confirmReinBingo(b.id); });
     card.querySelector('[data-act="del"]')?.addEventListener('click', e=>{ e.stopPropagation(); confirmDelBingo(b.id); });
     // Clique no corpo do card também abre o jogo (se válido)
-    card.addEventListener('click', ()=>{
+    card.addEventListener('click', async ()=>{
       if(b.status === 'encerrado') return; // visualização rápida: nada (ou poderia abrir em modo leitura)
-      abrirJogo(b.id);
+      await abrirJogo(b.id);
     });
   });
 }
@@ -1041,16 +1041,22 @@ function bingoCardHTML(b, bingoAtivoId, evMode){
   </div>`;
 }
 
-function abrirJogo(bingoId){
+async function abrirJogo(bingoId){
   if(!evId || !bingoId) return;
-  // Verifica conflito: outro bingo em jogo
-  const ev = evData;
-  if(ev.bingoAtivoId && ev.bingoAtivoId !== bingoId){
-    const outro = ev.bingos?.[ev.bingoAtivoId];
-    if(outro && outro.status === 'jogando'){
-      showToast(`Encerre ou reinicie o bingo "${outro.nome}" antes.`);
-      return;
+  // Verifica conflito em tempo real no Firebase (evData local pode estar desatualizado)
+  try {
+    const evSnap = await get(fb(`bingo/eventos/${evId}`));
+    const ev = evSnap.val();
+    if(ev?.bingoAtivoId && ev.bingoAtivoId !== bingoId){
+      const outroSnap = await get(fb(`bingo/eventos/${evId}/bingos/${ev.bingoAtivoId}`));
+      const outro = outroSnap.val();
+      if(outro && outro.status === 'jogando'){
+        showToast(`Encerre ou reinicie o bingo "${outro.nome}" antes de iniciar outro.`);
+        return;
+      }
     }
+  } catch(e) {
+    console.error('Erro ao verificar conflito:', e);
   }
   const url = `jogo.html?ev=${evId}&bingo=${bingoId}`;
   window.open(url, '_blank');

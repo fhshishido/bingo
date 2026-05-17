@@ -1,37 +1,29 @@
-<!-- IBBI Bingo Jogar v4.0 -->
+<!-- IBBI Bingo Jogar v5.0 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Jogar v4.0</title>
+<title>IBBI Jogar v5.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#060608;--surface:#0f0f14;--surface2:#161620;--surface3:#1e1e2a;--border:#252535;--border2:#323248;--accent:#00b8f0;--accent2:#00dfa8;--red:#f06060;--green:#00dfa8;--text:#e4f2ff;--text2:#7090b0;--text3:#3a5068;--radius:12px;--rsm:8px;--cB:#00b8f0;--cI:#00dfa8;--cN:#f5c800;--cG:#ff8c00;--cO:#c850ff}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
-
 .btn{border:none;border-radius:var(--rsm);padding:10px 20px;font-family:'Barlow',sans-serif;font-weight:800;font-size:.9rem;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
 .btn:active{transform:scale(.95)}
-.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.btn-acc{background:linear-gradient(135deg,var(--accent),#0090c8);color:#000;font-weight:900;box-shadow:0 4px 14px rgba(0,184,240,.28)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-acc{background:linear-gradient(135deg,var(--accent),#0090c8);color:#000;font-weight:900}
 .btn-ghost{background:var(--surface2);color:var(--text2);border:1.5px solid var(--border)}
 .btn-red{background:rgba(240,96,96,.1);color:var(--red);border:1.5px solid rgba(240,96,96,.3)}
 .btn-sm{padding:6px 12px;font-size:.78rem}
 .btn-icon{padding:6px 10px;font-size:1rem;min-width:36px}
 .btn-full{width:100%;padding:13px}
-.inp{width:100%;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:11px 13px;font-family:'Barlow',sans-serif;font-size:.95rem;font-weight:600;outline:none;transition:border-color .2s}
+.inp{width:100%;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:11px 13px;font-family:'Barlow',sans-serif;font-size:.95rem;font-weight:600;outline:none}
 .inp:focus{border-color:var(--accent)}
 .fg label{display:block;font-size:.68rem;font-weight:800;letter-spacing:1.5px;color:var(--text2);text-transform:uppercase;margin-bottom:5px}
 .err{color:var(--red);font-size:.8rem;font-weight:700;margin-top:8px;padding:8px 12px;background:rgba(240,96,96,.08);border:1px solid rgba(240,96,96,.25);border-radius:var(--rsm);display:none}
 .err.show{display:block}
-.ok-msg{color:var(--green);font-size:.8rem;font-weight:700;margin-top:8px;padding:8px 12px;background:rgba(0,223,168,.08);border:1px solid rgba(0,223,168,.25);border-radius:var(--rsm);display:none}
-.ok-msg.show{display:block}
-.vtag{font-size:.6rem;font-weight:700;color:var(--text3);text-align:center;margin-top:12px}
-
-.view{display:none;min-height:100vh}
-.view.active{display:block}
 .auth-bg{background:radial-gradient(ellipse at 50% 0%,#0a1e35 0%,var(--bg) 70%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
 .auth-box{width:100%;max-width:380px;text-align:center}
 .auth-logo{font-family:'Bebas Neue',sans-serif;font-size:4.5rem;letter-spacing:6px;color:var(--accent);text-shadow:0 0 40px rgba(0,184,240,.4);line-height:1}
@@ -39,49 +31,45 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .auth-ibbi span{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.58rem;font-weight:900;letter-spacing:2px;padding:2px 8px;border-radius:4px;text-transform:uppercase}
 .auth-card{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);padding:24px;margin-top:12px;text-align:left}
 .auth-link{color:var(--accent);font-size:.82rem;font-weight:700;cursor:pointer;text-decoration:underline;background:none;border:none;padding:0;font-family:'Barlow',sans-serif}
+.vtag{font-size:.6rem;font-weight:700;color:var(--text3);text-align:center;margin-top:12px}
 
-/* HEADER */
+.view{display:none;min-height:100vh}
+.view.active{display:block}
+
 .p-head{background:rgba(4,4,6,.97);border-bottom:1.5px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
 .p-logo{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:3px;color:var(--accent);line-height:1}
 .p-logo span{color:var(--accent2)}
 .p-username{font-size:.75rem;font-weight:800;color:var(--accent2);margin-left:auto;white-space:nowrap;max-width:100px;overflow:hidden;text-overflow:ellipsis}
 .p-vtag{font-size:.58rem;font-weight:700;color:var(--text3)}
 
-/* BODY */
-.p-body{padding:10px 12px 60px;display:flex;flex-direction:column;gap:10px;max-width:480px;margin:0 auto;width:100%}
+.p-body{padding:10px 12px 60px;max-width:480px;margin:0 auto}
 
-/* STATUS BAR (rodada/premio) */
-.status-bar{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rsm);padding:10px 14px;text-align:center;transition:all .3s}
+.ev-bar{background:var(--surface);border-bottom:1.5px solid var(--border);padding:8px 14px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1px;color:var(--accent)}
+
+.status-bar{background:var(--surface);border-bottom:1.5px solid var(--border);padding:10px 14px;text-align:center}
 .status-bar.waiting{border-color:rgba(245,200,0,.3);background:rgba(245,200,0,.05)}
 .status-bar.playing{border-color:rgba(0,223,168,.3);background:rgba(0,223,168,.05)}
+.sb-waiting{font-size:.82rem;color:var(--cN);font-weight:700}
 .sb-rodada{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;color:var(--accent)}
 .sb-premio{font-size:.72rem;color:var(--text2);font-weight:700;margin-top:2px}
-.sb-waiting{font-size:.82rem;color:var(--cN);font-weight:700}
 
-/* BALL */
-.p-last-ball{display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:border-color .3s}
-.p-last-ball.new-ball{border-color:var(--accent);box-shadow:0 0 20px rgba(0,184,240,.2)}
-.plb-hint{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase}
-.plb-tap{font-size:.72rem;color:var(--text2);margin-top:2px}
-.pbig{width:80px;height:80px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;line-height:1;user-select:none;transition:all .3s}
+.ball-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px;margin-top:10px}
+.ball-hint{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase}
+.pbig{width:80px;height:80px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;line-height:1}
 .pbig .pbl{font-size:1rem;opacity:.8}.pbig .pbn{font-size:2.4rem}
 .pbig.lB{background:radial-gradient(circle at 32% 30%,#d8f6ff,#00b8f0 55%,#005a80);color:#000;box-shadow:0 0 24px rgba(0,184,240,.5)}
 .pbig.lI{background:radial-gradient(circle at 32% 30%,#ccfff0,#00dfa8 55%,#005040);color:#000;box-shadow:0 0 24px rgba(0,223,168,.5)}
 .pbig.lN{background:radial-gradient(circle at 32% 30%,#fffbe0,#f5c800 55%,#806000);color:#000;box-shadow:0 0 24px rgba(245,200,0,.5)}
 .pbig.lG{background:radial-gradient(circle at 32% 30%,#fff0d8,#ff8c00 55%,#804000);color:#000;box-shadow:0 0 24px rgba(255,140,0,.5)}
 .pbig.lO{background:radial-gradient(circle at 32% 30%,#f8d8ff,#c850ff 55%,#600080);color:#000;box-shadow:0 0 24px rgba(200,80,255,.5)}
-.pbig.empty-ball{background:var(--surface2);color:var(--text3);box-shadow:none}
-.pbig.pop{animation:bpop .35s cubic-bezier(.15,1.6,.35,1) both}
-@keyframes bpop{from{transform:scale(.4);opacity:0}}
+.pbig.empty-ball{background:var(--surface2);color:var(--text3)}
 
-/* CARTELA NAV */
-.cartela-nav{display:flex;align-items:center;gap:6px;margin-bottom:10px}
+.cartela-nav{display:flex;align-items:center;gap:6px;margin-top:14px;margin-bottom:10px}
 .cn-info{text-align:center;flex:1}
 .cn-id{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--accent);letter-spacing:1px}
 .cn-pg{font-size:.7rem;color:var(--text3);font-weight:700;margin-top:1px}
 
-/* CARTELA */
-.cartela-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;touch-action:pan-y}
+.cartela-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .cartela-hdr{display:grid;grid-template-columns:repeat(5,1fr)}
 .ch-cell{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;text-align:center;padding:8px 4px;line-height:1}
 .ch-cell.lB{background:rgba(0,184,240,.2);color:#00b8f0}
@@ -90,8 +78,8 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .ch-cell.lG{background:rgba(255,140,0,.2);color:#ff8c00}
 .ch-cell.lO{background:rgba(200,80,255,.2);color:#c850ff}
 .cartela-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:6px}
-.c-cell{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.3rem;cursor:pointer;transition:all .2s;border:1.5px solid var(--border);background:var(--surface2);user-select:none}
-.c-cell.free-cell{background:var(--surface3);color:var(--text2);font-size:.9rem;cursor:default}
+.c-cell{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.3rem;border:1.5px solid var(--border);background:var(--surface2)}
+.c-cell.free-cell{background:var(--surface3);color:var(--text2);font-size:.9rem}
 .c-cell.filled-B{color:#00b8f0;border-color:rgba(0,184,240,.4);background:rgba(0,184,240,.07)}
 .c-cell.filled-I{color:#00dfa8;border-color:rgba(0,223,168,.4);background:rgba(0,223,168,.07)}
 .c-cell.filled-N{color:#f5c800;border-color:rgba(245,200,0,.4);background:rgba(245,200,0,.07)}
@@ -103,9 +91,8 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .c-cell.marked-G{background:#ff8c00;color:#000;border-color:#ff8c00}
 .c-cell.marked-O{background:#c850ff;color:#000;border-color:#c850ff}
 
-/* OPTS */
-.cartela-opts{display:flex;flex-wrap:wrap;gap:10px;padding:0 2px}
-.tog-row{display:flex;align-items:center;gap:7px;font-size:.82rem;font-weight:700;color:var(--text2);cursor:pointer;user-select:none}
+.cartela-opts{display:flex;gap:10px;padding:0 2px;margin-top:10px}
+.tog-row{display:flex;align-items:center;gap:7px;font-size:.82rem;font-weight:700;color:var(--text2);cursor:pointer}
 .tog{position:relative;width:38px;height:20px;flex-shrink:0}
 .tog input{opacity:0;width:0;height:0}
 .tog-sl{position:absolute;inset:0;border-radius:20px;cursor:pointer;background:var(--surface2);border:1.5px solid var(--border);transition:.2s}
@@ -113,24 +100,19 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .tog input:checked+.tog-sl{background:rgba(0,184,240,.18);border-color:#00b8f0}
 .tog input:checked+.tog-sl::before{background:#00b8f0;transform:translateX(18px)}
 
-/* BINGO BTN */
-.bingo-btn{width:100%;padding:18px;font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:4px;border:none;border-radius:var(--radius);cursor:pointer;transition:all .2s;background:linear-gradient(135deg,#f5c800,#ff8c00);color:#000;box-shadow:0 4px 20px rgba(245,200,0,.3)}
+.bingo-btn{width:100%;padding:18px;margin-top:12px;font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:4px;border:none;border-radius:var(--radius);cursor:pointer;background:linear-gradient(135deg,#f5c800,#ff8c00);color:#000;box-shadow:0 4px 20px rgba(245,200,0,.3)}
 .bingo-btn.pulsing{animation:bpulse 1s ease-in-out infinite}
 @keyframes bpulse{0%,100%{box-shadow:0 4px 20px rgba(245,200,0,.3)}50%{box-shadow:0 0 50px rgba(245,200,0,.9)}}
 
-/* BATIDA STATUS */
-.batida-status{text-align:center;padding:12px 16px;border-radius:var(--rsm);font-weight:800;font-size:.88rem;display:none}
-.bs-pend{display:block!important;background:rgba(245,200,0,.1);color:var(--cN);border:1px solid rgba(245,200,0,.3)}
-.bs-conf{display:block!important;background:rgba(0,223,168,.1);color:var(--green);border:1px solid rgba(0,223,168,.3)}
-.bs-rej{display:block!important;background:rgba(240,96,96,.1);color:var(--red);border:1px solid rgba(240,96,96,.3);animation:shake .4s ease}
+.batida-status{text-align:center;padding:12px 16px;border-radius:var(--rsm);font-weight:800;font-size:.88rem;display:none;margin-top:10px}
+.bs-pend{display:block;background:rgba(245,200,0,.1);color:var(--cN);border:1px solid rgba(245,200,0,.3)}
+.bs-conf{display:block;background:rgba(0,223,168,.1);color:var(--green);border:1px solid rgba(0,223,168,.3)}
+.bs-rej{display:block;background:rgba(240,96,96,.1);color:var(--red);border:1px solid rgba(240,96,96,.3);animation:shake .4s}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 
-/* HISTORY */
-.p-hist-title{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase}
-.p-hist-strip{display:flex;flex-wrap:wrap;gap:5px}
-.ph-ball{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;line-height:1;cursor:pointer;transition:transform .15s,opacity .15s;box-shadow:0 2px 5px rgba(0,0,0,.4)}
-.ph-ball:active{transform:scale(.88)}
-.ph-ball .phl{font-size:.48rem;opacity:.75}.ph-ball .phn{font-size:.92rem}
+.hist-title{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-top:14px}
+.hist-strip{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.ph-ball{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;line-height:1;cursor:pointer;box-shadow:0 2px 5px rgba(0,0,0,.4)}
 .ph-ball.lB{background:radial-gradient(circle at 32% 30%,#d8f6ff,#00b8f0 55%,#005a80);color:#000}
 .ph-ball.lI{background:radial-gradient(circle at 32% 30%,#ccfff0,#00dfa8 55%,#005040);color:#000}
 .ph-ball.lN{background:radial-gradient(circle at 32% 30%,#fffbe0,#f5c800 55%,#806000);color:#000}
@@ -139,26 +121,20 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .ph-ball.in-cartela{box-shadow:0 0 0 2.5px #fff,0 0 0 4.5px var(--green)}
 .ph-ball.marked{opacity:.4;cursor:default}
 
-/* NOT FOUND */
-.not-found{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:30px;background:var(--bg)}
-
-/* MODALS */
-.mbk{display:none;position:fixed;inset:0;background:rgba(0,0,2,.92);backdrop-filter:blur(6px);z-index:1000;align-items:center;justify-content:center;padding:16px}
+.mbk{display:none;position:fixed;inset:0;background:rgba(0,0,2,.92);z-index:1000;align-items:center;justify-content:center;padding:16px}
 .mbk.open{display:flex}
-.modal{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);width:100%;max-width:380px;padding:22px;margin:auto;animation:mIn .22s cubic-bezier(.2,1.4,.4,1) both}
-@keyframes mIn{from{transform:scale(.88);opacity:0}}
+.modal{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);width:100%;max-width:380px;padding:22px;margin:auto}
 .modal h2{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:2px;color:var(--accent);margin-bottom:14px}
 .mfoot{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
 
-/* TOAST */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface3);color:var(--text);padding:10px 20px;border-radius:var(--rsm);font-size:.82rem;font-weight:700;z-index:2000;opacity:0;transition:all .3s;white-space:nowrap;border:1px solid var(--border2)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
-<meta name="app-version" content="v4.0">
+<meta name="app-version" content="v5.0">
 </head>
 <body>
 
-<!-- ===== VIEW: REDIRECIONANDO ===== -->
+<!-- VIEW: REDIRECIONANDO -->
 <div class="view active" id="vRedirect">
   <div class="auth-bg">
     <div class="auth-box">
@@ -167,12 +143,12 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       <div style="font-size:1.1rem;font-weight:800;color:var(--text2);margin-top:16px;margin-bottom:8px">&#128273; Login necessario</div>
       <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px">Faca login no Hub para jogar.</div>
       <button class="btn btn-acc btn-full" onclick="window.location.href='player.html'">Ir para o Login &rarr;</button>
-      <div class="vtag">v4.0</div>
+      <div class="vtag">v5.0</div>
     </div>
   </div>
 </div>
 
-<!-- ===== VIEW: AGUARDANDO ===== -->
+<!-- VIEW: AGUARDANDO -->
 <div class="view" id="vAguardando">
   <div class="auth-bg">
     <div class="auth-box">
@@ -183,45 +159,46 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
   </div>
 </div>
 
-<!-- ===== VIEW: NOT FOUND ===== -->
+<!-- VIEW: NOT FOUND -->
 <div class="view" id="vNotFound">
-  <div class="not-found">
-    <div style="font-size:3.5rem;margin-bottom:14px">&#127921;</div>
-    <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--text2);letter-spacing:2px;margin-bottom:8px">Evento nao encontrado</div>
-    <div style="font-size:.85rem;color:var(--text3);line-height:1.6;margin-bottom:16px" id="nfMsg">Este evento nao existe.</div>
-    <button class="btn btn-ghost" onclick="window.location.href='player.html'">Voltar ao Hub</button>
+  <div class="auth-bg">
+    <div class="auth-box">
+      <div style="font-size:3rem;margin-bottom:12px">&#127921;</div>
+      <div style="font-size:1.2rem;font-weight:800;color:var(--text2);margin-bottom:8px">Evento nao encontrado</div>
+      <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px" id="nfMsg">Este evento nao existe.</div>
+      <button class="btn btn-ghost btn-full" onclick="window.location.href='player.html'">Voltar ao Hub</button>
+      <div class="vtag">v5.0</div>
+    </div>
   </div>
 </div>
 
-<!-- ===== VIEW: JOGO (cartelas abertas de cara) ===== -->
+<!-- VIEW: JOGO (cartelas + jogo) -->
 <div class="view" id="vJogo">
   <div class="p-head">
     <div class="p-logo">B<span>I</span>NGO</div>
     <div style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase">IBBI</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v4.0</span>
+    <span class="p-vtag">v5.0</span>
   </div>
   <!-- Barra do evento -->
-  <div id="gameEvBar" style="background:var(--surface);border-bottom:1.5px solid var(--border);padding:8px 14px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1px;color:var(--accent)">&mdash;</div>
-  <!-- Status bar: rodada/premio (atualiza dinamicamente) -->
-  <div id="gameStatusBar" class="status-bar waiting" style="background:var(--surface);border-bottom:1.5px solid var(--border);padding:10px 14px;text-align:center">
+  <div id="gameEvBar" class="ev-bar">&mdash;</div>
+  <!-- Status bar -->
+  <div id="gameStatusBar" class="status-bar waiting">
     <div class="sb-waiting" id="sbText">&#9203; Aguardando inicio da rodada...</div>
     <div class="sb-rodada" id="sbRodada" style="display:none">--</div>
     <div class="sb-premio" id="sbPremio" style="display:none">--</div>
   </div>
-  <div class="p-body" id="pBody">
-    <!-- Cartelas sao renderizadas imediatamente -->
-  </div>
+  <!-- Body: tudo criado pelo JS -->
+  <div class="p-body" id="pBody"></div>
 </div>
 
-<!-- MODALS -->
+<!-- MODAIS -->
 <div class="mbk" id="mAddNum"><div class="modal"><h2 id="mAddTitle">Adicionar?</h2><p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mAddTxt"></p><div class="mfoot"><button class="btn btn-ghost" onclick="closeM('mAddNum');pendingAdd=null">Cancelar</button><button class="btn btn-acc" onclick="confirmAdd()">Adicionar</button></div></div></div>
-<div class="mbk" id="mBingo"><div class="modal"><h2>&#127881; Declarar BINGO?</h2><p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mBingoTxt"></p><div class="mfoot"><button class="btn btn-ghost" onclick="closeM('mBingo')">Cancelar</button><button class="btn" onclick="enviarBatida()" style="background:linear-gradient(135deg,#f5c800,#ff8c00);color:#000;font-weight:900;font-family:'Barlow',sans-serif;border:none;border-radius:var(--rsm);padding:9px 18px;cursor:pointer;font-size:.9rem">&#127881; Confirmar!</button></div></div></div>
+<div class="mbk" id="mBingo"><div class="modal"><h2>&#127881; Declarar BINGO?</h2><p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mBingoTxt"></p><div class="mfoot"><button class="btn btn-ghost" onclick="closeM('mBingo')">Cancelar</button><button class="btn" onclick="enviarBatida()" style="background:linear-gradient(135deg,#f5c800,#ff8c00);color:#000;font-weight:900;font-family:'Barlow',sans-serif;border:none;border-radius:var(--rsm);padding:10px 20px;cursor:pointer;font-size:.9rem">&#127881; Confirmar!</button></div></div></div>
 <div class="mbk" id="mBatida"><div class="modal" style="max-width:380px;text-align:center;background:linear-gradient(180deg,#1a1a1a 0%,#2a1a00 100%);border:2px solid var(--green)"><div style="font-size:4rem;margin:10px 0">&#127919;</div><h2 style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:4px;color:var(--green);margin-bottom:8px">BATIDA!</h2><div id="batidaPremio" style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:6px">Sua cartela bateu!</div><div style="font-size:.85rem;color:var(--text3);margin-bottom:20px">Aperte BINGO para confirmar</div><button class="btn btn-acc" onclick="closeM('mBatida')" style="width:100%;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;padding:12px 30px">OK</button></div></div>
 <div class="mbk" id="mBingoOuro"><div class="modal" style="max-width:380px;text-align:center;background:linear-gradient(180deg,#1a1a1a 0%,#2a1a00 100%);border:2px solid #FFD700"><div style="font-size:4rem;margin:10px 0">&#127942;</div><h2 style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:4px;color:#FFD700;margin-bottom:8px">B I N G O !</h2><div id="bingoOuroPremio" style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:6px">Premio confirmado!</div><div id="bingoOuroData" style="font-size:.8rem;color:var(--text3);margin-bottom:20px">--</div><button class="btn" onclick="closeM('mBingoOuro')" style="background:linear-gradient(90deg,#FFD700,#FFA500);color:#000;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;padding:12px 30px;border:none;border-radius:var(--rsm);width:100%">FECHAR</button></div></div>
 <div class="mbk" id="mReativar"><div class="modal" style="max-width:380px;text-align:center;background:linear-gradient(180deg,#1a1a1a 0%,#2a0000 100%);border:2px solid var(--accent)"><div style="font-size:3rem;margin:10px 0">&#9888;</div><h2 style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:3px;color:var(--accent);margin-bottom:8px">VENCEDOR REMOVIDO</h2><div style="font-size:.9rem;color:var(--text);margin-bottom:8px">O gestor removeu o vencedor. Sua cartela voltara a participar.</div><div style="font-size:.78rem;color:var(--text3);margin-bottom:20px">Toque OK para continuar.</div><button class="btn btn-acc" onclick="reativarCartela()" style="width:100%;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;padding:12px 30px">OK</button></div></div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script type="module">
@@ -244,473 +221,508 @@ const fb = p => ref(db, p);
 
 const $ = id => document.getElementById(id);
 const showView = id => { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); $(id)?.classList.add('active'); };
-const showErr = (id, msg) => { const el = $(id); if(el){el.textContent=msg;el.style.display='block';} };
-const hideErr = id => { const el=$(id);if(el)el.style.display='none'; };
-const showToast = msg => { const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000); };
-const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const genId = () => Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-const LETTERS = ['B','I','N','G','O'];
-function getLetter(n,mode){ return LETTERS[Math.min(Math.floor((n-1)/(mode/5)),4)]; }
-function colRange(letter,mode){ const idx=LETTERS.indexOf(letter),size=mode/5;return{min:Math.floor(idx*size)+1,max:Math.floor((idx+1)*size)}; }
-function friendlyAuthError(code){
-  const msgs={'auth/invalid-email':'E-mail invalido.','auth/user-not-found':'E-mail nao cadastrado.','auth/wrong-password':'Senha incorreta.','auth/email-already-in-use':'E-mail ja cadastrado.','auth/weak-password':'Senha muito fraca.','auth/too-many-requests':'Muitas tentativas.','auth/network-request-failed':'Erro de conexao.','auth/invalid-credential':'E-mail ou senha incorretos.'};
-  return msgs[code]||'Erro: '+code;
-}
+const showToast = msg => { const t = $('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); };
+const esc = s => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const genId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const LETTERS = ['B', 'I', 'N', 'G', 'O'];
+function getLetter(n, mode) { return LETTERS[Math.min(Math.floor((n - 1) / (mode / 5)), 4)]; }
+function colRange(letter, mode) { const idx = LETTERS.indexOf(letter), size = mode / 5; return { min: Math.floor(idx * size) + 1, max: Math.floor((idx + 1) * size) }; }
 
 const params = new URLSearchParams(window.location.search);
 const evId = params.get('ev');
-let evData=null, bingoData=null, currentUser=null, userProfile=null;
-let cartelas=[], cartelaIdx=0;
-let pendingAdd=null, curPrizeId=null;
-let _cartelaParaReativar=null, _lastSaveTime=0;
-let jogoIniciado=false; // flag para saber se a rodada ja comecou
-
-// AUDIO
-const AC = new (window.AudioContext||window.webkitAudioContext)();
-function tone(freq,dur,type='sine',vol=0.25){try{const o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(vol,AC.currentTime);g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+dur);o.start();o.stop(AC.currentTime+dur);}catch(e){}}
-const sndMark = ()=>tone(880,.1,'sine',.15);
-const sndNew = ()=>tone(660,.15,'sine',.2);
-const sndBingo = ()=>[523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.25,'triangle',.4),i*130));
-const sndReject = ()=>tone(200,.5,'sawtooth',.3);
-const sndConfirm = ()=>[523,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.2,'sine',.35),i*140));
+let evData = null, bingoData = null, currentUser = null, userProfile = null;
+let cartelas = [], cartelaIdx = 0;
+let pendingAdd = null;
+let jogoIniciado = false;
 
 // AUTH
 onAuthStateChanged(auth, async user => {
-  if(user){
-    currentUser=user;
-    const snap=await get(fb(`bingo/usuarios/${user.uid}`));
-    userProfile=snap.val()||{nome:user.displayName||user.email};
-    if(evId) await initJogo();
-    else { $('nfMsg').textContent='Nenhum evento especificado.'; showView('vNotFound'); }
+  if (user) {
+    currentUser = user;
+    const snap = await get(fb(`bingo/usuarios/${user.uid}`));
+    userProfile = snap.val() || { nome: user.displayName || user.email };
+    if (evId) await initJogo();
+    else { $('nfMsg').textContent = 'Nenhum evento especificado.'; showView('vNotFound'); }
   } else {
-    currentUser=null;userProfile=null;
+    currentUser = null; userProfile = null;
     showView('vRedirect');
   }
 });
 
 // ============== INIT JOGO ==============
-// Abre DIRETO mostrando as cartelas. O jogo (rodada/premio) aparece automaticamente.
-async function initJogo(){
+async function initJogo() {
+  // 1. Carregar evento
   let ev;
-  try{
-    const snap=await get(fb('bingo/eventos/'+evId));
-    ev=snap.val();
-  }catch(e){console.error('Erro ao carregar evento:',e);}
-  if(!ev){$('nfMsg').textContent='Evento nao encontrado no Firebase.';showView('vNotFound');return;}
-  evData=ev;
-  $('gameUserName').textContent=userProfile?.apelido||userProfile?.nome||currentUser?.email;
+  try { const snap = await get(fb('bingo/eventos/' + evId)); ev = snap.val(); }
+  catch (e) { console.error('Erro ao carregar evento:', e); }
+  if (!ev) { $('nfMsg').textContent = 'Evento nao encontrado.'; showView('vNotFound'); return; }
+  evData = ev;
+  $('gameUserName').textContent = userProfile?.apelido || userProfile?.nome || currentUser?.email;
 
-  // Atualizar barra de evento
-  const tipoLabel=evData?.tipoCartela==='banco'?' | Banco':' | Propria';
-  const bingoNome=evData?.bingos?.[evData?.bingoAtivoId]?.nome||'--';
-  const bingoOrdem=evData?.bingos?.[evData?.bingoAtivoId]?.ordem||'?';
-  $('gameEvBar').textContent=(evData?.nome||'Evento')+' > #'+bingoOrdem+' '+bingoNome+tipoLabel;
+  // 2. Barra do evento
+  const tipoLabel = evData?.tipoCartela === 'banco' ? ' | Banco' : ' | Propria';
+  const bingoNome = evData?.bingos?.[evData?.bingoAtivoId]?.nome || '--';
+  const bingoOrdem = evData?.bingos?.[evData?.bingoAtivoId]?.ordem || '?';
+  $('gameEvBar').textContent = (evData?.nome || 'Evento') + ' > #' + bingoOrdem + ' ' + bingoNome + tipoLabel;
 
-  // Verificar permissao
-  try{
-    const permSnap=await get(fb('bingo/eventos/'+evId+'/permissoes/'+currentUser.uid));
-    const perm=permSnap.val();
-    if(perm?.status==='pendente'){showView('vAguardando');listenPermissao();return;}
-    if(perm?.status==='rejeitado'){$('nfMsg').textContent='Rejeitado.';showView('vNotFound');return;}
-  }catch(e){/* sem permissoes = livre */}
+  // 3. Verificar permissao
+  try {
+    const permSnap = await get(fb('bingo/eventos/' + evId + '/permissoes/' + currentUser.uid));
+    const perm = permSnap.val();
+    if (perm?.status === 'pendente') { showView('vAguardando'); listenPermissao(); return; }
+    if (perm?.status === 'rejeitado') { $('nfMsg').textContent = 'Rejeitado.'; showView('vNotFound'); return; }
+  } catch (e) { /* sem permissoes = livre */ }
 
-  // Carregar cartelas (cache + Firebase)
-  const hasCache=loadCartelasFromCache();
-  try{
-    const snap2=await get(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}/cartelas`));
-    const fbCartelas=snap2.val();
-    if(fbCartelas){
-      const novas=Object.entries(fbCartelas).map(([fbId,c])=>ensureNumerosFormat({fbId,...c}));
-      if(novas.length){cartelas=novas;cartelaIdx=Math.min(cartelaIdx,novas.length-1);}
+  // 4. Carregar cartelas
+  loadCartelasFromCache();
+  try {
+    const snap2 = await get(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}/cartelas`));
+    const fbCartelas = snap2.val();
+    if (fbCartelas) {
+      const novas = Object.entries(fbCartelas).map(([fbId, c]) => ensureNumerosFormat({ fbId, ...c }));
+      if (novas.length) { cartelas = novas; cartelaIdx = 0; }
     }
-  }catch(e){/* sem cartelas no FB */}
+  } catch (e) { /* sem cartelas no FB */ }
 
-  // Se nao tem cartelas, manda para cartelas.html
-  if(!cartelas.length){window.location.href=`cartelas.html?ev=${evId}`;return;}
+  if (!cartelas.length) { window.location.href = `cartelas.html?ev=${evId}`; return; }
 
-  // ===== ABRE DIRETO AS CARTELAS =====
+  // 5. ===== MOSTRAR TELA =====
   showView('vJogo');
-  renderBody();
-  renderCartela();
-  updateStatusBar();
+  buildUI();        // cria elementos do DOM
+  renderCartela();  // mostra cartela atual
+  updateStatusBar(); // barra de status
 
-  // Tenta carregar bingo ativo
-  const bingoId=evData?.bingoAtivoId;
-  if(bingoId){
-    try{
-      const bingoSnap=await get(fb('bingo/eventos/'+evId+'/bingos/'+bingoId));
-      bingoData=bingoSnap.val();
-      if(bingoData){
-        jogoIniciado=true;
+  // 6. Se ja tem bingo ativo, carregar
+  const bingoId = evData?.bingoAtivoId;
+  if (bingoId) {
+    try {
+      const bingoSnap = await get(fb('bingo/eventos/' + evId + '/bingos/' + bingoId));
+      bingoData = bingoSnap.val();
+      if (bingoData) {
+        jogoIniciado = true;
         updateStatusBar();
-        renderBall();renderHist();checkAutoBatida();
+        renderBall(); renderHist(); checkAutoBatida();
       }
-    }catch(e){console.error('Erro ao carregar bingo:',e);}
+    } catch (e) { console.error('Erro ao carregar bingo:', e); }
   }
 
-  // Listeners em tempo real
+  // 7. Listeners
   setupListeners();
 }
 
-function listenPermissao(){
-  onValue(fb('bingo/eventos/'+evId+'/permissoes/'+currentUser.uid),s=>{
-    const p=s.val();if(p?.status==='aprovado')initJogo();
+function listenPermissao() {
+  onValue(fb('bingo/eventos/' + evId + '/permissoes/' + currentUser.uid), s => {
+    const p = s.val(); if (p?.status === 'aprovado') initJogo();
   });
 }
 
-let _unsubBingo=null;
+// ============== BUILD UI (cria elementos uma vez) ==============
+function buildUI() {
+  const body = $('pBody');
+  body.innerHTML = '';
 
-function setupListeners(){
-  // Evento (bingoAtivoId mudou)
-  onValue(fb(`bingo/eventos/${evId}`),snap=>{
-    const ev2=snap.val();if(!ev2)return;
-    const oldBingoId=evData?.bingoAtivoId;
-    evData=ev2;
-    if(ev2.bingoAtivoId && ev2.bingoAtivoId!==oldBingoId){
-      // Cancelar listener anterior do bingo
-      if(_unsubBingo){_unsubBingo();_unsubBingo=null;}
-      get(fb(`bingo/eventos/${evId}/bingos/${ev2.bingoAtivoId}`)).then(s=>{
-        const b=s.val();if(!b)return;
-        // Se e uma NOVA rodada (bingoAtivoId mudou), resetar marcados
-        if(oldBingoId){
-          cartelas.forEach(c=>{c.marcados=[];c.status='ativa';c.premioGanho=null;});
-          saveAllCartelas();cartelaIdx=0;
-          showToast('Nova rodada iniciada!');
-        }
-        bingoData=b;jogoIniciado=true;
-        updateStatusBar();
-        renderBall();renderHist();checkAutoBatida();
-        renderCartela();
-        // Setar listener do bingo agora que sabemos o ID
-        _unsubBingo=onValue(fb(`bingo/eventos/${evId}/bingos/${ev2.bingoAtivoId}`),snap2=>{
-          const b2=snap2.val();if(!b2)return;
-          const newBall=bingoData && b2.lastDrawn!==bingoData.lastDrawn;
-          const wasReset=bingoData && (bingoData.drawn||[]).length>0 && (b2.drawn||[]).length===0;
-          bingoData=b2;
-          if(wasReset){
-            cartelas.forEach(c=>{c.marcados=[];c.status='ativa';c.premioGanho=null;});
-            saveAllCartelas();renderCartela();renderHist();showToast('Sorteio reiniciado.');
-          }
-          if(newBall) onNewBall();
-          updateStatusBar();renderBall();renderHist();checkAutoBatida();
-        });
-      });
-    }
-  });
+  // Bola (escondida inicialmente)
+  const ballWrap = document.createElement('div');
+  ballWrap.className = 'ball-wrap';
+  ballWrap.id = 'ballWrap';
+  ballWrap.style.display = 'none';
+  ballWrap.innerHTML = '<div class="ball-hint">Ultima pedra</div>' +
+    '<div class="pbig empty-ball" id="pBigBall"><span class="pbl" id="pBallL"></span><span class="pbn" id="pBallN">--</span></div>';
+  ballWrap.addEventListener('click', onTapLastBall);
+  body.appendChild(ballWrap);
 
-  // Brincante (batidas, cartelas do FB)
-  onValue(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),snap=>{
-    const data=snap.val();const age=Date.now()-_lastSaveTime;const justSaved=age<2000;
+  // Nav cartelas
+  const nav = document.createElement('div');
+  nav.className = 'cartela-nav';
+  nav.innerHTML = '<button class="btn btn-ghost btn-icon" id="btnPrev">&larr;</button>' +
+    '<div class="cn-info"><div class="cn-id" id="cnId">--</div><div class="cn-pg" id="cnPg">Cartela 1 de 1</div></div>' +
+    '<button class="btn btn-ghost btn-icon" id="btnNext">&rarr;</button>';
+  body.appendChild(nav);
+  $('btnPrev').addEventListener('click', prevCartela);
+  $('btnNext').addEventListener('click', nextCartela);
 
-    if(data?.bingoConfirmado){
-      const pg=data?.premioGanho;
-      const cid=data?.ultimaCartelaBatida;
-      const cBatida=cid?cartelas.find(c=>c.id===cid):cartelas[cartelaIdx];
-      if(cBatida&&cBatida.status==='ativa'){
-        cBatida.status='batida';cBatida.premioGanho={nome:pg?.nome||'Bingo',ordem:pg?.ordem||1,ts:Date.now()};
-        saveAllCartelas();
-        $('bingoOuroPremio').textContent=pg?'Premio #'+pg.ordem+' - '+pg.nome:'Premio confirmado!';
-        $('bingoOuroData').textContent=new Date().toLocaleString('pt-BR');
-        openM('mBingoOuro');sndConfirm();
-        cartelaIdx=0;renderCartela();renderHist();checkAutoBatida();
-      }
-    }
-    if(data&&data.bingoConfirmado===false&&data.premioGanho===null){
-      const cNaoAtiva=cartelas.find(c=>c.status!=='ativa');
-      if(cNaoAtiva){_cartelaParaReativar=cNaoAtiva;openM('mReativar');}
-    }
-    if(data?.cartelas&&!justSaved){
-      const novo=Object.entries(data.cartelas).map(([fbId,c])=>ensureNumerosFormat({fbId,...c}));
-      novo.forEach(cNovo=>{const cLocal=cartelas.find(c=>c.id===cNovo.id);if(cLocal&&cLocal.status!=='ativa'){cNovo.status=cLocal.status;cNovo.premioGanho=cLocal.premioGanho;}});
-      if(novo.length){cartelas=novo;cartelaIdx=Math.min(cartelaIdx,cartelas.length-1);}
-    }
-    const bs=data?.batidaStatus;
-    const el=$('batidaStatusEl');
-    if(el){el.className='batida-status';if(bs==='pendente'){el.className='batida-status bs-pend';el.textContent=' Batida enviada...';}else if(bs==='confirmada'){el.className='batida-status bs-conf';el.textContent=' BINGO CONFIRMADO!';sndConfirm();}else if(bs==='rejeitada'){el.className='batida-status bs-rej';el.textContent=' Batida rejeitada.';sndReject();setTimeout(()=>{if($('batidaStatusEl'))$('batidaStatusEl').style.display='none';},4000);}else{el.style.display='none';}}
-    renderCartela();renderHist();checkAutoBatida();
-  });
+  // Cartela
+  const cw = document.createElement('div');
+  cw.className = 'cartela-wrap';
+  cw.id = 'cartelaWrap';
+  const ch = document.createElement('div');
+  ch.className = 'cartela-hdr';
+  ch.id = 'cartelaHdr';
+  const cg = document.createElement('div');
+  cg.className = 'cartela-grid';
+  cg.id = 'cartelaGrid';
+  cw.appendChild(ch);
+  cw.appendChild(cg);
+  body.appendChild(cw);
+  // Swipe
+  setupSwipe(cw);
+
+  // Toggle auto
+  const opts = document.createElement('div');
+  opts.className = 'cartela-opts';
+  opts.innerHTML = '<label class="tog-row"><label class="tog"><input type="checkbox" id="togAuto" checked><span class="tog-sl"></span></label>Marcar automatico</label>';
+  body.appendChild(opts);
+  $('togAuto').addEventListener('change', toggleAuto);
+
+  // Puxar auto
+  const btnPuxar = document.createElement('button');
+  btnPuxar.className = 'btn btn-ghost btn-sm';
+  btnPuxar.style.cssText = 'width:100%;color:var(--accent2);border-color:rgba(0,223,168,.3);margin-top:8px';
+  btnPuxar.innerHTML = '&#9889; Puxar Automatico';
+  btnPuxar.addEventListener('click', puxarAuto);
+  body.appendChild(btnPuxar);
+
+  // Batida status
+  const bs = document.createElement('div');
+  bs.className = 'batida-status';
+  bs.id = 'batidaStatusEl';
+  body.appendChild(bs);
+
+  // Bingo button
+  const bb = document.createElement('button');
+  bb.className = 'bingo-btn';
+  bb.id = 'btnBingo';
+  bb.textContent = 'BINGO!';
+  bb.addEventListener('click', onBingoClick);
+  body.appendChild(bb);
+
+  // Historico
+  const hs = document.createElement('div');
+  hs.id = 'histSection';
+  hs.style.display = 'none';
+  hs.innerHTML = '<div class="hist-title">Numeros sorteados</div><div class="hist-strip" id="pHistStrip"></div>';
+  body.appendChild(hs);
+
+  // Footer buttons
+  const ft = document.createElement('div');
+  ft.style.cssText = 'display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px';
+  ft.innerHTML = '<button class="btn btn-ghost btn-sm" onclick="window.location.href=\'player.html\'">&#8592; Hub</button>' +
+    '<button class="btn btn-ghost btn-sm" onclick="window.location.href=\'cartelas.html?ev=' + evId + '\'">&#127921; Cartelas</button>' +
+    '<button class="btn btn-ghost btn-sm" onclick="sair()">Sair</button>';
+  body.appendChild(ft);
 }
 
 // ============== STATUS BAR ==============
-function updateStatusBar(){
-  const bar=$('gameStatusBar');
-  const txtWaiting=$('sbText');
-  const txtRodada=$('sbRodada');
-  const txtPremio=$('sbPremio');
-
-  if(!bingoData || !jogoIniciado){
-    // Mantem "Aguardando..."
-    bar.className='status-bar waiting';
-    txtWaiting.style.display='block';
-    txtRodada.style.display='none';
-    txtPremio.style.display='none';
+function updateStatusBar() {
+  const bar = $('gameStatusBar');
+  const txtW = $('sbText'), txtR = $('sbRodada'), txtP = $('sbPremio');
+  if (!bingoData || !jogoIniciado) {
+    bar.className = 'status-bar waiting';
+    txtW.style.display = 'block'; txtR.style.display = 'none'; txtP.style.display = 'none';
     return;
   }
-
-  // Rodada ativa!
-  bar.className='status-bar playing';
-  txtWaiting.style.display='none';
-  txtRodada.style.display='block';
-  txtPremio.style.display='block';
-
-  txtRodada.textContent='Rodada #'+(bingoData.ordem||'?')+' - '+(bingoData.nome||'');
-
-  const p=getCurrentPremio();
-  if(p) txtPremio.textContent='#'+p.ordem+' '+esc(p.nome)+' | '+(p.regra==='cheia'?'Cartela Cheia':'Linha/Coluna/Diagonal');
-  else txtPremio.textContent='Nenhum premio ativo';
-}
-
-// ============== RENDER BODY (cartelas sempre visiveis) ==============
-function renderBody(){
-  $('pBody').innerHTML=`
-    <!-- Bola (inicialmente escondida, aparece quando jogo inicia) -->
-    <div class="p-last-ball" id="pLastBall" onclick="onTapLastBall()" style="display:none">
-      <div class="plb-hint">Ultima pedra</div>
-      <div class="pbig empty-ball" id="pBigBall"><span class="pbl" id="pBallL"></span><span class="pbn" id="pBallN">--</span></div>
-      <div class="plb-tap" id="pBallHint">Toque na bola para marcar</div>
-    </div>
-    <!-- Paginacao de cartelas -->
-    <div class="cartela-nav">
-      <button class="btn btn-ghost btn-icon" onclick="prevCartela()">&larr;</button>
-      <div class="cn-info">
-        <div class="cn-id" id="cnId">--</div>
-        <div class="cn-pg" id="cnPg">Cartela 1 de 1</div>
-      </div>
-      <button class="btn btn-ghost btn-icon" onclick="nextCartela()">&rarr;</button>
-    </div>
-    <!-- Cartela (swipe) -->
-    <div class="cartela-wrap" id="cartelaWrapEl">
-      <div class="cartela-hdr" id="cartelaHdr"></div>
-      <div class="cartela-grid" id="cartelaGrid"></div>
-    </div>
-    <!-- Opcoes -->
-    <div class="cartela-opts">
-      <label class="tog-row"><label class="tog"><input type="checkbox" id="togAuto" checked onchange="toggleAuto()"><span class="tog-sl"></span></label>Marcar automatico</label>
-    </div>
-    <button class="btn btn-ghost btn-sm" onclick="puxarAuto()" style="width:100%;color:var(--accent2);border-color:rgba(0,223,168,.3)">&#9889; Puxar Automatico</button>
-    <!-- Batida status -->
-    <div class="batida-status" id="batidaStatusEl"></div>
-    <!-- Bingo button -->
-    <button class="bingo-btn" id="btnBingo" onclick="onBingoClick()">BINGO!</button>
-    <!-- Historico (inicialmente escondido) -->
-    <div id="histSection" style="display:none">
-      <div class="p-hist-title">Numeros sorteados</div>
-      <div class="p-hist-strip" id="pHistStrip"></div>
-    </div>
-    <!-- Botoes -->
-    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:8px">
-      <button class="btn btn-ghost btn-sm" onclick="window.location.href='player.html'">&#8592; Hub</button>
-      <button class="btn btn-ghost btn-sm" onclick="window.location.href='cartelas.html?ev=${evId}'">&#127921; Cartelas</button>
-      <button class="btn btn-ghost btn-sm" onclick="sair()">Sair</button>
-    </div>`;
-
-  // Swipe
-  setupSwipe($('cartelaWrapEl'));
-}
-
-function setupSwipe(el){
-  if(!el)return;
-  let sx=0,moved=false;
-  el.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;moved=false;},{passive:true});
-  el.addEventListener('touchmove',e=>{const dx=e.touches[0].clientX-sx;if(Math.abs(dx)>10)moved=true;},{passive:true});
-  el.addEventListener('touchend',e=>{if(!moved)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)<50)return;
-      if(dx<0&&cartelaIdx<cartelas.length-1){cartelaIdx++;renderCartela();if(jogoIniciado)renderHist();checkAutoBatida();showToast('Cartela '+(cartelaIdx+1)+'/'+cartelas.length);}
-      else if(dx>0&&cartelaIdx>0){cartelaIdx--;renderCartela();if(jogoIniciado)renderHist();checkAutoBatida();showToast('Cartela '+(cartelaIdx+1)+'/'+cartelas.length);}},{passive:true});
+  bar.className = 'status-bar playing';
+  txtW.style.display = 'none'; txtR.style.display = 'block'; txtP.style.display = 'block';
+  txtR.textContent = 'Rodada #' + (bingoData.ordem || '?') + ' - ' + (bingoData.nome || '');
+  const p = getCurrentPremio();
+  if (p) txtP.textContent = '#' + p.ordem + ' ' + esc(p.nome) + ' | ' + (p.regra === 'cheia' ? 'Cartela Cheia' : 'Linha/Col/Diag');
+  else txtP.textContent = 'Nenhum premio ativo';
 }
 
 // ============== CARTELA ==============
-function ensureNumerosFormat(c){if(!c.numeros)c.numeros={};LETTERS.forEach(l=>{if(!Array.isArray(c.numeros[l]))c.numeros[l]=[null,null,null,null,null];while(c.numeros[l].length<5)c.numeros[l].push(null);});return c;}
-
-function renderCartela(){
-  const hdr=$('cartelaHdr'),grid=$('cartelaGrid');if(!hdr||!grid)return;
-  const c=cartelas[cartelaIdx];if(!c)return;c=ensureNumerosFormat(c);
-  $('cnId').textContent=c.id||'--';
-  $('cnPg').textContent=`Cartela ${cartelaIdx+1} de ${cartelas.length}`;
-  hdr.innerHTML='';LETTERS.forEach(l=>{const d=document.createElement('div');d.className='ch-cell l'+l;d.textContent=l;hdr.appendChild(d);});
-  grid.innerHTML='';
-  const drawnSet=jogoIniciado?new Set(bingoData?.drawn||[]):new Set();
-  const marcados=new Set(c.marcados||[]);
-  for(let row=0;row<5;row++){LETTERS.forEach((letter,col)=>{
-    const isFree=c.freeCenter&&row===2&&col===2;
-    const num=(c.numeros[letter]||[])[row];
-    const hasNum=num!=null;
-    const isM=hasNum&&marcados.has(num);
-    const d=document.createElement('div');
-    if(isFree){d.className='c-cell free-cell';d.textContent='*';}
-    else if(!hasNum){d.className='c-cell free-cell';d.textContent='';}
-    else if(isM){d.className='c-cell marked-'+letter;d.textContent=num;}
-    else{d.className='c-cell filled-'+letter;d.textContent=num;}
-    grid.appendChild(d);
-  });}
+function ensureNumerosFormat(c) {
+  if (!c.numeros) c.numeros = {};
+  LETTERS.forEach(l => { if (!Array.isArray(c.numeros[l])) c.numeros[l] = [null, null, null, null, null]; while (c.numeros[l].length < 5) c.numeros[l].push(null); });
+  return c;
 }
 
-window.prevCartela=function(){if(cartelaIdx>0){cartelaIdx--;renderCartela();if(jogoIniciado)renderHist();checkAutoBatida();}};
-window.nextCartela=function(){if(cartelaIdx<cartelas.length-1){cartelaIdx++;renderCartela();if(jogoIniciado)renderHist();checkAutoBatida();}};
-window.toggleAuto=function(){const c=cartelas[cartelaIdx];if(c){c.autoMarcar=$('togAuto').checked;saveAllCartelas();}};
+function renderCartela() {
+  const hdr = $('cartelaHdr'), grid = $('cartelaGrid');
+  if (!hdr || !grid) { console.log('HDR/GRID nulo!'); return; }
+  const c = cartelas[cartelaIdx];
+  if (!c) { console.log('Sem cartela no index', cartelaIdx); return; }
+  ensureNumerosFormat(c);
+  $('cnId').textContent = c.id || '--';
+  $('cnPg').textContent = 'Cartela ' + (cartelaIdx + 1) + ' de ' + cartelas.length;
+
+  // Header
+  hdr.innerHTML = '';
+  LETTERS.forEach(l => { const d = document.createElement('div'); d.className = 'ch-cell l' + l; d.textContent = l; hdr.appendChild(d); });
+
+  // Grid
+  grid.innerHTML = '';
+  const drawnSet = jogoIniciado ? new Set(bingoData?.drawn || []) : new Set();
+  const marcados = new Set(c.marcados || []);
+  for (let row = 0; row < 5; row++) {
+    LETTERS.forEach((letter, col) => {
+      const isFree = c.freeCenter && row === 2 && col === 2;
+      const num = (c.numeros[letter] || [])[row];
+      const hasNum = num != null;
+      const isM = hasNum && marcados.has(num);
+      const d = document.createElement('div');
+      if (isFree) { d.className = 'c-cell free-cell'; d.textContent = '*'; }
+      else if (!hasNum) { d.className = 'c-cell free-cell'; d.textContent = ''; }
+      else if (isM) { d.className = 'c-cell marked-' + letter; d.textContent = num; }
+      else { d.className = 'c-cell filled-' + letter; d.textContent = num; }
+      grid.appendChild(d);
+    });
+  }
+}
+
+function prevCartela() { if (cartelaIdx > 0) { cartelaIdx--; renderCartela(); if (jogoIniciado) renderHist(); checkAutoBatida(); } }
+function nextCartela() { if (cartelaIdx < cartelas.length - 1) { cartelaIdx++; renderCartela(); if (jogoIniciado) renderHist(); checkAutoBatida(); } }
+function toggleAuto() { const c = cartelas[cartelaIdx]; if (c) { c.autoMarcar = $('togAuto').checked; saveAllCartelas(); } }
+
+function setupSwipe(el) {
+  if (!el) return;
+  let sx = 0, moved = false;
+  el.addEventListener('touchstart', e => { sx = e.touches[0].clientX; moved = false; }, { passive: true });
+  el.addEventListener('touchmove', e => { if (Math.abs(e.touches[0].clientX - sx) > 10) moved = true; }, { passive: true });
+  el.addEventListener('touchend', e => {
+    if (!moved) return;
+    const dx = e.changedTouches[0].clientX - sx;
+    if (Math.abs(dx) < 50) return;
+    if (dx < 0 && cartelaIdx < cartelas.length - 1) nextCartela();
+    else if (dx > 0 && cartelaIdx > 0) prevCartela();
+  }, { passive: true });
+}
 
 // ============== BALL ==============
-function renderBall(){
-  if(!jogoIniciado)return;
-  const ball=$('pBigBall'),hint=$('pBallHint'),wrap=$('pLastBall');
-  if(wrap)wrap.style.display='flex';
-  const n=bingoData?.lastDrawn,mode=evData?.mode||90;
-  if(n){const l=getLetter(n,mode);$('pBallL').textContent=l;$('pBallN').textContent=n;ball.className=`pbig l${l}`;if(hint)hint.textContent='Toque para marcar';}
-  else{$('pBallL').textContent='';$('pBallN').textContent='--';ball.className='pbig empty-ball';if(hint)hint.textContent='Aguardando sorteio...';}
+function renderBall() {
+  if (!jogoIniciado) return;
+  const wrap = $('ballWrap');
+  if (wrap) wrap.style.display = 'flex';
+  const n = bingoData?.lastDrawn, mode = evData?.mode || 90;
+  const ball = $('pBigBall');
+  if (n) {
+    const l = getLetter(n, mode);
+    $('pBallL').textContent = l; $('pBallN').textContent = n;
+    ball.className = 'pbig l' + l;
+  } else {
+    $('pBallL').textContent = ''; $('pBallN').textContent = '--';
+    ball.className = 'pbig empty-ball';
+  }
 }
 
-function onNewBall(){
-  sndNew();
-  const ball=$('pBigBall');if(ball){ball.classList.remove('pop');void ball.offsetWidth;ball.classList.add('pop');}
-  const lb=$('pLastBall');if(lb){lb.classList.add('new-ball');setTimeout(()=>lb.classList.remove('new-ball'),2000);}
-  // Mostrar historico se ainda nao visivel
-  const hist=$('histSection');if(hist)hist.style.display='block';
-
-  const n=bingoData?.lastDrawn,mode=evData?.mode||90;if(!n)return;
-  let changed=false;
-  cartelas.forEach(c=>{
-    if(!c.autoMarcar)return;
-    const all=Object.values(c.numeros).flat().filter(v=>v!=null);
-    if(all.includes(n)&&!(c.marcados||[]).includes(n)){c.marcados=c.marcados||[];c.marcados.push(n);changed=true;sndMark();}
-  });
-  if(changed){saveAllCartelas();renderCartela();renderHist();checkAutoBatida();}
-}
-
-function onTapLastBall(){
-  if(!jogoIniciado)return;
-  const n=bingoData?.lastDrawn,mode=evData?.mode||90;if(!n)return;
-  const l=getLetter(n,mode),c=cartelas[cartelaIdx];if(!c)return;
-  const all=Object.values(c.numeros).flat().filter(v=>v!=null);
-  if(!all.includes(n)){showToast('Numero nao esta na cartela');return;}
-  if((c.marcados||[]).includes(n)){showToast('Ja marcado');return;}
-  pendingAdd={n,letter:l};$('mAddTitle').textContent=`Adicionar ${l}${n}?`;
-  $('mAddTxt').textContent=`Adicionar ${n} (coluna ${l}) a cartela ${c.id}?`;
+function onTapLastBall() {
+  if (!jogoIniciado) return;
+  const n = bingoData?.lastDrawn, mode = evData?.mode || 90;
+  if (!n) return;
+  const l = getLetter(n, mode), c = cartelas[cartelaIdx];
+  if (!c) return;
+  const all = Object.values(c.numeros).flat().filter(v => v != null);
+  if (!all.includes(n)) { showToast('Numero nao esta na cartela'); return; }
+  if ((c.marcados || []).includes(n)) { showToast('Ja marcado'); return; }
+  pendingAdd = { n, letter: l };
+  $('mAddTitle').textContent = 'Adicionar ' + l + n + '?';
+  $('mAddTxt').textContent = 'Adicionar ' + n + ' (coluna ' + l + ') a cartela ' + c.id + '?';
   openM('mAddNum');
 }
-window.onTapLastBall=onTapLastBall;
-window.confirmAdd=function(){if(pendingAdd)addNum(pendingAdd.n,pendingAdd.letter);closeM('mAddNum');pendingAdd=null;};
-function addNum(n,letter){const c=cartelas[cartelaIdx];if(!c)return;if((c.marcados||[]).includes(n))return;c.marcados=c.marcados||[];c.marcados.push(n);saveAllCartelas();renderCartela();renderHist();sndMark();checkAutoBatida();}
+window.confirmAdd = function () { if (pendingAdd) addNum(pendingAdd.n, pendingAdd.letter); closeM('mAddNum'); pendingAdd = null; };
+function addNum(n, letter) {
+  const c = cartelas[cartelaIdx]; if (!c) return;
+  if ((c.marcados || []).includes(n)) return;
+  c.marcados = c.marcados || []; c.marcados.push(n);
+  saveAllCartelas(); renderCartela(); renderHist(); checkAutoBatida();
+}
 
 // ============== HISTORY ==============
-function renderHist(){
-  if(!jogoIniciado)return;
-  const strip=$('pHistStrip');if(!strip||!evData)return;
-  const c=cartelas[cartelaIdx];
-  const cNums=new Set(c?Object.values(c.numeros).flat().filter(v=>v!=null):[]);
-  const marcados=new Set(c?.marcados||[]);
-  const mode=evData?.mode||90;
-  strip.innerHTML='';
-  [...(bingoData?.drawn||[])].reverse().forEach(n=>{
-    const l=getLetter(n,mode),inC=cNums.has(n),isM=marcados.has(n);
-    const d=document.createElement('div');d.className='ph-ball l'+l+(inC?' in-cartela':'')+(isM?' marked':'');
-    d.innerHTML=`<span class="phl">${l}</span><span class="phn">${n}</span>`;
-    if(!isM)d.addEventListener('click',()=>{if(inC)addNum(n,l);});
+function renderHist() {
+  if (!jogoIniciado) return;
+  const strip = $('pHistStrip'); if (!strip) return;
+  const c = cartelas[cartelaIdx];
+  const cNums = new Set(c ? Object.values(c.numeros).flat().filter(v => v != null) : []);
+  const marcados = new Set(c?.marcados || []);
+  const mode = evData?.mode || 90;
+  strip.innerHTML = '';
+  [...(bingoData?.drawn || [])].reverse().forEach(n => {
+    const l = getLetter(n, mode), inC = cNums.has(n), isM = marcados.has(n);
+    const d = document.createElement('div'); d.className = 'ph-ball l' + l + (inC ? ' in-cartela' : '') + (isM ? ' marked' : '');
+    d.innerHTML = '<span class="phl">' + l + '</span><span class="phn">' + n + '</span>';
+    if (!isM) d.addEventListener('click', () => { if (inC) addNum(n, l); });
     strip.appendChild(d);
   });
 }
 
 // ============== PUXAR AUTO ==============
-window.puxarAuto=function(){
-  if(!jogoIniciado){showToast('Aguarde o inicio da rodada');return;}
-  const c=cartelas[cartelaIdx];if(!c)return;
-  const drawnSet=new Set(bingoData?.drawn||[]);
-  const allNums=Object.values(c.numeros).flat().filter(v=>v!=null);
-  if(!allNums.length){showToast('Cartela vazia');return;}
-  let count=0;
-  allNums.forEach(n=>{if(drawnSet.has(n)&&!(c.marcados||[]).includes(n)){c.marcados=c.marcados||[];c.marcados.push(n);count++;}});
-  if(count>0){saveAllCartelas();renderCartela();renderHist();checkAutoBatida();sndMark();showToast(count+' numero(s) marcados');}
+function puxarAuto() {
+  if (!jogoIniciado) { showToast('Aguarde o inicio da rodada'); return; }
+  const c = cartelas[cartelaIdx]; if (!c) return;
+  const drawnSet = new Set(bingoData?.drawn || []);
+  const allNums = Object.values(c.numeros).flat().filter(v => v != null);
+  if (!allNums.length) { showToast('Cartela vazia'); return; }
+  let count = 0;
+  allNums.forEach(n => { if (drawnSet.has(n) && !(c.marcados || []).includes(n)) { c.marcados = c.marcados || []; c.marcados.push(n); count++; } });
+  if (count > 0) { saveAllCartelas(); renderCartela(); renderHist(); checkAutoBatida(); showToast(count + ' numero(s) marcados'); }
   else showToast('Nenhum novo');
-};
+}
 
 // ============== BATIDA ==============
-function checkAutoBatida(){
-  if(!jogoIniciado)return;
-  const p=getCurrentPremio();if(!p)return;
-  const btn=$('btnBingo');let algumaBateu=false;
-  for(let i=0;i<cartelas.length;i++){
-    const c=cartelas[i];if(!c||c.status!=='ativa')continue;
-    const marcados=new Set(c.marcados||[]);let bateu=false;
-    if(p.regra==='cheia'){const all=Object.values(c.numeros).flat().filter(v=>v!=null);bateu=all.every(n=>marcados.has(n));}
-    else{bateu=checkLD(c,marcados);}
-    if(bateu){
-      algumaBateu=true;
-      const avisoKey='batida_'+c.id+'_p'+(p?.id||'none');
-      if(!sessionStorage.getItem(avisoKey)){
-        sessionStorage.setItem(avisoKey,'1');sndBingo();
-        try{navigator.vibrate([200,100,200,100,400]);}catch(e){}
-        if(i!==cartelaIdx){cartelaIdx=i;renderCartela();renderHist();}
-        $('batidaPremio').textContent='Cartela '+c.id+' bateu! Premio: '+p.nome;
+function checkAutoBatida() {
+  if (!jogoIniciado) return;
+  const p = getCurrentPremio(); if (!p) return;
+  const btn = $('btnBingo'); let algumaBateu = false;
+  for (let i = 0; i < cartelas.length; i++) {
+    const c = cartelas[i]; if (!c || c.status !== 'ativa') continue;
+    const marcados = new Set(c.marcados || []); let bateu = false;
+    if (p.regra === 'cheia') { const all = Object.values(c.numeros).flat().filter(v => v != null); bateu = all.every(n => marcados.has(n)); }
+    else { bateu = checkLD(c, marcados); }
+    if (bateu) {
+      algumaBateu = true;
+      const avisoKey = 'batida_' + c.id + '_p' + (p?.id || 'none');
+      if (!sessionStorage.getItem(avisoKey)) {
+        sessionStorage.setItem(avisoKey, '1');
+        if (i !== cartelaIdx) { cartelaIdx = i; renderCartela(); renderHist(); }
+        $('batidaPremio').textContent = 'Cartela ' + c.id + ' bateu! Premio: ' + p.nome;
         openM('mBatida');
       }
-      if(btn)btn.classList.add('pulsing');
+      if (btn) btn.classList.add('pulsing');
     }
   }
-  if(!algumaBateu&&btn)btn.classList.remove('pulsing');
+  if (!algumaBateu && btn) btn.classList.remove('pulsing');
 }
-function checkLD(c,marcados){
-  for(let row=0;row<5;row++){if(LETTERS.every((l,col)=>{if(c.freeCenter&&row===2&&col===2)return true;const n=c.numeros[l][row];return n!=null&&marcados.has(n);}))return true;}
-  for(let col=0;col<5;col++){const l=LETTERS[col];if(c.numeros[l].every((n,row)=>{if(c.freeCenter&&row===2&&col===2)return true;return n!=null&&marcados.has(n);}))return true;}
-  for(const d of[[[0,0],[1,1],[2,2],[3,3],[4,4]],[[0,4],[1,3],[2,2],[3,1],[4,0]]]){if(d.every(([r,col])=>{if(c.freeCenter&&r===2&&col===2)return true;const n=c.numeros[LETTERS[col]][r];return n!=null&&marcados.has(n);}))return true;}
+function checkLD(c, marcados) {
+  for (let row = 0; row < 5; row++) { if (LETTERS.every((l, col) => { if (c.freeCenter && row === 2 && col === 2) return true; const n = c.numeros[l][row]; return n != null && marcados.has(n); })) return true; }
+  for (let col = 0; col < 5; col++) { const l = LETTERS[col]; if (c.numeros[l].every((n, row) => { if (c.freeCenter && row === 2 && col === 2) return true; return n != null && marcados.has(n); })) return true; }
+  for (const d of [[[0, 0], [1, 1], [2, 2], [3, 3], [4, 4]], [[0, 4], [1, 3], [2, 2], [3, 1], [4, 0]]]) { if (d.every(([r, col]) => { if (c.freeCenter && r === 2 && col === 2) return true; const n = c.numeros[LETTERS[col]][r]; return n != null && marcados.has(n); })) return true; }
   return false;
 }
 
-window.onBingoClick=function(){
-  const c=cartelas[cartelaIdx];if(!c)return;
-  const nome=userProfile?.apelido||userProfile?.nome||currentUser?.email;
-  $('mBingoTxt').textContent='Declarar BINGO com a cartela '+c.id+' ('+nome+')?';
+function onBingoClick() {
+  const c = cartelas[cartelaIdx]; if (!c) return;
+  const nome = userProfile?.apelido || userProfile?.nome || currentUser?.email;
+  $('mBingoTxt').textContent = 'Declarar BINGO com a cartela ' + c.id + ' (' + nome + ')?';
   openM('mBingo');
-};
-window.enviarBatida=function(){
+}
+window.enviarBatida = function () {
   closeM('mBingo');
-  const c=cartelas[cartelaIdx];if(!c||!currentUser)return;
-  const p=getCurrentPremio();const nome=userProfile?.apelido||userProfile?.nome||currentUser.email;
-  const batidaId=genId();
-  set(fb('bingo/eventos/'+evId+'/batidas/'+batidaId),{playerId:currentUser.uid,playerNome:nome,cartelaId:c.id,premioId:p?.id||null,tipo:'manual',status:'pendente',timestamp:Date.now()});
-  update(fb('bingo/eventos/'+evId+'/brincantes/'+currentUser.uid),{batidaStatus:'pendente'});
-  showToast('BINGO declarado! Aguardando gestor.');
-  const el=$('batidaStatusEl');if(el){el.className='batida-status bs-pend';el.textContent=' Batida enviada...';}
+  const c = cartelas[cartelaIdx]; if (!c || !currentUser) return;
+  const p = getCurrentPremio(); const nome = userProfile?.apelido || userProfile?.nome || currentUser.email;
+  const batidaId = genId();
+  set(fb('bingo/eventos/' + evId + '/batidas/' + batidaId), { playerId: currentUser.uid, playerNome: nome, cartelaId: c.id, premioId: p?.id || null, tipo: 'manual', status: 'pendente', timestamp: Date.now() });
+  update(fb('bingo/eventos/' + evId + '/brincantes/' + currentUser.uid), { batidaStatus: 'pendente' });
+  showToast('BINGO declarado!');
+  const el = $('batidaStatusEl'); if (el) { el.className = 'batida-status bs-pend'; el.textContent = ' Batida enviada...'; }
 };
-window.reativarCartela=function(){
+window.reativarCartela = function () {
   closeM('mReativar');
-  if(_cartelaParaReativar){
-    _cartelaParaReativar.status='ativa';_cartelaParaReativar.premioGanho=null;_cartelaParaReativar=null;
-    try{Object.keys(sessionStorage).forEach(k=>{if(k.startsWith('batida_'))sessionStorage.removeItem(k);});}catch(e){}
-    saveAllCartelas();cartelaIdx=0;renderCartela();renderHist();checkAutoBatida();showToast('Cartela reativada!');
+  if (_cartelaParaReativar) {
+    _cartelaParaReativar.status = 'ativa'; _cartelaParaReativar.premioGanho = null; _cartelaParaReativar = null;
+    try { Object.keys(sessionStorage).forEach(k => { if (k.startsWith('batida_')) sessionStorage.removeItem(k); }); } catch (e) { }
+    saveAllCartelas(); cartelaIdx = 0; renderCartela(); renderHist(); checkAutoBatida(); showToast('Cartela reativada!');
   }
 };
 
-function getCurrentPremio(){
-  if(!bingoData?.premios)return null;
-  const premios=Object.values(bingoData.premios).sort((a,b)=>a.ordem-b.ordem);
-  const p=premios.find(pr=>!pr.fechado&&!pr.ganhadores?.length)||premios.find(pr=>!pr.fechado)||null;
-  curPrizeId=p?.id||null;return p;
+// ============== PREMIO ==============
+function getCurrentPremio() {
+  if (!bingoData?.premios) return null;
+  const premios = Object.values(bingoData.premios).sort((a, b) => a.ordem - b.ordem);
+  const p = premios.find(pr => !pr.fechado && !pr.ganhadores?.length) || premios.find(pr => !pr.fechado) || null;
+  return p;
+}
+
+// ============== LISTENERS ==============
+let _unsubBingo = null;
+
+function setupListeners() {
+  // Evento
+  onValue(fb('bingo/eventos/' + evId), snap => {
+    const ev2 = snap.val(); if (!ev2) return;
+    const oldBingoId = evData?.bingoAtivoId;
+    evData = ev2;
+    // Atualizar barra
+    const tipoLabel = evData?.tipoCartela === 'banco' ? ' | Banco' : ' | Propria';
+    const bingoNome = evData?.bingos?.[evData?.bingoAtivoId]?.nome || '--';
+    const bingoOrdem = evData?.bingos?.[evData?.bingoAtivoId]?.ordem || '?';
+    $('gameEvBar').textContent = (evData?.nome || 'Evento') + ' > #' + bingoOrdem + ' ' + bingoNome + tipoLabel;
+
+    if (ev2.bingoAtivoId && ev2.bingoAtivoId !== oldBingoId) {
+      if (_unsubBingo) { _unsubBingo(); _unsubBingo = null; }
+      get(fb('bingo/eventos/' + evId + '/bingos/' + ev2.bingoAtivoId)).then(s => {
+        const b = s.val(); if (!b) return;
+        if (oldBingoId) {
+          cartelas.forEach(c => { c.marcados = []; c.status = 'ativa'; c.premioGanho = null; });
+          saveAllCartelas(); cartelaIdx = 0;
+          showToast('Nova rodada iniciada!');
+        }
+        bingoData = b; jogoIniciado = true;
+        updateStatusBar(); renderBall(); renderHist(); checkAutoBatida(); renderCartela();
+        // Listener do bingo
+        _unsubBingo = onValue(fb('bingo/eventos/' + evId + '/bingos/' + ev2.bingoAtivoId), snap2 => {
+          const b2 = snap2.val(); if (!b2) return;
+          const newBall = bingoData && b2.lastDrawn !== bingoData.lastDrawn;
+          bingoData = b2;
+          if (newBall) onNewBall();
+          updateStatusBar(); renderBall(); renderHist(); checkAutoBatida();
+        });
+      });
+    }
+  });
+
+  // Brincante
+  onValue(fb('bingo/eventos/' + evId + '/brincantes/' + currentUser.uid), snap => {
+    const data = snap.val();
+    if (data?.bingoConfirmado) {
+      const pg = data?.premioGanho;
+      const cid = data?.ultimaCartelaBatida;
+      const cBatida = cid ? cartelas.find(c => c.id === cid) : cartelas[cartelaIdx];
+      if (cBatida && cBatida.status === 'ativa') {
+        cBatida.status = 'batida'; cBatida.premioGanho = { nome: pg?.nome || 'Bingo', ordem: pg?.ordem || 1, ts: Date.now() };
+        saveAllCartelas();
+        $('bingoOuroPremio').textContent = pg ? 'Premio #' + pg.ordem + ' - ' + pg.nome : 'Premio confirmado!';
+        $('bingoOuroData').textContent = new Date().toLocaleString('pt-BR');
+        openM('mBingoOuro');
+        cartelaIdx = 0; renderCartela(); renderHist(); checkAutoBatida();
+      }
+    }
+    if (data && data.bingoConfirmado === false && data.premioGanho === null) {
+      const cNaoAtiva = cartelas.find(c => c.status !== 'ativa');
+      if (cNaoAtiva) { _cartelaParaReativar = cNaoAtiva; openM('mReativar'); }
+    }
+    const bs = data?.batidaStatus;
+    const el = $('batidaStatusEl');
+    if (el) {
+      el.className = 'batida-status';
+      if (bs === 'pendente') { el.className = 'batida-status bs-pend'; el.textContent = ' Batida enviada...'; }
+      else if (bs === 'confirmada') { el.className = 'batida-status bs-conf'; el.textContent = ' BINGO CONFIRMADO!'; }
+      else if (bs === 'rejeitada') { el.className = 'batida-status bs-rej'; el.textContent = ' Batida rejeitada.'; setTimeout(() => { if ($('batidaStatusEl')) $('batidaStatusEl').style.display = 'none'; }, 4000); }
+      else { el.style.display = 'none'; }
+    }
+  });
+}
+
+function onNewBall() {
+  const wrap = $('ballWrap'); if (wrap) wrap.style.display = 'flex';
+  const hs = $('histSection'); if (hs) hs.style.display = 'block';
+  const ball = $('pBigBall');
+  if (ball) { ball.classList.remove('pop'); void ball.offsetWidth; ball.classList.add('pop'); }
+  const lb = $('ballWrap'); if (lb) { lb.classList.add('new-ball'); setTimeout(() => lb.classList.remove('new-ball'), 2000); }
+  const n = bingoData?.lastDrawn, mode = evData?.mode || 90;
+  if (!n) return;
+  let changed = false;
+  cartelas.forEach(c => {
+    if (!c.autoMarcar) return;
+    const all = Object.values(c.numeros).flat().filter(v => v != null);
+    if (all.includes(n) && !(c.marcados || []).includes(n)) { c.marcados = c.marcados || []; c.marcados.push(n); changed = true; }
+  });
+  if (changed) { saveAllCartelas(); renderCartela(); renderHist(); checkAutoBatida(); }
 }
 
 // ============== SAVE/LOAD ==============
-function saveAllCartelas(){
-  if(!evId||!currentUser)return;
-  const obj={};
-  cartelas.forEach(c=>{obj[c.fbId]={id:c.id,status:c.status||'ativa',premioGanho:c.premioGanho||null,numeros:c.numeros,marcados:c.marcados||[],freeCenter:c.freeCenter||false,autoMarcar:c.autoMarcar!==false,criadaEm:c.criadaEm};});
-  const nome=userProfile?.apelido||userProfile?.nome||currentUser.email;
-  _lastSaveTime=Date.now();
-  try{localStorage.setItem('bingo_cartelas_'+evId+'_'+currentUser.uid,JSON.stringify({cartelas:obj,cartelaIdx}));}catch(e){}
-  set(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),{cartelas:obj,nome,uid:currentUser.uid});
+function saveAllCartelas() {
+  if (!evId || !currentUser) return;
+  const obj = {};
+  cartelas.forEach(c => { obj[c.fbId] = { id: c.id, status: c.status || 'ativa', premioGanho: c.premioGanho || null, numeros: c.numeros, marcados: c.marcados || [], freeCenter: c.freeCenter || false, autoMarcar: c.autoMarcar !== false, criadaEm: c.criadaEm }; });
+  const nome = userProfile?.apelido || userProfile?.nome || currentUser.email;
+  try { localStorage.setItem('bingo_cartelas_' + evId + '_' + currentUser.uid, JSON.stringify({ cartelas: obj, cartelaIdx })); } catch (e) { }
+  set(fb('bingo/eventos/' + evId + '/brincantes/' + currentUser.uid), { cartelas: obj, nome, uid: currentUser.uid });
 }
-function loadCartelasFromCache(){
-  if(!evId||!currentUser)return false;
-  try{
-    const raw=localStorage.getItem('bingo_cartelas_'+evId+'_'+currentUser.uid);
-    if(!raw)return false;
-    const {cartelas:obj}=JSON.parse(raw);
-    if(!obj||!Object.keys(obj).length)return false;
-    cartelas=Object.entries(obj).map(([fbId,c])=>ensureNumerosFormat({fbId,...c}));
-    return cartelas.length>0;
-  }catch(e){return false;}
+function loadCartelasFromCache() {
+  if (!evId || !currentUser) return false;
+  try {
+    const raw = localStorage.getItem('bingo_cartelas_' + evId + '_' + currentUser.uid);
+    if (!raw) return false;
+    const { cartelas: obj } = JSON.parse(raw);
+    if (!obj || !Object.keys(obj).length) return false;
+    cartelas = Object.entries(obj).map(([fbId, c]) => ensureNumerosFormat({ fbId, ...c }));
+    return cartelas.length > 0;
+  } catch (e) { return false; }
 }
 
 // ============== HELPERS ==============
-function openM(id){$(id)?.classList.add('open');}
-window.closeM=function(id){$(id)?.classList.remove('open');};
-window.sair=async function(){await signOut(auth);window.location.href='player.html';};
+function openM(id) { $(id)?.classList.add('open'); }
+window.closeM = function (id) { $(id)?.classList.remove('open'); };
+window.sair = async function () { await signOut(auth); window.location.href = 'player.html'; };
 
 </script>
 </body>

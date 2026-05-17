@@ -732,7 +732,6 @@ let pendingBatidaId=null;
 
 onValue(fb('bingo/eventos'),snap=>{
   const val=snap.val();
-  console.log('FB eventos:', JSON.stringify(val).slice(0,200));
   eventos=val||{};
   try { localStorage.setItem('ibbi_eventos_cache', JSON.stringify(eventos)); } catch(e){}
   renderEv();
@@ -1063,9 +1062,10 @@ function loadSorteio(id){
 
 function renderS(animated){
   const ev=evData; if(!ev)return;
-  const enc=ev.status==='encerrado';
+  const premios=sortP(ev.premios);
   const cp=premios.find(p=>p.id===curPrizeId);
   const premioFechado=cp?.fechado===true;
+  const enc=ev.status==='encerrado';
   $('s2name').textContent=ev.nome; $('s2mode').textContent=ev.mode+' pedras';
   if(enc){$('encBox').style.display='block';$('encInfo').textContent='Encerrado em '+fmtTs(ev.encerradoEm);$('btnDraw').disabled=true;$('btnEnc').style.display='none';}
   else{
@@ -1073,14 +1073,9 @@ function renderS(animated){
     // Desabilitar sorteio se premio atual estiver fechado ou todas pedras sorteadas
     $('btnDraw').disabled= premioFechado || (ev.drawn||[]).length>=ev.mode;
     $('btnEnc').style.display='';
-    // Se premio fechado, mostrar aviso
-    if(premioFechado && $('btnDraw').disabled){
-      // Botao ja desabilitado, visual extra no cp
-    }
   }
 
   // prize chips
-  const premios=sortP(ev.premios);
   const ps=$('prizesScroll'); ps.innerHTML='';
   premios.forEach(p=>{
     const hasWinners=p.ganhadores?.length>0;

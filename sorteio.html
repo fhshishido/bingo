@@ -645,13 +645,13 @@ function renderBatidas(batidas) {
         <span class="batida-tipo">${b.tipo==='automatica'?'&#9989; Auto':'&#9995; Manual'}</span>
       </div>
       <div class="batida-btns">
-        <button class="btn btn-red btn-sm" data-bid="${bid}">&#10060; Rejeitar</button>
-        <button class="btn btn-green btn-sm" data-bid="${bid}" data-confirm="1">&#9989; Confirmar</button>
-        ${temCartela?'<button class="btn btn-sm" data-bid="'+bid+'" data-vercartela="1" style="background:rgba(0,184,240,.12);color:var(--accent);border:1.5px solid rgba(0,184,240,.3)">&#127921; Ver Cartela</button>':''}
+        <button class="btn btn-red btn-sm" data-rej="${bid}">&#10060; Rejeitar</button>
+        <button class="btn btn-green btn-sm" data-conf="${bid}">&#9989; Confirmar</button>
+        ${temCartela?'<button class="btn btn-sm" data-ver="'+bid+'" style="background:rgba(0,184,240,.12);color:var(--accent);border:1.5px solid rgba(0,184,240,.3)">&#127921; Ver Cartela</button>':''}
       </div>`;
-    card.querySelector('[data-confirm]').addEventListener('click',()=>confirmarBatida(bid,b));
-    card.querySelector('[data-bid]:not([data-confirm]):not([data-vercartela])').addEventListener('click',()=>rejeitarBatida(bid));
-    const btnVer = card.querySelector('[data-vercartela]');
+    card.querySelector('[data-conf]').addEventListener('click',()=>confirmarBatida(bid,b));
+    card.querySelector('[data-rej]').addEventListener('click',()=>rejeitarBatida(bid));
+    const btnVer = card.querySelector('[data-ver]');
     if(btnVer) btnVer.addEventListener('click',()=>mostrarCartelaBatida(b.cartela,b.playerNome));
     list.appendChild(card);
   });
@@ -664,7 +664,7 @@ function confirmarBatida(bid, b) {
   }
   const cp = bingoData.premios[curPrizeId];
   if(!cp.ganhadores) cp.ganhadores=[];
-  const ganhador = {nome:b.playerNome||'Anônimo', cartelaId:b.cartelaId||'', ts:Date.now()};
+  const ganhador = {nome:b.playerNome||'Anônimo', cartelaId:b.cartelaId||'', ts:Date.now(), cartela:b.cartela||null};
   cp.ganhadores.push(ganhador);
   cp.ganhoEm = Date.now();
   const premioInfo = {ordem:cp.ordem, nome:cp.nome, regra:cp.regra, ts:Date.now(), bingoId};
@@ -962,7 +962,16 @@ function renderGanhadoresPremio(cp) {
       <span class="wi-id">${esc(g.cartelaId||'-')}</span>
       <span class="wi-name">${esc(g.nome)}</span>
       <span style="font-size:.7rem;color:var(--text3)">${fmtTs(g.ts)}</span>
+      ${g.cartela&&g.cartela.numeros?'<button class="btn btn-blue btn-sm" data-vercartela-win="'+i+'" style="padding:4px 8px;font-size:.72rem">&#127921; Ver</button>':''}
     </div>`).join('');
+  // Bind botao Ver Cartela nos ganhadores
+  list.querySelectorAll('[data-vercartela-win]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const gi = parseInt(btn.dataset.vercartelaWin);
+      const ganh = cp.ganhadores[gi];
+      if(ganh&&ganh.cartela) mostrarCartelaBatida(ganh.cartela, ganh.nome);
+    });
+  });
   $('mWinActions').style.display='none';
 }
 
@@ -971,14 +980,30 @@ $('btnCancelWin').addEventListener('click', ()=>closeM('mWin'));
 $('btnGanhadorTodos').addEventListener('click', ()=>{
   const premios = sortP(bingoData.premios);
   $('mWinTodosSubtitle').textContent = 'Bingo: '+(bingoData.nome||'--');
-  $('mWinTodosList').innerHTML = premios.map(p=>{
+  const listEl = $('mWinTodosList');
+  listEl.innerHTML = premios.map((p,pi)=>{
     const ganh = p.ganhadores || [];
     return `<div style="background:var(--surface2);border-radius:var(--rsm);padding:10px;margin-bottom:8px">
       <div style="font-weight:800;color:var(--accent);font-size:.95rem">#${p.ordem} - ${esc(p.nome)}</div>
       <div style="font-size:.72rem;color:var(--text3);margin-top:2px">${p.regra==='cheia'?'Cartela Cheia':'Linha/Coluna/Diagonal'}${p.fechado?' • 🔒 Fechado':''}</div>
-      ${ganh.length ? ganh.map(g=>`<div style="margin-top:6px;font-size:.85rem;color:var(--green)">🏆 ${esc(g.nome)} (${esc(g.cartelaId||'-')})</div>`).join('') : '<div style="margin-top:6px;font-size:.8rem;color:var(--text3)">Sem ganhador</div>'}
+      ${ganh.length ? ganh.map((g,gi)=>`<div style="margin-top:6px;font-size:.85rem;color:var(--green);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span>🏆 ${esc(g.nome)} (${esc(g.cartelaId||'-')})</span>
+        ${g.cartela&&g.cartela.numeros?`<button class="btn btn-blue btn-sm btn-ver-g" data-pi="${pi}" data-gi="${gi}" style="padding:4px 8px;font-size:.72rem">&#127921; Ver Cartela</button>`:''}
+      </div>`).join('') : '<div style="margin-top:6px;font-size:.8rem;color:var(--text3)">Sem ganhador</div>'}
     </div>`;
   }).join('');
+  // Bind botao Ver Cartela
+  listEl.querySelectorAll('.btn-ver-g').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const pi2 = parseInt(btn.dataset.pi);
+      const gi2 = parseInt(btn.dataset.gi);
+      const prem = premios[pi2];
+      if(prem&&prem.ganhadores[gi2]){
+        const ganh2 = prem.ganhadores[gi2];
+        if(ganh2.cartela) mostrarCartelaBatida(ganh2.cartela, ganh2.nome);
+      }
+    });
+  });
   openM('mWinTodos');
 });
 $('btnCloseWinTodos').addEventListener('click', ()=>closeM('mWinTodos'));

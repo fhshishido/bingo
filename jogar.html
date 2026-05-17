@@ -433,19 +433,53 @@ function verGanhadores() {
   if (!batidas.length) { showToast('Nenhuma cartela premiada'); return; }
   
   let html = '<div style="max-height:60vh;overflow-y:auto">';
-  batidas.forEach(c => {
+  batidas.forEach((c, idx) => {
     const p = c.premioGanho || {};
     html += '<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rsm);padding:12px;margin-bottom:10px;display:flex;align-items:center;gap:10px">' +
       '<div style="font-size:2rem">&#127942;</div>' +
       '<div style="flex:1">' +
       '<div style="font-family:Bebas Neue;font-size:1.1rem;color:#FFD700;letter-spacing:1px">' + esc(c.id) + '</div>' +
       '<div style="font-size:.8rem;color:var(--text2)">Premio: ' + esc(p.nome || 'Bingo') + '</div>' +
-      '</div></div>';
+      '</div>' +
+      '<button class="btn btn-sm" onclick="verMinhaCartela(' + idx + ')" style="background:rgba(0,184,240,.12);color:var(--accent);border:1.5px solid rgba(0,184,240,.3);padding:6px 10px;font-size:.78rem">&#127921; Ver Cartela</button>' +
+      '</div>';
   });
   html += '</div>';
   
   openModal('Cartelas Premiadas', html, '<button class="btn btn-ghost" onclick="closeModal()">Fechar</button>');
 }
+
+window.verMinhaCartela = function(idx) {
+  const batidas = getBatidas();
+  const c = batidas[idx]; if (!c) return;
+  ensureNumerosFormat(c);
+  const marcados = new Set(c.marcados || []);
+  const freeCenter = c.freeCenter || false;
+  const colors = {B:'#00b8f0',I:'#00dfa8',N:'#f5c800',G:'#ff8c00',O:'#c850ff'};
+  let html = '<div style="text-align:center;margin-bottom:10px;font-weight:700;color:var(--text2)">Cartela ' + esc(c.id) + '</div>';
+  html += '<div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--rsm);overflow:hidden;max-width:280px;margin:0 auto">';
+  html += '<div style="display:grid;grid-template-columns:repeat(5,1fr)">';
+  LETTERS.forEach(l => {
+    html += '<div style="font-family:Bebas Neue;font-size:1.4rem;text-align:center;padding:6px 2px;background:rgba(' + ({B:'0,184,240',I:'0,223,168',N:'245,200,0',G:'255,140,0',O:'200,80,255'}[l]) + ',.2);color:' + colors[l] + '">' + l + '</div>';
+  });
+  html += '</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:6px">';
+  for (let row = 0; row < 5; row++) {
+    LETTERS.forEach((letter, col) => {
+      const isFree = freeCenter && row === 2 && col === 2;
+      const num = (c.numeros[letter] || [])[row];
+      const hasNum = num != null;
+      const isM = hasNum && marcados.has(num);
+      let bg = 'var(--surface3)'; let color = 'var(--text)'; let border = '1.5px solid var(--border)';
+      if (isFree) { bg = 'var(--surface3)'; color = 'var(--text2)'; }
+      else if (isM) { bg = colors[letter]; color = '#000'; border = '1.5px solid ' + colors[letter]; }
+      else if (hasNum) { bg = 'rgba(' + ({B:'0,184,240',I:'0,223,168',N:'245,200,0',G:'255,140,0',O:'200,80,255'}[letter]) + ',.07)'; color = colors[letter]; border = '1.5px solid rgba(' + ({B:'0,184,240',I:'0,223,168',N:'245,200,0',G:'255,140,0',O:'200,80,255'}[letter]) + ',.4)'; }
+      html += '<div style="aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:Bebas Neue;font-size:1.1rem;background:' + bg + ';color:' + color + ';border:' + border + '">' + (isFree ? '&#9733;' : (num || '')) + '</div>';
+    });
+  }
+  html += '</div></div>';
+  openModal('&#127921; Minha Cartela', html, '<button class="btn btn-ghost" onclick="closeModal()">Fechar</button>');
+};
 
 // ============== STATUS BAR ==============
 function updateStatusBar() {

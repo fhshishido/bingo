@@ -1,10 +1,10 @@
-<!-- IBBI Bingo Cartelas v2.0 -->
+<!-- IBBI Bingo Cartelas v3.0 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Cartelas v2.0</title>
+<title>IBBI Cartelas v3.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -169,57 +169,20 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 
 input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30px #161620 inset!important;-webkit-text-fill-color:#e4f2ff!important;transition:background-color 9999s ease-in-out 0s}
 </style>
-<meta name="app-version" content="v2.0">
+<meta name="app-version" content="v3.0">
 </head>
 <body>
 
-<!-- ===== VIEW: LOGIN ===== -->
-<div class="view active" id="vLogin">
+<!-- ===== VIEW: REDIRECIONANDO ===== -->
+<div class="view active" id="vRedirect">
   <div class="auth-bg">
     <div class="auth-box">
       <div class="auth-logo">B<span>I</span>NGO</div>
       <div class="auth-ibbi"><span>IBBI</span></div>
-      <div class="auth-card">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;color:var(--accent);margin-bottom:16px">Entrar</div>
-        <div class="fg"><label>E-mail</label><input class="inp" type="email" id="loginEmail" placeholder="seu@email.com" autocomplete="email"></div>
-        <div class="fg"><label>Senha</label><input class="inp" type="password" id="loginSenha" placeholder="Sua senha" autocomplete="current-password"></div>
-        <div class="err" id="loginErr"></div>
-        <button class="btn btn-acc btn-full" id="btnLogin">Entrar</button>
-        <div style="text-align:center;margin-top:14px;display:flex;flex-direction:column;gap:8px">
-          <button class="auth-link" id="btnEsqueceuSenha">Esqueci minha senha</button>
-          <div class="ok-msg" id="resetOk">E-mail enviado!</div>
-          <button class="auth-link" id="btnIrCadastro">Cadastrar</button>
-        </div>
-      </div>
-      <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v2.0</div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== VIEW: CADASTRO ===== -->
-<div class="view" id="vCadastro">
-  <div class="auth-bg" style="align-items:flex-start;padding-top:30px">
-    <div class="auth-box">
-      <div class="auth-logo" style="font-size:3rem">B<span>I</span>NGO</div>
-      <div class="auth-ibbi"><span>IBBI</span></div>
-      <div class="auth-card">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;color:var(--accent);margin-bottom:16px">Cadastro</div>
-        <div class="fg"><label>E-mail *</label><input class="inp" type="email" id="cadEmail" placeholder="seu@email.com" autocomplete="email"></div>
-        <div class="fg"><label>Senha *</label><input class="inp" type="password" id="cadSenha" placeholder="Crie uma senha" autocomplete="new-password"></div>
-        <div class="fg"><label>Confirmar Senha *</label><input class="inp" type="password" id="cadSenhaConf" placeholder="Repita" autocomplete="new-password"></div>
-        <div class="fg"><label>Nome completo *</label><input class="inp" type="text" id="cadNome" placeholder="Seu nome" maxlength="60" autocomplete="name"></div>
-        <div class="fg"><label>Apelido</label><input class="inp" type="text" id="cadApelido" placeholder="Ex: joao123" maxlength="30" autocapitalize="off"></div>
-        <div style="background:var(--surface2);border:1.5px solid var(--border2);border-radius:var(--rsm);padding:12px;margin-top:10px;margin-bottom:4px">
-          <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;user-select:none">
-            <input type="checkbox" id="chkTermos" style="margin-top:3px;flex-shrink:0;accent-color:var(--accent);width:18px;height:18px">
-            <span style="font-size:.77rem;color:var(--text2);line-height:1.5">Declaro que sou responsavel pela conferencia dos numeros da minha cartela.</span>
-          </label>
-        </div>
-        <div class="err" id="cadErr"></div>
-        <button class="btn btn-acc btn-full" id="btnCadastrar" style="margin-top:8px">Criar Conta</button>
-        <div style="text-align:center;margin-top:12px"><button class="auth-link" id="btnIrLogin">Ja tenho conta</button></div>
-      </div>
-      <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v2.0</div>
+      <div style="font-size:1.1rem;font-weight:800;color:var(--text2);margin-top:16px;margin-bottom:8px">&#128273; Login necessario</div>
+      <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px">Faca login no Hub para acessar suas cartelas.</div>
+      <button class="btn btn-acc btn-full" onclick="window.location.href='player.html'">Ir para o Login &rarr;</button>
+      <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v3.0</div>
     </div>
   </div>
 </div>
@@ -440,42 +403,11 @@ onAuthStateChanged(auth, async user => {
     else { showView('vNotFound'); $('nfMsg').textContent='Nenhum evento especificado.'; }
   } else {
     currentUser=null;userProfile=null;
-    showView('vLogin');
+    showView('vRedirect');
   }
 });
 
-// Login/Cadastro
-$('btnIrCadastro')?.addEventListener('click',()=>{hideErr('loginErr');hideErr('cadErr');showView('vCadastro');setTimeout(()=>$('cadEmail')?.focus(),200);});
-$('btnIrLogin')?.addEventListener('click',()=>{hideErr('loginErr');hideErr('cadErr');showView('vLogin');setTimeout(()=>$('loginEmail')?.focus(),200);});
-$('loginSenha')?.addEventListener('keydown',e=>{if(e.key==='Enter')$('btnLogin')?.click();});
-$('btnLogin')?.addEventListener('click',async()=>{
-  const email=$('loginEmail').value.trim(),senha=$('loginSenha').value;
-  hideErr('loginErr');$('resetOk').classList.remove('show');
-  if(!email||!senha){showErr('loginErr','Preencha e-mail e senha.');return;}
-  $('btnLogin').disabled=true;$('btnLogin').textContent='Entrando...';
-  try{await signInWithEmailAndPassword(auth,email,senha);}
-  catch(e){$('btnLogin').disabled=false;$('btnLogin').textContent='Entrar';showErr('loginErr',friendlyAuthError(e.code));}
-});
-$('btnEsqueceuSenha')?.addEventListener('click',async()=>{
-  const email=$('loginEmail').value.trim();if(!email){showErr('loginErr','Digite e-mail.');return;}
-  try{await sendPasswordResetEmail(auth,email);$('resetOk').classList.add('show');}
-  catch(e){showErr('loginErr',friendlyAuthError(e.code));}
-});
-$('cadSenhaConf')?.addEventListener('keydown',e=>{if(e.key==='Enter')$('btnCadastrar')?.click();});
-$('btnCadastrar')?.addEventListener('click',async()=>{
-  const email=$('cadEmail').value.trim(),senha=$('cadSenha').value,senhaConf=$('cadSenhaConf').value;
-  const nome=$('cadNome').value.trim(),apelido=$('cadApelido').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'')||'';
-  hideErr('cadErr');
-  if(!email){showErr('cadErr','Digite e-mail.');return;}if(!senha||senha.length<6){showErr('cadErr','Senha min 6 chars.');return;}
-  if(senha!==senhaConf){showErr('cadErr','Senhas nao coincidem.');return;}if(!nome){showErr('cadErr','Digite nome.');return;}
-  if(!$('chkTermos').checked){showErr('cadErr','Aceite os termos.');return;}
-  $('btnCadastrar').disabled=true;
-  try{
-    const cred=await createUserWithEmailAndPassword(auth,email,senha);
-    await updateProfile(cred.user,{displayName:nome});
-    await set(fb(`bingo/usuarios/${cred.user.uid}`),{nome,email,apelido:apelido||null,criadoEm:Date.now()});
-  }catch(e){$('btnCadastrar').disabled=false;showErr('cadErr',friendlyAuthError(e.code));}
-});
+
 
 // ============ INIT CARTELAS ============
 async function initCartelas(){

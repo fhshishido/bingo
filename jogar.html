@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Jogar v3.0 -->
+<!-- IBBI Bingo Jogar v4.0 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -199,8 +199,10 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="p-logo">B<span>I</span>NGO</div>
     <div style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase">IBBI</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v3.0</span>
+    <span class="p-vtag">v4.0</span>
   </div>
+  <!-- Barra do evento -->
+  <div id="gameEvBar" style="background:var(--surface);border-bottom:1.5px solid var(--border);padding:8px 14px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1px;color:var(--accent)">&mdash;</div>
   <!-- Status bar: rodada/premio (atualiza dinamicamente) -->
   <div id="gameStatusBar" class="status-bar waiting" style="background:var(--surface);border-bottom:1.5px solid var(--border);padding:10px 14px;text-align:center">
     <div class="sb-waiting" id="sbText">&#9203; Aguardando inicio da rodada...</div>
@@ -289,28 +291,39 @@ onAuthStateChanged(auth, async user => {
 // ============== INIT JOGO ==============
 // Abre DIRETO mostrando as cartelas. O jogo (rodada/premio) aparece automaticamente.
 async function initJogo(){
-  const snap=await get(fb('bingo/eventos/'+evId));
-  const ev=snap.val();
-  if(!ev){showView('vNotFound');return;}
+  let ev;
+  try{
+    const snap=await get(fb('bingo/eventos/'+evId));
+    ev=snap.val();
+  }catch(e){console.error('Erro ao carregar evento:',e);}
+  if(!ev){$('nfMsg').textContent='Evento nao encontrado no Firebase.';showView('vNotFound');return;}
   evData=ev;
   $('gameUserName').textContent=userProfile?.apelido||userProfile?.nome||currentUser?.email;
 
-  // Verificar permissao
-  const permSnap=await get(fb('bingo/eventos/'+evId+'/permissoes/'+currentUser.uid));
-  const perm=permSnap.val();
-  if(perm?.status==='pendente'){showView('vAguardando');listenPermissao();return;}
-  if(perm?.status==='rejeitado'){$('nfMsg').textContent='Rejeitado.';showView('vNotFound');return;}
+  // Atualizar barra de evento
+  const tipoLabel=evData?.tipoCartela==='banco'?' | Banco':' | Propria';
+  const bingoNome=evData?.bingos?.[evData?.bingoAtivoId]?.nome||'--';
+  const bingoOrdem=evData?.bingos?.[evData?.bingoAtivoId]?.ordem||'?';
+  $('gameEvBar').textContent=(evData?.nome||'Evento')+' > #'+bingoOrdem+' '+bingoNome+tipoLabel;
 
-  // Carregar cartelas
-  loadCartelasFromCache();
+  // Verificar permissao
+  try{
+    const permSnap=await get(fb('bingo/eventos/'+evId+'/permissoes/'+currentUser.uid));
+    const perm=permSnap.val();
+    if(perm?.status==='pendente'){showView('vAguardando');listenPermissao();return;}
+    if(perm?.status==='rejeitado'){$('nfMsg').textContent='Rejeitado.';showView('vNotFound');return;}
+  }catch(e){/* sem permissoes = livre */}
+
+  // Carregar cartelas (cache + Firebase)
+  const hasCache=loadCartelasFromCache();
   try{
     const snap2=await get(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}/cartelas`));
     const fbCartelas=snap2.val();
     if(fbCartelas){
       const novas=Object.entries(fbCartelas).map(([fbId,c])=>ensureNumerosFormat({fbId,...c}));
-      if(novas.length){cartelas=novas;cartelaIdx=0;}
+      if(novas.length){cartelas=novas;cartelaIdx=Math.min(cartelaIdx,novas.length-1);}
     }
-  }catch(e){}
+  }catch(e){/* sem cartelas no FB */}
 
   // Se nao tem cartelas, manda para cartelas.html
   if(!cartelas.length){window.location.href=`cartelas.html?ev=${evId}`;return;}
@@ -319,17 +332,20 @@ async function initJogo(){
   showView('vJogo');
   renderBody();
   renderCartela();
+  updateStatusBar();
 
-  // Tenta carregar bingo ativo (pode ja existir ou nao)
+  // Tenta carregar bingo ativo
   const bingoId=evData?.bingoAtivoId;
   if(bingoId){
-    const bingoSnap=await get(fb('bingo/eventos/'+evId+'/bingos/'+bingoId));
-    bingoData=bingoSnap.val();
-    if(bingoData){
-      jogoIniciado=true;
-      updateStatusBar();
-      renderBall();renderHist();checkAutoBatida();
-    }
+    try{
+      const bingoSnap=await get(fb('bingo/eventos/'+evId+'/bingos/'+bingoId));
+      bingoData=bingoSnap.val();
+      if(bingoData){
+        jogoIniciado=true;
+        updateStatusBar();
+        renderBall();renderHist();checkAutoBatida();
+      }
+    }catch(e){console.error('Erro ao carregar bingo:',e);}
   }
 
   // Listeners em tempo real

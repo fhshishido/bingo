@@ -643,10 +643,6 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
   </div>
 </div>
 
-</div>
-
-</div>
-
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -730,13 +726,18 @@ let eventos={}, evId=null, evData=null, curPrizeId=null;
 let pendingOpenId=null, pendingDelId=null;
 let pendingBatidaId=null;
 
-onValue(fb('bingo/eventos'),snap=>{
-  const val=snap.val();
-  eventos=val||{};
-  try { localStorage.setItem('ibbi_eventos_cache', JSON.stringify(eventos)); } catch(e){}
-  renderEv();
-  if(evId&&eventos[evId]){ evData=JSON.parse(JSON.stringify(eventos[evId])); renderS(false); }
-});
+try {
+  const evRef = fb('bingo/eventos');
+  onValue(evRef, snap=>{
+    const val=snap.val();
+    eventos=val||{};
+    try { localStorage.setItem('ibbi_eventos_cache', JSON.stringify(eventos)); } catch(e){}
+    renderEv();
+    if(evId&&eventos[evId]){ evData=JSON.parse(JSON.stringify(eventos[evId])); renderS(false); }
+  });
+} catch(e) {
+  console.error('ERRO ao criar listener:', e);
+}
 
 // Carregar cache imediatamente enquanto Firebase nao responde
 try {

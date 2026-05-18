@@ -179,7 +179,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .err-screen h1{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:3px;color:var(--red);margin-bottom:14px}
 .err-screen p{color:var(--text2);font-size:.95rem;margin-bottom:18px;max-width:480px;line-height:1.5}
 </style>
-  <meta name="app-version" content="v3.0">
+  <meta name="app-version" content="v3.1">
 </head>
 <body>
 
@@ -752,7 +752,7 @@ function mostrarCartelaBatida(cartelaData, playerNome) {
       let bg='var(--surface2)'; let color='var(--text)'; let border='1.5px solid var(--border)';
       if(isFree) { bg='var(--surface3)'; color='var(--text2)'; }
       else if(isM) { bg=colors[letter]; color='#000'; border='1.5px solid '+colors[letter]; }
-      else if(hasNum) { bg='rgba('+({B:'0,184,240',I:'0,223,168',N:'245,200,0',G:'255,140,0',O:'200,80,255'}[l])+',.07)'; color=colors[letter]; border='1.5px solid rgba('+({B:'0,184,240',I:'0,223,168',N:'245,200,0',G:'255,140,0',O:'200,80,255'}[l])+',.4)'; }
+      else if(hasNum) { bg='rgba('+({B:'0,184,240',I:'0,223,168',N:'245,200,0',G:'255,140,0',O:'200,80,255'}[letter])+',.07)'; color=colors[letter]; border='1.5px solid rgba('+({B:'0,184,240',I:'0,223,168',N:'245,200,0',G:'255,140,0',O:'200,80,255'}[letter])+',.4)'; }
       html += '<div style="aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:Bebas Neue;font-size:1.2rem;background:'+bg+';color:'+color+';border:'+border+'">'+(isFree?'&#9733;':(num||''))+'</div>';
     });
   }

@@ -1,10 +1,10 @@
-<!-- IBBI Sorteio v3.4 - 2026-05-18 - Tela de Sorteio (por Bingo) -->
+<!-- IBBI Sorteio v3.5 - 2026-05-18 - Tela de Sorteio (por Bingo) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Sorteio v3.4</title>
+<title>IBBI Sorteio v3.5</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -179,7 +179,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .err-screen h1{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:3px;color:var(--red);margin-bottom:14px}
 .err-screen p{color:var(--text2);font-size:.95rem;margin-bottom:18px;max-width:480px;line-height:1.5}
 </style>
-  <meta name="app-version" content="v3.4">
+  <meta name="app-version" content="v3.5">
 </head>
 <body>
 
@@ -199,7 +199,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
       <span class="mode-badge" id="s2mode">90 pedras</span>
-      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v3.4</span>
+      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v3.5</span>
     </div>
     <span class="conn off" id="connDot" style="margin-left:8px">⬤ offline</span>
     <div class="s2-right">
@@ -328,7 +328,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v3.4';
+const APP_VERSION = 'v3.5';
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
   authDomain: "domino-fa285.firebaseapp.com",
@@ -701,6 +701,8 @@ function confirmarBatida(bid, b) {
     set(fb(`bingo/eventos/${evId}/historico/${histKey}`), histData)
   ]).then(()=>{
     soundConfirm();
+    // Fecha o premio automaticamente apos confirmar a batida
+    fecharPremio(curPrizeId, true);
   }).catch(e=>{
     console.error('Erro:',e);
     alert('Erro ao salvar: '+e.message);
@@ -810,11 +812,13 @@ function removeWinner(prizeId, idx) {
   });
 }
 
-function fecharPremio(prizeId) {
+function fecharPremio(prizeId, auto) {
   const p = bingoData.premios[prizeId]; if(!p) return;
-  if(!confirm(`Fechar o prêmio "${p.nome}"? Não será mais possível sortear para este prêmio.`)) return;
+  if(!auto && !confirm(`Fechar o prêmio "${p.nome}"? Não será mais possível sortear para este prêmio.`)) return;
+  // Marca localmente primeiro para garantir que sortP veja o estado atualizado
+  bingoData.premios[prizeId].fechado = true;
+  bingoData.premios[prizeId].fechadoEm = Date.now();
   set(fb(`bingo/eventos/${evId}/bingos/${bingoId}/premios/${prizeId}/fechado`), true).then(()=>{
-    bingoData.premios[prizeId].fechado = true;
     const premios = sortP(bingoData.premios);
     const proximo = premios.find(pr=>!pr.fechado && !pr.ganhadores?.length);
     if(proximo) {
@@ -830,9 +834,15 @@ function fecharPremio(prizeId) {
       } else {
         // Todos os prêmios fechados — encerra o BINGO automaticamente
         curPrizeId = null;
+        renderS(false);
         encerrarBingo(true);
       }
     }
+  }).catch(e=>{
+    console.error('Erro ao fechar premio:', e);
+    // Reverte marcacao local em caso de erro
+    bingoData.premios[prizeId].fechado = false;
+    alert('Erro ao fechar prêmio: ' + e.message);
   });
 }
 

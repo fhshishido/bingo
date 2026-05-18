@@ -734,7 +734,13 @@ function renderEv(){
   }
   ids.forEach(id=>{
     const c=g.querySelector('[data-evid="'+id+'"]');
-    if(c) c.addEventListener('click',()=>openEvent(id));
+    if(c) c.addEventListener('click',e=>{
+      // Ignora clicks em botoes ou em elementos com data-* de acoes
+      const btn = e.target.closest('button');
+      if(btn) return;
+      if(e.target.closest('[data-shareid]') || e.target.closest('[data-editid]') || e.target.closest('[data-delid]') || e.target.closest('[data-permsid]') || e.target.closest('[data-winnersid]')) return;
+      openEvent(id);
+    });
     const d=g.querySelector('[data-delid="'+id+'"]');
     if(d) d.addEventListener('click',e=>{e.stopPropagation();startDel(id);});
     const s=g.querySelector('[data-shareid="'+id+'"]');
@@ -1696,12 +1702,25 @@ function openModal(title, bodyHtml, footHtml){
     el.id='mGeneric';
     el.className='mbk';
     el.style.cssText='display:none;position:fixed;inset:0;background:rgba(0,0,2,.9);z-index:4000;align-items:center;justify-content:center;padding:16px';
-    el.innerHTML='<div style="background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);width:100%;max-width:480px;padding:22px;margin:auto;max-height:80vh;display:flex;flex-direction:column"><h2 id="mGenTitle" style="font-family:Bebas Neue,sans-serif;font-size:1.5rem;letter-spacing:2px;color:var(--accent);margin-bottom:14px;flex-shrink:0"></h2><div id="mGenBody" style="overflow-y:auto;flex:1"></div><div id="mGenFoot" style="margin-top:18px;display:flex;gap:8px;justify-content:flex-end;flex-shrink:0"></div></div>';
+    el.innerHTML='<div id="mGenInner" style="background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);width:100%;max-width:480px;padding:22px;margin:auto;max-height:80vh;display:flex;flex-direction:column;position:relative"><button id="mGenClose" style="position:absolute;top:8px;right:8px;background:none;border:none;color:var(--text3);font-size:1.2rem;cursor:pointer;padding:4px 8px">&#10005;</button><h2 id="mGenTitle" style="font-family:Bebas Neue,sans-serif;font-size:1.5rem;letter-spacing:2px;color:var(--accent);margin-bottom:14px;flex-shrink:0"></h2><div id="mGenBody" style="overflow-y:auto;flex:1"></div><div id="mGenFoot" style="margin-top:18px;display:flex;gap:8px;justify-content:flex-end;flex-shrink:0"></div></div>';
     document.body.appendChild(el);
+    // Bind X button once
+    document.getElementById('mGenClose').addEventListener('click', closeModal);
   }
   document.getElementById('mGenTitle').textContent=title;
   document.getElementById('mGenBody').innerHTML=bodyHtml;
-  document.getElementById('mGenFoot').innerHTML=footHtml||'<button class="btn btn-ghost" onclick="closeModal()">Fechar</button>';
+  // Footer: usar addEventListener ao inves de onclick inline (evita problemas com modulos ES6)
+  const footEl = document.getElementById('mGenFoot');
+  if(footHtml){
+    footEl.innerHTML=footHtml;
+  } else {
+    footEl.innerHTML='';
+    const btnFechar = document.createElement('button');
+    btnFechar.className='btn btn-ghost';
+    btnFechar.textContent='Fechar';
+    btnFechar.addEventListener('click', closeModal);
+    footEl.appendChild(btnFechar);
+  }
   el.style.display='flex';
 }
 function closeModal(){

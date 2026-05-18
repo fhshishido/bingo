@@ -130,7 +130,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface3);color:var(--text);padding:10px 20px;border-radius:var(--rsm);font-size:.82rem;font-weight:700;z-index:2000;opacity:0;transition:all .3s;white-space:nowrap;border:1px solid var(--border2)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
-<meta name="app-version" content="v7.2">
+<meta name="app-version" content="v7.3">
 </head>
 <body>
 
@@ -178,7 +178,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="p-logo">B<span>I</span>NGO</div>
     <div style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase">IBBI</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v7.2</span>
+    <span class="p-vtag">v7.3</span>
   </div>
   <!-- Barra do evento -->
   <div id="gameEvBar" class="ev-bar">&mdash;</div>
@@ -195,7 +195,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 <!-- MODAIS -->
 <div class="mbk" id="mAddNum"><div class="modal"><h2 id="mAddTitle">Adicionar?</h2><p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mAddTxt"></p><div class="mfoot"><button class="btn btn-ghost" onclick="closeM('mAddNum');pendingAdd=null">Cancelar</button><button class="btn btn-acc" onclick="confirmAdd()">Adicionar</button></div></div></div>
 <div class="mbk" id="mBingo"><div class="modal"><h2>&#127881; Declarar BINGO?</h2><p style="font-size:.85rem;color:var(--text2);margin-bottom:14px" id="mBingoTxt"></p><div class="mfoot"><button class="btn btn-ghost" onclick="closeM('mBingo')">Cancelar</button><button class="btn" onclick="enviarBatida()" style="background:linear-gradient(135deg,#f5c800,#ff8c00);color:#000;font-weight:900;font-family:'Barlow',sans-serif;border:none;border-radius:var(--rsm);padding:10px 20px;cursor:pointer;font-size:.9rem">&#127881; Confirmar!</button></div></div></div>
-<div class="mbk" id="mBatida"><div class="modal" style="max-width:380px;text-align:center;background:linear-gradient(180deg,#1a1a1a 0%,#2a1a00 100%);border:2px solid var(--green)"><div style="font-size:4rem;margin:10px 0">&#127919;</div><h2 style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:4px;color:var(--green);margin-bottom:8px">BATIDA!</h2><div id="batidaPremio" style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:6px">Sua cartela bateu!</div><div style="font-size:.85rem;color:var(--text3);margin-bottom:20px">Aperte BINGO para confirmar</div><button class="btn btn-acc" onclick="closeM('mBatida')" style="width:100%;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;padding:12px 30px">OK</button></div></div>
+<div class="mbk" id="mBatida"><div class="modal" style="max-width:400px;text-align:center;background:linear-gradient(180deg,#1a1a1a 0%,#2a1a00 100%);border:2px solid var(--green)"><div style="font-size:3rem;margin:6px 0">&#127919;</div><h2 style="font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:4px;color:var(--green);margin-bottom:6px">BATIDA!</h2><div id="batidaPremio" style="font-size:1rem;font-weight:800;color:#fff;margin-bottom:8px">Sua cartela bateu!</div><div style="font-size:.8rem;color:var(--text3);margin-bottom:10px">Confira sua cartela antes de declarar</div><!-- Cartela preview --><div id="batidaCartelaPreview" style="margin:10px auto;max-width:280px"></div><div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-ghost" onclick="closeM('mBatida')" style="flex:1;font-family:'Bebas Neue';font-size:.9rem;letter-spacing:1px;padding:10px 16px">Fechar</button><button class="btn" onclick="onBingoFromBatida()" style="flex:2;background:linear-gradient(135deg,#f5c800,#ff8c00);color:#000;font-weight:900;font-family:'Bebas Neue',sans-serif;border:none;border-radius:var(--rsm);padding:10px 16px;cursor:pointer;font-size:1rem;letter-spacing:2px">&#127881; DECLARAR BINGO</button></div></div></div>
 <div class="mbk" id="mBingoOuro"><div class="modal" style="max-width:380px;text-align:center;background:linear-gradient(180deg,#1a1a1a 0%,#2a1a00 100%);border:2px solid #FFD700"><div style="font-size:4rem;margin:10px 0">&#127942;</div><h2 style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:4px;color:#FFD700;margin-bottom:8px">B I N G O !</h2><div id="bingoOuroPremio" style="font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:6px">Premio confirmado!</div><div id="bingoOuroData" style="font-size:.8rem;color:var(--text3);margin-bottom:20px">--</div><button class="btn" onclick="closeM('mBingoOuro')" style="background:linear-gradient(90deg,#FFD700,#FFA500);color:#000;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;padding:12px 30px;border:none;border-radius:var(--rsm);width:100%">FECHAR</button></div></div>
 <div class="mbk" id="mReativar"><div class="modal" style="max-width:380px;text-align:center;background:linear-gradient(180deg,#1a1a1a 0%,#2a0000 100%);border:2px solid var(--accent)"><div style="font-size:3rem;margin:10px 0">&#9888;</div><h2 style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:3px;color:var(--accent);margin-bottom:8px">VENCEDOR REMOVIDO</h2><div style="font-size:.9rem;color:var(--text);margin-bottom:8px">O gestor removeu o vencedor. Sua cartela voltara a participar.</div><div style="font-size:.78rem;color:var(--text3);margin-bottom:20px">Toque OK para continuar.</div><button class="btn btn-acc" onclick="reativarCartela()" style="width:100%;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;padding:12px 30px">OK</button></div></div>
 <!-- MODAL GENERICO -->
@@ -671,6 +671,38 @@ function puxarAuto() {
   else showToast('Nenhum novo');
 }
 
+// ============== MINI CARTELA (para modal de batida) ==============
+function renderMiniCartela(containerId, c) {
+  const el = $(containerId); if (!el || !c) return;
+  ensureNumerosFormat(c);
+  const LETTERS = ['B','I','N','G','O'];
+  const marcados = new Set(c.marcados || []);
+  const freeCenter = c.freeCenter || false;
+  const colors = {B:'#00b8f0',I:'#00dfa8',N:'#f5c800',G:'#ff8c00',O:'#c850ff'};
+  let html = '<div style="background:var(--surface3);border:1.5px solid var(--border);border-radius:var(--rsm);overflow:hidden">';
+  html += '<div style="display:grid;grid-template-columns:repeat(5,1fr)">';
+  LETTERS.forEach(l => {
+    html += '<div style="font-family:Bebas Neue;font-size:1rem;text-align:center;padding:3px 1px;background:rgba(' + ({B:'0,184,240',I:'0,223,168',N:'245,200,0',G:'255,140,0',O:'200,80,255'}[l]) + ',.2);color:' + colors[l] + '">' + l + '</div>';
+  });
+  html += '</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:4px">';
+  for (let row = 0; row < 5; row++) {
+    LETTERS.forEach((letter, col) => {
+      const isFree = freeCenter && row === 2 && col === 2;
+      const num = (c.numeros[letter] || [])[row];
+      const hasNum = num != null;
+      const isM = hasNum && marcados.has(num);
+      let bg = 'var(--surface2)'; let color = 'var(--text)'; let border = '1.5px solid var(--border)';
+      if (isFree) { bg = 'var(--surface3)'; color = 'var(--text2)'; }
+      else if (isM) { bg = colors[letter]; color = '#000'; border = '1.5px solid ' + colors[letter]; }
+      else if (hasNum) { bg = 'rgba(' + ({B:'0,184,240',I:'0,223,168',N:'245,200,0',G:'255,140,0',O:'200,80,255'}[letter]) + ',.07)'; color = colors[letter]; border = '1.5px solid rgba(' + ({B:'0,184,240',I:'0,223,168',N:'245,200,0',G:'255,140,0',O:'200,80,255'}[letter]) + ',.4)'; }
+      html += '<div style="aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:Bebas Neue;font-size:.85rem;background:' + bg + ';color:' + color + ';border:' + border + '">' + (isFree ? '&#9733;' : (num || '')) + '</div>';
+    });
+  }
+  html += '</div></div>';
+  el.innerHTML = html;
+}
+
 // ============== BATIDA ==============
 function checkAutoBatida() {
   if (!jogoIniciado) return;
@@ -696,6 +728,7 @@ function checkAutoBatida() {
           renderHist();
         }
         $('batidaPremio').textContent = 'Cartela ' + c.id + ' bateu! Premio: ' + p.nome;
+        renderMiniCartela('batidaCartelaPreview', c);
         openM('mBatida');
       }
       if (btn) btn.classList.add('pulsing');
@@ -713,10 +746,20 @@ function checkLD(c, marcados) {
 function onBingoClick() {
   const c = _cartelaQueBateu || cartelas[cartelaIdx];
   if (!c) return;
+  openBingoModal(c);
+}
+
+function openBingoModal(c) {
   const nome = userProfile?.apelido || userProfile?.nome || currentUser?.email;
   $('mBingoTxt').textContent = 'Declarar BINGO com a cartela ' + c.id + ' (' + nome + ')?';
   openM('mBingo');
 }
+
+window.onBingoFromBatida = function () {
+  closeM('mBatida');
+  const c = _cartelaQueBateu || cartelas[cartelaIdx];
+  if (c) openBingoModal(c);
+};
 window.enviarBatida = function () {
   closeM('mBingo');
   const c = _cartelaQueBateu || cartelas[cartelaIdx];

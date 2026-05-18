@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v11.3 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
+<!-- IBBI Bingo v11.4 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v11.3</title>
+<title>IBBI Bingo v11.4</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -289,7 +289,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 .win-inp::placeholder{color:var(--text3)}
 
 </style>
-  <meta name="app-version" content="v11.3">
+  <meta name="app-version" content="v11.4">
 </head>
 <body>
 
@@ -307,7 +307,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.3</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.4</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -585,7 +585,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <button class="btn btn-acc btn-sm" id="btnQRDownload">⬇ Baixar PNG</button>
       <button class="btn btn-ghost btn-sm" id="btnQRClose">Fechar</button>
     </div>
-    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.3</div>
+    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.4</div>
   </div>
 </div>
 
@@ -636,7 +636,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v11.3';
+const APP_VERSION = 'v11.4';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -1583,18 +1583,28 @@ $('btnConciliarCartelas')?.addEventListener('click', async ()=>{
       const banco = bancoSnap.val() || {};
       const ids = Object.keys(banco);
       let liberadas = 0;
+      let verificadas = 0;
+      // Buscar TODOS os brincantes de uma vez
+      const brinSnap = await get(fb('bingo/eventos/'+evId+'/brincantes'));
+      const brincantes = brinSnap.val() || {};
       for(const cid of ids) {
         const c = banco[cid];
         if(!c?.usada || !c?.playerId) continue;
-        const brinSnap = await get(fb('bingo/eventos/'+evId+'/brincantes/'+c.playerId+'/cartelas'));
-        const brinCartelas = brinSnap.val() || {};
-        const aindaTem = Object.values(brinCartelas).some(bc => bc.id === cid);
+        verificadas++;
+        let aindaTem = false;
+        for(const brin of Object.values(brincantes)) {
+          const bcart = brin?.cartelas || {};
+          for(const bc of Object.values(bcart)) {
+            if(bc?.id === cid) { aindaTem = true; break; }
+          }
+          if(aindaTem) break;
+        }
         if(!aindaTem) {
           await update(fb('bingo/eventos/'+evId+'/cartelas/'+cid), {usada:false, playerId:null, jogador:null});
           liberadas++;
         }
       }
-      showToast(liberadas + ' cartela(s) liberada(s)!');
+      showToast('Verificadas: ' + verificadas + ' | Liberadas: ' + liberadas);
     } catch(e) {
       console.error('Erro na conciliacao:', e);
       showToast('Erro ao conciliar: ' + e.message);

@@ -1,13 +1,11 @@
-<!-- IBBI Bingo - Gerador de Cartelas v3.9 -->
-
+<!-- IBBI Bingo - Gerador de Cartelas v4.0 -->
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gerador de Cartelas IBBI v4.2</title>
+<title>Gerador de Cartelas IBBI v4.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 html{background:#060608}
@@ -23,14 +21,12 @@ html{background:#060608}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:5px}
-
-/* === SHARED === */
 .sec-lbl{font-size:.66rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase}
 .btn{border:none;border-radius:var(--rsm);padding:9px 18px;font-family:'Barlow',sans-serif;font-weight:800;font-size:.9rem;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
 .btn:active{transform:scale(.96)}
 .btn-acc{background:linear-gradient(135deg,var(--accent),#0090c8);color:#fff;box-shadow:0 4px 16px rgba(0,184,240,.28)}
 .btn-acc:hover{filter:brightness(1.12)}
-.btn-acc:disabled{background:var(--text3);color:var(--surface);cursor:not-allowed;box-shadow:none;filter:none}
+.btn-acc:disabled{background:var(--surface3);color:var(--text3);cursor:not-allowed;box-shadow:none;filter:none}
 .btn-ghost{background:var(--surface2);color:var(--text2);border:1.5px solid var(--border)}
 .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
 .btn-red{background:rgba(240,96,96,.1);color:var(--red);border:1.5px solid rgba(240,96,96,.3)}
@@ -41,40 +37,26 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:12px}
 .card h3{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:10px}
 .divider{height:1px;background:var(--border);margin:14px 0}
-.fg{margin-bottom:14px}
-.fg label{display:block;font-size:.7rem;font-weight:800;letter-spacing:1.5px;color:var(--text2);text-transform:uppercase;margin-bottom:5px}
-.fg input,.fg select{width:100%;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:9px 12px;font-family:'Barlow',sans-serif;font-size:.95rem;font-weight:600;outline:none;transition:border-color .2s}
-.fg input:focus,.fg select:focus{border-color:var(--accent)}
-.fg input::placeholder{color:var(--text3)}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .badge{font-size:.62rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0}
 .ba{background:rgba(0,184,240,.12);color:var(--accent);border:1px solid rgba(0,184,240,.3)}
-
-/* === MODAL === */
 .mbk{display:none;position:fixed;inset:0;background:rgba(0,0,2,.92);backdrop-filter:blur(5px);z-index:1000;align-items:center;justify-content:center;padding:16px}
 .mbk.open{display:flex}
 .modal{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);width:100%;max-width:500px;max-height:92vh;overflow-y:auto;padding:24px;animation:mIn .22s cubic-bezier(.2,1.4,.4,1) both}
 @keyframes mIn{from{transform:scale(.9);opacity:0}}
 .modal h2{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;color:var(--accent);margin-bottom:16px}
 .mfoot{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
-
-/* === HEADER === */
 .g-head{background:rgba(4,4,6,.97);border-bottom:1.5px solid var(--border);padding:10px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
 .logo{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:4px;color:var(--accent);line-height:1}
 .logo span{color:var(--accent2)}
 .logo-sub{font-size:.62rem;font-weight:700;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-top:2px}
 .g-head-right{margin-left:auto;display:flex;gap:6px;align-items:center}
-
-/* === LAYOUT === */
 .g-body{display:grid;grid-template-columns:280px 1fr;gap:12px;padding:12px;align-items:start}
 @media(max-width:800px){.g-body{grid-template-columns:1fr}}
 .side-col{display:flex;flex-direction:column;gap:10px}
 .main-col{display:flex;flex-direction:column;gap:10px}
-
-/* === MODO SELECTOR === */
 .modo-sel{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .modo-btn{background:var(--surface2);border:2px solid var(--border);border-radius:var(--rsm);padding:12px 8px;text-align:center;cursor:pointer;transition:all .2s;user-select:none}
-.modo-btn:hover{border-color:var(--border2)}
 .modo-btn.active-90{border-color:var(--cN);background:rgba(245,200,0,.07)}
 .modo-btn.active-75{border-color:var(--green);background:rgba(0,223,168,.07)}
 .modo-btn-num{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:2px;line-height:1}
@@ -84,30 +66,19 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .modo-btn-cnt{font-size:.72rem;font-weight:800;margin-top:5px;color:var(--text3)}
 .modo-btn.active-90 .modo-btn-cnt{color:var(--cN)}
 .modo-btn.active-75 .modo-btn-cnt{color:var(--green)}
-
-/* === QTD INPUT === */
 .qtd-big{width:100%;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:10px;font-family:'Bebas Neue',sans-serif;font-size:2.2rem;text-align:center;letter-spacing:3px;outline:none;transition:border-color .2s}
 .qtd-big:focus{border-color:var(--accent)}
 .qtd-big::placeholder{color:var(--text3)}
-
-/* === STATS === */
 .stats-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-@media(max-width:500px){.stats-g{grid-template-columns:repeat(3,1fr)}}
 .sbox{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center}
 .sv{font-family:'Bebas Neue',sans-serif;font-size:2rem;line-height:1}
-.sv-total{color:var(--accent)}
-.sv-90{color:var(--cN)}
-.sv-75{color:var(--green)}
+.sv-total{color:var(--accent)}.sv-90{color:var(--cN)}.sv-75{color:var(--green)}
 .sl{font-size:.64rem;font-weight:700;color:var(--text3);margin-top:3px;text-transform:uppercase;letter-spacing:1px}
-
-/* === RANGE PANEL === */
 .range-cols{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:8px}
 .rcol{background:var(--surface2);border-radius:6px;padding:6px 4px;text-align:center}
 .rcol-ltr{font-family:'Bebas Neue',sans-serif;font-size:1rem}
 .rcol-ltr.lB{color:var(--cB)}.rcol-ltr.lI{color:var(--cI)}.rcol-ltr.lN{color:var(--cN)}.rcol-ltr.lG{color:var(--cG)}.rcol-ltr.lO{color:var(--cO)}
 .rcol-val{font-size:.58rem;color:var(--text3);font-weight:700;margin-top:2px}
-
-/* === TOGGLE === */
 .vrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .vrow:last-child{margin-bottom:0}
 .vrow-lbl{font-size:.82rem;font-weight:700;color:var(--text2);cursor:pointer;user-select:none;flex:1}
@@ -117,22 +88,16 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .tog-sl::before{content:'';position:absolute;width:12px;height:12px;background:var(--text3);border-radius:50%;top:2px;left:2px;transition:.2s}
 .tog input:checked+.tog-sl{background:rgba(0,184,240,.18);border-color:var(--blue)}
 .tog input:checked+.tog-sl::before{background:var(--blue);transform:translateX(18px)}
-
-/* === PROGRESS === */
-.progress-wrap{display:none}
-.pbar{height:6px;background:var(--surface3);border-radius:4px;overflow:hidden;margin-top:8px}
-.pbar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .25s}
-.pbar-txt{text-align:center;font-size:.72rem;color:var(--text3);margin-top:5px;font-weight:700}
-
-/* === FILTER TABS === */
+.progress-wrap{display:none;margin-top:10px}
+.pbar{height:8px;background:var(--surface3);border-radius:4px;overflow:hidden;margin-top:8px}
+.pbar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .15s}
+.pbar-txt{text-align:center;font-size:.72rem;color:var(--text2);margin-top:5px;font-weight:700;min-height:18px}
+.pbar-sub{text-align:center;font-size:.65rem;color:var(--text3);margin-top:2px;min-height:16px}
 .ftabs{display:flex;gap:6px;margin-bottom:12px;align-items:center;flex-wrap:wrap}
 .ftab{background:var(--surface2);border:1.5px solid var(--border);color:var(--text2);border-radius:var(--rsm);padding:6px 14px;font-family:'Barlow',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer;transition:all .15s}
-.ftab:hover{border-color:var(--border2);color:var(--text)}
 .ftab.active{background:rgba(0,184,240,.1);border-color:var(--accent);color:var(--accent)}
 .ftab.f90.active{background:rgba(245,200,0,.08);border-color:var(--cN);color:var(--cN)}
 .ftab.f75.active{background:rgba(0,223,168,.08);border-color:var(--green);color:var(--green)}
-
-/* === CARTELAS GRID === */
 .ct-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px}
 @media(max-width:600px){.ct-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}}
 .ct-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--rsm);padding:10px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
@@ -140,15 +105,13 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .ct-card.m90::before{background:var(--cN)}
 .ct-card.m75::before{background:var(--green)}
 .ct-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.4)}
-.ct-card.m90:hover{border-color:rgba(245,200,0,.5)}
-.ct-card.m75:hover{border-color:rgba(0,223,168,.5)}
 .ct-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .ct-id{font-family:'Bebas Neue',sans-serif;font-size:.95rem;color:var(--accent);letter-spacing:1px}
 .ct-badge{font-size:.56rem;font-weight:800;padding:2px 6px;border-radius:4px}
 .ct-badge.m90{background:rgba(245,200,0,.1);color:var(--cN)}
 .ct-badge.m75{background:rgba(0,223,168,.1);color:var(--green)}
 .ct-mini{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;margin-bottom:8px}
-.ct-cell{aspect-ratio:1;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:.62rem;background:var(--surface3);color:var(--text3);border:1px solid var(--border)}
+.ct-cell{aspect-ratio:1;min-height:20px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:.62rem;background:var(--surface3);color:var(--text3);border:1px solid var(--border)}
 .ct-cell.hB{color:var(--cB);border-color:rgba(0,184,240,.3);background:rgba(0,184,240,.07)}
 .ct-cell.hI{color:var(--cI);border-color:rgba(0,223,168,.3);background:rgba(0,223,168,.07)}
 .ct-cell.hN{color:var(--cN);border-color:rgba(245,200,0,.3);background:rgba(245,200,0,.07)}
@@ -156,45 +119,36 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .ct-cell.hO{color:var(--cO);border-color:rgba(200,80,255,.3);background:rgba(200,80,255,.07)}
 .ct-cell.free{background:var(--surface3);color:var(--text2);font-size:.5rem}
 .ct-foot{display:flex;justify-content:space-between;font-size:.6rem;color:var(--text3)}
-
-/* === PAGINACAO === */
 .pager{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;flex-wrap:wrap}
 .pager-info{font-size:.75rem;color:var(--text3);font-weight:700}
 .pager-pg{font-size:.75rem;font-weight:800;color:var(--accent);min-width:60px;text-align:center}
-
-/* === MODAL CARTELA === */
 .fs-cartela{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--rsm);padding:14px;margin:12px 0}
 .fs-hdr{display:grid;grid-template-columns:repeat(5,1fr);margin-bottom:4px}
 .fs-hdr-cell{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;text-align:center;padding:6px 2px;line-height:1}
-.fs-hdr-cell.lB{background:rgba(0,184,240,.18);color:var(--cB);border-radius:6px 6px 0 0}
+.fs-hdr-cell.lB{background:rgba(0,184,240,.18);color:var(--cB)}
 .fs-hdr-cell.lI{background:rgba(0,223,168,.18);color:var(--cI)}
 .fs-hdr-cell.lN{background:rgba(245,200,0,.18);color:var(--cN)}
 .fs-hdr-cell.lG{background:rgba(255,140,0,.18);color:var(--cG)}
 .fs-hdr-cell.lO{background:rgba(200,80,255,.18);color:var(--cO)}
 .fs-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
-.fs-cell{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.2rem;background:var(--surface3);border:1.5px solid var(--border);color:var(--text)}
+.fs-cell{aspect-ratio:1;min-height:44px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.2rem;background:var(--surface3);border:1.5px solid var(--border);color:var(--text);box-sizing:border-box}
 .fs-cell.free{color:var(--text2);font-size:.9rem}
 .fs-cell.nB{color:var(--cB);border-color:rgba(0,184,240,.4)}
 .fs-cell.nI{color:var(--cI);border-color:rgba(0,223,168,.4)}
 .fs-cell.nN{color:var(--cN);border-color:rgba(245,200,0,.4)}
 .fs-cell.nG{color:var(--cG);border-color:rgba(255,140,0,.4)}
 .fs-cell.nO{color:var(--cO);border-color:rgba(200,80,255,.4)}
-
-/* === EMPTY === */
 .empty-st{text-align:center;padding:50px 20px;color:var(--text3);grid-column:1/-1}
 .empty-st .ei{font-size:3rem;margin-bottom:10px}
 .empty-st p{font-size:.85rem;font-weight:600}
-
-/* === TOAST === */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface2);border:1.5px solid var(--accent);color:var(--text);padding:10px 22px;border-radius:var(--rsm);font-weight:700;font-size:.88rem;z-index:2000;transition:transform .3s;box-shadow:0 4px 20px rgba(0,0,0,.5);white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
+.fb-status{font-size:.68rem;font-weight:700;color:var(--text3);text-align:center;margin-top:4px;min-height:16px}
+.fb-status.ok{color:var(--green)}.fb-status.err{color:var(--red)}
 </style>
-
-  <meta name="app-version" content="v4.2">
+<meta name="app-version" content="v4.0">
 </head>
 <body>
-
-<!-- HEADER -->
 
 <div class="g-head">
   <div>
@@ -202,143 +156,119 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="logo-sub">Gerador de Cartelas</div>
   </div>
   <div class="g-head-right">
-    <span class="sec-lbl">v3.9</span>
-    <a href="index.html" class="btn btn-ghost btn-sm">🎲 Sorteio</a>
+    <span class="sec-lbl">v4.0</span>
+    <a href="index.html" class="btn btn-ghost btn-sm">🎲 Gestor</a>
     <a href="player.html" class="btn btn-ghost btn-sm">🎴 Player</a>
   </div>
 </div>
 
 <div class="g-body">
-
-  <!-- SIDEBAR -->
-
   <div class="side-col">
 
-```
-<!-- Selecao de Modo -->
-<div class="card">
-  <h3>Modo do Banco</h3>
-  <div class="modo-sel">
-    <div class="modo-btn active-90" id="modoBtn90" onclick="setModo(90)">
-      <div class="modo-btn-num">G90</div>
-      <div class="modo-btn-lbl">90 Pedras</div>
-      <div class="modo-btn-cnt" id="cntBtn90">0 cartelas</div>
+    <div class="card">
+      <h3>Modo do Banco</h3>
+      <div class="modo-sel">
+        <div class="modo-btn active-90" id="modoBtn90" onclick="setModo(90)">
+          <div class="modo-btn-num">G90</div>
+          <div class="modo-btn-lbl">90 Pedras</div>
+          <div class="modo-btn-cnt" id="cntBtn90">—</div>
+        </div>
+        <div class="modo-btn" id="modoBtn75" onclick="setModo(75)">
+          <div class="modo-btn-num">G75</div>
+          <div class="modo-btn-lbl">75 Pedras</div>
+          <div class="modo-btn-cnt" id="cntBtn75">—</div>
+        </div>
+      </div>
     </div>
-    <div class="modo-btn" id="modoBtn75" onclick="setModo(75)">
-      <div class="modo-btn-num">G75</div>
-      <div class="modo-btn-lbl">75 Pedras</div>
-      <div class="modo-btn-cnt" id="cntBtn75">0 cartelas</div>
+
+    <div class="card">
+      <h3>Quantidade a Gerar</h3>
+      <input type="number" class="qtd-big" id="qtdInput" value="50" min="1" max="5000" placeholder="50">
+      <div style="font-size:.68rem;color:var(--text3);text-align:center;margin-top:6px">até 5.000 por vez · salva direto no Firebase</div>
     </div>
-  </div>
-</div>
 
-<!-- Quantidade -->
-<div class="card">
-  <h3>Quantidade a Gerar</h3>
-  <input type="number" class="qtd-big" id="qtdInput" value="10" min="1" max="1000" placeholder="10">
-  <div style="font-size:.68rem;color:var(--text3);text-align:center;margin-top:6px">máx. 1000 por vez</div>
-</div>
+    <div class="card">
+      <h3>Opções</h3>
+      <div class="vrow">
+        <label class="vrow-lbl" for="toggleFree">FREE CENTER</label>
+        <label class="tog"><input type="checkbox" id="toggleFree"><span class="tog-sl"></span></label>
+      </div>
+      <div class="vrow">
+        <label class="vrow-lbl" for="toggleUnique">Evitar repetidas</label>
+        <label class="tog"><input type="checkbox" id="toggleUnique" checked><span class="tog-sl"></span></label>
+      </div>
+      <div class="vrow">
+        <label class="vrow-lbl" for="toggleHalf">Não repetir metade</label>
+        <label class="tog"><input type="checkbox" id="toggleHalf"><span class="tog-sl"></span></label>
+      </div>
+    </div>
 
-<!-- Opcoes -->
-<div class="card">
-  <h3>Opções</h3>
-  <div class="vrow">
-    <label class="vrow-lbl" for="toggleFree">FREE CENTER</label>
-    <label class="tog"><input type="checkbox" id="toggleFree"><span class="tog-sl"></span></label>
-  </div>
-  <div class="vrow">
-    <label class="vrow-lbl" for="toggleUnique">Evitar repetidas</label>
-    <label class="tog"><input type="checkbox" id="toggleUnique" checked><span class="tog-sl"></span></label>
-  </div>
-  <div class="vrow">
-    <label class="vrow-lbl" for="toggleHalf">Não repetir metade</label>
-    <label class="tog"><input type="checkbox" id="toggleHalf"><span class="tog-sl"></span></label>
-  </div>
-</div>
+    <div class="card">
+      <h3 id="faixaTitle">Faixas G90</h3>
+      <div class="range-cols" id="rangeDisplay"></div>
+    </div>
 
-<!-- Faixas -->
-<div class="card">
-  <h3 id="faixaTitle">Faixas G90</h3>
-  <div class="range-cols" id="rangeDisplay"></div>
-</div>
+    <button class="btn btn-acc" id="btnGerar" style="width:100%;padding:13px;font-size:1rem">🎲 Gerar e Salvar</button>
+    <div class="progress-wrap" id="progressWrap">
+      <div class="pbar"><div class="pbar-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="pbar-txt" id="progressTxt"></div>
+      <div class="pbar-sub" id="progressSub"></div>
+    </div>
+    <div class="fb-status" id="fbStatus">Carregando banco...</div>
 
-<!-- Gerar -->
-<button class="btn btn-acc" id="btnGerar" style="width:100%;padding:13px;font-size:1rem">🎲 Gerar Cartelas</button>
-<div class="progress-wrap" id="progressWrap">
-  <div class="pbar"><div class="pbar-fill" id="progressFill" style="width:0%"></div></div>
-  <div class="pbar-txt" id="progressTxt">0%</div>
-</div>
+    <div class="divider"></div>
 
-<div class="divider"></div>
-
-<!-- Export / Limpar -->
-<button class="btn btn-green btn-sm" id="btnExport" style="width:100%">⬇️ Exportar JSON</button>
-<button class="btn btn-acc btn-sm" id="btnSyncFb" style="width:100%;margin-top:8px">☁️ Sincronizar com Firebase</button>
-<div class="frow" style="margin-top:8px">
-  <button class="btn btn-red btn-sm" id="btnLimpar90">🗑️ G90</button>
-  <button class="btn btn-red btn-sm" id="btnLimpar75">🗑️ G75</button>
-</div>
-```
+    <button class="btn btn-green btn-sm" id="btnExport" style="width:100%">⬇️ Exportar JSON</button>
+    <div class="frow" style="margin-top:8px">
+      <button class="btn btn-red btn-sm" id="btnLimpar90">🗑️ Limpar G90</button>
+      <button class="btn btn-red btn-sm" id="btnLimpar75">🗑️ Limpar G75</button>
+    </div>
 
   </div>
-
-  <!-- MAIN -->
 
   <div class="main-col">
 
-```
-<!-- Stats -->
-<div class="stats-g">
-  <div class="sbox"><div class="sv sv-total" id="statTotal">0</div><div class="sl">Total no Banco</div></div>
-  <div class="sbox"><div class="sv sv-90" id="stat90">0</div><div class="sl">G90</div></div>
-  <div class="sbox"><div class="sv sv-75" id="stat75">0</div><div class="sl">G75</div></div>
-</div>
-
-<!-- Cartelas -->
-<div class="card" style="flex:1">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-    <h3 style="margin:0">Cartelas no Banco</h3>
-    <span class="badge ba" id="cartelaCount">0</span>
-  </div>
-
-  <div class="ftabs">
-    <button class="ftab active" data-filter="todas">Todas</button>
-    <button class="ftab f90" data-filter="90">G90</button>
-    <button class="ftab f75" data-filter="75">G75</button>
-    <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
-      <span class="sec-lbl">por pág.</span>
-      <select id="perPageSel" style="background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:4px 8px;font-family:'Barlow',sans-serif;font-size:.78rem;font-weight:700;outline:none">
-        <option value="20" selected>20</option>
-        <option value="50">50</option>
-        <option value="100">100</option>
-      </select>
+    <div class="stats-g">
+      <div class="sbox"><div class="sv sv-total" id="statTotal">—</div><div class="sl">Total no Banco</div></div>
+      <div class="sbox"><div class="sv sv-90" id="stat90">—</div><div class="sl">G90</div></div>
+      <div class="sbox"><div class="sv sv-75" id="stat75">—</div><div class="sl">G75</div></div>
     </div>
-  </div>
 
-  <!-- Paginacao superior -->
-  <div class="pager" id="pagerTop" style="display:none;margin-bottom:12px">
-    <button class="btn btn-ghost btn-sm" id="btnPrevTop">← Ant</button>
-    <span class="pager-pg" id="pagerPgTop"></span>
-    <button class="btn btn-ghost btn-sm" id="btnNextTop">Próx →</button>
-    <span class="pager-info" id="pagerInfoTop"></span>
-  </div>
+    <div class="card" style="flex:1">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+        <h3 style="margin:0">Cartelas no Banco</h3>
+        <span class="badge ba" id="cartelaCount">0</span>
+      </div>
+      <div class="ftabs">
+        <button class="ftab active" data-filter="todas">Todas</button>
+        <button class="ftab f90" data-filter="90">G90</button>
+        <button class="ftab f75" data-filter="75">G75</button>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+          <span class="sec-lbl">por pág.</span>
+          <select id="perPageSel" style="background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:4px 8px;font-family:'Barlow',sans-serif;font-size:.78rem;font-weight:700;outline:none">
+            <option value="20" selected>20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+      </div>
+      <div class="pager" id="pagerTop" style="display:none;margin-bottom:12px">
+        <button class="btn btn-ghost btn-sm" id="btnPrevTop">← Ant</button>
+        <span class="pager-pg" id="pagerPgTop"></span>
+        <button class="btn btn-ghost btn-sm" id="btnNextTop">Próx →</button>
+        <span class="pager-info" id="pagerInfoTop"></span>
+      </div>
+      <div class="ct-grid" id="ctGrid"></div>
+      <div class="pager" id="pager" style="display:none">
+        <button class="btn btn-ghost btn-sm" id="btnPrev">← Ant</button>
+        <span class="pager-pg" id="pagerPg"></span>
+        <button class="btn btn-ghost btn-sm" id="btnNext">Próx →</button>
+        <span class="pager-info" id="pagerInfo"></span>
+      </div>
+    </div>
 
-  <div class="ct-grid" id="ctGrid"></div>
-
-  <!-- Paginacao inferior -->
-  <div class="pager" id="pager" style="display:none">
-    <button class="btn btn-ghost btn-sm" id="btnPrev">← Ant</button>
-    <span class="pager-pg" id="pagerPg"></span>
-    <button class="btn btn-ghost btn-sm" id="btnNext">Próx →</button>
-    <span class="pager-info" id="pagerInfo"></span>
   </div>
 </div>
-```
-
-  </div>
-</div>
-
-<!-- Modal: Cartela Expandida -->
 
 <div class="mbk" id="mCartela">
   <div class="modal">
@@ -355,7 +285,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, get, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const _app = initializeApp({
   apiKey:"AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -367,16 +297,21 @@ const _app = initializeApp({
   appId:"1:462709449311:web:569624eeac6fc57c0631ea"
 });
 const _db = getDatabase(_app);
+const fb = p => ref(_db, p);
 
 const LETTERS = ['B','I','N','G','O'];
 const RANGES = {
   90:{B:{min:1,max:18},I:{min:19,max:36},N:{min:37,max:54},G:{min:55,max:72},O:{min:73,max:90}},
   75:{B:{min:1,max:15},I:{min:16,max:30},N:{min:31,max:45},G:{min:46,max:60},O:{min:61,max:75}}
 };
-const STORAGE_KEY = 'ibbi_banco_cartelas_v2';
+const BATCH_SIZE = 100;
 const PG_DEFAULT = 20;
 
-// --- STATE ---
+const $ = id => document.getElementById(id);
+const showToast = msg => { const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800); };
+const setFbStatus = (msg, cls='') => { const el=$('fbStatus');el.textContent=msg;el.className='fb-status'+(cls?' '+cls:''); };
+
+// STATE — banco em memória (IDs + dados para verificação de premissas)
 let banco = {g90:{}, g75:{}};
 let sigs = {g90:new Set(), g75:new Set()};
 let modoAtivo = 90;
@@ -384,26 +319,17 @@ let currentFilter = 'todas';
 let currentPage = 1;
 let perPage = PG_DEFAULT;
 let currentCtId = null;
-
-// --- HELPERS ---
-const $ = id => document.getElementById(id);
-const mKey = m => m===90?'g90':'g75';
-const showToast = msg => {
-  const t=$('toast');t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2800);
-};
+let _carregando = false;
+let _seqG90 = 0, _seqG75 = 0;
 
 // --- MODO ---
-function setModo(m) {
+window.setModo = function(m) {
   modoAtivo = m;
-  $('modoBtn90').className = 'modo-btn' + (m===90?' active-90':'');
-  $('modoBtn75').className = 'modo-btn' + (m===75?' active-75':'');
+  $('modoBtn90').className = 'modo-btn'+(m===90?' active-90':'');
+  $('modoBtn75').className = 'modo-btn'+(m===75?' active-75':'');
   $('faixaTitle').textContent = `Faixas G${m}`;
-  renderFaixas();
-  // Sincronizar filtro com modo selecionado
-  currentPage = 1;
-}
-
+  renderFaixas(); currentPage=1; renderCartelas();
+};
 function renderFaixas() {
   $('rangeDisplay').innerHTML = Object.entries(RANGES[modoAtivo]).map(([col,r])=>
     `<div class="rcol"><div class="rcol-ltr l${col}">${col}</div><div class="rcol-val">${r.min}–${r.max}</div></div>`
@@ -429,12 +355,9 @@ function generateOne(freeCenter) {
   });
   return numeros;
 }
-
-function getSig(n) { return LETTERS.map(l=>n[l].join(',')).join('|'); }
-
+function getSig(n) { return LETTERS.map(l=>(n[l]||[]).join(',')).join('|'); }
 function checkHalf(nova, existentes) {
-  const total = LETTERS.reduce((s,l)=>s+nova[l].filter(n=>n!==null).length, 0);
-  const minDiff = Math.ceil(total/2);
+  const minDiff = 13;
   for(const c of existentes) {
     let diff=0;
     LETTERS.forEach(l=>{ for(let i=0;i<5;i++) if(nova[l][i]!==c.numeros[l][i]) diff++; });
@@ -442,222 +365,132 @@ function checkHalf(nova, existentes) {
   }
   return true;
 }
-
 function nextId() {
-  const key = mKey(modoAtivo);
-  let maxN = 0;
-  Object.keys(banco[key]).forEach(id => {
-    const n = parseInt(id.split('-').pop());
-    if(!isNaN(n) && n>maxN) maxN=n;
-  });
-  return `G${modoAtivo}-${String(maxN+1).padStart(4,'0')}`;
+  if(modoAtivo===90) return `G90-${String(++_seqG90).padStart(4,'0')}`;
+  return `G75-${String(++_seqG75).padStart(4,'0')}`;
+}
+function initSeq() {
+  _seqG90 = Object.keys(banco.g90).reduce((mx,id)=>{const n=parseInt(id.split('-').pop());return isNaN(n)?mx:Math.max(mx,n);},0);
+  _seqG75 = Object.keys(banco.g75).reduce((mx,id)=>{const n=parseInt(id.split('-').pop());return isNaN(n)?mx:Math.max(mx,n);},0);
 }
 
-async function gerarCartelas() {
+// --- GERAR E SALVAR NO FIREBASE EM BATCHES ---
+$('btnGerar').addEventListener('click', async () => {
   const qtd = parseInt($('qtdInput').value)||0;
-  if(qtd<1) { showToast('Informe a quantidade'); return; }
-  if(qtd>1000) { showToast('Máximo 1000 por vez'); return; }
+  if(qtd<1){showToast('Informe a quantidade');return;}
+  if(qtd>5000){showToast('Máximo 5.000 por vez');return;}
+  if(_carregando){showToast('Aguarde o carregamento...');return;}
 
   const freeCenter = $('toggleFree').checked;
   const unique = $('toggleUnique').checked;
   const half = $('toggleHalf').checked;
-  const key = mKey(modoAtivo);
+  const key = modoAtivo===90?'g90':'g75';
 
   $('btnGerar').disabled=true;
-  $('btnGerar').textContent='⏳ Gerando...';
   $('progressWrap').style.display='block';
+  $('progressFill').style.width='0%';
+  $('progressTxt').textContent='Gerando...';
+  $('progressSub').textContent='';
 
-  const existentes = Object.entries(banco[key]).map(([id,c])=>({id,...c}));
-  let geradas = 0;
+  // Existentes para checkHalf — só carrega se necessário
+  const existentes = half ? Object.values(banco[key]).map(c=>({numeros:c.numeros})) : [];
+  let geradas=0, erros=0;
+  let batch={};
 
-  for(let i=0; i<qtd; i++) {
+  for(let i=0;i<qtd;i++) {
     let numeros, sig, tent=0;
     do {
       numeros = generateOne(freeCenter);
       sig = getSig(numeros);
       tent++;
-      if(tent>1500) { showToast(`Limite de combinações atingido após ${geradas}`); break; }
+      if(tent>2000) break;
     } while(
       (unique && sigs[key].has(sig)) ||
       (half && !checkHalf(numeros, existentes))
     );
-    if(tent>1500) break;
+    if(tent>2000){erros++;continue;}
 
     const id = nextId();
+    const cartela = {numeros, freeCenter, criadaEm:Date.now()};
     sigs[key].add(sig);
-    banco[key][id] = {numeros, freeCenter, criadaEm:Date.now()};
-    existentes.push({id, numeros, freeCenter});
+    banco[key][id] = cartela;
+    if(half) existentes.push({numeros});
+    batch[id] = cartela;
     geradas++;
 
     const pct = Math.round((i+1)/qtd*100);
-    $('progressFill').style.width = pct+'%';
-    $('progressTxt').textContent = `${geradas}/${qtd} — ${pct}%`;
-    if(geradas%20===0 || geradas===qtd) await new Promise(r=>setTimeout(r,0));
+    $('progressFill').style.width=pct+'%';
+    $('progressTxt').textContent=`${geradas}/${qtd} geradas`;
+
+    // Salvar batch no Firebase a cada BATCH_SIZE
+    if(Object.keys(batch).length >= BATCH_SIZE) {
+      $('progressSub').textContent=`Salvando no Firebase... (${geradas}/${qtd})`;
+      try {
+        const upd={};
+        Object.entries(batch).forEach(([bid,c])=>{upd[`bingo/banco/${key}/${bid}`]=c;});
+        await update(fb('/'),upd);
+        batch={};
+      } catch(e) {
+        showToast('Erro ao salvar: '+e.message);
+        break;
+      }
+      $('progressSub').textContent='';
+      await new Promise(r=>setTimeout(r,0));
+    }
+  }
+
+  // Salvar restante
+  if(Object.keys(batch).length>0) {
+    $('progressSub').textContent='Finalizando no Firebase...';
+    try {
+      const upd={};
+      Object.entries(batch).forEach(([bid,c])=>{upd[`bingo/banco/${key}/${bid}`]=c;});
+      await update(fb('/'),upd);
+    } catch(e){showToast('Erro ao finalizar: '+e.message);}
   }
 
   $('btnGerar').disabled=false;
-  $('btnGerar').textContent='🎲 Gerar Cartelas';
   $('progressWrap').style.display='none';
   $('qtdInput').value='';
 
-  saveStorage(); updateStats();
-  // Ir para a ultima pagina do modo gerado
-  currentFilter = String(modoAtivo);
+  const msg = erros>0
+    ? `${geradas} cartelas salvas (${erros} ignoradas — combinações esgotadas)`
+    : `✅ ${geradas} cartelas G${modoAtivo} salvas no Firebase`;
+  showToast(msg);
+  setFbStatus(msg,'ok');
+  updateStats();
+  currentFilter=String(modoAtivo);
   document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));
   document.querySelector(`.ftab[data-filter="${modoAtivo}"]`).classList.add('active');
-  const lista = getListaFiltrada();
-  currentPage = Math.ceil(lista.length/perPage);
+  currentPage=Math.ceil(Object.keys(banco[key]).length/perPage);
   renderCartelas();
-  showToast(`✅ ${geradas} cartelas G${modoAtivo} adicionadas`);
-}
-$('btnGerar').addEventListener('click', gerarCartelas);
-
-// --- LISTA FILTRADA ---
-function getListaFiltrada() {
-  let lista = [];
-  if(currentFilter==='todas'||currentFilter==='90')
-    Object.entries(banco.g90).forEach(([id,c])=>lista.push({id,modo:90,...c}));
-  if(currentFilter==='todas'||currentFilter==='75')
-    Object.entries(banco.g75).forEach(([id,c])=>lista.push({id,modo:75,...c}));
-  return lista;
-}
-
-// --- RENDER ---
-function renderCartelas() {
-  const lista = getListaFiltrada();
-  const total = lista.length;
-  const totalPages = Math.max(1, Math.ceil(total/perPage));
-  if(currentPage > totalPages) currentPage = totalPages;
-
-  $('cartelaCount').textContent = total;
-
-  const grid = $('ctGrid');
-  if(!total) {
-    grid.innerHTML = `<div class="empty-st"><div class="ei">🎱</div><p>Banco vazio${currentFilter!=='todas'?' para este modo':''}.<br>Configure e clique em Gerar.</p></div>`;
-    $('pager').style.display='none';
-    return;
-  }
-
-  const start = (currentPage-1)*perPage;
-  const pagina = lista.slice(start, start+perPage);
-  grid.innerHTML = pagina.map(c=>renderCard(c)).join('');
-  pagina.forEach(c=>{
-    document.querySelector(`[data-cid="${c.id}"]`)?.addEventListener('click',()=>openModal(c.id));
-  });
-
-  // Paginacao
-  const pager = $('pager');
-  const pagerTop = $('pagerTop');
-  if(totalPages <= 1) {
-    pager.style.display='none';
-    pagerTop.style.display='none';
-    return;
-  }
-  const pgTxt = `${currentPage} / ${totalPages}`;
-  const infoTxt = `${start+1}–${Math.min(start+perPage,total)} de ${total}`;
-  // inferior
-  pager.style.display='flex';
-  $('pagerPg').textContent=pgTxt;
-  $('pagerInfo').textContent=infoTxt;
-  $('btnPrev').disabled=currentPage<=1;
-  $('btnNext').disabled=currentPage>=totalPages;
-  // superior
-  pagerTop.style.display='flex';
-  $('pagerPgTop').textContent=pgTxt;
-  $('pagerInfoTop').textContent=infoTxt;
-  $('btnPrevTop').disabled=currentPage<=1;
-  $('btnNextTop').disabled=currentPage>=totalPages;
-}
-
-function renderCard(c) {
-  const mini=[];
-  for(let row=0;row<5;row++) {
-    LETTERS.forEach(col=>{
-      const n=c.numeros[col][row];
-      const isFree=c.freeCenter&&col==='N'&&row===2;
-      mini.push(`<div class="ct-cell ${isFree?'free':'h'+col}">${isFree?'★':(n||'')}</div>`);
-    });
-  }
-  return `<div class="ct-card m${c.modo}" data-cid="${c.id}">
-    <div class="ct-hdr"><span class="ct-id">${c.id}</span><span class="ct-badge m${c.modo}">G${c.modo}</span></div>
-    <div class="ct-mini">${mini.join('')}</div>
-    <div class="ct-foot"><span>${c.freeCenter?'★ FREE':'Padrão'}</span><span>${new Date(c.criadaEm).toLocaleDateString('pt-BR')}</span></div>
-  </div>`;
-}
-
-// --- PAGINACAO ---
-$('btnPrev').addEventListener('click',()=>{ if(currentPage>1){currentPage--;renderCartelas();window.scrollTo(0,0);} });
-$('btnNext').addEventListener('click',()=>{ currentPage++;renderCartelas();window.scrollTo(0,0); });
-$('btnPrevTop').addEventListener('click',()=>{ if(currentPage>1){currentPage--;renderCartelas();} });
-$('btnNextTop').addEventListener('click',()=>{ currentPage++;renderCartelas(); });
-$('perPageSel').addEventListener('change',()=>{ perPage=parseInt($('perPageSel').value); currentPage=1; renderCartelas(); });
-
-// --- FILTER TABS ---
-document.querySelectorAll('.ftab').forEach(tab=>{
-  tab.addEventListener('click',()=>{
-    document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));
-    tab.classList.add('active');
-    currentFilter=tab.dataset.filter;
-    currentPage=1;
-    renderCartelas();
-  });
 });
 
-// --- MODAL ---
-function openModal(id) {
-  const key = id.startsWith('G90')?'g90':'g75';
-  const c = banco[key][id]; if(!c) return;
-  currentCtId = id;
-  const modo = key==='g90'?90:75;
-  $('mCtTitle').textContent = `Cartela ${id}`;
-  const hdr = LETTERS.map(l=>`<div class="fs-hdr-cell l${l}">${l}</div>`).join('');
-  const cells = [];
-  for(let row=0;row<5;row++) {
-    LETTERS.forEach(col=>{
-      const n=c.numeros[col][row];
-      const isFree=c.freeCenter&&col==='N'&&row===2;
-      cells.push(`<div class="fs-cell ${isFree?'free':'n'+col}">${isFree?'★ FREE':(n||'')}</div>`);
-    });
+// --- CARREGAR DO FIREBASE ---
+async function loadFromFb() {
+  _carregando=true;
+  setFbStatus('Carregando banco do Firebase...');
+  $('btnGerar').disabled=true;
+  try {
+    const snap = await get(fb('bingo/banco'));
+    const data = snap.val()||{g90:{},g75:{}};
+    banco.g90 = data.g90||{};
+    banco.g75 = data.g75||{};
+    sigs.g90 = new Set(Object.values(banco.g90).map(c=>getSig(c.numeros)));
+    sigs.g75 = new Set(Object.values(banco.g75).map(c=>getSig(c.numeros)));
+    initSeq();
+    const n90=Object.keys(banco.g90).length, n75=Object.keys(banco.g75).length;
+    setFbStatus(`${n90+n75} cartelas carregadas`,'ok');
+    updateStats(); renderCartelas();
+  } catch(e) {
+    setFbStatus('Erro ao carregar: '+e.message,'err');
+    showToast('Erro Firebase: '+e.message);
   }
-  const cor = modo===90?'245,200,0':'0,223,168';
-  const varC = modo===90?'--cN':'--green';
-  $('mCtBody').innerHTML = `
-    <div style="display:flex;gap:6px;margin-bottom:12px">
-      <span class="badge" style="background:rgba(${cor},.1);color:var(${varC});border:1px solid rgba(${cor},.3)">G${modo} — ${modo} Pedras</span>
-      <span class="badge" style="background:var(--surface2);color:var(--text3);border:1px solid var(--border)">${c.freeCenter?'★ Free Center':'Sem Free'}</span>
-    </div>
-    <div class="fs-cartela">
-      <div class="fs-hdr">${hdr}</div>
-      <div class="fs-grid">${cells.join('')}</div>
-    </div>
-    <div style="font-size:.72rem;color:var(--text3);margin-top:8px">📅 ${new Date(c.criadaEm).toLocaleString('pt-BR')}</div>`;
-  $('mCartela').classList.add('open');
-}
-$('btnMCtFechar').addEventListener('click',()=>$('mCartela').classList.remove('open'));
-$('mCartela').addEventListener('click',e=>{if(e.target===$('mCartela'))$('mCartela').classList.remove('open');});
-$('btnMCtExcluir').addEventListener('click',()=>{
-  if(!currentCtId) return;
-  if(!confirm(`Excluir ${currentCtId} do banco?`)) return;
-  const key = currentCtId.startsWith('G90')?'g90':'g75';
-  sigs[key].delete(getSig(banco[key][currentCtId].numeros));
-  delete banco[key][currentCtId];
-  saveStorage(); updateStats(); renderCartelas();
-  $('mCartela').classList.remove('open');
-  showToast('Cartela removida');
-});
-
-// --- STATS ---
-function updateStats() {
-  const n90=Object.keys(banco.g90).length;
-  const n75=Object.keys(banco.g75).length;
-  $('statTotal').textContent=n90+n75;
-  $('stat90').textContent=n90;
-  $('stat75').textContent=n75;
-  $('cntBtn90').textContent=n90+' cartelas';
-  $('cntBtn75').textContent=n75+' cartelas';
+  _carregando=false;
+  $('btnGerar').disabled=false;
 }
 
-// --- EXPORT ---
+// --- EXPORT JSON ---
 $('btnExport').addEventListener('click',()=>{
   const n=Object.keys(banco.g90).length+Object.keys(banco.g75).length;
   if(!n){showToast('Banco vazio');return;}
@@ -665,74 +498,122 @@ $('btnExport').addEventListener('click',()=>{
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
   a.download=`ibbi_banco_${new Date().toISOString().slice(0,10)}.json`;
-  a.click(); URL.revokeObjectURL(a.href);
+  a.click();URL.revokeObjectURL(a.href);
   showToast(`Exportado: G90(${Object.keys(banco.g90).length}) G75(${Object.keys(banco.g75).length})`);
 });
 
 // --- LIMPAR ---
-$('btnLimpar90').addEventListener('click',()=>{
-  const n=Object.keys(banco.g90).length; if(!n)return;
-  if(!confirm(`Excluir todas as ${n} cartelas G90?`))return;
-  banco.g90={};sigs.g90.clear();saveStorage();updateStats();renderCartelas();showToast('G90 limpo');
+$('btnLimpar90').addEventListener('click',async()=>{
+  const n=Object.keys(banco.g90).length;if(!n)return;
+  if(!confirm(`Excluir todas as ${n} cartelas G90?\nIsso também apaga do Firebase.`))return;
+  try{
+    await remove(fb('bingo/banco/g90'));
+    banco.g90={};sigs.g90.clear();_seqG90=0;
+    showToast('G90 limpo');setFbStatus('G90 removido','ok');
+    updateStats();renderCartelas();
+  }catch(e){showToast('Erro: '+e.message);}
 });
-$('btnLimpar75').addEventListener('click',()=>{
-  const n=Object.keys(banco.g75).length; if(!n)return;
-  if(!confirm(`Excluir todas as ${n} cartelas G75?`))return;
-  banco.g75={};sigs.g75.clear();saveStorage();updateStats();renderCartelas();showToast('G75 limpo');
+$('btnLimpar75').addEventListener('click',async()=>{
+  const n=Object.keys(banco.g75).length;if(!n)return;
+  if(!confirm(`Excluir todas as ${n} cartelas G75?\nIsso também apaga do Firebase.`))return;
+  try{
+    await remove(fb('bingo/banco/g75'));
+    banco.g75={};sigs.g75.clear();_seqG75=0;
+    showToast('G75 limpo');setFbStatus('G75 removido','ok');
+    updateStats();renderCartelas();
+  }catch(e){showToast('Erro: '+e.message);}
 });
 
-// --- STORAGE ---
-function saveStorage() {
-  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(banco));}catch(e){}
+// --- STATS ---
+function updateStats(){
+  const n90=Object.keys(banco.g90).length, n75=Object.keys(banco.g75).length;
+  $('stat90').textContent=n90;$('stat75').textContent=n75;$('statTotal').textContent=n90+n75;
+  $('cntBtn90').textContent=n90+' cartelas';$('cntBtn75').textContent=n75+' cartelas';
 }
-function loadStorage() {
-  try {
-    const data=localStorage.getItem(STORAGE_KEY);
-    if(data) {
-      banco=JSON.parse(data);
-      ['g90','g75'].forEach(key=>{
-        sigs[key]=new Set();
-        Object.values(banco[key]).forEach(c=>sigs[key].add(getSig(c.numeros)));
-      });
-    } else {
-      // Migrar formato antigo
-      const old=localStorage.getItem('ibbi_cartelas_banco');
-      if(old) {
-        const arr=JSON.parse(old); let seq={90:0,75:0};
-        arr.forEach(c=>{
-          const key=mKey(c.modo); seq[c.modo]++;
-          const id=`G${c.modo}-${String(seq[c.modo]).padStart(4,'0')}`;
-          banco[key][id]={numeros:c.numeros,freeCenter:c.freeCenter,criadaEm:c.criadaEm};
-          sigs[key].add(getSig(c.numeros));
-        });
-        saveStorage();
-        showToast(`${arr.length} cartelas migradas do formato anterior`);
-      }
-    }
-  } catch(e){}
-  updateStats();
-  renderCartelas();
+
+// --- RENDER PAGINADO ---
+function getListaFiltrada(){
+  const todos=[
+    ...Object.entries(banco.g90).map(([id,c])=>({id,modo:90,...c})),
+    ...Object.entries(banco.g75).map(([id,c])=>({id,modo:75,...c}))
+  ];
+  if(currentFilter==='90') return todos.filter(c=>c.modo===90);
+  if(currentFilter==='75') return todos.filter(c=>c.modo===75);
+  return todos;
 }
-// --- SYNC FIREBASE ---
-$('btnSyncFb').addEventListener('click', async () => {
-  const n = Object.keys(banco.g90).length + Object.keys(banco.g75).length;
-  if(!n){showToast('Banco vazio');return;}
-  if(!confirm(`Sincronizar ${n} cartelas com Firebase?`))return;
-  $('btnSyncFb').textContent='☁️ Enviando...';
-  $('btnSyncFb').disabled=true;
-  try {
-    await set(ref(_db,'bingo/banco/g90'), banco.g90);
-    await set(ref(_db,'bingo/banco/g75'), banco.g75);
-    showToast(`✅ ${n} cartelas sincronizadas no Firebase`);
-  } catch(e) {
-    showToast('❌ Erro: '+e.message);
+function renderCartelas(){
+  const lista=getListaFiltrada();
+  const total=lista.length;
+  const totalPages=Math.max(1,Math.ceil(total/perPage));
+  if(currentPage>totalPages) currentPage=totalPages;
+  const start=(currentPage-1)*perPage;
+  const page=lista.slice(start,start+perPage);
+  $('cartelaCount').textContent=total;
+  const showPager=totalPages>1;
+  ['pager','pagerTop'].forEach(id=>{$(id).style.display=showPager?'flex':'none';});
+  const pgTxt=`${currentPage} / ${totalPages}`;
+  const infoTxt=`${total?start+1:0}–${Math.min(start+perPage,total)} de ${total}`;
+  $('pagerPg').textContent=pgTxt;$('pagerPgTop').textContent=pgTxt;
+  $('pagerInfo').textContent=infoTxt;$('pagerInfoTop').textContent=infoTxt;
+  $('btnPrev').disabled=$('btnPrevTop').disabled=currentPage<=1;
+  $('btnNext').disabled=$('btnNextTop').disabled=currentPage>=totalPages;
+  if(!page.length){
+    $('ctGrid').innerHTML='<div class="empty-st"><div class="ei">🎱</div><p>Nenhuma cartela no banco.<br>Gere as primeiras!</p></div>';
+    return;
   }
-  $('btnSyncFb').textContent='☁️ Sincronizar com Firebase';
-  $('btnSyncFb').disabled=false;
+  $('ctGrid').innerHTML=page.map(c=>{
+    const cls=c.modo===90?'m90':'m75';
+    let mini='';
+    for(let r=0;r<5;r++){LETTERS.forEach(col=>{const n=c.numeros[col][r];const f=c.freeCenter&&col==='N'&&r===2;mini+=`<div class="ct-cell ${f?'free':'h'+col}">${f?'★':(n||'')}</div>`;});}
+    return`<div class="ct-card ${cls}" onclick="openCartela('${c.id}')">
+      <div class="ct-hdr"><span class="ct-id">${c.id}</span><span class="ct-badge ${cls}">G${c.modo}</span></div>
+      <div class="ct-mini">${mini}</div>
+      <div class="ct-foot"><span>${c.freeCenter?'Free ★':''}</span><span>${new Date(c.criadaEm).toLocaleDateString('pt-BR')}</span></div>
+    </div>`;
+  }).join('');
+}
+
+// --- PAGINACAO ---
+['btnPrev','btnPrevTop'].forEach(id=>{$(id)?.addEventListener('click',()=>{if(currentPage>1){currentPage--;renderCartelas();}});});
+['btnNext','btnNextTop'].forEach(id=>{$(id)?.addEventListener('click',()=>{currentPage++;renderCartelas();});});
+$('perPageSel')?.addEventListener('change',()=>{perPage=parseInt($('perPageSel').value);currentPage=1;renderCartelas();});
+document.querySelectorAll('.ftab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    currentFilter=tab.dataset.filter;currentPage=1;renderCartelas();
+  });
 });
 
-loadStorage();
-</script>
+// --- MODAL CARTELA ---
+window.openCartela=function(id){
+  const key=id.startsWith('G90')?'g90':'g75';
+  const c=banco[key][id];if(!c)return;
+  currentCtId=id;
+  $('mCtTitle').textContent=id;
+  const hdr=LETTERS.map(l=>`<div class="fs-hdr-cell l${l}">${l}</div>`).join('');
+  let cells='';
+  for(let r=0;r<5;r++){LETTERS.forEach((col,ci)=>{const n=c.numeros[col][r];const f=c.freeCenter&&ci===2&&r===2;cells+=`<div class="fs-cell ${f?'free':'n'+col}">${f?'★':(n||'')}</div>`;});}
+  $('mCtBody').innerHTML=`<div class="fs-cartela"><div class="fs-hdr">${hdr}</div><div class="fs-grid">${cells}</div></div>
+    <div style="font-size:.72rem;color:var(--text3)">Criada em: ${new Date(c.criadaEm).toLocaleString('pt-BR')}</div>`;
+  $('mCartela').classList.add('open');
+};
+$('btnMCtFechar').addEventListener('click',()=>$('mCartela').classList.remove('open'));
+$('btnMCtExcluir').addEventListener('click',async()=>{
+  if(!currentCtId)return;
+  if(!confirm(`Excluir cartela ${currentCtId}?`))return;
+  const key=currentCtId.startsWith('G90')?'g90':'g75';
+  try{
+    await remove(fb(`bingo/banco/${key}/${currentCtId}`));
+    sigs[key].delete(getSig(banco[key][currentCtId].numeros));
+    delete banco[key][currentCtId];
+    $('mCartela').classList.remove('open');
+    showToast('Cartela excluída');updateStats();renderCartelas();
+  }catch(e){showToast('Erro: '+e.message);}
+});
 
+// --- INIT ---
+loadFromFb();
+</script>
 </body>
 </html>

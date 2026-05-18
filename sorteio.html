@@ -1,10 +1,10 @@
-<!-- IBBI Sorteio v3.3 - 2026-05-18 - Tela de Sorteio (por Bingo) -->
+<!-- IBBI Sorteio v3.4 - 2026-05-18 - Tela de Sorteio (por Bingo) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Sorteio v3.3</title>
+<title>IBBI Sorteio v3.4</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -179,7 +179,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .err-screen h1{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:3px;color:var(--red);margin-bottom:14px}
 .err-screen p{color:var(--text2);font-size:.95rem;margin-bottom:18px;max-width:480px;line-height:1.5}
 </style>
-  <meta name="app-version" content="v3.3">
+  <meta name="app-version" content="v3.4">
 </head>
 <body>
 
@@ -199,7 +199,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
       <span class="mode-badge" id="s2mode">90 pedras</span>
-      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v3.3</span>
+      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v3.4</span>
     </div>
     <span class="conn off" id="connDot" style="margin-left:8px">⬤ offline</span>
     <div class="s2-right">
@@ -328,7 +328,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v3.3';
+const APP_VERSION = 'v3.4';
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
   authDomain: "domino-fa285.firebaseapp.com",
@@ -981,13 +981,19 @@ function renderGanhadoresPremio(cp) {
     $('mWinActions').style.display='none';
     return;
   }
+  const isDividido = cp.ganhadores.length > 1;
   list.innerHTML = cp.ganhadores.map((g,i)=>`
     <div class="winner-item">
       <span class="wi-id">${esc(g.cartelaId||'-')}</span>
       <span class="wi-name">${esc(g.nome)}</span>
       <span style="font-size:.7rem;color:var(--text3)">${fmtTs(g.ts)}</span>
+      ${isDividido?'<span style="font-size:.65rem;background:rgba(245,200,0,.12);color:var(--cN);padding:2px 6px;border-radius:4px">&#128101; Dividido</span>':'<span style="font-size:.65rem;background:rgba(0,223,168,.1);color:var(--green);padding:2px 6px;border-radius:4px">&#127942; Unico</span>'}
       ${g.cartela&&g.cartela.numeros?'<button class="btn btn-blue btn-sm" data-vercartela-win="'+i+'" style="padding:4px 8px;font-size:.72rem">&#127921; Ver</button>':''}
     </div>`).join('');
+  // Header com info de divisao
+  if(isDividido){
+    list.insertAdjacentHTML('afterbegin','<div style="background:rgba(245,200,0,.08);border:1.5px solid rgba(245,200,0,.25);border-radius:var(--rsm);padding:8px 10px;margin-bottom:10px;font-size:.8rem;color:var(--cN);text-align:center">&#128101; Premio dividido entre <strong>'+cp.ganhadores.length+'</strong> ganhadores</div>');
+  }
   // Bind botao Ver Cartela nos ganhadores
   list.querySelectorAll('[data-vercartela-win]').forEach(btn=>{
     btn.addEventListener('click',()=>{
@@ -1012,8 +1018,12 @@ $('btnGanhadorTodos').addEventListener('click', ()=>{
   const listEl = $('mWinTodosList');
   listEl.innerHTML = premios.map((p,pi)=>{
     const ganh = p.ganhadores || [];
+    const isDividido = ganh.length > 1;
     return `<div style="background:var(--surface2);border-radius:var(--rsm);padding:10px;margin-bottom:8px">
-      <div style="font-weight:800;color:var(--accent);font-size:.95rem">#${p.ordem} - ${esc(p.nome)}</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="font-weight:800;color:var(--accent);font-size:.95rem">#${p.ordem} - ${esc(p.nome)}</span>
+        ${isDividido?'<span style="font-size:.65rem;background:rgba(245,200,0,.12);color:var(--cN);padding:2px 7px;border-radius:4px;font-weight:700">&#128101; Dividido ('+ganh.length+')</span>':ganh.length?'<span style="font-size:.65rem;background:rgba(0,223,168,.1);color:var(--green);padding:2px 7px;border-radius:4px;font-weight:700">&#127942; Unico</span>':''}
+      </div>
       <div style="font-size:.72rem;color:var(--text3);margin-top:2px">${p.regra==='cheia'?'Cartela Cheia':'Linha/Coluna/Diagonal'}${p.fechado?' • 🔒 Fechado':''}</div>
       ${ganh.length ? ganh.map((g,gi)=>`<div style="margin-top:6px;font-size:.85rem;color:var(--green);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
         <span>🏆 ${esc(g.nome)} (${esc(g.cartelaId||'-')})</span>

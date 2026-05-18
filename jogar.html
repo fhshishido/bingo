@@ -303,6 +303,20 @@ async function initJogo() {
       bingoData = bingoSnap.val();
       if (bingoData) {
         jogoIniciado = true;
+        // Se o sorteio foi reiniciado (drawn vazio) mas cartelas ainda tem marcados do localStorage, limpar
+        const drawnEmpty = !(bingoData.drawn || []).length;
+        const hasMarcados = cartelas.some(c => (c.marcados || []).length > 0);
+        const hasGanhadores = cartelas.some(c => c.status === 'batida');
+        if (drawnEmpty && (hasMarcados || hasGanhadores)) {
+          cartelas.forEach(c => { c.marcados = []; c.status = 'ativa'; c.premioGanho = null; });
+          saveAllCartelas(); cartelaIdx = 0;
+          renderCartela();
+          // Limpar avisos de batida
+          try { Object.keys(sessionStorage).forEach(k => { if (k.startsWith('batida_')) sessionStorage.removeItem(k); }); } catch (e) { }
+        }
+        // Mostrar historico se ja tem pedras sorteadas
+        const hs = $('histSection');
+        if (hs && (bingoData.drawn || []).length > 0) hs.style.display = 'block';
         updateStatusBar();
         renderBall(); renderHist(); checkAutoBatida();
       }
@@ -758,6 +772,9 @@ function setupListeners() {
           showToast('Nova rodada iniciada!');
         }
         bingoData = b; jogoIniciado = true;
+        // Mostrar historico se ja tem pedras sorteadas
+        const hs2 = $('histSection');
+        if (hs2 && (bingoData.drawn || []).length > 0) hs2.style.display = 'block';
         updateStatusBar(); renderBall(); renderHist(); checkAutoBatida(); renderCartela();
         // Listener do bingo
         _unsubBingo = onValue(fb('bingo/eventos/' + evId + '/bingos/' + ev2.bingoAtivoId), snap2 => {
@@ -766,11 +783,13 @@ function setupListeners() {
           const wasReset = bingoData && (bingoData.drawn||[]).length > 0 && (b2.drawn||[]).length === 0;
           bingoData = b2;
           if (wasReset) {
-            // Sorteio reiniciado — limpar marcados, MANTER ganhadores no historico
-            cartelas.forEach(c => { c.marcados = []; c.status = 'ativa'; });
-            saveAllCartelas(); cartelaIdx = 0; renderCartela(); renderBall(); renderHist(); checkAutoBatida(); showToast('Sorteio reiniciado!');
+            // Sorteio reiniciado — limpar marcados e ganhadores
+            cartelas.forEach(c => { c.marcados = []; c.status = 'ativa'; c.premioGanho = null; });
+            saveAllCartelas(); cartelaIdx = 0; renderCartela(); renderBall(); renderHist(); checkAutoBatida(); updateGanhadoresButton(); showToast('Sorteio reiniciado!');
             // Limpar avisos de batida do sessionStorage
             try { Object.keys(sessionStorage).forEach(k => { if (k.startsWith('batida_')) sessionStorage.removeItem(k); }); } catch (e) { }
+            // Esconder historico (drawn vazio apos reinicio)
+            const hs = $('histSection'); if (hs) hs.style.display = 'none';
           }
           if (newBall) onNewBall();
           updateStatusBar(); renderBall(); renderHist(); checkAutoBatida();

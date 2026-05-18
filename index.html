@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v11.1 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
+<!-- IBBI Bingo v11.2 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v11.1</title>
+<title>IBBI Bingo v11.2</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -289,7 +289,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 .win-inp::placeholder{color:var(--text3)}
 
 </style>
-  <meta name="app-version" content="v11.1">
+  <meta name="app-version" content="v11.2">
 </head>
 <body>
 
@@ -307,7 +307,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.1</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.2</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -585,7 +585,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <button class="btn btn-acc btn-sm" id="btnQRDownload">⬇ Baixar PNG</button>
       <button class="btn btn-ghost btn-sm" id="btnQRClose">Fechar</button>
     </div>
-    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.1</div>
+    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.2</div>
   </div>
 </div>
 
@@ -632,7 +632,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v11.1';
+const APP_VERSION = 'v11.2';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -739,13 +739,15 @@ function renderEv(){
       // Ignora clicks em botoes ou em elementos com data-* de acoes
       const btn = e.target.closest('button');
       if(btn) return;
-      if(e.target.closest('[data-shareid]') || e.target.closest('[data-editid]') || e.target.closest('[data-delid]') || e.target.closest('[data-permsid]') || e.target.closest('[data-winnersid]')) return;
+      if(e.target.closest('[data-shareid]') || e.target.closest('[data-qrid]') || e.target.closest('[data-editid]') || e.target.closest('[data-delid]') || e.target.closest('[data-permsid]') || e.target.closest('[data-winnersid]')) return;
       openEvent(id);
     });
     const d=g.querySelector('[data-delid="'+id+'"]');
     if(d) d.addEventListener('click',e=>{e.stopPropagation();startDel(id);});
     const s=g.querySelector('[data-shareid="'+id+'"]');
     if(s) s.addEventListener('click',e=>{e.stopPropagation();shareEvent(id);});
+    const qr=g.querySelector('[data-qrid="'+id+'"]');
+    if(qr) qr.addEventListener('click',e=>{e.stopPropagation();mostrarQRCodeEvento(id);});
     const ed=g.querySelector('[data-editid="'+id+'"]');
     if(ed) ed.addEventListener('click',e=>{e.stopPropagation();openEditFromCard(id);});
     const pm=g.querySelector('[data-permsid="'+id+'"]');
@@ -780,6 +782,7 @@ function cardHTML(id,ev){
       +'<div class="ev-foot">'
       +'<button class="btn btn-ghost btn-sm" data-winnersid="'+id+'">🏆 Ganhadores</button>'
       +'<button class="btn btn-ghost btn-sm" data-shareid="'+id+'" title="Copiar link">🔗 Link</button>'
+      +'<button class="btn btn-ghost btn-sm" data-qrid="'+id+'" title="Ver QR Code">🔳 QR</button>'
       +'<button class="btn btn-ghost btn-sm" data-editid="'+id+'">⚙ Editar</button>'
       +'<button class="btn btn-ghost btn-sm" data-permsid="'+id+'">👥 Perms</button>'
       +'<button class="btn btn-red btn-sm" data-delid="'+id+'">🗑️ Exc</button>'
@@ -1767,6 +1770,14 @@ function mostrarGanhadoresBingo(bingo){
   }
   html += '</div>';
   openModal('&#127942; Ganhadores — ' + esc(bingo.nome||'Rodada'), html);
+}
+
+function mostrarQRCodeEvento(evId){
+  const ev = eventos[evId]; if(!ev) return;
+  const link = 'https://ia7dwzgshzyqw.kimi.page/player.html?ev=' + evId;
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + encodeURIComponent(link);
+  $('qrBox').innerHTML = '<img src="'+qrUrl+'" alt="QR Code" style="width:240px;height:240px;display:block">';
+  openM('mQR');
 }
 
 function mostrarGanhadoresEvento(ev){

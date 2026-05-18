@@ -179,7 +179,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .err-screen h1{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:3px;color:var(--red);margin-bottom:14px}
 .err-screen p{color:var(--text2);font-size:.95rem;margin-bottom:18px;max-width:480px;line-height:1.5}
 </style>
-  <meta name="app-version" content="v3.2">
+  <meta name="app-version" content="v3.3">
 </head>
 <body>
 
@@ -197,8 +197,11 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       <div class="s2-evname" id="s2name">--</div>
       <div class="s2-bingoname" id="s2bingoName">--</div>
     </div>
-    <span class="mode-badge" id="s2mode">90 pedras</span>
-    <span class="conn off" id="connDot">⬤ offline</span>
+    <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
+      <span class="mode-badge" id="s2mode">90 pedras</span>
+      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v3.3</span>
+    </div>
+    <span class="conn off" id="connDot" style="margin-left:8px">⬤ offline</span>
     <div class="s2-right">
       <button class="btn btn-yellow btn-sm" id="btnReiniciarBingo">↻ Reiniciar Bingo</button>
       <button class="btn btn-red btn-sm" id="btnEncerrarBingo">⛔ Encerrar Bingo</button>

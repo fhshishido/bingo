@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v11.4 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
+<!-- IBBI Bingo v11.5 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v11.4</title>
+<title>IBBI Bingo v11.5</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -289,7 +289,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 .win-inp::placeholder{color:var(--text3)}
 
 </style>
-  <meta name="app-version" content="v11.4">
+  <meta name="app-version" content="v11.5">
 </head>
 <body>
 
@@ -307,7 +307,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.4</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.5</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -585,7 +585,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <button class="btn btn-acc btn-sm" id="btnQRDownload">⬇ Baixar PNG</button>
       <button class="btn btn-ghost btn-sm" id="btnQRClose">Fechar</button>
     </div>
-    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.4</div>
+    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.5</div>
   </div>
 </div>
 
@@ -636,7 +636,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v11.4';
+const APP_VERSION = 'v11.5';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -835,18 +835,36 @@ function openPermsFromCard(id){
 }
 
 // --- NOVO EVENTO ---
-// --- BANCO DE CARTELAS (localStorage) ---
+// --- BANCO DE CARTELAS (localStorage + Firebase fallback) ---
 const BANCO_KEY = 'ibbi_banco_cartelas_v2';
-function loadBanco() {
-  try { return JSON.parse(localStorage.getItem(BANCO_KEY)) || {g90:{},g75:{}}; }
-  catch(e) { return {g90:{},g75:{}}; }
+let _bancoCache = null;
+
+async function loadBanco() {
+  // 1. Tentar localStorage
+  try {
+    const local = JSON.parse(localStorage.getItem(BANCO_KEY));
+    if(local && (Object.keys(local.g90||{}).length + Object.keys(local.g75||{}).length) > 0) {
+      _bancoCache = local;
+      return local;
+    }
+  } catch(e){}
+  // 2. Tentar cache em memória
+  if(_bancoCache) return _bancoCache;
+  // 3. Buscar do Firebase
+  try {
+    const snap = await get(fb('bingo/banco'));
+    const fbBanco = snap.val() || {g90:{},g75:{}};
+    _bancoCache = fbBanco;
+    try { localStorage.setItem(BANCO_KEY, JSON.stringify(fbBanco)); } catch(e){}
+    return fbBanco;
+  } catch(e) { return {g90:{},g75:{}}; }
 }
 function saveBanco(b) {
+  _bancoCache = b;
   try { localStorage.setItem(BANCO_KEY, JSON.stringify(b)); } catch(e){}
 }
-function bancoDisponiveis(modo, eventosBanco) {
-  // Cartelas do banco que ainda nao foram reservadas por nenhum evento ativo
-  const banco = loadBanco();
+async function bancoDisponiveis(modo, eventosBanco) {
+  const banco = await loadBanco();
   const key = modo===90 ? 'g90' : 'g75';
   const usadas = new Set();
   Object.values(eventosBanco||{}).forEach(ev => {
@@ -854,18 +872,20 @@ function bancoDisponiveis(modo, eventosBanco) {
       Object.keys(ev.cartelas||{}).forEach(cid => usadas.add(cid));
     }
   });
-  return Object.keys(banco[key]).filter(id => !usadas.has(id));
+  return Object.keys(banco[key]||{}).filter(id => !usadas.has(id));
 }
 
-function updateBancoInfo() {
+async function updateBancoInfo() {
   const modo = parseInt($('mEvMode').value);
-  const disp = bancoDisponiveis(modo, eventos);
+  $('mEvBancoInfo').innerHTML = 'Carregando banco...';
+  const disp = await bancoDisponiveis(modo, eventos);
+  const banco = await loadBanco();
   const key = modo===90 ? 'g90' : 'g75';
-  const total = Object.keys(loadBanco()[key]||{}).length;
+  const total = Object.keys(banco[key]||{}).length;
   $('mEvBancoInfo').innerHTML =
     'Banco G'+modo+': <strong style="color:var(--accent)">'+total+'</strong> cartelas &nbsp;|&nbsp; '
     +'Disponiveis: <strong style="color:var(--green)">'+disp.length+'</strong>'
-    +(disp.length===0 ? '<br><span style="color:var(--red)">&#9888; Banco vazio para G'+modo+'. Gere cartelas primeiro.</span>' : '');
+    +(disp.length===0 ? '<br><span style="color:var(--red)">&#9888; Banco vazio para G'+modo+'. Sincronize o Gerador de Cartelas.</span>' : '');
 }
 
 function toggleBancoOpts() {
@@ -885,7 +905,7 @@ $('btnNovoEv').addEventListener('click',()=>{
 });
 $('btnCancelEv').addEventListener('click',()=>closeM('mNewEv'));
 
-$('btnCreateEv').addEventListener('click',()=>{
+$('btnCreateEv').addEventListener('click', async ()=>{
   const nome=$('mEvNome').value.trim();
   if(!nome){alert('Digite o nome do evento.');return;}
   const mode=parseInt($('mEvMode').value);
@@ -897,9 +917,9 @@ $('btnCreateEv').addEventListener('click',()=>{
   if(tipoCartela==='banco') {
     const qtd = parseInt($('mEvQtdCartelas').value)||0;
     if(qtd<1){alert('Informe a quantidade de cartelas para o evento.');return;}
-    const disp = bancoDisponiveis(mode, eventos);
+    const disp = await bancoDisponiveis(mode, eventos);
     if(qtd > disp.length){
-      alert(`Cartelas insuficientes no banco G${mode}.\nDisponíveis: ${disp.length}\nSolicitadas: ${qtd}\n\nGere mais cartelas no Gerador.`);
+      alert(`Cartelas insuficientes no banco G${mode}.\nDisponíveis: ${disp.length}\nSolicitadas: ${qtd}\n\nSincronize o Gerador de Cartelas com o Firebase.`);
       return;
     }
     disp.slice(0, qtd).forEach(cid => {
@@ -1651,21 +1671,21 @@ function toggleEBancoOpts() {
 }
 $('eEvTipo').addEventListener('change', toggleEBancoOpts);
 
-function updateEBancoInfo() {
+async function updateEBancoInfo() {
   const modo = evData?.mode || 90;
   const atual = Object.keys(evData?.cartelas||{}).length;
-  const disp = bancoDisponiveis(modo, eventos);
+  const disp = await bancoDisponiveis(modo, eventos);
   $('eEvBancoInfo').innerHTML =
     `Atual: <strong style="color:var(--accent)">${atual}</strong> cartelas &nbsp;|&nbsp; ` +
     `Disponíveis para add: <strong style="color:var(--green)">${disp.length}</strong>` +
-    (disp.length===0 && atual===0 ? `<br><span style="color:var(--red)">Banco vazio. Gere cartelas primeiro.</span>` : '');
+    (disp.length===0 && atual===0 ? `<br><span style="color:var(--red)">Banco vazio. Sincronize o Gerador de Cartelas.</span>` : '');
 }
 $('eEvQtdCartelas')?.addEventListener('input', updateEBancoInfo);
 
 $('btnEditarCancelar')?.addEventListener('click',()=>closeM('mEditar'));
 $('btnS2Edit')?.addEventListener('click',()=>abrirModalEditar());
 
-$('btnEditarSalvar')?.addEventListener('click',()=>{
+$('btnEditarSalvar')?.addEventListener('click', async ()=>{
   if(!evData) return;
   const nome = $('eEvNome').value.trim();
   if(!nome){ $('eEvErr').textContent='Digite o nome do evento.'; $('eEvErr').style.display='block'; return; }
@@ -1699,7 +1719,7 @@ $('btnEditarSalvar')?.addEventListener('click',()=>{
 
     if(novaQtd > qtdAtual) {
       const faltam = novaQtd - qtdAtual;
-      const disp = bancoDisponiveis(evData.mode, eventos);
+      const disp = await bancoDisponiveis(evData.mode, eventos);
       if(faltam > disp.length) {
         $('eEvErr').textContent = 'Banco insuficiente. Disponíveis: '+disp.length+', necessários: '+faltam+'.';
         $('eEvErr').style.display = 'block';

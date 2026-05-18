@@ -849,7 +849,7 @@ function getCurrentPremio() {
 // ============== LISTENERS ==============
 let _unsubBingo = null;
 
-function subscribeBingo(bingoId, isNewBingo) {
+function subscribeBingo(bingoId, isNewBingo, isReinicioEvento) {
   if (!bingoId) return;
   if (_unsubBingo) { _unsubBingo(); _unsubBingo = null; }
   let primeiroDisparo = true;
@@ -863,6 +863,11 @@ function subscribeBingo(bingoId, isNewBingo) {
         showToast('Nova rodada iniciada!');
         // Limpar avisos de batida do sessionStorage ao trocar de bingo
         try { Object.keys(sessionStorage).forEach(k => { if (k.startsWith('batida_')) sessionStorage.removeItem(k); }); } catch (e) { }
+        // Se reinicio de evento, esconder botao de premios (sera atualizado pelo listener do historico)
+        if (isReinicioEvento) {
+          const btn = $('btnHistPremios');
+          if (btn) { btn.style.display = 'none'; btn.innerHTML = '&#127881; Meus Prêmios (0)'; }
+        }
       }
       bingoData = b2; jogoIniciado = true;
       const hs2 = $('histSection');
@@ -902,10 +907,14 @@ function setupListeners() {
 
     if (ev2.bingoAtivoId && ev2.bingoAtivoId !== oldBingoId) {
       // Bingo ativo MUDOU — nova rodada
-      subscribeBingo(ev2.bingoAtivoId, !!oldBingoId);
+      // Detectar reinicio de evento: nova ordem <= ordem anterior (voltou ou reiniciou)
+      const oldOrdem = evData?.bingos?.[oldBingoId]?.ordem || 0;
+      const newOrdem = ev2?.bingos?.[ev2.bingoAtivoId]?.ordem || 0;
+      const isReinicioEvento = oldBingoId && newOrdem <= oldOrdem;
+      subscribeBingo(ev2.bingoAtivoId, !!oldBingoId, isReinicioEvento);
     } else if (ev2.bingoAtivoId && !_unsubBingo) {
       // Ja tem bingo ativo mas sem listener (pagina acabou de carregar)
-      subscribeBingo(ev2.bingoAtivoId, false);
+      subscribeBingo(ev2.bingoAtivoId, false, false);
     }
   });
 

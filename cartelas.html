@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Cartelas v4.6 -->
+<!-- IBBI Bingo Cartelas v4.7 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>IBBI Cartelas v4.6</title>
+<title>IBBI Cartelas v4.7</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -49,7 +49,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .c-evname{font-size:.7rem;font-weight:700;color:var(--text2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* BODY */
-.c-body{padding:12px;max-width:480px;margin:0 auto}
+.c-body{padding:12px;max-width:480px;margin:0 auto;width:100%;box-sizing:border-box}
 
 /* CARTELA PAGINACAO */
 .cartela-nav{display:flex;align-items:center;gap:6px;margin-bottom:10px}
@@ -58,17 +58,16 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .cn-pg{font-size:.7rem;color:var(--text3);font-weight:700;margin-top:1px}
 
 /* CARTELA DISPLAY */
-.cartela-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;touch-action:pan-y}
-.cartela-hdr{display:grid;grid-template-columns:repeat(5,1fr)}
+.cartela-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;touch-action:pan-y;width:100%;display:block}
 .cartela-hdr{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:4px 6px 2px;border-bottom:1.5px solid var(--border)}
-.ch-cell{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;text-align:center;padding:6px 2px;line-height:1;border-radius:4px}
+.ch-cell{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;text-align:center;padding:6px 2px;line-height:1;border-radius:4px;display:flex;align-items:center;justify-content:center}
 .ch-cell.lB{background:rgba(0,184,240,.2);color:#00b8f0}
 .ch-cell.lI{background:rgba(0,223,168,.2);color:#00dfa8}
 .ch-cell.lN{background:rgba(245,200,0,.2);color:#f5c800}
 .ch-cell.lG{background:rgba(255,140,0,.2);color:#ff8c00}
 .ch-cell.lO{background:rgba(200,80,255,.2);color:#c850ff}
 .cartela-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:6px}
-.c-cell{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.3rem;cursor:pointer;transition:all .2s;border:1.5px solid var(--border);background:var(--surface2);user-select:none}
+.c-cell{aspect-ratio:1;width:100%;min-height:48px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.3rem;cursor:pointer;transition:all .2s;border:1.5px solid var(--border);background:var(--surface2);user-select:none;box-sizing:border-box}
 .c-cell.free-cell{background:var(--surface3);color:var(--text2);font-size:.9rem;cursor:default}
 .c-cell.filled-B{color:#00b8f0;border-color:rgba(0,184,240,.4);background:rgba(0,184,240,.07)}
 .c-cell.filled-I{color:#00dfa8;border-color:rgba(0,223,168,.4);background:rgba(0,223,168,.07)}
@@ -114,7 +113,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .preview-hdr .ph-cell.lG{background:rgba(255,140,0,.2);color:#ff8c00}
 .preview-hdr .ph-cell.lO{background:rgba(200,80,255,.2);color:#c850ff}
 .preview-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;padding:8px;background:var(--surface);border:1.5px solid var(--border);border-top:none;border-radius:0 0 var(--rsm) var(--rsm)}
-.preview-grid .pg-cell{aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.6rem;border:1.5px solid var(--border);background:var(--surface2);color:var(--text)}
+.preview-grid .pg-cell{aspect-ratio:1;width:100%;min-height:48px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.6rem;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);box-sizing:border-box}
 .preview-grid .pg-cell.free-cell{background:var(--surface3);color:var(--text2);font-size:1rem}
 .preview-grid .pg-cell.filled-B{color:#00b8f0;border-color:rgba(0,184,240,.4);background:rgba(0,184,240,.07)}
 .preview-grid .pg-cell.filled-I{color:#00dfa8;border-color:rgba(0,223,168,.4);background:rgba(0,223,168,.07)}
@@ -156,6 +155,8 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .ajuste-rot{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .ajuste-rot label{font-size:.72rem;font-weight:700;color:var(--text2);white-space:nowrap;flex-shrink:0}
 .ajuste-rot input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:6px;background:var(--surface2);border-radius:3px;outline:none}
+#ocrRotWrap{display:none}
+#ocrRotWrap.visivel{display:flex}
 .ajuste-rot input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer}
 .ajuste-rot .rot-val{font-size:.75rem;font-weight:800;color:var(--accent);min-width:36px;text-align:right}
 .ajuste-btns{display:flex;gap:8px;flex-wrap:wrap}
@@ -174,9 +175,14 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 
 input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30px #161620 inset!important;-webkit-text-fill-color:#e4f2ff!important;transition:background-color 9999s ease-in-out 0s}
 
-/* iPad compatibilidade */
+/* iOS/Safari compatibilidade */
 @supports (-webkit-touch-callout:none){
-  .c-cell{min-height:36px}
+  .c-cell{min-height:40px;-webkit-tap-highlight-color:transparent}
+  .btn{min-height:44px}
+  .npbtn{min-height:54px}
+  .cartela-grid{display:grid}
+  .cartela-hdr{display:grid}
+  .ch-cell{display:flex;align-items:center;justify-content:center}
 }
 /* iPad */
 @media only screen and (min-device-width:768px) and (max-device-width:1366px){
@@ -185,7 +191,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
   .c-cell{min-height:48px;font-size:1.3rem}
 }
 </style>
-<meta name="app-version" content="v4.6">
+<meta name="app-version" content="v4.7">
 </head>
 <body>
 
@@ -198,7 +204,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
       <div style="font-size:1.1rem;font-weight:800;color:var(--text2);margin-top:16px;margin-bottom:8px">&#128273; Login necessario</div>
       <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px">Faca login no Hub para acessar suas cartelas.</div>
       <button class="btn btn-acc btn-full" onclick="window.location.href='player.html'">Ir para o Login &rarr;</button>
-      <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v4.6</div>
+      <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v4.7</div>
     </div>
   </div>
 </div>
@@ -232,7 +238,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
     <div class="c-logo">B<span>I</span>NGO</div>
     <div style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase">IBBI</div>
     <div class="c-evname" id="cEvNome">Cartelas</div>
-    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-right:6px">v4.6</span>
+    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-right:6px">v4.7</span>
     <button class="btn btn-ghost btn-sm" onclick="voltarHub()">Sair</button>
   </div>
   <div class="c-body" id="cBody"></div>
@@ -298,7 +304,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
       </label>
     </div>
     <canvas id="ocrCanvas" style="width:100%;display:none;border-radius:var(--rsm);border:1.5px solid var(--border2);touch-action:none;cursor:crosshair;margin-bottom:8px"></canvas>
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;display:none" id="ocrRotWrap">
+    <div id="ocrRotWrap" style="align-items:center;gap:8px;margin-bottom:8px">
       <label style="font-size:.65rem;font-weight:800;color:var(--text2);text-transform:uppercase;white-space:nowrap">Rotacao</label>
       <input type="range" id="ocrRotSlider" min="-20" max="20" step="0.5" value="0" style="flex:1;accent-color:var(--accent)">
       <span id="ocrRotVal" style="font-size:.72rem;color:var(--accent);width:32px;text-align:right">0deg</span>
@@ -704,7 +710,7 @@ window.abrirOcr=function(){
 
 // OCR events
 $('ocrFileInput')?.addEventListener('change',async(e)=>{const f=e.target.files[0];if(!f)return;_ocrRot=0;await ocrLoadFoto(URL.createObjectURL(f));});
-$('btnOcrLimpar')?.addEventListener('click',()=>{_ocrNums={B:[],I:[],N:[],G:[],O:[]};_ocrImg=null;_ocrGrid=null;$('ocrFileInput').value='';$('ocrCanvas').style.display='none';$('ocrRotWrap').style.display='none';$('ocrStatus').textContent='';renderOcrGrid();});
+$('btnOcrLimpar')?.addEventListener('click',()=>{_ocrNums={B:[],I:[],N:[],G:[],O:[]};_ocrImg=null;_ocrGrid=null;$('ocrFileInput').value='';$('ocrCanvas').style.display='none';$('ocrRotWrap').classList.remove('visivel');$('ocrStatus').textContent='';renderOcrGrid();});
 $('btnOcrProcessar')?.addEventListener('click',ocrProcessar);
 $('ocrRotSlider')?.addEventListener('input',()=>{_ocrRot=parseFloat($('ocrRotSlider').value);$('ocrRotVal').textContent=_ocrRot+'deg';ocrDraw();});
 $('btnOcrSalvar')?.addEventListener('click',salvarOcrCartela);
@@ -720,7 +726,7 @@ async function ocrLoadFoto(url){
   const maxW=Math.min(400,(window.innerWidth||400)-60);
   const scale=maxW/_ocrImg.width;
   _ocrCanvas.width=Math.round(_ocrImg.width*scale);_ocrCanvas.height=Math.round(_ocrImg.height*scale);
-  $('ocrCanvas').style.display='block';$('ocrRotWrap').style.display='flex';
+  $('ocrCanvas').style.display='block';$('ocrRotWrap').classList.add('visivel');
   _ocrGrid=ocrDetectGrid(_ocrImg,_ocrCanvas.width,_ocrCanvas.height);
   ocrDraw();ocrBindEvents();
 }

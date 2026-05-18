@@ -238,6 +238,7 @@ let cartelas = [], cartelaIdx = 0;
 let pendingAdd = null;
 let jogoIniciado = false;
 let _cartelaQueBateu = null; // cartela que bateu (para enviar no bingo)
+let _cartelaParaReativar = null; // cartela a ser reativada quando vencedor removido
 
 // AUTH
 onAuthStateChanged(auth, async user => {
@@ -503,6 +504,7 @@ function verHistoricoPremios() {
     openModal('&#127881; Meus Prêmios no Evento', html, '<button class="btn btn-ghost" onclick="closeModal()">Fechar</button>');
   }).catch(() => showToast('Erro ao carregar histórico'));
 }
+window.verMinhaCartela = function(idx) {
   const batidas = getBatidas();
   const c = batidas[idx]; if (!c) return;
   ensureNumerosFormat(c);
@@ -917,6 +919,9 @@ function setupListeners() {
       btn.innerHTML = '&#127881; Meus Prêmios (' + meus.length + ')';
     }
   });
+
+  // Listener do brincante (status de batida, bingo confirmado, reativacao)
+  onValue(fb('bingo/eventos/' + evId + '/brincantes/' + currentUser.uid), snap => {
     const data = snap.val();
     if (data?.bingoConfirmado) {
       const pg = data?.premioGanho;

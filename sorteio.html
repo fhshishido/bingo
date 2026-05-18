@@ -1,11 +1,11 @@
-<!-- IBBI Sorteio v3.12 - 2026-05-18 - Tela de Sorteio (por Bingo) -->
+<!-- IBBI Sorteio v3.13 - 2026-05-18 - Tela de Sorteio (por Bingo) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Sorteio v3.12</title>
+<title>IBBI Sorteio v3.13</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -180,7 +180,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .err-screen h1{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:3px;color:var(--red);margin-bottom:14px}
 .err-screen p{color:var(--text2);font-size:.95rem;margin-bottom:18px;max-width:480px;line-height:1.5}
 </style>
-  <meta name="app-version" content="v3.12">
+  <meta name="app-version" content="v3.13">
 </head>
 <body>
 
@@ -201,11 +201,11 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
       <span class="mode-badge" id="s2mode">90 pedras</span>
-      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v3.12</span>
+      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v3.13</span>
     </div>
     <span class="conn off" id="connDot" style="margin-left:8px">⬤ offline</span>
     <div class="s2-right">
-      <button class="btn btn-yellow btn-sm" id="btnReiniciarBingo">↻ Reiniciar Bingo</button>
+
       <button class="btn btn-red btn-sm" id="btnEncerrarBingo">⛔ Encerrar Bingo</button>
     </div>
   </div>
@@ -330,7 +330,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v3.12';
+const APP_VERSION = 'v3.13';
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
   authDomain: "domino-fa285.firebaseapp.com",
@@ -939,54 +939,6 @@ function encerrarBingo(automatico) {
     showToast(automatico ? 'Todos os prêmios fechados. Bingo encerrado automaticamente.' : 'Bingo encerrado.');
   });
 }
-
-// Reiniciar bingo
-$('btnReiniciarBingo').addEventListener('click', async ()=>{
-  if(!confirm('Reiniciar este bingo? Pedras, batidas e ganhadores serão apagados. Irreversível.')) return;
-  const premios = bingoData.premios||{};
-  const tasks = [];
-  Object.keys(premios).forEach(pid=>{
-    tasks.push(set(fb(`bingo/eventos/${evId}/bingos/${bingoId}/premios/${pid}/ganhadores`), []));
-    tasks.push(set(fb(`bingo/eventos/${evId}/bingos/${bingoId}/premios/${pid}/ganhoEm`), null));
-    tasks.push(set(fb(`bingo/eventos/${evId}/bingos/${bingoId}/premios/${pid}/fechado`), false));
-  });
-  tasks.push(update(fb(`bingo/eventos/${evId}/bingos/${bingoId}`), {
-    drawn: [], lastDrawn: null, status: 'pendente',
-    iniciadoEm: null, encerradoEm: null, batidas: null
-  }));
-  // Volta evento para ativo (rodada zerada = ainda nao iniciada)
-  tasks.push(update(fb(`bingo/eventos/${evId}`), {
-    bingoAtivoId: null,
-    status: 'ativo'
-  }));
-  // Corrige outras rodadas encerradas para pendente (ficaram com status errado)
-  const todosSnap = await get(fb(`bingo/eventos/${evId}/bingos`));
-  const todos = todosSnap.val()||{};
-  Object.entries(todos).forEach(([bid, b])=>{
-    if(bid !== bingoId && b.status === 'encerrado' && !(b.drawn||[]).length) {
-      // Rodada encerrada sem pedras sorteadas = reiniciada sem atualizar status
-      tasks.push(update(fb(`bingo/eventos/${evId}/bingos/${bid}`), {status:'pendente'}));
-    }
-  });
-  // Limpa cartelas dos brincantes pra este bingo
-  const brinSnap = await get(fb(`bingo/eventos/${evId}/brincantes`));
-  const brincantes = brinSnap.val()||{};
-  Object.keys(brincantes).forEach(uid=>{
-    const br = brincantes[uid];
-    if(br.bingoIdAtivo === bingoId || !br.bingoIdAtivo) {
-      tasks.push(update(fb(`bingo/eventos/${evId}/brincantes/${uid}`), {
-        cartelasAtuais: null, batidaStatus: null, bingoConfirmado: null,
-        ultimaCartelaBatida: null, premioGanho: null, bingoIdAtivo: null
-      }));
-    }
-  });
-  Promise.all(tasks).then(()=>{
-    showToast('Bingo reiniciado.');
-    setTimeout(()=>window.location.reload(), 800);
-  }).catch(e=>{
-    alert('Erro: '+e.message);
-  });
-});
 
 // Modais de ganhadores
 $('btnGanhador').addEventListener('click', ()=>{

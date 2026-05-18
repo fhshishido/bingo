@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v11.2 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
+<!-- IBBI Bingo v11.3 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
 
 <!DOCTYPE html>
 
@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v11.2</title>
+<title>IBBI Bingo v11.3</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -289,7 +289,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 .win-inp::placeholder{color:var(--text3)}
 
 </style>
-  <meta name="app-version" content="v11.2">
+  <meta name="app-version" content="v11.3">
 </head>
 <body>
 
@@ -307,7 +307,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.2</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.3</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -585,7 +585,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <button class="btn btn-acc btn-sm" id="btnQRDownload">⬇ Baixar PNG</button>
       <button class="btn btn-ghost btn-sm" id="btnQRClose">Fechar</button>
     </div>
-    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.2</div>
+    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.3</div>
   </div>
 </div>
 
@@ -600,6 +600,10 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
     </div>
   </div>
   <div style="padding:12px;flex:1;display:flex;flex-direction:column;gap:10px;max-width:680px;margin:0 auto;width:100%">
+    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+      <button class="btn btn-yellow btn-sm" id="btnConciliarCartelas" title="Verifica cartelas usadas e libera as que nao estao mais em uso">&#9851; Conciliar Cartelas</button>
+      <span style="font-size:.65rem;color:var(--text3);flex:1">Libera cartelas que foram excluidas pelos jogadores</span>
+    </div>
     <div style="display:flex;gap:6px;flex-wrap:wrap">
       <input type="text" id="permsBusca" placeholder="Buscar por nome ou ID..." style="flex:1;min-width:140px;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:7px 10px;font-family:'Barlow',sans-serif;font-size:.88rem;outline:none">
       <select id="permsFiltro" style="background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:7px 10px;font-family:'Barlow',sans-serif;font-size:.82rem;outline:none">
@@ -632,7 +636,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v11.2';
+const APP_VERSION = 'v11.3';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -1570,7 +1574,34 @@ function ajustarQtd(uid,qtd){
     update(fb('bingo/eventos/'+evId+'/permissoes/'+uid),{qtdAprovada:qtdFinal});
   }
 }
-$('btnPermsCadastrar')?.addEventListener('click',()=>{
+$('btnConciliarCartelas')?.addEventListener('click', async ()=>{
+    if(!confirm('Conciliar cartelas do banco?\n\nIsso verifica todas as cartelas marcadas como "usadas" e libera as que o jogador nao possui mais.\n\nContinuar?')) return;
+    const evId = currentEvId; if(!evId) return;
+    showToast('Conciliando cartelas...');
+    try {
+      const bancoSnap = await get(fb('bingo/eventos/'+evId+'/cartelas'));
+      const banco = bancoSnap.val() || {};
+      const ids = Object.keys(banco);
+      let liberadas = 0;
+      for(const cid of ids) {
+        const c = banco[cid];
+        if(!c?.usada || !c?.playerId) continue;
+        const brinSnap = await get(fb('bingo/eventos/'+evId+'/brincantes/'+c.playerId+'/cartelas'));
+        const brinCartelas = brinSnap.val() || {};
+        const aindaTem = Object.values(brinCartelas).some(bc => bc.id === cid);
+        if(!aindaTem) {
+          await update(fb('bingo/eventos/'+evId+'/cartelas/'+cid), {usada:false, playerId:null, jogador:null});
+          liberadas++;
+        }
+      }
+      showToast(liberadas + ' cartela(s) liberada(s)!');
+    } catch(e) {
+      console.error('Erro na conciliacao:', e);
+      showToast('Erro ao conciliar: ' + e.message);
+    }
+  });
+
+  $('btnPermsCadastrar')?.addEventListener('click',()=>{
   const nome=($('permsManNome')?.value||'').trim();
   if(!nome){showToast('Digite o nome');return;}
   const qtd=parseInt($('permsManQtd')?.value)||1;

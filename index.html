@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v11.6 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
+<!-- IBBI Bingo v11.7 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
 
 <!DOCTYPE html>
 
@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v11.6</title>
+<title>IBBI Bingo v11.7</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -290,7 +290,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 .win-inp::placeholder{color:var(--text3)}
 
 </style>
-  <meta name="app-version" content="v11.6">
+  <meta name="app-version" content="v11.7">
 </head>
 <body>
 
@@ -308,7 +308,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.6</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.7</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -586,7 +586,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <button class="btn btn-acc btn-sm" id="btnQRDownload">⬇ Baixar PNG</button>
       <button class="btn btn-ghost btn-sm" id="btnQRClose">Fechar</button>
     </div>
-    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.6</div>
+    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.7</div>
   </div>
 </div>
 
@@ -602,7 +602,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
   </div>
   <div style="padding:12px;flex:1;display:flex;flex-direction:column;gap:10px;max-width:680px;margin:0 auto;width:100%">
     <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-      <button class="btn btn-yellow btn-sm" id="btnConciliarCartelas" title="Verifica cartelas usadas e libera as que nao estao mais em uso">&#9851; Conciliar Cartelas</button>
+
       <span style="font-size:.65rem;color:var(--text3);flex:1">Libera cartelas que foram excluidas pelos jogadores</span>
     </div>
     <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -637,7 +637,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v11.6';
+const APP_VERSION = 'v11.7';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -773,7 +773,7 @@ function cardHTML(id,ev){
       ganhos += premios.filter(p => p.ganhadores && p.ganhadores.length).length;
     });
     const mode = ev.mode || 90;
-    const stLbl={ativo:'Novo',andamento:'Em andamento',encerrado:'Encerrado'}[ev.status]||'Novo';
+    const stLbl={ativo:'Ativo',andamento:'Em andamento',encerrado:'Encerrado'}[ev.status]||'Ativo';
     const bc={ativo:'bg',andamento:'ba',encerrado:'be'}[ev.status]||'bg';
     const tipo=(ev.tipoCartela||'livre');
     const tipoTag=tipo==='livre'?'Cartela Livre':'Banco';
@@ -998,7 +998,7 @@ function renderGestao(){
   $('s2evMode').textContent = (ev.mode || 90) + ' pedras';
   $('s2evTipo').textContent = ev.tipoCartela === 'banco' ? 'Banco de Cartelas' : 'Cartela Livre';
 
-  const stLbl = {ativo:'Novo', andamento:'Em andamento', encerrado:'Encerrado'}[ev.status] || 'Novo';
+  const stLbl = {ativo:'Ativo', andamento:'Em andamento', encerrado:'Encerrado'}[ev.status] || 'Ativo';
   const bc = {ativo:'bg', andamento:'ba', encerrado:'be'}[ev.status] || 'bg';
   $('s2evStatusBadge').textContent = stLbl;
   $('s2evStatusBadge').className = 's2g-evstatus '+bc;
@@ -1595,43 +1595,6 @@ function ajustarQtd(uid,qtd){
     update(fb('bingo/eventos/'+evId+'/permissoes/'+uid),{qtdAprovada:qtdFinal});
   }
 }
-$('btnConciliarCartelas')?.addEventListener('click', async ()=>{
-    if(!confirm('Conciliar cartelas do banco?\n\nIsso verifica todas as cartelas marcadas como "usadas" e libera as que o jogador nao possui mais.\n\nContinuar?')) return;
-    const evId = currentEvId; if(!evId) return;
-    showToast('Conciliando cartelas...');
-    try {
-      const bancoSnap = await get(fb('bingo/eventos/'+evId+'/cartelas'));
-      const banco = bancoSnap.val() || {};
-      const ids = Object.keys(banco);
-      let liberadas = 0;
-      let verificadas = 0;
-      // Buscar TODOS os brincantes de uma vez
-      const brinSnap = await get(fb('bingo/eventos/'+evId+'/brincantes'));
-      const brincantes = brinSnap.val() || {};
-      for(const cid of ids) {
-        const c = banco[cid];
-        if(!c?.usada || !c?.playerId) continue;
-        verificadas++;
-        let aindaTem = false;
-        for(const brin of Object.values(brincantes)) {
-          const bcart = brin?.cartelas || {};
-          for(const bc of Object.values(bcart)) {
-            if(bc?.id === cid) { aindaTem = true; break; }
-          }
-          if(aindaTem) break;
-        }
-        if(!aindaTem) {
-          await update(fb('bingo/eventos/'+evId+'/cartelas/'+cid), {usada:false, playerId:null, jogador:null});
-          liberadas++;
-        }
-      }
-      showToast('Verificadas: ' + verificadas + ' | Liberadas: ' + liberadas);
-    } catch(e) {
-      console.error('Erro na conciliacao:', e);
-      showToast('Erro ao conciliar: ' + e.message);
-    }
-  });
-
   $('btnPermsCadastrar')?.addEventListener('click',()=>{
   const nome=($('permsManNome')?.value||'').trim();
   if(!nome){showToast('Digite o nome');return;}

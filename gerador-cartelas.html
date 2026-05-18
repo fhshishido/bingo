@@ -1,5 +1,4 @@
-
-<!-- IBBI Bingo - Gerador de Cartelas v3.7 -->
+<!-- IBBI Bingo - Gerador de Cartelas v3.8 -->
 
 <!DOCTYPE html>
 
@@ -7,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gerador de Cartelas IBBI v4.0</title>
+<title>Gerador de Cartelas IBBI v4.1</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 html{background:#060608}
@@ -190,7 +189,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .toast.show{transform:translateX(-50%) translateY(0)}
 </style>
 
-  <meta name="app-version" content="v4.0">
+  <meta name="app-version" content="v4.1">
 </head>
 <body>
 
@@ -202,7 +201,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="logo-sub">Gerador de Cartelas</div>
   </div>
   <div class="g-head-right">
-    <span class="sec-lbl">v3.7</span>
+    <span class="sec-lbl">v3.8</span>
     <a href="index.html" class="btn btn-ghost btn-sm">🎲 Sorteio</a>
     <a href="player.html" class="btn btn-ghost btn-sm">🎴 Player</a>
   </div>
@@ -273,6 +272,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 
 <!-- Export / Limpar -->
 <button class="btn btn-green btn-sm" id="btnExport" style="width:100%">⬇️ Exportar JSON</button>
+<button class="btn btn-acc btn-sm" id="btnSyncFb" style="width:100%;margin-top:8px">☁️ Sincronizar com Firebase</button>
 <div class="frow" style="margin-top:8px">
   <button class="btn btn-red btn-sm" id="btnLimpar90">🗑️ G90</button>
   <button class="btn btn-red btn-sm" id="btnLimpar75">🗑️ G75</button>
@@ -352,7 +352,21 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 
 <div class="toast" id="toast"></div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const _app = initializeApp({
+  apiKey:"AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
+  authDomain:"domino-fa285.firebaseapp.com",
+  databaseURL:"https://domino-fa285-default-rtdb.firebaseio.com",
+  projectId:"domino-fa285",
+  storageBucket:"domino-fa285.firebasestorage.app",
+  messagingSenderId:"462709449311",
+  appId:"1:462709449311:web:569624eeac6fc57c0631ea"
+});
+const _db = getDatabase(_app);
+
 const LETTERS = ['B','I','N','G','O'];
 const RANGES = {
   90:{B:{min:1,max:18},I:{min:19,max:36},N:{min:37,max:54},G:{min:55,max:72},O:{min:73,max:90}},
@@ -698,6 +712,24 @@ function loadStorage() {
   updateStats();
   renderCartelas();
 }
+// --- SYNC FIREBASE ---
+$('btnSyncFb').addEventListener('click', async () => {
+  const n = Object.keys(banco.g90).length + Object.keys(banco.g75).length;
+  if(!n){showToast('Banco vazio');return;}
+  if(!confirm(`Sincronizar ${n} cartelas com Firebase?`))return;
+  $('btnSyncFb').textContent='☁️ Enviando...';
+  $('btnSyncFb').disabled=true;
+  try {
+    await set(ref(_db,'bingo/banco/g90'), banco.g90);
+    await set(ref(_db,'bingo/banco/g75'), banco.g75);
+    showToast(`✅ ${n} cartelas sincronizadas no Firebase`);
+  } catch(e) {
+    showToast('❌ Erro: '+e.message);
+  }
+  $('btnSyncFb').textContent='☁️ Sincronizar com Firebase';
+  $('btnSyncFb').disabled=false;
+});
+
 loadStorage();
 </script>
 

@@ -130,7 +130,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface3);color:var(--text);padding:10px 20px;border-radius:var(--rsm);font-size:.82rem;font-weight:700;z-index:2000;opacity:0;transition:all .3s;white-space:nowrap;border:1px solid var(--border2)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
-<meta name="app-version" content="v7.0">
+<meta name="app-version" content="v7.2">
 </head>
 <body>
 
@@ -178,7 +178,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="p-logo">B<span>I</span>NGO</div>
     <div style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase">IBBI</div>
     <div class="p-username" id="gameUserName"></div>
-    <span class="p-vtag">v7.0</span>
+    <span class="p-vtag">v7.2</span>
   </div>
   <!-- Barra do evento -->
   <div id="gameEvBar" class="ev-bar">&mdash;</div>
@@ -442,13 +442,16 @@ function verGanhadores() {
   let html = '<div style="max-height:60vh;overflow-y:auto">';
   batidas.forEach((c, idx) => {
     const p = c.premioGanho || {};
+    const bingoNome = bingoData?.nome || 'Rodada';
+    const bingoOrdem = bingoData?.ordem || '?';
     html += '<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rsm);padding:12px;margin-bottom:10px;display:flex;align-items:center;gap:10px">' +
       '<div style="font-size:2rem">&#127942;</div>' +
       '<div style="flex:1">' +
       '<div style="font-family:Bebas Neue;font-size:1.1rem;color:#FFD700;letter-spacing:1px">' + esc(c.id) + '</div>' +
-      '<div style="font-size:.8rem;color:var(--text2)">Premio: ' + esc(p.nome || 'Bingo') + '</div>' +
+      '<div style="font-size:.8rem;color:var(--text2)">&#127942; Premio: ' + esc(p.nome || 'Bingo') + '</div>' +
+      '<div style="font-size:.72rem;color:var(--text3)">&#127881; ' + esc(evData?.nome || 'Evento') + ' &bull; &#127920; #' + bingoOrdem + ' ' + esc(bingoNome) + '</div>' +
       '</div>' +
-      '<button class="btn btn-sm" onclick="verMinhaCartela(' + idx + ')" style="background:rgba(0,184,240,.12);color:var(--accent);border:1.5px solid rgba(0,184,240,.3);padding:6px 10px;font-size:.78rem">&#127921; Ver Cartela</button>' +
+      '<button class="btn btn-sm" onclick="verMinhaCartela(' + idx + ')" style="background:rgba(0,184,240,.12);color:var(--accent);border:1.5px solid rgba(0,184,240,.3);padding:6px 10px;font-size:.78rem">&#127921; Ver</button>' +
       '</div>';
   });
   html += '</div>';
@@ -684,7 +687,14 @@ function checkAutoBatida() {
       const avisoKey = 'batida_' + c.id + '_p' + (p?.id || 'none');
       if (!sessionStorage.getItem(avisoKey)) {
         sessionStorage.setItem(avisoKey, '1');
-        if (i !== cartelaIdx) { cartelaIdx = i; renderCartela(); renderHist(); }
+        // Encontrar o indice correto dentro de getAtivas() (nao o indice global)
+        const ativas = getAtivas();
+        const idxAtiva = ativas.findIndex(ac => ac.id === c.id);
+        if (idxAtiva >= 0 && idxAtiva !== cartelaIdx) {
+          cartelaIdx = idxAtiva;
+          renderCartela();
+          renderHist();
+        }
         $('batidaPremio').textContent = 'Cartela ' + c.id + ' bateu! Premio: ' + p.nome;
         openM('mBatida');
       }

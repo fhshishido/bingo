@@ -179,7 +179,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .err-screen h1{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:3px;color:var(--red);margin-bottom:14px}
 .err-screen p{color:var(--text2);font-size:.95rem;margin-bottom:18px;max-width:480px;line-height:1.5}
 </style>
-  <meta name="app-version" content="v3.1">
+  <meta name="app-version" content="v3.2">
 </head>
 <body>
 
@@ -652,7 +652,15 @@ function renderBatidas(batidas) {
     card.querySelector('[data-conf]').addEventListener('click',()=>confirmarBatida(bid,b));
     card.querySelector('[data-rej]').addEventListener('click',()=>rejeitarBatida(bid));
     const btnVer = card.querySelector('[data-ver]');
-    if(btnVer) btnVer.addEventListener('click',()=>mostrarCartelaBatida(b.cartela,b.playerNome));
+    if(btnVer) btnVer.addEventListener('click',()=>{
+      const cp2 = curPrizeId && bingoData.premios[curPrizeId] ? bingoData.premios[curPrizeId] : null;
+      mostrarCartelaBatida(b.cartela, b.playerNome, {
+        cartelaId: b.cartelaId, pendente: true, playerNome: b.playerNome,
+        premioNome: cp2?.nome, premioOrdem: cp2?.ordem, premioFechado: false,
+        ganhadoresCount: cp2?.ganhadores?.length || 0,
+        eventoNome: evData?.nome, bingoNome: bingoData?.nome
+      });
+    });
     list.appendChild(card);
   });
 }
@@ -724,23 +732,36 @@ window.closeModal = function() {
 };
 
 // MOSTRAR CARTELA DE UMA BATIDA
-function mostrarCartelaBatida(cartelaData, playerNome) {
+function mostrarCartelaBatida(cartelaData, playerNome, info) {
   if(!cartelaData || !cartelaData.numeros) { showToast('Dados da cartela nao disponiveis'); return; }
+  info = info || {};
   const LETTERS = ['B','I','N','G','O'];
   const numeros = cartelaData.numeros;
   const marcados = new Set(cartelaData.marcados || []);
   const freeCenter = cartelaData.freeCenter || false;
   
-  let html = '<div style="text-align:center;margin-bottom:10px;font-weight:700;color:var(--text2)">Cartela de ' + esc(playerNome||'Jogador') + '</div>';
+  // Header com informacoes
+  let html = '<div style="margin-bottom:12px;padding:10px;background:var(--surface2);border-radius:var(--rsm);border:1.5px solid var(--border);font-size:.8rem">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+  html += '<span style="font-family:Bebas Neue;font-size:1.1rem;color:var(--accent);letter-spacing:1px">&#127921; ' + esc(info.cartelaId || cartelaData.id || '-') + '</span>';
+  if (info.premioFechado) html += '<span style="background:rgba(0,223,168,.15);color:var(--green);padding:2px 8px;border-radius:4px;font-size:.7rem;font-weight:800">&#9989; CONFIRMADO</span>';
+  else if (info.pendente) html += '<span style="background:rgba(245,200,0,.15);color:var(--cN);padding:2px 8px;border-radius:4px;font-size:.7rem;font-weight:800">&#9203; PENDENTE</span>';
+  html += '</div>';
+  if (info.eventoNome || evData?.nome) html += '<div style="color:var(--text3);margin-bottom:2px">&#127881; Evento: <span style="color:var(--text)">' + esc(info.eventoNome || evData?.nome || '-') + '</span></div>';
+  if (info.bingoNome || bingoData?.nome) html += '<div style="color:var(--text3);margin-bottom:2px">&#127920; Rodada: <span style="color:var(--text)">' + esc(info.bingoNome || bingoData?.nome || '-') + '</span></div>';
+  if (info.premioNome) html += '<div style="color:var(--text3);margin-bottom:2px">&#127942; Premio: <span style="color:var(--text)">#' + (info.premioOrdem || '?') + ' ' + esc(info.premioNome) + '</span></div>';
+  if (info.ganhadoresCount > 1) html += '<div style="color:var(--cN);font-size:.75rem;margin-top:4px">&#128101; Premio dividido entre ' + info.ganhadoresCount + ' ganhadores</div>';
+  if (info.playerNome || playerNome) html += '<div style="color:var(--text3);margin-top:4px">&#128100; Jogador: <span style="color:var(--text);font-weight:700">' + esc(info.playerNome || playerNome || '-') + '</span></div>';
+  html += '</div>';
+  
+  // Cartela
   html += '<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rsm);overflow:hidden;max-width:300px;margin:0 auto">';
-  // Header
   html += '<div style="display:grid;grid-template-columns:repeat(5,1fr)">';
   LETTERS.forEach(l=>{
     const colors={B:'#00b8f0',I:'#00dfa8',N:'#f5c800',G:'#ff8c00',O:'#c850ff'};
     html += '<div style="font-family:Bebas Neue;font-size:1.5rem;text-align:center;padding:6px 2px;background:rgba('+({B:'0,184,240',I:'0,223,168',N:'245,200,0',G:'255,140,0',O:'200,80,255'}[l])+',.2);color:'+colors[l]+'">'+l+'</div>';
   });
   html += '</div>';
-  // Grid
   html += '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:6px">';
   for(let row=0; row<5; row++){
     LETTERS.forEach((letter,col)=>{
@@ -969,7 +990,12 @@ function renderGanhadoresPremio(cp) {
     btn.addEventListener('click',()=>{
       const gi = parseInt(btn.dataset.vercartelaWin);
       const ganh = cp.ganhadores[gi];
-      if(ganh&&ganh.cartela) mostrarCartelaBatida(ganh.cartela, ganh.nome);
+      if(ganh&&ganh.cartela) mostrarCartelaBatida(ganh.cartela, ganh.nome, {
+        cartelaId: ganh.cartelaId, premioFechado: true, playerNome: ganh.nome,
+        premioNome: cp.nome, premioOrdem: cp.ordem, premioFechado: cp.fechado,
+        ganhadoresCount: cp.ganhadores?.length || 1,
+        eventoNome: evData?.nome, bingoNome: bingoData?.nome
+      });
     });
   });
   $('mWinActions').style.display='none';
@@ -1000,7 +1026,12 @@ $('btnGanhadorTodos').addEventListener('click', ()=>{
       const prem = premios[pi2];
       if(prem&&prem.ganhadores[gi2]){
         const ganh2 = prem.ganhadores[gi2];
-        if(ganh2.cartela) mostrarCartelaBatida(ganh2.cartela, ganh2.nome);
+        if(ganh2.cartela) mostrarCartelaBatida(ganh2.cartela, ganh2.nome, {
+          cartelaId: ganh2.cartelaId, premioFechado: true, playerNome: ganh2.nome,
+          premioNome: prem.nome, premioOrdem: prem.ordem, premioFechado: prem.fechado,
+          ganhadoresCount: prem.ganhadores?.length || 1,
+          eventoNome: evData?.nome, bingoNome: bingoData?.nome
+        });
       }
     });
   });

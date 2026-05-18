@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Cartelas v4.8 -->
+<!-- IBBI Bingo Cartelas v4.9 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>IBBI Cartelas v4.8</title>
+<title>IBBI Cartelas v4.9</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -191,7 +191,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
   .c-cell{min-height:48px;font-size:1.3rem}
 }
 </style>
-<meta name="app-version" content="v4.8">
+<meta name="app-version" content="v4.9">
 </head>
 <body>
 
@@ -204,7 +204,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
       <div style="font-size:1.1rem;font-weight:800;color:var(--text2);margin-top:16px;margin-bottom:8px">&#128273; Login necessario</div>
       <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px">Faca login no Hub para acessar suas cartelas.</div>
       <button class="btn btn-acc btn-full" onclick="window.location.href='player.html'">Ir para o Login &rarr;</button>
-      <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v4.8</div>
+      <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v4.9</div>
     </div>
   </div>
 </div>
@@ -238,7 +238,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
     <div class="c-logo">B<span>I</span>NGO</div>
     <div style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase">IBBI</div>
     <div class="c-evname" id="cEvNome">Cartelas</div>
-    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-right:6px">v4.8</span>
+    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-right:6px">v4.9</span>
     <button class="btn btn-ghost btn-sm" onclick="voltarHub()">Sair</button>
   </div>
   <div class="c-body" id="cBody"></div>
@@ -509,17 +509,26 @@ async function cadastrarNoEvento(ev){
 
 // ============ CARREGAR CARTELAS ============
 async function carregarCartelas(){
-  // Tentar carregar do cache
-  loadCartelasFromCache();
-  // Tentar do Firebase
+  // Firebase é sempre a fonte principal
+  let carregouDoFb = false;
   try{
     const snap=await get(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}/cartelas`));
     const fbCartelas=snap.val();
     if(fbCartelas){
       const novas=Object.entries(fbCartelas).map(([fbId,c])=>ensureNumerosFormat({fbId,...c}));
-      if(novas.length){cartelas=novas;cartelaIdx=0;saveCartelasCache();}
+      if(novas.length){
+        cartelas=novas;
+        cartelaIdx=0;
+        saveCartelasCache();
+        carregouDoFb=true;
+      }
     }
   }catch(e){}
+
+  // Só usa cache local se Firebase não retornou nada
+  if(!carregouDoFb){
+    loadCartelasFromCache();
+  }
 
   if(cartelas.length>0){
     showCartelasPaginacao();
@@ -639,25 +648,31 @@ function loadBancoLocal(){try{const d=localStorage.getItem(BANCO_KEY_V2);if(d){b
 function getCartelaLocal(id){const key=id.startsWith('G90')?'g90':'g75';return bancoLocal[key]?.[id]?{id,modo:key==='g90'?90:75,...bancoLocal[key][id]}:(_bancoFbCache?.[key]?.[id]?{id,modo:key==='g90'?90:75,..._bancoFbCache[key][id]}:null);}
 
 async function loadBancoFb(){
-  if(_bancoFbCache)return;
   try{
     const snap=await get(fb('bingo/banco'));
-    _bancoFbCache=snap.val()||{g90:{},g75:{}};
-    // Salvar no localStorage para próximas visitas
-    try{localStorage.setItem(BANCO_KEY_V2,JSON.stringify(_bancoFbCache));}catch(e){}
-  }catch(e){_bancoFbCache={g90:{},g75:{}};}
+    const fbData=snap.val()||{g90:{},g75:{}};
+    const temDados=Object.keys(fbData.g90||{}).length+Object.keys(fbData.g75||{}).length>0;
+    if(temDados){
+      _bancoFbCache=fbData;
+      // Atualiza localStorage com dados frescos do Firebase
+      try{localStorage.setItem(BANCO_KEY_V2,JSON.stringify(_bancoFbCache));}catch(e){}
+    } else if(!_bancoFbCache){
+      // Firebase vazio, tenta localStorage como fallback
+      loadBancoLocal();
+      _bancoFbCache=bancoLocal;
+    }
+  }catch(e){
+    // Offline: usa localStorage como fallback
+    if(!_bancoFbCache){loadBancoLocal();_bancoFbCache=bancoLocal;}
+  }
 }
 
 const BANCO_PER_PAGE=20;
 window.abrirBanco=async function(){
-  loadBancoLocal();
-  // Se localStorage vazio, buscar do Firebase
-  const temLocal=Object.keys(bancoLocal.g90||{}).length+Object.keys(bancoLocal.g75||{}).length>0;
-  if(!temLocal){
-    showToast('Carregando banco...');
-    await loadBancoFb();
-    bancoLocal=_bancoFbCache;
-  }
+  // Sempre busca do Firebase primeiro (fonte principal)
+  showToast('Carregando banco...');
+  await loadBancoFb();
+  bancoLocal=_bancoFbCache||{g90:{},g75:{}};
   bancoEvento=evData?.cartelas||{};
   if(!Object.keys(bancoEvento).length){showToast('Nenhuma cartela no banco');return;}
   $('bEvNome').textContent=(evData?.nome||'')+' | Banco';

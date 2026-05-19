@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v11.18 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
+<!-- IBBI Bingo v11.19 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
 
 <!DOCTYPE html>
 
@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v11.18</title>
+<title>IBBI Bingo v11.19</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -295,7 +295,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 .err-screen p{color:var(--text2);font-size:.95rem;margin-bottom:18px;max-width:480px;line-height:1.5}
 
 </style>
-  <meta name="app-version" content="v11.18">
+  <meta name="app-version" content="v11.19">
 </head>
 <body>
 
@@ -313,7 +313,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.18</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.19</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -591,7 +591,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <button class="btn btn-acc btn-sm" id="btnQRDownload">⬇ Baixar PNG</button>
       <button class="btn btn-ghost btn-sm" id="btnQRClose">Fechar</button>
     </div>
-    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.18</div>
+    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.19</div>
   </div>
 </div>
 
@@ -650,7 +650,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
       <span class="mode-badge" id="soMode">90 pedras</span>
-      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v11.18</span>
+      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v11.19</span>
     </div>
     <span class="conn off" id="soConnDot" style="margin-left:8px">&#11044; offline</span>
     <div class="s2-right">
@@ -769,7 +769,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v11.18';
+const APP_VERSION = 'v11.19';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -2165,28 +2165,28 @@ function renderPermCard(u){
     .sort((a,b)=>{const nm=s=>{const m=(s||'').match(/(\d+)$/);return m?parseInt(m[1]):0;};return nm(a.id)-nm(b.id);});
 
   let cartelasHtml='';
-  if(exigeAp && brincCartelas.length){
+  if(brincCartelas.length){
     const temPendentes=brincCartelas.some(c=>c.liberada===false);
     const temLiberadas=brincCartelas.some(c=>c.liberada!==false);
     cartelasHtml+='<div style="margin-top:8px;border-top:1px solid '+stBrd+';padding-top:8px">';
     cartelasHtml+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:4px">';
     cartelasHtml+='<span style="font-size:.65rem;font-weight:800;letter-spacing:1px;color:var(--text3);text-transform:uppercase">Cartelas ('+brincCartelas.length+')</span>';
     cartelasHtml+='<div style="display:flex;gap:4px">';
-    if(temPendentes) cartelasHtml+='<button class="btn btn-green btn-sm" style="font-size:.68rem;padding:4px 10px" data-liberar-todas="'+u.uid+'">&#10003; Liberar Todas</button>';
-    if(temLiberadas) cartelasHtml+='<button class="btn btn-red btn-sm" style="font-size:.68rem;padding:4px 10px" data-bloquear-todas="'+u.uid+'">&#128274; Bloquear Todas</button>';
+    if(exigeAp&&temPendentes) cartelasHtml+='<button class="btn btn-green btn-sm" style="font-size:.68rem;padding:4px 10px" data-liberar-todas="'+u.uid+'">&#10003; Liberar Todas</button>';
+    if(exigeAp&&temLiberadas) cartelasHtml+='<button class="btn btn-red btn-sm" style="font-size:.68rem;padding:4px 10px" data-bloquear-todas="'+u.uid+'">&#128274; Bloquear Todas</button>';
     cartelasHtml+='</div>';
     cartelasHtml+='</div>';
     brincCartelas.forEach(c=>{
       const lib=c.liberada!==false;
-      const badgeLab=lib
-        ?'<span style="font-size:.58rem;padding:1px 6px;border-radius:10px;background:rgba(0,223,168,.15);color:var(--green);border:1px solid rgba(0,223,168,.4)">&#10003; Liberada</span>'
+      const badgeLab=!exigeAp?''
+        :lib?'<span style="font-size:.58rem;padding:1px 6px;border-radius:10px;background:rgba(0,223,168,.15);color:var(--green);border:1px solid rgba(0,223,168,.4)">&#10003; Liberada</span>'
         :'<span style="font-size:.58rem;padding:1px 6px;border-radius:10px;background:rgba(245,200,0,.15);color:var(--cN);border:1px solid rgba(245,200,0,.4)">&#128274; Pendente</span>';
       cartelasHtml+='<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 8px;background:var(--surface3);border-radius:6px;margin-bottom:4px;gap:6px;flex-wrap:wrap">';
       cartelasHtml+='<div style="display:flex;align-items:center;gap:6px"><span style="font-family:Bebas Neue,sans-serif;font-size:.88rem;color:var(--accent)">'+esc(c.id||c.fbId)+'</span>'+badgeLab+'</div>';
       cartelasHtml+='<div style="display:flex;gap:4px">';
       cartelasHtml+='<button class="btn btn-ghost btn-sm" style="font-size:.65rem;padding:3px 8px" data-ver-cartela="'+c.fbId+'" data-uid="'+u.uid+'">&#128065; Ver</button>';
-      if(!lib) cartelasHtml+='<button class="btn btn-green btn-sm" style="font-size:.65rem;padding:3px 8px" data-liberar-cartela="'+c.fbId+'" data-uid="'+u.uid+'">Liberar</button>';
-      if(lib)  cartelasHtml+='<button class="btn btn-red btn-sm" style="font-size:.65rem;padding:3px 8px" data-cancelar-cartela="'+c.fbId+'" data-uid="'+u.uid+'">Cancelar</button>';
+      if(exigeAp&&!lib) cartelasHtml+='<button class="btn btn-green btn-sm" style="font-size:.65rem;padding:3px 8px" data-liberar-cartela="'+c.fbId+'" data-uid="'+u.uid+'">Liberar</button>';
+      if(exigeAp&&lib)  cartelasHtml+='<button class="btn btn-red btn-sm" style="font-size:.65rem;padding:3px 8px" data-cancelar-cartela="'+c.fbId+'" data-uid="'+u.uid+'">Cancelar</button>';
       cartelasHtml+='</div>';
       cartelasHtml+='</div>';
     });

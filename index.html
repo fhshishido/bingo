@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v11.19 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
+<!-- IBBI Bingo v11.20 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
 
 <!DOCTYPE html>
 
@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v11.19</title>
+<title>IBBI Bingo v11.20</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -295,7 +295,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 .err-screen p{color:var(--text2);font-size:.95rem;margin-bottom:18px;max-width:480px;line-height:1.5}
 
 </style>
-  <meta name="app-version" content="v11.19">
+  <meta name="app-version" content="v11.20">
 </head>
 <body>
 
@@ -313,7 +313,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.19</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.20</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -591,7 +591,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <button class="btn btn-acc btn-sm" id="btnQRDownload">⬇ Baixar PNG</button>
       <button class="btn btn-ghost btn-sm" id="btnQRClose">Fechar</button>
     </div>
-    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.19</div>
+    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.20</div>
   </div>
 </div>
 
@@ -626,14 +626,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <span id="permsPg" style="font-size:.75rem;font-weight:800;color:var(--accent);min-width:60px;text-align:center"></span>
       <button class="btn btn-ghost btn-sm" id="btnPermsNext">Prox &#8594;</button>
     </div>
-    <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rsm);padding:10px;margin-top:4px">
-      <div style="font-size:.68rem;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Cadastrar Manualmente</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <input type="text" id="permsManNome" placeholder="Nome do jogador" style="flex:1;min-width:120px;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:7px 10px;font-family:'Barlow',sans-serif;font-size:.88rem;outline:none">
-        <input type="number" id="permsManQtd" min="1" max="100" value="1" style="width:70px;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);padding:7px 10px;font-family:'Barlow',sans-serif;font-size:.88rem;outline:none;text-align:center">
-        <button class="btn btn-acc btn-sm" id="btnPermsCadastrar">+ Cadastrar</button>
-      </div>
-    </div>
+
   </div>
 </div>
 
@@ -650,7 +643,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
       <span class="mode-badge" id="soMode">90 pedras</span>
-      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v11.19</span>
+      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v11.20</span>
     </div>
     <span class="conn off" id="soConnDot" style="margin-left:8px">&#11044; offline</span>
     <div class="s2-right">
@@ -769,7 +762,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v11.19';
+const APP_VERSION = 'v11.20';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -2335,18 +2328,7 @@ function ajustarQtd(uid,qtd){
     update(fb('bingo/eventos/'+evId+'/permissoes/'+uid),{qtdAprovada:qtdFinal});
   }
 }
-  $('btnPermsCadastrar')?.addEventListener('click',()=>{
-  const nome=($('permsManNome')?.value||'').trim();
-  if(!nome){showToast('Digite o nome');return;}
-  const qtd=parseInt($('permsManQtd')?.value)||1;
-  const max=evData?.maxCartelasUser||0;
-  const qtdFinal=max>0?Math.min(qtd,max):qtd;
-  const uid='manual_'+Date.now();
-  set(fb('bingo/eventos/'+evId+'/permissoes/'+uid),{nome,qtdSolicitada:qtdFinal,qtdAprovada:qtdFinal,status:'aprovado',cadastradoPor:'gestor',ts:Date.now()});
-  if($('permsManNome')) $('permsManNome').value='';
-  if($('permsManQtd')) $('permsManQtd').value='1';
-  showToast(nome+' cadastrado com '+qtdFinal+' cartela(s)');
-});
+
 
 // --- EDITAR EVENTO (apenas campos do evento, sem prêmios) ---
 function abrirModalEditar() {

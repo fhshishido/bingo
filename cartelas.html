@@ -723,10 +723,10 @@ function renderBancoGrid(){
   const grid=$('bancoGrid');
   const todosIds=Object.keys(bancoEvento);
   const meuId=currentUser?.uid;
-  // Banco mostra: disponiveis (nao usadas) + minhas (usadas por MIM)
-  // Cartelas de OUTROS jogadores NAO aparecem aqui
+  // "Minha" = Firebase diz que é minha (NÃO depende do array local)
   const disponiveis=todosIds.filter(cid=>{const e=bancoEvento[cid];return!e.usada;});
   const minhas=todosIds.filter(cid=>{const e=bancoEvento[cid];return e.usada&&e.playerId===meuId;});
+  // NÃO mostrar cartelas de outros jogadores
   const ids=[...disponiveis,...minhas].sort();
   if(!ids.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text3)">&#127881; Todas as cartelas foram escolhidas!</div>';$('bancoPg').textContent='0/0';$('btnBancoPrev').disabled=true;$('btnBancoNext').disabled=true;return;}
   const totalPages=Math.ceil(ids.length/BANCO_PER_PAGE);
@@ -734,11 +734,10 @@ function renderBancoGrid(){
   const start=(bancoPage-1)*BANCO_PER_PAGE;
   const pagIds=ids.slice(start,start+BANCO_PER_PAGE);
   grid.innerHTML=pagIds.map(cid=>{
-    const e=bancoEvento[cid];const isDisponivel=!e.usada;
-    const isMinha=e.usada&&e.playerId===meuId;
+    const e=bancoEvento[cid];const isMinha=e.usada&&e.playerId===meuId;
     const c=getCartelaLocal(cid);let cls='bc-card';if(isMinha)cls+=' minha';
     let mini='';if(c){for(let r=0;r<5;r++){LETTERS.forEach(col=>{const n=c.numeros[col][r];const f=c.freeCenter&&col==='N'&&r===2;mini+=`<div class="bc-mc ${f?'free':'h'+col}">${f?'&#9733;':(n||'')}</div>`;});}}
-    return`<div class="${cls}" ${isDisponivel?`onclick="onBancoTap('${cid}')" ondblclick="selecionarBanco('${cid}')"`:`onclick="onBancoTap('${cid}')" style="cursor:pointer"`}><div class="bc-id">${cid}</div><div class="bc-mini">${mini}</div>${isMinha?'<div style="text-align:center;font-size:.6rem;color:var(--green);margin-top:4px">MINHA</div>':''}</div>`;
+    return`<div class="${cls}" onclick="onBancoTap('${cid}')" ondblclick="selecionarBanco('${cid}')"><div class="bc-id">${cid}</div><div class="bc-mini">${mini}</div>${isMinha?'<div style="text-align:center;font-size:.6rem;color:var(--green);margin-top:4px">MINHA</div>':''}</div>`;
   }).join('');
   $('bancoPg').textContent=bancoPage+'/'+totalPages;
   $('btnBancoPrev').disabled=bancoPage<=1;$('btnBancoNext').disabled=bancoPage>=totalPages;

@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v11.21 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
+<!-- IBBI Bingo v11.22 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
 
 <!DOCTYPE html>
 
@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v11.21</title>
+<title>IBBI Bingo v11.22</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -295,7 +295,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 .err-screen p{color:var(--text2);font-size:.95rem;margin-bottom:18px;max-width:480px;line-height:1.5}
 
 </style>
-  <meta name="app-version" content="v11.21">
+  <meta name="app-version" content="v11.22">
 </head>
 <body>
 
@@ -313,7 +313,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.21</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.22</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -591,7 +591,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <button class="btn btn-acc btn-sm" id="btnQRDownload">⬇ Baixar PNG</button>
       <button class="btn btn-ghost btn-sm" id="btnQRClose">Fechar</button>
     </div>
-    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.21</div>
+    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.22</div>
   </div>
 </div>
 
@@ -643,7 +643,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
       <span class="mode-badge" id="soMode">90 pedras</span>
-      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v11.21</span>
+      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v11.22</span>
     </div>
     <span class="conn off" id="soConnDot" style="margin-left:8px">&#11044; offline</span>
     <div class="s2-right">
@@ -762,7 +762,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v11.21';
+const APP_VERSION = 'v11.22';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -1162,7 +1162,7 @@ function soConfirmarBatida(bid,b){
   const brincantePath=`bingo/eventos/${evId}/brincantes/${b.playerId||b.uid||'anon'}`;
   const prizeId=_soCurPrizeId;
   const histKey=`${_soBingoId}_${prizeId}_${Date.now()}`;
-  const histData={bingoId:_soBingoId,bingoNome:_soBingoData?.nome||'',bingoOrdem:_soBingoData?.ordem||'',premioId:prizeId,premioNome:cp.nome,premioOrdem:cp.ordem,premioRegra:cp.regra||'cheia',playerId:b.playerId||'',playerNome:b.playerNome||'',cartelaId:b.cartelaId||'',ts:Date.now()};
+  const histData={bingoId:_soBingoId,bingoNome:_soBingoData?.nome||'',bingoOrdem:_soBingoData?.ordem||'',premioId:prizeId,premioNome:cp.nome,premioOrdem:cp.ordem,premioRegra:cp.regra||'cheia',playerId:b.playerId||'',playerNome:b.playerNome||'',cartelaId:b.cartelaId||'',ts:Date.now(),resultadoAposta:'pendente'};
   Promise.all([
     set(fb(basePath+'/ganhadores'),cp.ganhadores),
     set(fb(basePath+'/ganhoEm'),Date.now()),
@@ -1292,7 +1292,15 @@ function soDividirPremio(prizeId){
         tasks.push(update(fb(`bingo/eventos/${evId}/brincantes/${batida.playerId}/premioGanho`),{divididoCom:outros,divididoEm:Date.now()}));
       }
     });
-    Promise.all(tasks).then(()=>{soFecharPremio(prizeId);});
+    // Atualizar resultadoAposta no historico para cada ganhador
+    get(fb('bingo/eventos/'+evId+'/historico')).then(histSnap=>{
+      const hist=histSnap.val()||{};
+      g.forEach(ganhador=>{
+        const hKey=Object.keys(hist).find(k=>hist[k].premioId===prizeId&&hist[k].cartelaId===ganhador.cartelaId);
+        if(hKey) tasks.push(update(fb('bingo/eventos/'+evId+'/historico/'+hKey),{resultadoAposta:'dividido'}));
+      });
+      Promise.all(tasks).then(()=>{soFecharPremio(prizeId);});
+    });
   });
 }
 
@@ -1313,13 +1321,23 @@ function soEscolherVencedor(prizeId){
     get(fb(`bingo/eventos/${evId}/bingos/${_soBingoId}/batidas`)).then(snap=>{
       const batidas=snap.val()||{};
       const confirmadas=Object.values(batidas).filter(b=>b.status==='confirmada');
-      perdedores.forEach(perd=>{
-        const batida=confirmadas.find(b=>b.cartelaId===perd.cartelaId);
-        if(batida?.playerId){
-          update(fb(`bingo/eventos/${evId}/brincantes/${batida.playerId}/premioGanho`),{perdeuEscolha:true,escolhidoFoi:escolhido.nome});
-        }
+      get(fb('bingo/eventos/'+evId+'/historico')).then(histSnap=>{
+        const hist=histSnap.val()||{};
+        const tasks2=[];
+        // Escolhido: ganhou_aposta
+        const hKeyEsc=Object.keys(hist).find(k=>hist[k].premioId===prizeId&&hist[k].cartelaId===escolhido.cartelaId);
+        if(hKeyEsc) tasks2.push(update(fb('bingo/eventos/'+evId+'/historico/'+hKeyEsc),{resultadoAposta:'ganhou_aposta'}));
+        // Perdedores: perdeu_aposta + gravar no brincante
+        perdedores.forEach(perd=>{
+          const batida=confirmadas.find(b=>b.cartelaId===perd.cartelaId);
+          if(batida?.playerId){
+            tasks2.push(update(fb(`bingo/eventos/${evId}/brincantes/${batida.playerId}/premioGanho`),{perdeuEscolha:true,escolhidoFoi:escolhido.nome}));
+          }
+          const hKeyPerd=Object.keys(hist).find(k=>hist[k].premioId===prizeId&&hist[k].cartelaId===perd.cartelaId);
+          if(hKeyPerd) tasks2.push(update(fb('bingo/eventos/'+evId+'/historico/'+hKeyPerd),{resultadoAposta:'perdeu_aposta',escolhidoFoi:escolhido.nome}));
+        });
+        Promise.all(tasks2).then(()=>{soFecharPremio(prizeId);});
       });
-      soFecharPremio(prizeId);
     });
   });
 }
@@ -2480,9 +2498,25 @@ function closeModal(){
   if(el) el.style.display='none';
 }
 
+// Badge visual para resultado de aposta
+function badgeResultado(resultadoAposta, escolhidoFoi){
+  if(!resultadoAposta||resultadoAposta==='pendente') return '';
+  if(resultadoAposta==='dividido')
+    return '<span style="font-size:.6rem;background:rgba(245,200,0,.12);color:var(--cN);padding:2px 7px;border-radius:4px;font-weight:700">&#128101; Dividido</span>';
+  if(resultadoAposta==='ganhou_aposta')
+    return '<span style="font-size:.6rem;background:rgba(0,223,168,.12);color:var(--green);padding:2px 7px;border-radius:4px;font-weight:700">&#127942; Ganhou Aposta</span>';
+  if(resultadoAposta==='perdeu_aposta')
+    return '<span style="font-size:.6rem;background:rgba(240,96,96,.12);color:var(--red);padding:2px 7px;border-radius:4px;font-weight:700">&#10060; Perdeu Aposta'+(escolhidoFoi?' — escolhido: '+esc(escolhidoFoi):'')+'</span>';
+  return '';
+}
+
 // ===== MOSTRAR GANHADORES (Bingo / Evento) =====
-function mostrarGanhadoresBingo(bingo){
+async function mostrarGanhadoresBingo(bingo){
   if(!bingo) return;
+  // Buscar historico para cruzar resultadoAposta
+  let hist={};
+  try{const hs=await get(fb('bingo/eventos/'+evId+'/historico'));hist=hs.val()||{};}catch(e){}
+  const histArr=Object.values(hist);
   const premios = sortP(bingo.premios||{});
   let html = '<div style="max-height:60vh;overflow-y:auto">';
   if(!premios.length){
@@ -2505,8 +2539,14 @@ function mostrarGanhadoresBingo(bingo){
       html += '<div style="font-size:.72rem;color:var(--text3);margin-bottom:4px">' + (p.regra==='cheia'?'Cartela Cheia':'Linha/Coluna/Diagonal') + '</div>';
       if(g.length){
         g.forEach(gg=>{
-          html += '<div style="margin-top:4px;font-size:.85rem;color:var(--green);display:flex;align-items:center;gap:6px">';
-          html += '<span>&#127942; ' + esc(gg.nome) + ' <span style="color:var(--text3);font-size:.75rem">(' + esc(gg.cartelaId||'-') + ')</span></span>';
+          const hEntry=histArr.find(h=>h.premioId===p.id&&h.cartelaId===gg.cartelaId);
+          const res=hEntry?.resultadoAposta||'';
+          const escolhidoFoi=hEntry?.escolhidoFoi||'';
+          const corNome=res==='perdeu_aposta'?'var(--red)':'var(--green)';
+          const icone=res==='perdeu_aposta'?'&#10060;':'&#127942;';
+          html += '<div style="margin-top:4px;font-size:.85rem;color:'+corNome+';display:flex;align-items:center;gap:6px;flex-wrap:wrap">';
+          html += '<span>'+icone+' ' + esc(gg.nome) + ' <span style="color:var(--text3);font-size:.75rem">(' + esc(gg.cartelaId||'-') + ')</span></span>';
+          html += badgeResultado(res, escolhidoFoi);
           html += '</div>';
         });
       } else {
@@ -2528,8 +2568,10 @@ function mostrarQRCodeEvento(evId){
   openM('mQR');
 }
 
-function mostrarGanhadoresEvento(ev){
+async function mostrarGanhadoresEvento(ev){
   if(!ev) return;
+  let histArrEv=[];
+  try{const hs=await get(fb('bingo/eventos/'+evId+'/historico'));histArrEv=Object.values(hs.val()||{});}catch(e){}
   const bingos = sortP(ev.bingos||{});
   let html = '<div style="max-height:60vh;overflow-y:auto">';
   let totalGanhadores = 0;
@@ -2552,7 +2594,12 @@ function mostrarGanhadoresEvento(ev){
           else html += ' <span style="font-size:.6rem;color:var(--green)">&#127942; Unico</span>';
           html += '</div>';
           g.forEach(gg=>{
-            html += '<div style="font-size:.82rem;color:var(--green);margin-top:2px">&#127942; ' + esc(gg.nome) + ' <span style="color:var(--text3);font-size:.72rem">(' + esc(gg.cartelaId||'-') + ')</span></div>';
+            const hEntry=histArrEv.find(h=>h.premioId===p.id&&h.cartelaId===gg.cartelaId);
+            const res=hEntry?.resultadoAposta||'';
+            const escolhidoFoi=hEntry?.escolhidoFoi||'';
+            const corNome=res==='perdeu_aposta'?'var(--red)':'var(--green)';
+            const icone=res==='perdeu_aposta'?'&#10060;':'&#127942;';
+            html += '<div style="font-size:.82rem;color:'+corNome+';margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+icone+' ' + esc(gg.nome) + ' <span style="color:var(--text3);font-size:.72rem">(' + esc(gg.cartelaId||'-') + ')</span>' + badgeResultado(res, escolhidoFoi) + '</div>';
           });
           html += '</div>';
         });

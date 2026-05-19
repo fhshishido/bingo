@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Cartelas v4.19 -->
+<!-- IBBI Bingo Cartelas v4.20 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>IBBI Cartelas v4.19</title>
+<title>IBBI Cartelas v4.20</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -195,7 +195,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
   .c-cell{min-height:48px;font-size:1.3rem}
 }
 </style>
-<meta name="app-version" content="v4.19">
+<meta name="app-version" content="v4.20">
 <base target="_blank">
 </head>
 <body>
@@ -217,7 +217,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
         <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px">Faca login no Hub para acessar suas cartelas.</div>
         <button class="btn btn-acc btn-full" onclick="window.location.href='player.html'">Ir para o Login &rarr;</button>
       </div>
-      <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v4.19</div>
+      <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v4.20</div>
     </div>
   </div>
 </div>
@@ -252,7 +252,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
     <div class="c-logo">B<span>I</span>NGO</div>
     <div style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase">IBBI</div>
     <div class="c-evname" id="cEvNome">Cartelas</div>
-    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-right:6px">v4.19</span>
+    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-right:6px">v4.20</span>
     <button class="btn btn-ghost btn-sm" onclick="voltarHub()">Sair</button>
   </div>
   <div class="c-body" id="cBody"></div>
@@ -392,7 +392,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, update, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, update, onValue, get, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const app = initializeApp({
@@ -782,23 +782,36 @@ window.selecionarBanco=async function(cid){
   // Verificar se cartela ja existe localmente
   const jaExiste=cartelas.find(x=>x.id===c.id);
   if(jaExiste){showToast('Cartela ja adicionada');cartelaIdx=cartelas.indexOf(jaExiste);showCartelasPaginacao();return;}
-  // Ler estado FRESCO do Firebase (evita condicao de corrida entre dois usuarios)
-  let estadoFresco;
+  // runTransaction e atomico: le, verifica e grava em uma unica operacao no servidor.
+  // Se dois usuarios tentarem ao mesmo tempo, apenas um vai conseguir — o outro recebe abort.
+  const jogadorNome=userProfile?.apelido||userProfile?.nome||currentUser.email;
+  let conflito=false;
   try{
-    const snap=await get(fb(`bingo/eventos/${evId}/cartelas/${cid}`));
-    estadoFresco=snap.val();
-  }catch(e){showToast('Erro de conexao');return;}
-  // Se outro usuario acabou de pegar essa cartela
-  if(estadoFresco?.usada && estadoFresco.playerId!==currentUser?.uid){
-    showToast('Cartela ja escolhida por outro jogador — atualizando...');
-    // Atualizar bancoEvento com o estado fresco e re-renderizar o banco
-    const snapBanco=await get(fb('bingo/eventos/'+evId+'/cartelas'));
-    bancoEvento=snapBanco.val()||{};
-    renderBancoGrid();
-    showView('vBanco');
+    const result=await runTransaction(fb(`bingo/eventos/${evId}/cartelas/${cid}`),estadoAtual=>{
+      // Se nao existe ainda, tratar como livre
+      if(!estadoAtual) return{usada:true,playerId:currentUser.uid,jogador:jogadorNome,ts:Date.now()};
+      // Se ja esta em uso por outro usuario, abortar a transacao retornando undefined
+      if(estadoAtual.usada && estadoAtual.playerId!==currentUser.uid){
+        conflito=true;
+        return undefined; // abort
+      }
+      // Livre ou ja minha: reservar
+      return{...estadoAtual,usada:true,playerId:currentUser.uid,jogador:jogadorNome,ts:Date.now()};
+    });
+    if(!result.committed){
+      // Transacao abortada: cartela foi tomada por outro usuario
+      showToast('Cartela ja escolhida por outro — atualizando...');
+      const snapBanco=await get(fb('bingo/eventos/'+evId+'/cartelas'));
+      bancoEvento=snapBanco.val()||{};
+      renderBancoGrid();
+      showView('vBanco');
+      return;
+    }
+  }catch(e){
+    showToast('Erro ao reservar cartela: '+e.message);
     return;
   }
-  await update(fb(`bingo/eventos/${evId}/cartelas/${cid}`),{usada:true,playerId:currentUser.uid,jogador:userProfile?.apelido||userProfile?.nome||currentUser.email,ts:Date.now()});
+  // Transacao confirmada: salvar localmente
   salvarCartela({id:c.id,fbId:genId(),numeros:JSON.parse(JSON.stringify(c.numeros)),marcados:[],freeCenter:c.freeCenter||false,autoMarcar:true,criadaEm:Date.now(),origem:'banco'});
   showToast('Cartela '+c.id+' escolhida!');cartelaIdx=cartelas.length-1;showCartelasPaginacao();
 };

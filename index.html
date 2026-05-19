@@ -289,6 +289,11 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 .win-inp:focus{border-color:#00ffcc}
 .win-inp::placeholder{color:var(--text3)}
 
+/* err screen */
+.err-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center}
+.err-screen h1{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:3px;color:var(--red);margin-bottom:14px}
+.err-screen p{color:var(--text2);font-size:.95rem;margin-bottom:18px;max-width:480px;line-height:1.5}
+
 </style>
   <meta name="app-version" content="v11.8">
 </head>
@@ -632,6 +637,133 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
   </div>
 </div>
 
+<!-- ==================================
+     SCREEN 4 - SORTEIO (inline)
+================================== -->
+
+<div class="screen" id="s4">
+  <div class="s2-head">
+    <button class="btn btn-ghost btn-sm" id="btnS4Voltar" style="padding:6px 10px;font-size:.75rem">&#8592; Voltar ao Evento</button>
+    <div>
+      <div class="s2-evname" id="soName">--</div>
+      <div class="s2-bingoname" id="soBingoName">--</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
+      <span class="mode-badge" id="soMode">90 pedras</span>
+      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v11.8</span>
+    </div>
+    <span class="conn off" id="soConnDot" style="margin-left:8px">&#11044; offline</span>
+    <div class="s2-right">
+      <button class="btn btn-red btn-sm" id="btnSoEncerrar">&#99458; Encerrar Bingo</button>
+    </div>
+  </div>
+  <div class="s2-body">
+    <div class="main-col">
+      <div class="prizes-panel">
+        <div class="pp-head"><div class="sec-lbl">&#127942; Prêmios deste Bingo</div></div>
+        <div class="prizes-scroll" id="soPrizesScroll"></div>
+      </div>
+      <div class="batidas-panel" id="soBatidasPanel">
+        <div class="sec-lbl" style="margin-bottom:10px">&#128276; Batidas Recebidas</div>
+        <div id="soBatidasList"></div>
+      </div>
+      <div class="cpbox">
+        <div>
+          <div class="cpbox-lbl">Sorteando agora</div>
+          <div class="cpbox-name" id="soCpName">--</div>
+          <div class="cpbox-rule" id="soCpRule"></div>
+          <div id="soCpWinner" class="cpbox-empty">Sem ganhador registrado</div>
+        </div>
+        <div class="cpbox-btns" style="display:flex;flex-direction:column;gap:6px">
+          <button class="btn btn-green btn-sm" id="btnSoGanhador">&#127941; Ganhadores do Prêmio</button>
+          <button class="btn btn-blue btn-sm" id="btnSoGanhadorTodos">&#127942; Todos os Ganhadores</button>
+        </div>
+      </div>
+      <div class="card" id="soWinnersCard" style="display:none">
+        <h3>&#127942; Ganhadores Confirmados</h3>
+        <div class="winners-list" id="soWinnersList"></div>
+        <div class="winners-actions" id="soWinnersActions"></div>
+      </div>
+      <div class="ball-area">
+        <div class="ball-lbl">Pedra sorteada</div>
+        <div class="bigball empty" id="soBigball">
+          <span class="ball-letter" id="soBallLetter"></span>
+          <span class="ball-number" id="soBallNumber">--</span>
+        </div>
+        <div class="draw-ctrl">
+          <button class="btn btn-acc" id="btnSoDraw" style="font-size:1rem;padding:12px 28px">&#127921; Sortear</button>
+          <button class="btn btn-blue btn-sm" id="btnSoRep" style="display:none">&#128266; Repetir</button>
+        </div>
+        <div class="fin-bar" id="soFinBar">
+          <h2>&#127881; Todas as pedras sorteadas!</h2>
+          <p id="soFinTxt"></p>
+        </div>
+        <div class="sec-lbl" style="align-self:flex-start;margin-top:4px">Últimas pedras</div>
+        <div class="hstrip" id="soHstrip"></div>
+      </div>
+      <div class="grid-wrap">
+        <div class="grid-title" id="soGridTitle">Tabela de Números</div>
+        <div class="bingo-cols" id="soBingoGrid"></div>
+      </div>
+    </div>
+    <div class="side-col">
+      <div class="card">
+        <h3>&#128202; Estatísticas</h3>
+        <div class="stats-g">
+          <div class="sbox"><div class="sv" id="soStD">0</div><div class="sl">Sorteadas</div></div>
+          <div class="sbox"><div class="sv" id="soStL">90</div><div class="sl">Restantes</div></div>
+          <div class="sbox"><div class="sv" id="soStP">0%</div><div class="sl">Progresso</div></div>
+          <div class="sbox"><div class="sv" id="soStU">--</div><div class="sl">Última</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>&#128266; Voz</h3>
+        <div class="vrow">
+          <label for="soVtog">Ativar voz</label>
+          <label class="tog"><input type="checkbox" id="soVtog" checked><span class="tog-sl"></span></label>
+        </div>
+        <div class="rrow"><span>Velocidade</span><input type="range" id="soVrate" min="0.5" max="1.5" step="0.1" value="0.9"></div>
+        <select class="vsel" id="soVsel"></select>
+      </div>
+      <div class="enc-box" id="soEncBox"><h3>&#99458; Encerrado</h3><p id="soEncInfo"></p></div>
+      <div class="card"><h3>&#128203; Histórico</h3><div class="hlog" id="soHlog"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAIS DO SORTEIO -->
+<div class="mbk" id="mSoBatida">
+  <div class="modal" style="max-width:420px">
+    <h2>&#128276; Batida Recebida!</h2>
+    <div id="mSoBatidaInfo" style="background:var(--surface2);border-radius:var(--rsm);padding:12px;margin-bottom:14px;font-size:.9rem"></div>
+    <div class="mfoot">
+      <button class="btn btn-red" id="btnSoBatidaRejeitar">&#10060; Rejeitar</button>
+      <button class="btn btn-green" id="btnSoBatidaConfirmar">&#9989; Confirmar Ganhador</button>
+    </div>
+  </div>
+</div>
+<div class="mbk" id="mSoWin">
+  <div class="modal" style="max-width:460px;max-height:80vh;display:flex;flex-direction:column">
+    <h2>&#127941; Ganhadores do Prêmio</h2>
+    <p style="font-size:.82rem;color:var(--text2);margin-bottom:14px" id="mSoWinPrize"></p>
+    <div id="mSoWinList" style="flex:1;overflow-y:auto;margin-bottom:14px;max-height:50vh"></div>
+    <div id="mSoWinActions" style="display:none;margin-bottom:14px"></div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnSoCancelWin">Fechar</button>
+    </div>
+  </div>
+</div>
+<div class="mbk" id="mSoWinTodos">
+  <div class="modal" style="max-width:520px;max-height:85vh;display:flex;flex-direction:column">
+    <h2>&#127942; Todos os Ganhadores</h2>
+    <p style="font-size:.82rem;color:var(--text2);margin-bottom:14px" id="mSoWinTodosSubtitle">Bingo</p>
+    <div id="mSoWinTodosList" style="flex:1;overflow-y:auto;margin-bottom:14px;max-height:60vh"></div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnSoCloseWinTodos">Fechar</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -834,6 +966,433 @@ function openPermsFromCard(id){
   evData = JSON.parse(JSON.stringify(eventos[id]));
   $('btnS2Perms')?.click();
 }
+
+// ====================================================
+//  SCREEN 4 - SORTEIO (inline, migrado de sorteio.html)
+// ====================================================
+let _soBingoId=null,_soBingoData=null,_soCurPrizeId=null,_soPendingBatidaId=null,_soPendingBatida=null;
+let _soVoiceOn=true,_soVoices=[],_soLastSpoken='';
+let _soUnsubBingo=null,_soUnsubBatidas=null,_soUnsubEventoSorteio=null;
+
+function soLoadVoices(){
+  _soVoices=window.speechSynthesis.getVoices().filter(v=>v.lang.startsWith('pt'));
+  if(!_soVoices.length)_soVoices=window.speechSynthesis.getVoices();
+  const sel=$('soVsel');if(!sel)return;
+  sel.innerHTML='';
+  _soVoices.forEach((v,i)=>{const o=document.createElement('option');o.value=i;o.textContent=v.name+(v.lang?` (${v.lang})`:'');sel.appendChild(o);});
+}
+window.speechSynthesis.onvoiceschanged=soLoadVoices;
+function soSyncRepBtn(){const btn=$('btnSoRep');if(!btn)return;btn.style.display=_soVoiceOn&&(_soBingoData?.drawn?.length)?'inline-flex':'none';}
+function soSpeak(t){if(!_soVoiceOn)return;_soLastSpoken=t;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);const si=$('soVsel')?.value||0;u.rate=parseFloat($('soVrate')?.value||0.9);if(_soVoices[si])u.voice=_soVoices[si];u.lang='pt-BR';window.speechSynthesis.speak(u);}
+
+function limparSorteio(){
+  if(_soUnsubBingo){_soUnsubBingo();_soUnsubBingo=null;}
+  if(_soUnsubBatidas){_soUnsubBatidas();_soUnsubBatidas=null;}
+  if(_soUnsubEventoSorteio){_soUnsubEventoSorteio();_soUnsubEventoSorteio=null;}
+  _soBingoId=null;_soBingoData=null;_soCurPrizeId=null;_soPendingBatidaId=null;_soPendingBatida=null;
+  closeM('mSoBatida');closeM('mSoWin');closeM('mSoWinTodos');
+}
+
+async function iniciarSorteio(bingoId){
+  if(!evId||!bingoId)return;
+  _soBingoId=bingoId;
+  if(!evData){const evSnap=await get(fb('bingo/eventos/'+evId));evData=evSnap.val();}
+  if(!evData){showToast('Evento não encontrado.');return;}
+  const biSnap=await get(fb('bingo/eventos/'+evId+'/bingos/'+bingoId));
+  _soBingoData=biSnap.val();
+  if(!_soBingoData){showToast('Bingo não encontrado.');return;}
+  if(evData.bingoAtivoId&&evData.bingoAtivoId!==bingoId){
+    const outroSnap=await get(fb('bingo/eventos/'+evId+'/bingos/'+evData.bingoAtivoId));
+    const outro=outroSnap.val();
+    if(outro&&outro.status==='jogando'){showToast('Outro bingo já está em jogo: "'+(outro.nome||'')+'".');return;}
+  }
+  if(_soBingoData.status==='pendente'){
+    _soBingoData.status='jogando';_soBingoData.iniciadoEm=Date.now();
+    await update(fb('bingo/eventos/'+evId+'/bingos/'+bingoId),{status:'jogando',iniciadoEm:_soBingoData.iniciadoEm});
+  }
+  if(_soBingoData.status!=='encerrado'){
+    await update(fb('bingo/eventos/'+evId),{bingoAtivoId:bingoId,status:(evData.status==='ativo'||evData.status==='novo')?'andamento':evData.status||'andamento'});
+    evData.bingoAtivoId=bingoId;evData.status='andamento';
+  }
+  const premios=soSortP(_soBingoData.premios);
+  _soCurPrizeId=premios.find(p=>!p.fechado&&!p.ganhadores?.length)?.id||premios.find(p=>!p.fechado)?.id||null;
+  showScreen('s4');soLoadVoices();soSyncRepBtn();
+  if(_soUnsubBingo)_soUnsubBingo();
+  _soUnsubBingo=onValue(fb('bingo/eventos/'+evId+'/bingos/'+bingoId),snap=>{
+    const v=snap.val();if(!v)return;
+    const oldLast=_soBingoData?.lastDrawn;_soBingoData=v;soRender(oldLast!==v.lastDrawn&&v.lastDrawn);
+  });
+  if(_soUnsubBatidas)_soUnsubBatidas();
+  _soUnsubBatidas=onValue(fb('bingo/eventos/'+evId+'/bingos/'+bingoId+'/batidas'),snap=>{soRenderBatidas(snap.val()||{});});
+  if(_soUnsubEventoSorteio)_soUnsubEventoSorteio();
+  _soUnsubEventoSorteio=onValue(fb('bingo/eventos/'+evId),snap=>{
+    const v=snap.val();if(v){evData=v;if(v.bingoAtivoId&&v.bingoAtivoId!==_soBingoId&&_soBingoData?.status!=='encerrado'){limparSorteio();showScreen('s2');showToast('Outro bingo foi ativado.');}}
+  });
+  soRender(false);
+}
+
+function soRender(animated){
+  if(!_soBingoData)return;
+  const ev=_soBingoData;
+  const mode=evData.mode||90;
+  const premios=soSortP(ev.premios);
+  const cp=premios.find(p=>p.id===_soCurPrizeId);
+  const premioFechado=cp?.fechado===true;
+  const enc=ev.status==='encerrado';
+  $('soName').textContent=evData.nome||'--';
+  $('soBingoName').textContent=(ev.nome||'Bingo')+' • #'+(ev.ordem||1);
+  $('soMode').textContent=mode+' pedras';
+  if(enc){$('soEncBox').style.display='block';$('soEncInfo').textContent='Encerrado em '+fmtTs(ev.encerradoEm);$('btnSoDraw').disabled=true;$('btnSoEncerrar').style.display='none';}
+  else{$('soEncBox').style.display='none';$('btnSoDraw').disabled=premioFechado||(ev.drawn||[]).length>=mode;$('btnSoEncerrar').style.display='';}
+  // Prize chips
+  const ps=$('soPrizesScroll');ps.innerHTML='';
+  premios.forEach(p=>{
+    const hasWinners=p.ganhadores?.length>0;
+    const isFechado=p.fechado===true;
+    let cls;
+    if(isFechado)cls='closed';else if(hasWinners)cls='won';else if(p.id===_soCurPrizeId)cls='curr';else cls='pend';
+    const chip=document.createElement('div');
+    chip.className='pchip '+cls;
+    let statusHtml='';
+    if(isFechado)statusHtml='<div class="pc-win">&#128274; Fechado</div>';
+    else if(hasWinners)statusHtml='<div class="pc-win">&#127942; '+p.ganhadores.length+' ganhador(es)</div>';
+    chip.innerHTML='<span class="pc-ord">'+p.ordem+'</span><div><div class="pc-name">'+esc(p.nome)+'</div>'+statusHtml+'</div>';
+    chip.addEventListener('click',()=>{_soCurPrizeId=p.id;soRender(false);});
+    ps.appendChild(chip);
+  });
+  // Current prize
+  if(cp){
+    $('soCpName').textContent='#'+cp.ordem+' - '+cp.nome;
+    $('soCpRule').textContent=cp.regra==='cheia'?'Cartela Cheia':'Linha / Coluna / Diagonal';
+    const cw=$('soCpWinner');
+    if(cp.ganhadores?.length){cw.className='cpbox-won';cw.textContent='&#127942; '+cp.ganhadores.map(g=>g.nome).join(', ');}
+    else{cw.className='cpbox-empty';cw.textContent='Sem ganhador registrado';}
+    if(cp.ganhadores?.length>0){
+      $('soWinnersCard').style.display='block';
+      $('soWinnersList').innerHTML=cp.ganhadores.map((g,i)=>`<div class="winner-item"><span class="wi-id">${esc(g.cartelaId||'-')}</span><span class="wi-name">${esc(g.nome)}</span><button class="wi-rm" data-so-idx="${i}" title="Remover">&#10005;</button></div>`).join('');
+      $('soWinnersList').querySelectorAll('.wi-rm').forEach(btn=>{btn.addEventListener('click',()=>soRemoveWinner(cp.id,parseInt(btn.dataset.soIdx)));});
+      $('soWinnersActions').innerHTML=`<button class="btn btn-red btn-sm" id="btnSoFecharPremio">&#9989; Fechar Prêmio</button><button class="btn btn-green btn-sm" id="btnSoDividir">&#129309; Dividir Prêmio</button><button class="btn btn-yellow btn-sm" id="btnSoEscolher">&#127942; Escolher Um</button>`;
+      $('soWinnersActions').querySelector('#btnSoFecharPremio')?.addEventListener('click',()=>soFecharPremio(cp.id));
+      $('soWinnersActions').querySelector('#btnSoDividir')?.addEventListener('click',()=>soDividirPremio(cp.id));
+      $('soWinnersActions').querySelector('#btnSoEscolher')?.addEventListener('click',()=>soEscolherVencedor(cp.id));
+    }else{$('soWinnersCard').style.display='none';}
+  }else{$('soCpName').textContent='--';$('soCpRule').textContent='';$('soCpWinner').textContent='Sem prêmio ativo';$('soWinnersCard').style.display='none';}
+  // Ball
+  const ball=$('soBigball');
+  if(ev.lastDrawn){
+    const letter=getLetter(ev.lastDrawn,mode);
+    $('soBallLetter').textContent=letter;
+    $('soBallNumber').textContent=ev.lastDrawn;
+    ball.className='bigball l'+letter;
+    if(animated){ball.classList.remove('pop');void ball.offsetWidth;ball.classList.add('pop');if(_soVoiceOn)soSpeak(letter+', '+ev.lastDrawn);}
+  }else{$('soBallLetter').textContent='';$('soBallNumber').textContent='--';ball.className='bigball empty';}
+  soSyncRepBtn();
+  const drawn=(ev.drawn||[]).length;
+  $('soStD').textContent=drawn;
+  $('soStL').textContent=mode-drawn;
+  $('soStP').textContent=Math.round(drawn/mode*100)+'%';
+  $('soStU').textContent=ev.lastDrawn?ballLabel(ev.lastDrawn,mode):'--';
+  // Strip
+  const strip=$('soHstrip');strip.innerHTML='';
+  [...(ev.drawn||[])].reverse().slice(0,20).forEach((n,i)=>{
+    const letter=getLetter(n,mode);
+    const d=document.createElement('div');
+    d.className='mball l'+letter+(i===0?' latest':'');
+    d.innerHTML='<span class="ml">'+letter+'</span><span class="mn">'+n+'</span>';
+    strip.appendChild(d);
+  });
+  // Log
+  const log=$('soHlog');log.innerHTML='';
+  [...(ev.drawn||[])].reverse().forEach((n,i)=>{
+    const letter=getLetter(n,mode);
+    const e=document.createElement('div');
+    e.className='lrow';
+    e.innerHTML='<span class="lnum l'+letter+'">'+letter+' '+n+'</span><span class="linfo">'+(i===0?'&#127912;':'')+'</span><span class="lseq">#'+(drawn-i)+'</span>';
+    log.appendChild(e);
+  });
+  // Grid
+  const gridEl=$('soBingoGrid');
+  $('soGridTitle').textContent='Tabela - '+mode+' pedras';
+  const dSet=new Set(ev.drawn||[]),size=mode/5;
+  gridEl.innerHTML='';
+  LETTERS.forEach((letter,li)=>{
+    const col=document.createElement('div');col.className='bingo-col';
+    const hdr=document.createElement('div');hdr.className='bingo-col-hdr l'+letter;hdr.textContent=letter;
+    const nums=document.createElement('div');nums.className='bingo-col-nums';
+    for(let i=li*size+1;i<=(li+1)*size;i++){
+      const isLatest=i===ev.lastDrawn,isDrawn=dSet.has(i);
+      const cell=document.createElement('div');
+      cell.className='nc'+(isDrawn||isLatest?` drawn-${letter}`:'')+(isLatest?' latest':'');
+      cell.textContent=i;
+      nums.appendChild(cell);
+    }
+    col.appendChild(hdr);col.appendChild(nums);
+    gridEl.appendChild(col);
+  });
+  // Fin bar
+  if(drawn>=mode){$('soFinBar').classList.add('show');$('soFinTxt').textContent='Todas as '+mode+' pedras foram sorteadas neste bingo.';}
+  else{$('soFinBar').classList.remove('show');}
+}
+
+function soRenderBatidas(batidas){
+  const pend=Object.entries(batidas).filter(([id,b])=>b.status==='pendente');
+  const list=$('soBatidasList'),panel=$('soBatidasPanel');
+  if(!pend.length){panel.classList.remove('show');list.innerHTML='';return;}
+  panel.classList.add('show');
+  list.innerHTML='';
+  pend.forEach(([bid,b])=>{
+    const card=document.createElement('div');card.className='batida-card';
+    const temCartela=b.cartela&&b.cartela.numeros;
+    card.innerHTML=`<div class="batida-card-top"><div><div class="batida-nome">${esc(b.playerNome||'Anonimo')}</div><div class="batida-id">Cartela: ${esc(b.cartelaId||'-')}</div></div><span class="batida-tipo">${b.tipo==='automatica'?'&#9989; Auto':'&#9995; Manual'}</span></div><div class="batida-btns"><button class="btn btn-red btn-sm" data-so-rej="${bid}">&#10060; Rejeitar</button><button class="btn btn-green btn-sm" data-so-conf="${bid}">&#9989; Confirmar</button>${temCartela?`<button class="btn btn-sm" data-so-ver="${bid}" style="background:rgba(0,184,240,.12);color:var(--accent);border:1.5px solid rgba(0,184,240,.3)">&#127921; Ver Cartela</button>`:''}</div>`;
+    card.querySelector('[data-so-conf]').addEventListener('click',()=>soConfirmarBatida(bid,b));
+    card.querySelector('[data-so-rej]').addEventListener('click',()=>soRejeitarBatida(bid));
+    const btnVer=card.querySelector('[data-so-ver]');
+    if(btnVer)btnVer.addEventListener('click',()=>{const cp2=_soCurPrizeId&&_soBingoData.premios[_soCurPrizeId]?_soBingoData.premios[_soCurPrizeId]:null;soMostrarCartelaBatida(b.cartela,b.playerNome,{cartelaId:b.cartelaId,pendente:true,playerNome:b.playerNome,premioNome:cp2?.nome,premioOrdem:cp2?.ordem,premioFechado:false,ganhadoresCount:cp2?.ganhadores?.length||0,eventoNome:evData?.nome,bingoNome:_soBingoData?.nome});});
+    list.appendChild(card);
+  });
+}
+
+function soConfirmarBatida(bid,b){
+  if(!_soCurPrizeId||!_soBingoData.premios[_soCurPrizeId]){alert('Sem prêmio ativo para confirmar.');return;}
+  const cp=_soBingoData.premios[_soCurPrizeId];
+  if(!cp.ganhadores)cp.ganhadores=[];
+  const ganhador={nome:b.playerNome||'Anônimo',cartelaId:b.cartelaId||'',ts:Date.now(),cartela:b.cartela||null};
+  cp.ganhadores.push(ganhador);
+  cp.ganhoEm=Date.now();
+  const premioInfo={ordem:cp.ordem,nome:cp.nome,regra:cp.regra,ts:Date.now(),bingoId:_soBingoId};
+  const basePath=`bingo/eventos/${evId}/bingos/${_soBingoId}/premios/${_soCurPrizeId}`;
+  const brincantePath=`bingo/eventos/${evId}/brincantes/${b.playerId||b.uid||'anon'}`;
+  const prizeId=_soCurPrizeId;
+  const histKey=`${_soBingoId}_${prizeId}_${Date.now()}`;
+  const histData={bingoId:_soBingoId,bingoNome:_soBingoData?.nome||'',bingoOrdem:_soBingoData?.ordem||'',premioId:prizeId,premioNome:cp.nome,premioOrdem:cp.ordem,premioRegra:cp.regra||'cheia',playerId:b.playerId||'',playerNome:b.playerNome||'',cartelaId:b.cartelaId||'',ts:Date.now()};
+  Promise.all([
+    set(fb(basePath+'/ganhadores'),cp.ganhadores),
+    set(fb(basePath+'/ganhoEm'),Date.now()),
+    update(fb(`bingo/eventos/${evId}/bingos/${_soBingoId}/batidas/${bid}`),{status:'confirmada'}),
+    set(fb(brincantePath+'/premioGanho'),premioInfo),
+    set(fb(brincantePath+'/bingoConfirmado'),true),
+    set(fb(brincantePath+'/ultimaCartelaBatida'),b.cartelaId||''),
+    set(fb(brincantePath+'/bingoIdAtivo'),_soBingoId),
+    set(fb(`bingo/eventos/${evId}/historico/${histKey}`),histData)
+  ]).then(()=>{soundConfirm();}).catch(e=>{console.error('Erro:',e);alert('Erro ao salvar: '+e.message);});
+}
+
+function soRejeitarBatida(bid){
+  update(fb(`bingo/eventos/${evId}/bingos/${_soBingoId}/batidas/${bid}`),{status:'rejeitada'});
+  soundReject();
+}
+
+function soMostrarCartelaBatida(cartelaData,playerNome,info){
+  if(!cartelaData||!cartelaData.numeros){showToast('Dados da cartela não disponíveis');return;}
+  info=info||{};
+  const numeros=cartelaData.numeros;
+  const freeCenter=cartelaData.freeCenter||false;
+  const drawnSet=new Set(_soBingoData?.drawn||[]);
+  const lastDrawn=_soBingoData?.lastDrawn;
+  const regra=info.regra||(_soCurPrizeId&&_soBingoData?.premios?.[_soCurPrizeId]?.regra)||'ld';
+  const todosNums=[];
+  LETTERS.forEach(l=>{(numeros[l]||[]).forEach(n=>{if(n!=null)todosNums.push(n);});});
+  const confirmados=todosNums.filter(n=>drawnSet.has(n));
+  const faltando=todosNums.filter(n=>!drawnSet.has(n));
+  const ultimaNaCartela=lastDrawn&&todosNums.includes(lastDrawn);
+  const COLORS={B:'#00b8f0',I:'#00dfa8',N:'#f5c800',G:'#ff8c00',O:'#c850ff'};
+  const RGBA={B:'0,184,240',I:'0,223,168',N:'245,200,0',G:'255,140,0',O:'200,80,255'};
+  let html='<div style="margin-bottom:12px;padding:10px;background:var(--surface2);border-radius:var(--rsm);border:1.5px solid var(--border);font-size:.8rem">';
+  html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
+  html+='<span style="font-family:Bebas Neue;font-size:1.2rem;color:var(--accent);letter-spacing:1px">&#127921; '+esc(info.cartelaId||cartelaData.id||'-')+'</span>';
+  if(info.premioFechado)html+='<span style="background:rgba(0,223,168,.15);color:var(--green);padding:2px 8px;border-radius:4px;font-size:.7rem;font-weight:800">&#9989; CONFIRMADO</span>';
+  else if(info.pendente)html+='<span style="background:rgba(245,200,0,.15);color:var(--cN);padding:2px 8px;border-radius:4px;font-size:.7rem;font-weight:800">&#9203; PENDENTE</span>';
+  html+='</div>';
+  if(info.playerNome||playerNome)html+='<div style="color:var(--text3);margin-bottom:3px">&#128100; <span style="color:var(--text);font-weight:700">'+esc(info.playerNome||playerNome||'-')+'</span></div>';
+  if(info.premioNome)html+='<div style="color:var(--text3);margin-bottom:3px">&#127942; Prêmio: <span style="color:var(--text)">#'+(info.premioOrdem||'?')+' '+esc(info.premioNome)+'</span></div>';
+  html+='<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">';
+  if(lastDrawn){const lLetter=LETTERS[Math.min(Math.floor((lastDrawn-1)/((evData?.mode||90)/5)),4)];const corUlt=ultimaNaCartela?COLORS[lLetter]:'var(--red)';const icone=ultimaNaCartela?'&#9989;':'&#10060;';html+='<span style="background:rgba(0,0,0,.3);border:1.5px solid '+corUlt+';color:'+corUlt+';padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:800">'+icone+' Última pedra '+lastDrawn+(ultimaNaCartela?' está na cartela':' NÃO está na cartela')+'</span>';}
+  const corConf=faltando.length===0?'var(--green)':faltando.length<=3?'var(--cN)':'var(--red)';
+  html+='<span style="background:rgba(0,0,0,.3);border:1.5px solid '+corConf+';color:'+corConf+';padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:800">'+confirmados.length+'/'+todosNums.length+' números sorteados</span>';
+  if(faltando.length>0){html+='<span style="background:rgba(240,96,96,.1);border:1.5px solid rgba(240,96,96,.4);color:var(--red);padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:800">&#9888; Faltam: '+faltando.join(', ')+'</span>';}
+  else{html+='<span style="background:rgba(0,223,168,.1);border:1.5px solid rgba(0,223,168,.4);color:var(--green);padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:800">&#9989; Todos os números saíram!</span>';}
+  html+='</div></div>';
+  html+='<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rsm);overflow:hidden;max-width:320px;margin:0 auto">';
+  html+='<div style="display:grid;grid-template-columns:repeat(5,1fr)">';
+  LETTERS.forEach(l=>{html+='<div style="font-family:Bebas Neue;font-size:1.5rem;text-align:center;padding:6px 2px;background:rgba('+RGBA[l]+',.2);color:'+COLORS[l]+'">'+l+'</div>';});
+  html+='</div>';
+  html+='<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:6px">';
+  for(let row=0;row<5;row++){
+    LETTERS.forEach((letter,col)=>{
+      const isFree=freeCenter&&row===2&&col===2;
+      const num=(numeros[letter]||[])[row];
+      const isLast=num!=null&&num===lastDrawn;
+      const isDrawn=num!=null&&drawnSet.has(num);
+      const missing=num!=null&&!drawnSet.has(num);
+      let bg,color,border,extra='';
+      if(isFree){bg='var(--surface3)';color='var(--text2)';border='1.5px solid var(--border)';}
+      else if(isLast){bg='#fff';color='#000';border='2.5px solid #fff';extra=' box-shadow:0 0 12px rgba(255,255,255,.8);font-size:1.3rem;';}
+      else if(isDrawn){bg=COLORS[letter];color='#000';border='1.5px solid '+COLORS[letter];}
+      else if(missing){bg='rgba(240,96,96,.12)';color='var(--red)';border='1.5px solid rgba(240,96,96,.4)';}
+      else{bg='var(--surface2)';color='var(--text3)';border='1.5px solid var(--border)';}
+      html+='<div style="aspect-ratio:1;min-height:44px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:Bebas Neue;font-size:1.2rem;background:'+bg+';color:'+color+';border:'+border+extra+';box-sizing:border-box">'+(isFree?'&#9733;':(num!=null?num:''))+'</div>';
+    });
+  }
+  html+='</div></div>';
+  html+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;font-size:.65rem;font-weight:700">';
+  html+='<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:#fff;display:inline-block"></span>Última pedra</span>';
+  html+='<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:var(--green);display:inline-block"></span>Sorteado</span>';
+  html+='<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:rgba(240,96,96,.3);border:1px solid var(--red);display:inline-block"></span>Não saiu</span>';
+  html+='</div>';
+  openModal('&#127921; Conferência de Cartela',html);
+}
+
+function soRemoveWinner(prizeId,idx){
+  if(!confirm('Remover este ganhador? A cartela voltará a participar no player.'))return;
+  const pri=_soBingoData.premios[prizeId];
+  const removido=pri.ganhadores[idx];
+  pri.ganhadores.splice(idx,1);
+  if(!pri.ganhadores.length)pri.ganhoEm=null;
+  const basePath=`bingo/eventos/${evId}/bingos/${_soBingoId}/premios/${prizeId}`;
+  const updates={};
+  updates[basePath+'/ganhadores']=pri.ganhadores;
+  if(!pri.ganhadores.length)updates[basePath+'/ganhoEm']=null;
+  update(fb('/'),updates).then(()=>{
+    if(removido?.cartelaId){
+      get(fb(`bingo/eventos/${evId}/bingos/${_soBingoId}/batidas`)).then(snap=>{
+        const batidas=snap.val()||{};
+        const bConfirmada=Object.values(batidas).find(b=>b.status==='confirmada'&&b.cartelaId===removido.cartelaId);
+        if(bConfirmada?.playerId){
+          update(fb(`bingo/eventos/${evId}/brincantes/${bConfirmada.playerId}`),{bingoConfirmado:false,premioGanho:null});
+        }
+      });
+    }
+  });
+}
+
+function soFecharPremio(prizeId,auto){
+  const p=_soBingoData.premios[prizeId];if(!p)return;
+  if(!auto&&!confirm(`Fechar o prêmio "${p.nome}"? Não será mais possível sortear para este prêmio.`))return;
+  _soBingoData.premios[prizeId].fechado=true;
+  _soBingoData.premios[prizeId].fechadoEm=Date.now();
+  set(fb(`bingo/eventos/${evId}/bingos/${_soBingoId}/premios/${prizeId}/fechado`),true).then(()=>{
+    const premios=soSortP(_soBingoData.premios);
+    const proximo=premios.find(pr=>!pr.fechado&&!pr.ganhadores?.length);
+    if(proximo){_soCurPrizeId=proximo.id;soRender(false);showToast(`Prêmio "${p.nome}" fechado. Próximo: #${proximo.ordem} ${proximo.nome}`);}
+    else{const aindaAtivo=premios.find(pr=>!pr.fechado);if(aindaAtivo){_soCurPrizeId=aindaAtivo.id;soRender(false);showToast(`Prêmio "${p.nome}" fechado.`);}else{_soCurPrizeId=null;soRender(false);soEncerrarBingo(true);}}
+  }).catch(e=>{console.error('Erro ao fechar premio:',e);_soBingoData.premios[prizeId].fechado=false;alert('Erro ao fechar prêmio: '+e.message);});
+}
+
+function soDividirPremio(prizeId){
+  const g=_soBingoData.premios[prizeId].ganhadores;
+  if(!g?.length)return;
+  if(!confirm(`Dividir prêmio entre ${g.length} ganhador(es)?`))return;
+  const nomes=g.map(w=>w.nome);
+  get(fb(`bingo/eventos/${evId}/bingos/${_soBingoId}/batidas`)).then(snap=>{
+    const batidas=snap.val()||{};
+    const confirmadas=Object.values(batidas).filter(b=>b.status==='confirmada');
+    const tasks=[];
+    g.forEach(ganhador=>{
+      const batida=confirmadas.find(b=>b.cartelaId===ganhador.cartelaId);
+      if(batida?.playerId){
+        const outros=nomes.filter(n=>n!==ganhador.nome);
+        tasks.push(update(fb(`bingo/eventos/${evId}/brincantes/${batida.playerId}/premioGanho`),{divididoCom:outros,divididoEm:Date.now()}));
+      }
+    });
+    Promise.all(tasks).then(()=>{soFecharPremio(prizeId);});
+  });
+}
+
+function soEscolherVencedor(prizeId){
+  const g=_soBingoData.premios[prizeId].ganhadores;
+  if(!g?.length)return;
+  const nomes=g.map((w,i)=>`${i+1}) ${w.nome} (${w.cartelaId})`).join('\n');
+  const idx=prompt(`Escolher um vencedor:\n\n${nomes}\n\nDigite o número:`);
+  const n=parseInt(idx);
+  if(isNaN(n)||n<1||n>g.length)return;
+  const escolhido=g[n-1];
+  const perdedores=g.filter((_,i)=>i!==n-1);
+  if(!confirm(`Confirmar: "${escolhido.nome}" como único vencedor?`))return;
+  _soBingoData.premios[prizeId].ganhadores=[escolhido];
+  _soBingoData.premios[prizeId].ganhoEm=Date.now();
+  const basePath=`bingo/eventos/${evId}/bingos/${_soBingoId}/premios/${prizeId}`;
+  set(fb(basePath+'/ganhadores'),[escolhido]).then(()=>{
+    get(fb(`bingo/eventos/${evId}/bingos/${_soBingoId}/batidas`)).then(snap=>{
+      const batidas=snap.val()||{};
+      const confirmadas=Object.values(batidas).filter(b=>b.status==='confirmada');
+      perdedores.forEach(perd=>{
+        const batida=confirmadas.find(b=>b.cartelaId===perd.cartelaId);
+        if(batida?.playerId){
+          update(fb(`bingo/eventos/${evId}/brincantes/${batida.playerId}/premioGanho`),{perdeuEscolha:true,escolhidoFoi:escolhido.nome});
+        }
+      });
+      soFecharPremio(prizeId);
+    });
+  });
+}
+
+function soEncerrarBingo(automatico){
+  const upd={
+    [`bingo/eventos/${evId}/bingos/${_soBingoId}/status`]:'encerrado',
+    [`bingo/eventos/${evId}/bingos/${_soBingoId}/encerradoEm`]:Date.now(),
+    [`bingo/eventos/${evId}/bingoAtivoId`]:null,
+    [`bingo/eventos/${evId}/status`]:'ativo'
+  };
+  update(fb('/'),upd).then(()=>{
+    showToast(automatico?'Todos os prêmios fechados. Bingo encerrado automaticamente.':'Bingo encerrado.');
+  });
+}
+
+function soRenderGanhadoresPremio(cp){
+  $('mSoWinPrize').textContent='#'+cp.ordem+' - '+cp.nome;
+  const list=$('mSoWinList');
+  if(!cp.ganhadores?.length){list.innerHTML='<p style="color:var(--text3);font-size:.85rem;text-align:center;padding:20px">Sem ganhadores ainda.</p>';$('mSoWinActions').style.display='none';return;}
+  const isDividido=cp.ganhadores.length>1;
+  list.innerHTML=cp.ganhadores.map((g,i)=>`<div class="winner-item"><span class="wi-id">${esc(g.cartelaId||'-')}</span><span class="wi-name">${esc(g.nome)}</span><span style="font-size:.7rem;color:var(--text3)">${fmtTs(g.ts)}</span>${isDividido?'<span style="font-size:.65rem;background:rgba(245,200,0,.12);color:var(--cN);padding:2px 6px;border-radius:4px">&#128101; Dividido</span>':'<span style="font-size:.65rem;background:rgba(0,223,168,.1);color:var(--green);padding:2px 6px;border-radius:4px">&#127942; Unico</span>'}${g.cartela&&g.cartela.numeros?`<button class="btn btn-blue btn-sm" data-so-vercartela-win="${i}" style="padding:4px 8px;font-size:.72rem">&#127921; Ver</button>`:''}</div>`).join('');
+  if(isDividido){list.insertAdjacentHTML('afterbegin','<div style="background:rgba(245,200,0,.08);border:1.5px solid rgba(245,200,0,.25);border-radius:var(--rsm);padding:8px 10px;margin-bottom:10px;font-size:.8rem;color:var(--cN);text-align:center">&#128101; Prêmio dividido entre <strong>'+cp.ganhadores.length+'</strong> ganhadores</div>');}
+  list.querySelectorAll('[data-so-vercartela-win]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const gi=parseInt(btn.dataset.soVercartelaWin);
+      const ganh=cp.ganhadores[gi];
+      if(ganh&&ganh.cartela)soMostrarCartelaBatida(ganh.cartela,ganh.nome,{cartelaId:ganh.cartelaId,premioFechado:true,playerNome:ganh.nome,premioNome:cp.nome,premioOrdem:cp.ordem,premioFechado:cp.fechado,ganhadoresCount:cp.ganhadores?.length||1,eventoNome:evData?.nome,bingoNome:_soBingoData?.nome});
+    });
+  });
+  $('mSoWinActions').style.display='none';
+}
+
+// --- Event listeners do sorteio ---
+$('btnS4Voltar')?.addEventListener('click',()=>{limparSorteio();showScreen('s2');renderGestao();});
+$('soVtog')?.addEventListener('change',()=>{_soVoiceOn=$('soVtog').checked;soSyncRepBtn();});
+$('btnSoRep')?.addEventListener('click',()=>{if(_soLastSpoken)soSpeak(_soLastSpoken);});
+$('btnSoDraw')?.addEventListener('click',()=>{
+  const ev=_soBingoData;const mode=evData.mode||90;
+  if(!ev||(ev.drawn||[]).length>=mode||ev.status==='encerrado')return;
+  const dSet=new Set(ev.drawn||[]);const rem=[];
+  for(let i=1;i<=mode;i++)if(!dSet.has(i))rem.push(i);
+  if(!rem.length)return;
+  const n=rem[Math.floor(Math.random()*rem.length)];
+  const newDrawn=[...(ev.drawn||[]),n];
+  update(fb(`bingo/eventos/${evId}/bingos/${_soBingoId}`),{drawn:newDrawn,lastDrawn:n});
+});
+$('btnSoEncerrar')?.addEventListener('click',()=>{if(!confirm('Encerrar este bingo? O histórico será preservado.'))return;soEncerrarBingo(false);});
+$('btnSoGanhador')?.addEventListener('click',()=>{const cp=soSortP(_soBingoData.premios).find(p=>p.id===_soCurPrizeId);if(!cp)return;soRenderGanhadoresPremio(cp);openM('mSoWin');});
+$('btnSoCancelWin')?.addEventListener('click',()=>closeM('mSoWin'));
+$('btnSoBatidaConfirmar')?.addEventListener('click',()=>{if(_soPendingBatidaId&&_soPendingBatida){soConfirmarBatida(_soPendingBatidaId,_soPendingBatida);_soPendingBatidaId=null;_soPendingBatida=null;closeM('mSoBatida');}});
+$('btnSoBatidaRejeitar')?.addEventListener('click',()=>{if(_soPendingBatidaId){soRejeitarBatida(_soPendingBatidaId);_soPendingBatidaId=null;_soPendingBatida=null;closeM('mSoBatida');}});
+$('btnSoGanhadorTodos')?.addEventListener('click',()=>{
+  const premios=soSortP(_soBingoData.premios);
+  $('mSoWinTodosSubtitle').textContent='Bingo: '+(_soBingoData.nome||'--');
+  const listEl=$('mSoWinTodosList');
+  listEl.innerHTML=premios.map((p,pi)=>{
+    const ganh=p.ganhadores||[];
+    const isDividido=ganh.length>1;
+    return `<div style="background:var(--surface2);border-radius:var(--rsm);padding:10px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-weight:800;color:var(--accent);font-size:.95rem">#${p.ordem} - ${esc(p.nome)}</span>${isDividido?'<span style="font-size:.65rem;background:rgba(245,200,0,.12);color:var(--cN);padding:2px 7px;border-radius:4px;font-weight:700">&#128101; Dividido ('+ganh.length+')</span>':ganh.length?'<span style="font-size:.65rem;background:rgba(0,223,168,.1);color:var(--green);padding:2px 7px;border-radius:4px;font-weight:700">&#127942; Unico</span>':''}</div><div style="font-size:.72rem;color:var(--text3);margin-top:2px">${p.regra==='cheia'?'Cartela Cheia':'Linha/Coluna/Diagonal'}${p.fechado?' • &#128274; Fechado':''}</div>${ganh.length?ganh.map((g,gi)=>`<div style="margin-top:6px;font-size:.85rem;color:var(--green);display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span>&#127942; ${esc(g.nome)} (${esc(g.cartelaId||'-')})</span>${g.cartela&&g.cartela.numeros?`<button class="btn btn-blue btn-sm btn-so-ver-g" data-so-pi="${pi}" data-so-gi="${gi}" style="padding:4px 8px;font-size:.72rem">&#127921; Ver Cartela</button>`:''}</div>`).join(''):'<div style="margin-top:6px;font-size:.8rem;color:var(--text3)">Sem ganhador</div>'}</div>`;
+  }).join('');
+  listEl.querySelectorAll('.btn-so-ver-g').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const pi2=parseInt(btn.dataset.soPi);const gi2=parseInt(btn.dataset.soGi);
+      const prem=premios[pi2];
+      if(prem&&prem.ganhadores[gi2]){const ganh2=prem.ganhadores[gi2];if(ganh2.cartela)soMostrarCartelaBatida(ganh2.cartela,ganh2.nome,{cartelaId:ganh2.cartelaId,premioFechado:true,playerNome:ganh2.nome,premioNome:prem.nome,premioOrdem:prem.ordem,premioFechado:prem.fechado,ganhadoresCount:prem.ganhadores?.length||1,eventoNome:evData?.nome,bingoNome:_soBingoData?.nome});}
+    });
+  });
+  openM('mSoWinTodos');
+});
+$('btnSoCloseWinTodos')?.addEventListener('click',()=>closeM('mSoWinTodos'));
 
 // --- NOVO EVENTO ---
 // --- BANCO DE CARTELAS (localStorage + Firebase fallback) ---
@@ -1111,8 +1670,7 @@ async function abrirJogo(bingoId){
     showToast('Erro ao iniciar bingo');
     return;
   }
-  const url = `sorteio.html?ev=${evId}&bingo=${bingoId}`;
-  window.open(url, '_blank');
+  iniciarSorteio(bingoId);
 }
 
 // -------- VOLTAR --------

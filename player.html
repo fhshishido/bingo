@@ -339,25 +339,28 @@ $('btnCadastrar')?.addEventListener('click', async () => {
 });
 
 // -- MEUS PRÊMIOS --
+let _playerPremiosData = [];
+
 window.verMeusPremiosPlayer = async function(evId) {
   if (!currentUser) { showToast('Faça login primeiro'); return; }
   const ev = todosEventos[evId] || meusEventos[evId];
   $('mPremiosEvento').textContent = ev?.nome || 'Evento';
-  
+
   try {
     const snap = await get(fb(`bingo/eventos/${evId}/historico`));
     const hist = snap.val() || {};
     const meus = Object.values(hist)
       .filter(h => h.playerId === currentUser.uid)
       .sort((a, b) => (a.ts || 0) - (b.ts || 0));
-    
+    _playerPremiosData = meus;
+
     const listEl = $('mPremiosList');
     if (!meus.length) {
-      listEl.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text3);font-size:.9rem">Nenhum prêmio ganho ainda.<br> participe das rodadas para ganhar prêmios!</div>';
+      listEl.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text3);font-size:.9rem">Nenhum prêmio ganho ainda.<br>Participe das rodadas para ganhar prêmios!</div>';
       openM('mPremios');
       return;
     }
-    
+
     listEl.innerHTML = meus.map((h, i) => {
       return `<div style="background:var(--surface2);border:1.5px solid rgba(200,80,255,.3);border-radius:var(--rsm);padding:12px;margin-bottom:10px;display:flex;align-items:center;gap:10px">
         <div style="font-size:2rem">&#127942;</div>
@@ -367,14 +370,91 @@ window.verMeusPremiosPlayer = async function(evId) {
           <div style="font-size:.72rem;color:var(--text3)">&#127920; Rodada #${h.bingoOrdem || '?'} ${esc(h.bingoNome || '')}</div>
           <div style="font-size:.68rem;color:var(--text3)">${new Date(h.ts || 0).toLocaleString('pt-BR')}</div>
         </div>
+        <button class="btn btn-blue btn-sm" onclick="verCartelaPremioPlayer(${i},'${evId}')" title="Ver cartela">&#127921; Ver</button>
       </div>`;
     }).join('');
-    
+
     openM('mPremios');
   } catch (e) {
     console.error(e);
     showToast('Erro ao carregar prêmios');
   }
+};
+
+window.verCartelaPremioPlayer = async function(idx, evId) {
+  const p = _playerPremiosData[idx]; if (!p) return;
+  const cartSnap = await get(fb('bingo/eventos/' + evId + '/brincantes/' + currentUser.uid + '/cartelas'));
+  const cartelasFb = cartSnap.val() || {};
+  const cData = Object.values(cartelasFb).find(c => c.id === p.cartelaId);
+  if (!cData) { showToast('Cartela nao encontrada'); return; }
+  const bingoSnap = await get(fb('bingo/eventos/' + evId + '/bingos/' + p.bingoId));
+  const bingo = bingoSnap.val() || {};
+  const drawn = new Set(bingo.drawn || []);
+  const lastDrawn = bingo.lastDrawn;
+  const mode = bingo.mode || evData?.mode || 90;
+  const numeros = cData.numeros || {};
+  const freeCenter = cData.freeCenter || false;
+  const LET = ['B','I','N','G','O'];
+  const COL = {B:'#00b8f0',I:'#00dfa8',N:'#f5c800',G:'#ff8c00',O:'#c850ff'};
+  const RGB = {B:'0,184,240',I:'0,223,168',N:'245,200,0',G:'255,140,0',O:'200,80,255'};
+  const todosNums = [];
+  LET.forEach(l => { (numeros[l] || []).forEach(n => { if (n != null) todosNums.push(n); }); });
+  const confirmados = todosNums.filter(n => drawn.has(n));
+  const faltando = todosNums.filter(n => !drawn.has(n));
+  const ultimaNaCartela = lastDrawn && todosNums.includes(lastDrawn);
+
+  let html = '<div style="margin-bottom:12px;padding:10px;background:var(--surface2);border-radius:var(--rsm);border:1.5px solid var(--border);font-size:.8rem">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
+  html += '<span style="font-family:Bebas Neue;font-size:1.2rem;color:var(--accent);letter-spacing:1px">&#127921; ' + esc(p.cartelaId || '-') + '</span>';
+  html += '<span style="background:rgba(0,223,168,.15);color:var(--green);padding:2px 8px;border-radius:4px;font-size:.7rem;font-weight:800">&#9989; CONFIRMADO</span></div>';
+  html += '<div style="color:var(--text3);margin-bottom:3px">&#127942; Prêmio: <span style="color:var(--text)">#' + (p.premioOrdem || '?') + ' ' + esc(p.premioNome) + '</span></div>';
+  html += '<div style="color:var(--text3);margin-bottom:3px">&#127920; Rodada: <span style="color:var(--text)">#' + (p.bingoOrdem || '?') + ' ' + esc(p.bingoNome || '') + '</span></div>';
+  html += '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">';
+  if (lastDrawn) {
+    const lL = LET[Math.min(Math.floor((lastDrawn - 1) / (mode / 5)), 4)];
+    const cU = ultimaNaCartela ? COL[lL] : 'var(--red)';
+    const ic = ultimaNaCartela ? '&#9989;' : '&#10060;';
+    html += '<span style="background:rgba(0,0,0,.3);border:1.5px solid ' + cU + ';color:' + cU + ';padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:800">' + ic + ' Última pedra ' + lastDrawn + (ultimaNaCartela ? ' está na cartela' : ' NÃO está na cartela') + '</span>';
+  }
+  const cC = faltando.length === 0 ? 'var(--green)' : faltando.length <= 3 ? 'var(--cN)' : 'var(--red)';
+  html += '<span style="background:rgba(0,0,0,.3);border:1.5px solid ' + cC + ';color:' + cC + ';padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:800">' + confirmados.length + '/' + todosNums.length + ' números sorteados</span>';
+  if (faltando.length > 0) {
+    html += '<span style="background:rgba(240,96,96,.1);border:1.5px solid rgba(240,96,96,.4);color:var(--red);padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:800">&#9888; Faltam: ' + faltando.join(', ') + '</span>';
+  } else {
+    html += '<span style="background:rgba(0,223,168,.1);border:1.5px solid rgba(0,223,168,.4);color:var(--green);padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:800">&#9989; Todos os números saíram!</span>';
+  }
+  html += '</div></div>';
+
+  html += '<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rsm);overflow:hidden;max-width:320px;margin:0 auto">';
+  html += '<div style="display:grid;grid-template-columns:repeat(5,1fr)">';
+  LET.forEach(l => { html += '<div style="font-family:Bebas Neue;font-size:1.5rem;text-align:center;padding:6px 2px;background:rgba(' + RGB[l] + ',.2);color:' + COL[l] + '">' + l + '</div>'; });
+  html += '</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:6px">';
+  for (let row = 0; row < 5; row++) {
+    LET.forEach((letter, col) => {
+      const isFree = freeCenter && row === 2 && col === 2;
+      const num = (numeros[letter] || [])[row];
+      const isLast = num != null && num === lastDrawn;
+      const isDrawn = num != null && drawn.has(num);
+      const missing = num != null && !drawn.has(num);
+      let bg, color, border, extra = '';
+      if (isFree) { bg = 'var(--surface3)'; color = 'var(--text2)'; border = '1.5px solid var(--border)'; }
+      else if (isLast) { bg = '#fff'; color = '#000'; border = '2.5px solid #fff'; extra = ' box-shadow:0 0 12px rgba(255,255,255,.8);font-size:1.3rem;'; }
+      else if (isDrawn) { bg = COL[letter]; color = '#000'; border = '1.5px solid ' + COL[letter]; }
+      else if (missing) { bg = 'rgba(240,96,96,.12)'; color = 'var(--red)'; border = '1.5px solid rgba(240,96,96,.4)'; }
+      else { bg = 'var(--surface2)'; color = 'var(--text3)'; border = '1.5px solid var(--border)'; }
+      html += '<div style="aspect-ratio:1;min-height:44px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:Bebas Neue;font-size:1.2rem;background:' + bg + ';color:' + color + ';border:' + border + extra + ';box-sizing:border-box">' + (isFree ? '&#9733;' : (num != null ? num : '')) + '</div>';
+    });
+  }
+  html += '</div></div>';
+
+  html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;font-size:.65rem;font-weight:700">';
+  html += '<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:#fff;display:inline-block"></span>Última pedra</span>';
+  html += '<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:var(--green);display:inline-block"></span>Sorteado</span>';
+  html += '<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:rgba(240,96,96,.3);border:1px solid var(--red);display:inline-block"></span>Não saiu</span>';
+  html += '</div>';
+
+  openModal('&#127921; Conferência de Cartela', html);
 };
 
 function friendlyAuthError(code) {

@@ -202,13 +202,22 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
     <div class="auth-box">
       <div class="auth-logo">B<span>I</span>NGO</div>
       <div class="auth-ibbi"><span>IBBI</span></div>
-      <div style="font-size:1.1rem;font-weight:800;color:var(--text2);margin-top:16px;margin-bottom:8px">&#128273; Login necessario</div>
-      <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px">Faca login no Hub para acessar suas cartelas.</div>
-      <button class="btn btn-acc btn-full" onclick="window.location.href='player.html'">Ir para o Login &rarr;</button>
+      <!-- Tela de carregamento (mostrada enquanto verifica auth) -->
+      <div id="vRedirectLoading">
+        <div style="font-size:2rem;margin-top:16px;margin-bottom:8px;animation:spin 1s linear infinite">&#128260;</div>
+        <div style="font-size:.9rem;font-weight:700;color:var(--text2)">Carregando...</div>
+      </div>
+      <!-- Tela de login necessario (so mostra se confirmar q nao esta logado) -->
+      <div id="vRedirectLogin" style="display:none">
+        <div style="font-size:1.1rem;font-weight:800;color:var(--text2);margin-top:16px;margin-bottom:8px">&#128273; Login necessario</div>
+        <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px">Faca login no Hub para acessar suas cartelas.</div>
+        <button class="btn btn-acc btn-full" onclick="window.location.href='player.html'">Ir para o Login &rarr;</button>
+      </div>
       <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v4.12</div>
     </div>
   </div>
 </div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 
 <!-- ===== VIEW: AGUARDANDO ===== -->
 <div class="view" id="vAguardando">
@@ -421,6 +430,7 @@ let drawnSet=new Set(), bingoData=null;
 let _unsubBingoCartelas=null;
 
 // ============ AUTH ============
+let _authCheckTimerCartelas=null;
 onAuthStateChanged(auth, async user => {
   if(user){
     currentUser=user;
@@ -430,9 +440,19 @@ onAuthStateChanged(auth, async user => {
     else { showView('vNotFound'); $('nfMsg').textContent='Nenhum evento especificado.'; }
   } else {
     currentUser=null;userProfile=null;
+    // So mostra "Login necessario" se confirmado que nao esta logado
+    $('vRedirectLoading').style.display='none';
+    $('vRedirectLogin').style.display='block';
     showView('vRedirect');
   }
 });
+// Timeout de seguranca: se em 4s nao resolveu auth, mostra opcao de ir pro login
+_authCheckTimerCartelas=setTimeout(()=>{
+  if(!currentUser){
+    $('vRedirectLoading').style.display='none';
+    $('vRedirectLogin').style.display='block';
+  }
+},4000);
 
 
 

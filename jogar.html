@@ -141,13 +141,22 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="auth-box">
       <div class="auth-logo">B<span>I</span>NGO</div>
       <div class="auth-ibbi"><span>IBBI</span></div>
-      <div style="font-size:1.1rem;font-weight:800;color:var(--text2);margin-top:16px;margin-bottom:8px">&#128273; Login necessario</div>
-      <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px">Faca login no Hub para jogar.</div>
-      <button class="btn btn-acc btn-full" onclick="window.location.href='player.html'">Ir para o Login &rarr;</button>
+      <!-- Tela de carregamento (mostrada enquanto verifica auth) -->
+      <div id="vRedirectLoading">
+        <div style="font-size:2rem;margin-top:16px;margin-bottom:8px;animation:spin 1s linear infinite">&#128260;</div>
+        <div style="font-size:.9rem;font-weight:700;color:var(--text2)">Carregando...</div>
+      </div>
+      <!-- Tela de login necessario (só mostra se confirmar q nao esta logado) -->
+      <div id="vRedirectLogin" style="display:none">
+        <div style="font-size:1.1rem;font-weight:800;color:var(--text2);margin-top:16px;margin-bottom:8px">&#128273; Login necessario</div>
+        <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px">Faca login no Hub para jogar.</div>
+        <button class="btn btn-acc btn-full" onclick="window.location.href='player.html'">Ir para o Login &rarr;</button>
+      </div>
       <div class="vtag">v7.12</div>
     </div>
   </div>
 </div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 
 <!-- VIEW: AGUARDANDO -->
 <div class="view" id="vAguardando">
@@ -241,6 +250,7 @@ let _cartelaQueBateu = null; // cartela que bateu (para enviar no bingo)
 let _cartelaParaReativar = null; // cartela a ser reativada quando vencedor removido
 
 // AUTH
+let _authCheckTimer = null;
 onAuthStateChanged(auth, async user => {
   if (user) {
     currentUser = user;
@@ -250,9 +260,19 @@ onAuthStateChanged(auth, async user => {
     else { $('nfMsg').textContent = 'Nenhum evento especificado.'; showView('vNotFound'); }
   } else {
     currentUser = null; userProfile = null;
+    // Só mostra "Login necessario" se confirmado que nao esta logado
+    $('vRedirectLoading').style.display = 'none';
+    $('vRedirectLogin').style.display = 'block';
     showView('vRedirect');
   }
 });
+// Timeout de seguranca: se em 4s nao resolveu auth, mostra opcao de ir pro login
+_authCheckTimer = setTimeout(() => {
+  if (!currentUser) {
+    $('vRedirectLoading').style.display = 'none';
+    $('vRedirectLogin').style.display = 'block';
+  }
+}, 4000);
 
 // ============== INIT JOGO ==============
 async function initJogo() {
@@ -884,6 +904,8 @@ function subscribeBingo(bingoId, isNewBingo, isReinicioEvento) {
       saveAllCartelas(); cartelaIdx = 0;
       try { Object.keys(sessionStorage).forEach(k => { if (k.startsWith('batida_')) sessionStorage.removeItem(k); }); } catch (e) { }
       const hs = $('histSection'); if (hs) hs.style.display = 'none';
+      // Limpar botao Meus Premios ao reiniciar rodada
+      const btnHP = $('btnHistPremios'); if (btnHP) { btnHP.style.display = 'none'; btnHP.innerHTML = '&#127881; Meus Prêmios (0)'; }
       renderCartela(); renderBall(); renderHist(); checkAutoBatida(); updateGanhadoresButton();
       showToast('Sorteio reiniciado!');
       return;

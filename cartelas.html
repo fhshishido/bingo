@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Cartelas v4.18 -->
+<!-- IBBI Bingo Cartelas v4.19 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>IBBI Cartelas v4.18</title>
+<title>IBBI Cartelas v4.19</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -195,7 +195,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
   .c-cell{min-height:48px;font-size:1.3rem}
 }
 </style>
-<meta name="app-version" content="v4.18">
+<meta name="app-version" content="v4.19">
 <base target="_blank">
 </head>
 <body>
@@ -217,7 +217,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
         <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px">Faca login no Hub para acessar suas cartelas.</div>
         <button class="btn btn-acc btn-full" onclick="window.location.href='player.html'">Ir para o Login &rarr;</button>
       </div>
-      <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v4.18</div>
+      <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v4.19</div>
     </div>
   </div>
 </div>
@@ -252,7 +252,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
     <div class="c-logo">B<span>I</span>NGO</div>
     <div style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase">IBBI</div>
     <div class="c-evname" id="cEvNome">Cartelas</div>
-    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-right:6px">v4.18</span>
+    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-right:6px">v4.19</span>
     <button class="btn btn-ghost btn-sm" onclick="voltarHub()">Sair</button>
   </div>
   <div class="c-body" id="cBody"></div>
@@ -778,15 +778,29 @@ window.onBancoTap=function(cid){
   showView('vPreview');
 };
 window.selecionarBanco=async function(cid){
-  const estado=bancoEvento[cid];if(!estado)return;
-  if(estado.usada&&estado.playerId!==currentUser?.uid){showToast('Ja escolhida');return;}
   const c=getCartelaLocal(cid);if(!c)return;
-  // Verificar se cartela já existe no array
+  // Verificar se cartela ja existe localmente
   const jaExiste=cartelas.find(x=>x.id===c.id);
-  if(jaExiste){showToast('Cartela já adicionada');cartelaIdx=cartelas.indexOf(jaExiste);showCartelasPaginacao();return;}
+  if(jaExiste){showToast('Cartela ja adicionada');cartelaIdx=cartelas.indexOf(jaExiste);showCartelasPaginacao();return;}
+  // Ler estado FRESCO do Firebase (evita condicao de corrida entre dois usuarios)
+  let estadoFresco;
+  try{
+    const snap=await get(fb(`bingo/eventos/${evId}/cartelas/${cid}`));
+    estadoFresco=snap.val();
+  }catch(e){showToast('Erro de conexao');return;}
+  // Se outro usuario acabou de pegar essa cartela
+  if(estadoFresco?.usada && estadoFresco.playerId!==currentUser?.uid){
+    showToast('Cartela ja escolhida por outro jogador — atualizando...');
+    // Atualizar bancoEvento com o estado fresco e re-renderizar o banco
+    const snapBanco=await get(fb('bingo/eventos/'+evId+'/cartelas'));
+    bancoEvento=snapBanco.val()||{};
+    renderBancoGrid();
+    showView('vBanco');
+    return;
+  }
   await update(fb(`bingo/eventos/${evId}/cartelas/${cid}`),{usada:true,playerId:currentUser.uid,jogador:userProfile?.apelido||userProfile?.nome||currentUser.email,ts:Date.now()});
   salvarCartela({id:c.id,fbId:genId(),numeros:JSON.parse(JSON.stringify(c.numeros)),marcados:[],freeCenter:c.freeCenter||false,autoMarcar:true,criadaEm:Date.now(),origem:'banco'});
-  showToast(`Cartela ${c.id} escolhida!`);cartelaIdx=cartelas.length-1;showCartelasPaginacao();
+  showToast('Cartela '+c.id+' escolhida!');cartelaIdx=cartelas.length-1;showCartelasPaginacao();
 };
 window.voltarBanco=function(){previewCartelaId=null;showView('vBanco');};
 $('btnPreviewSalvar')?.addEventListener('click',async()=>{if(previewCartelaId)await selecionarBanco(previewCartelaId);});

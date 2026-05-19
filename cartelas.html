@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Cartelas v4.22 -->
+<!-- IBBI Bingo Cartelas v4.23 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>IBBI Cartelas v4.22</title>
+<title>IBBI Cartelas v4.23</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -195,7 +195,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
   .c-cell{min-height:48px;font-size:1.3rem}
 }
 </style>
-<meta name="app-version" content="v4.22">
+<meta name="app-version" content="v4.23">
 <base target="_blank">
 </head>
 <body>
@@ -217,7 +217,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
         <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px">Faca login no Hub para acessar suas cartelas.</div>
         <button class="btn btn-acc btn-full" onclick="window.location.href='player.html'">Ir para o Login &rarr;</button>
       </div>
-      <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v4.22</div>
+      <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v4.23</div>
     </div>
   </div>
 </div>
@@ -252,7 +252,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
     <div class="c-logo">B<span>I</span>NGO</div>
     <div style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase">IBBI</div>
     <div class="c-evname" id="cEvNome">Cartelas</div>
-    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-right:6px">v4.22</span>
+    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-right:6px">v4.23</span>
     <button class="btn btn-ghost btn-sm" onclick="voltarHub()">Sair</button>
   </div>
   <div class="c-body" id="cBody"></div>
@@ -436,6 +436,10 @@ function friendlyAuthError(code){
 const params = new URLSearchParams(window.location.search);
 const evId = params.get('ev');
 let evData=null, currentUser=null, userProfile=null, minhaPermissao=null;
+// Helper: evento exige aprovacao de cartelas?
+const exigeAp = () => !!(evData?.exigeAprovacao);
+// Helper: cartela esta liberada para jogar?
+const cartelaLiberada = c => !exigeAp() || c.liberada === true;
 let cartelas=[], cartelaIdx=0;
 let bancoEvento={}, bancoPage=1;
 let previewCartelaId=null;
@@ -605,6 +609,7 @@ function renderCartelasView(){
     }
   }
 
+  const liberada=cartelaLiberada(c);
   let hdrHtml='';LETTERS.forEach(l=>{hdrHtml+=`<div class="ch-cell l${l}">${l}</div>`;});
   let cellsHtml='';const nums=c.numeros||{};
   for(let row=0;row<5;row++){LETTERS.forEach((letter,col)=>{
@@ -616,11 +621,21 @@ function renderCartelasView(){
     cellsHtml+=`<div class="${cls}">${isFree?'&#9733;':(n||'')}</div>`;
   });}
 
+  const badgeStatus=exigeAp()
+    ?(liberada
+      ?'<span style="font-size:.62rem;font-weight:900;padding:2px 8px;border-radius:20px;background:rgba(0,223,168,.15);color:var(--green);border:1px solid rgba(0,223,168,.4)">&#10003; Liberada</span>'
+      :'<span style="font-size:.62rem;font-weight:900;padding:2px 8px;border-radius:20px;background:rgba(245,200,0,.15);color:var(--cN);border:1px solid rgba(245,200,0,.4)">&#128274; Aguard. aprovacao</span>')
+    :'';
+  const bannerBloqueio=(!liberada)
+    ?`<div style="background:rgba(245,200,0,.1);border:1.5px solid rgba(245,200,0,.4);border-radius:var(--rsm);padding:10px 12px;font-size:.82rem;color:var(--cN);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px">&#128274; Esta cartela aguarda aprovacao do gestor. Contate o organizador do evento.</div>`
+    :'';
+
   body.innerHTML=`
+    ${bannerBloqueio}
     <div class="cartela-nav">
       <button class="btn btn-ghost btn-icon" id="btnPrevCartela">&larr;</button>
       <div class="cn-info">
-        <div class="cn-id">${esc(c.id||'--')}</div>
+        <div class="cn-id">${esc(c.id||'--')} ${badgeStatus}</div>
         <div class="cn-pg">Cartela ${cartelaIdx+1} de ${cartelas.length}</div>
       </div>
       <button class="btn btn-ghost btn-icon" id="btnNextCartela">&rarr;</button>
@@ -632,7 +647,7 @@ function renderCartelasView(){
     </div>
     <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
       <button class="btn btn-acc btn-full" id="btnNovaCartela">+ Nova Cartela</button>
-      <button class="btn btn-ghost btn-full" id="btnIrJogo">&#9654; Ir para o Jogo</button>
+      <button class="btn btn-ghost btn-full" id="btnIrJogo" ${!liberada?'disabled title="Cartela nao liberada"':''}>&#9654; Ir para o Jogo</button>
     </div>
   `;
   $('btnPrevCartela')?.addEventListener('click', prevCartela);
@@ -659,16 +674,18 @@ function showCriarCartela(){
         <div class="icon">&#127921;</div>
         <div class="title">Nenhuma cartela ainda</div>
         <div class="sub">Este evento usa Banco de Cartelas. Escolha uma do banco.</div>
-        <button class="btn btn-acc btn-full" style="margin-top:12px" onclick="abrirBanco()">&#127921; Escolher do Banco</button>
+        <button class="btn btn-acc btn-full" style="margin-top:12px" id="btnCriarBanco">&#127921; Escolher do Banco</button>
       </div>`;
+    $('btnCriarBanco')?.addEventListener('click', novaCartela);
   } else {
     body.innerHTML=`
       <div class="criar-box">
         <div class="icon">&#128221;</div>
         <div class="title">Nenhuma cartela ainda</div>
         <div class="sub">Crie sua cartela digitando os numeros ou escaneando uma foto.</div>
-        <button class="btn btn-acc btn-full" style="margin-top:12px" onclick="abrirOcr()">+ Criar Cartela</button>
+        <button class="btn btn-acc btn-full" style="margin-top:12px" id="btnCriarOcr">+ Criar Cartela</button>
       </div>`;
+    $('btnCriarOcr')?.addEventListener('click', novaCartela);
   }
 }
 
@@ -688,11 +705,19 @@ window.delCartela=async function(){
   }
   cartelas.splice(cartelaIdx,1);
   cartelaIdx=Math.max(0,cartelaIdx-1);
+  if(exigeAp()&&cartelas.length>0) bloquearTodasCartelas();
   saveAllCartelas();
   if(cartelas.length>0)renderCartelasView();else showCriarCartela();
-  showToast('Cartela excluida');
+  showToast('Cartela excluida'+(exigeAp()&&cartelas.length>0?' — aprovacao necessaria':''));
 };
-window.novaCartela=function(){const tipo=evData?.tipoCartela||'livre';if(tipo==='banco')abrirBanco();else abrirOcr();};
+window.novaCartela=function(){
+  const max=evData?.maxCartelasUser||0;
+  if(max>0&&cartelas.length>=max){
+    showToast('Limite de '+max+' cartela(s) atingido para este evento');
+    return;
+  }
+  const tipo=evData?.tipoCartela||'livre';if(tipo==='banco')abrirBanco();else abrirOcr();
+};
 window.voltarHub=function(){window.location.href='player.html';};
 window.voltarCartelas=function(){if(cartelas.length>0){showCartelasPaginacao();}else{showCriarCartela();}};
 window.irParaJogo=function(){window.location.href=`jogar.html?ev=${evId}`;};
@@ -771,7 +796,17 @@ function renderBancoGrid(){
     const isMinha=e.usada&&e.playerId===meuId;
     const c=getCartelaLocal(cid);let cls='bc-card';if(isMinha)cls+=' minha';else if(isDisponivel)cls+=' disponivel';
     let mini='';if(c){for(let r=0;r<5;r++){LETTERS.forEach(col=>{const n=c.numeros[col][r];const f=c.freeCenter&&col==='N'&&r===2;mini+=`<div class="bc-mc ${f?'free':'h'+col}">${f?'&#9733;':(n||'')}</div>`;});}}
-    const labelBadge=isMinha?'<div style="text-align:center;font-size:.6rem;color:var(--cN);font-weight:900;margin-top:4px">&#9733; MINHA</div>':'<div style="text-align:center;font-size:.6rem;color:var(--green);font-weight:900;margin-top:4px">DISPONIVEL</div>';
+    let labelBadge;
+    if(isMinha){
+      // Verificar se essa cartela esta liberada: buscar no array local
+      const cLocal=cartelas.find(x=>x.id===cid);
+      const lib=cLocal?cartelaLiberada(cLocal):!exigeAp();
+      labelBadge=lib
+        ?'<div style="text-align:center;font-size:.6rem;color:var(--cN);font-weight:900;margin-top:4px">&#9733; MINHA &#10003;</div>'
+        :'<div style="text-align:center;font-size:.6rem;color:var(--cN);font-weight:900;margin-top:4px">&#9733; MINHA &#128274;</div>';
+    } else {
+      labelBadge='<div style="text-align:center;font-size:.6rem;color:var(--green);font-weight:900;margin-top:4px">DISPONIVEL</div>';
+    }
     return`<div class="${cls}" onclick="onBancoTap('${cid}')" ondblclick="${isDisponivel?`selecionarBanco('${cid}')`:''}"><div class="bc-id">${cid}</div><div class="bc-mini">${mini}</div>${labelBadge}</div>`;
   }).join('');
   $('bancoPg').textContent=bancoPage+'/'+totalPages;
@@ -826,8 +861,11 @@ window.selecionarBanco=async function(cid){
     return;
   }
   // Transacao confirmada: salvar localmente
-  salvarCartela({id:c.id,fbId:genId(),numeros:JSON.parse(JSON.stringify(c.numeros)),marcados:[],freeCenter:c.freeCenter||false,autoMarcar:true,criadaEm:Date.now(),origem:'banco'});
-  showToast('Cartela '+c.id+' escolhida!');cartelaIdx=cartelas.length-1;showCartelasPaginacao();
+  const liberadaVal=!exigeAp(); // se nao exige aprovacao ja vem liberada
+  salvarCartela({id:c.id,fbId:genId(),numeros:JSON.parse(JSON.stringify(c.numeros)),marcados:[],freeCenter:c.freeCenter||false,autoMarcar:true,criadaEm:Date.now(),origem:'banco',liberada:liberadaVal});
+  if(exigeAp()) bloquearTodasCartelas();
+  showToast('Cartela '+c.id+' escolhida!'+(exigeAp()?' — aguarde aprovacao do gestor':''));
+  cartelaIdx=cartelas.length-1;showCartelasPaginacao();
 };
 window.voltarBanco=function(){previewCartelaId=null;showView('vBanco');};
 $('btnPreviewSalvar')?.addEventListener('click',async()=>{if(previewCartelaId)await selecionarBanco(previewCartelaId);});
@@ -946,8 +984,12 @@ function updateOcrCellDisplay(){
   else{disp.className='np-display invalid';if(hint){hint.textContent='Deve ser '+min+'-'+max;hint.style.color='var(--red)';}}
 }
 function salvarOcrCartela(){
-  const c={id:gerarCartelaId(),fbId:genId(),status:'ativa',premioGanho:null,numeros:JSON.parse(JSON.stringify(_ocrNums)),marcados:[],freeCenter:true,autoMarcar:true,criadaEm:Date.now(),origem:'ocr'};
-  salvarCartela(c);showToast('Cartela salva!');cartelaIdx=cartelas.length-1;showCartelasPaginacao();
+  const liberadaVal=!exigeAp();
+  const c={id:gerarCartelaId(),fbId:genId(),status:'ativa',premioGanho:null,numeros:JSON.parse(JSON.stringify(_ocrNums)),marcados:[],freeCenter:true,autoMarcar:true,criadaEm:Date.now(),origem:'ocr',liberada:liberadaVal};
+  salvarCartela(c);
+  if(exigeAp()) bloquearTodasCartelas();
+  showToast('Cartela salva!'+(exigeAp()?' — aguarde aprovacao do gestor':''));
+  cartelaIdx=cartelas.length-1;showCartelasPaginacao();
 }
 function gerarCartelaId(){return`${evData?.mode||90}-C${String(Math.floor(Math.random()*9000)+1000)}`;}
 
@@ -959,14 +1001,14 @@ function salvarCartela(c){
 }
 function saveAllCartelas(){
   if(!evId||!currentUser)return;
-  const obj={};cartelas.forEach(c=>{obj[c.fbId]={id:c.id,status:c.status||'ativa',premioGanho:c.premioGanho||null,numeros:c.numeros,marcados:c.marcados||[],freeCenter:c.freeCenter||false,autoMarcar:c.autoMarcar!==false,criadaEm:c.criadaEm,origem:c.origem||''};});
+  const obj={};cartelas.forEach(c=>{obj[c.fbId]={id:c.id,status:c.status||'ativa',premioGanho:c.premioGanho||null,numeros:c.numeros,marcados:c.marcados||[],freeCenter:c.freeCenter||false,autoMarcar:c.autoMarcar!==false,criadaEm:c.criadaEm,origem:c.origem||'',liberada:c.liberada!==false};});
   const nome=userProfile?.apelido||userProfile?.nome||currentUser.email;
   try{localStorage.setItem('bingo_cartelas_'+evId+'_'+currentUser.uid,JSON.stringify({cartelas:obj,cartelaIdx}));}catch(e){}
   set(fb(`bingo/eventos/${evId}/brincantes/${currentUser.uid}`),{cartelas:obj,nome,uid:currentUser.uid});
 }
 function saveCartelasCache(){
   if(!evId||!currentUser)return;
-  const obj={};cartelas.forEach(c=>{obj[c.fbId]={id:c.id,status:c.status||'ativa',premioGanho:c.premioGanho||null,numeros:c.numeros,marcados:c.marcados||[],freeCenter:c.freeCenter||false,autoMarcar:c.autoMarcar!==false,criadaEm:c.criadaEm,origem:c.origem||''};});
+  const obj={};cartelas.forEach(c=>{obj[c.fbId]={id:c.id,status:c.status||'ativa',premioGanho:c.premioGanho||null,numeros:c.numeros,marcados:c.marcados||[],freeCenter:c.freeCenter||false,autoMarcar:c.autoMarcar!==false,criadaEm:c.criadaEm,origem:c.origem||'',liberada:c.liberada!==false};});
   try{localStorage.setItem('bingo_cartelas_'+evId+'_'+currentUser.uid,JSON.stringify({cartelas:obj,cartelaIdx}));}catch(e){}
 }
 function loadCartelasFromCache(){
@@ -979,6 +1021,18 @@ function loadCartelasFromCache(){
     cartelas=Object.entries(obj).map(([fbId,c])=>ensureNumerosFormat({fbId,...c}));
     return cartelas.length>0;
   }catch(e){return false;}
+}
+
+// Marca todas as cartelas como nao liberadas e sinaliza permissao pendente no Firebase
+function bloquearTodasCartelas(){
+  cartelas.forEach(c=>{ c.liberada=false; });
+  // Atualizar status de permissao do usuario para pendente_cartelas
+  if(evId&&currentUser){
+    update(fb('bingo/eventos/'+evId+'/permissoes/'+currentUser.uid),{
+      status:'pendente_cartelas',
+      cartelasPendentesEm:Date.now()
+    }).catch(()=>{});
+  }
 }
 
 function openM(id){$(id)?.classList.add('open');}

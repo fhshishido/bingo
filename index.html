@@ -974,6 +974,11 @@ let _soBingoId=null,_soBingoData=null,_soCurPrizeId=null,_soPendingBatidaId=null
 let _soVoiceOn=true,_soVoices=[],_soLastSpoken='';
 let _soUnsubBingo=null,_soUnsubBatidas=null,_soUnsubEventoSorteio=null;
 
+function soSortP(obj){
+  if(!obj)return[];
+  return Object.entries(obj).map(([id,p])=>({id,...p})).sort((a,b)=>a.ordem-b.ordem);
+}
+
 function soLoadVoices(){
   _soVoices=window.speechSynthesis.getVoices().filter(v=>v.lang.startsWith('pt'));
   if(!_soVoices.length)_soVoices=window.speechSynthesis.getVoices();

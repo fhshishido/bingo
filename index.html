@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v11.25 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
+<!-- IBBI Bingo v11.26 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
 
 <!DOCTYPE html>
 
@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v11.25</title>
+<title>IBBI Bingo v11.26</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -295,7 +295,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 .err-screen p{color:var(--text2);font-size:.95rem;margin-bottom:18px;max-width:480px;line-height:1.5}
 
 </style>
-  <meta name="app-version" content="v11.25">
+  <meta name="app-version" content="v11.26">
 </head>
 <body>
 
@@ -313,7 +313,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.25</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.26</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -591,7 +591,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <button class="btn btn-acc btn-sm" id="btnQRDownload">⬇ Baixar PNG</button>
       <button class="btn btn-ghost btn-sm" id="btnQRClose">Fechar</button>
     </div>
-    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.25</div>
+    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.26</div>
   </div>
 </div>
 
@@ -643,7 +643,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
       <span class="mode-badge" id="soMode">90 pedras</span>
-      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v11.25</span>
+      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v11.26</span>
     </div>
     <span class="conn off" id="soConnDot" style="margin-left:8px">&#11044; offline</span>
     <div class="s2-right">
@@ -718,7 +718,11 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
         <div class="rrow"><span>Velocidade</span><input type="range" id="soVrate" min="0.5" max="1.5" step="0.1" value="0.9"></div>
         <select class="vsel" id="soVsel"></select>
       </div>
-      <div class="enc-box" id="soEncBox"><h3>&#99458; Encerrado</h3><p id="soEncInfo"></p></div>
+      <div class="enc-box" id="soEncBox">
+        <h3>&#9989; Rodada Encerrada</h3>
+        <p id="soEncInfo"></p>
+        <div id="soProximaWrap" style="margin-top:10px"></div>
+      </div>
       <div class="card"><h3>&#128203; Histórico</h3><div class="hlog" id="soHlog"></div></div>
     </div>
   </div>
@@ -762,7 +766,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v11.25';
+const APP_VERSION = 'v11.26';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -1041,7 +1045,34 @@ function soRender(animated){
   $('soName').textContent=evData.nome||'--';
   $('soBingoName').textContent=(ev.nome||'Bingo')+' • #'+(ev.ordem||1);
   $('soMode').textContent=mode+' pedras';
-  if(enc){$('soEncBox').style.display='block';$('soEncInfo').textContent='Encerrado em '+fmtTs(ev.encerradoEm);$('btnSoDraw').disabled=true;$('btnSoEncerrar').style.display='none';}
+  if(enc){
+    $('soEncBox').style.display='block';
+    $('soEncInfo').textContent='Encerrado em '+fmtTs(ev.encerradoEm);
+    $('btnSoDraw').disabled=true;
+    $('btnSoEncerrar').style.display='none';
+    // Listar próximas rodadas disponíveis (pendente ou ativo, exceto a atual)
+    const proximaWrap=$('soProximaWrap');
+    if(proximaWrap){
+      const proximas=sortP(evData.bingos||{}).filter(b=>b.id!==_soBingoId&&b.status!=='encerrado');
+      if(proximas.length){
+        let html='<div style="font-size:.72rem;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Próximas Rodadas</div>';
+        proximas.forEach(b=>{
+          const stCor=b.status==='andamento'?'var(--green)':'var(--cN)';
+          const stLbl=b.status==='andamento'?'Em andamento':'Pendente';
+          html+=`<div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--rsm);padding:8px 10px;margin-bottom:6px;gap:8px">
+            <div>
+              <span style="font-family:Bebas Neue,sans-serif;font-size:.95rem;color:var(--accent)">#${b.ordem||'?'} ${esc(b.nome||'')}</span>
+              <span style="font-size:.6rem;margin-left:6px;color:${stCor}">${stLbl}</span>
+            </div>
+            <button class="btn btn-green btn-sm" style="font-size:.72rem;white-space:nowrap" onclick="irParaRodada('${b.id}')">&#9654; Ir</button>
+          </div>`;
+        });
+        proximaWrap.innerHTML=html;
+      } else {
+        proximaWrap.innerHTML='<div style="font-size:.78rem;color:var(--text3);text-align:center;padding:6px 0">Nenhuma rodada disponível</div>';
+      }
+    }
+  }
   else{$('soEncBox').style.display='none';$('btnSoDraw').disabled=premioFechado||(ev.drawn||[]).length>=mode;$('btnSoEncerrar').style.display='';}
   // Prize chips
   const ps=$('soPrizesScroll');ps.innerHTML='';
@@ -1354,6 +1385,10 @@ function soEscolherVencedor(prizeId){
     });
   });
 }
+
+window.irParaRodada = async function(bingoId){
+  await abrirJogo(bingoId);
+};
 
 function soEncerrarBingo(automatico){
   const upd={

@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Cartelas v4.13 -->
+<!-- IBBI Bingo Cartelas v4.14 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>IBBI Cartelas v4.13</title>
+<title>IBBI Cartelas v4.14</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -192,7 +192,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
   .c-cell{min-height:48px;font-size:1.3rem}
 }
 </style>
-<meta name="app-version" content="v4.13">
+<meta name="app-version" content="v4.14">
 <base target="_blank">
 </head>
 <body>
@@ -214,7 +214,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
         <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px">Faca login no Hub para acessar suas cartelas.</div>
         <button class="btn btn-acc btn-full" onclick="window.location.href='player.html'">Ir para o Login &rarr;</button>
       </div>
-      <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v4.13</div>
+      <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v4.14</div>
     </div>
   </div>
 </div>
@@ -249,7 +249,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
     <div class="c-logo">B<span>I</span>NGO</div>
     <div style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase">IBBI</div>
     <div class="c-evname" id="cEvNome">Cartelas</div>
-    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-right:6px">v4.13</span>
+    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-right:6px">v4.14</span>
     <button class="btn btn-ghost btn-sm" onclick="voltarHub()">Sair</button>
   </div>
   <div class="c-body" id="cBody"></div>
@@ -723,17 +723,9 @@ function renderBancoGrid(){
   const grid=$('bancoGrid');
   const todosIds=Object.keys(bancoEvento);
   const meuId=currentUser?.uid;
-  // "Minha" = Firebase diz que é minha E cartela ainda está no meu array ativo
-  const minhasAtivas=new Set(cartelas.map(c=>c.id));
+  // Mostrar: disponiveis (nao usadas) + minhas (usadas pelo player atual)
   const disponiveis=todosIds.filter(cid=>{const e=bancoEvento[cid];return!e.usada;});
-  const minhas=todosIds.filter(cid=>{const e=bancoEvento[cid];return e.usada&&e.playerId===meuId&&minhasAtivas.has(cid);});
-  // Se Firebase diz minha mas não está no array ativo, liberar de volta
-  todosIds.forEach(async cid=>{
-    const e=bancoEvento[cid];
-    if(e.usada&&e.playerId===meuId&&!minhasAtivas.has(cid)){
-      try{await update(fb('bingo/eventos/'+evId+'/cartelas/'+cid),{usada:false,playerId:null,jogador:null});}catch(err){}
-    }
-  });
+  const minhas=todosIds.filter(cid=>{const e=bancoEvento[cid];return e.usada&&e.playerId===meuId;});
   const ids=[...disponiveis,...minhas].sort();
   if(!ids.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text3)">&#127881; Todas as cartelas foram escolhidas!</div>';$('bancoPg').textContent='0/0';$('btnBancoPrev').disabled=true;$('btnBancoNext').disabled=true;return;}
   const totalPages=Math.ceil(ids.length/BANCO_PER_PAGE);
@@ -741,7 +733,7 @@ function renderBancoGrid(){
   const start=(bancoPage-1)*BANCO_PER_PAGE;
   const pagIds=ids.slice(start,start+BANCO_PER_PAGE);
   grid.innerHTML=pagIds.map(cid=>{
-    const e=bancoEvento[cid];const isMinha=e.usada&&e.playerId===meuId&&minhasAtivas.has(cid);
+    const e=bancoEvento[cid];const isMinha=e.usada&&e.playerId===meuId;
     const isOutro=e.usada&&e.playerId!==meuId;
     const c=getCartelaLocal(cid);let cls='bc-card';if(isMinha)cls+=' minha';else if(isOutro)cls+=' indisponivel';
     let mini='';if(c){for(let r=0;r<5;r++){LETTERS.forEach(col=>{const n=c.numeros[col][r];const f=c.freeCenter&&col==='N'&&r===2;mini+=`<div class="bc-mc ${f?'free':'h'+col}">${f?'&#9733;':(n||'')}</div>`;});}}

@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Cartelas v4.17 -->
+<!-- IBBI Bingo Cartelas v4.18 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>IBBI Cartelas v4.17</title>
+<title>IBBI Cartelas v4.18</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -195,7 +195,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
   .c-cell{min-height:48px;font-size:1.3rem}
 }
 </style>
-<meta name="app-version" content="v4.17">
+<meta name="app-version" content="v4.18">
 <base target="_blank">
 </head>
 <body>
@@ -217,7 +217,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
         <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px">Faca login no Hub para acessar suas cartelas.</div>
         <button class="btn btn-acc btn-full" onclick="window.location.href='player.html'">Ir para o Login &rarr;</button>
       </div>
-      <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v4.17</div>
+      <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v4.18</div>
     </div>
   </div>
 </div>
@@ -252,7 +252,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
     <div class="c-logo">B<span>I</span>NGO</div>
     <div style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase">IBBI</div>
     <div class="c-evname" id="cEvNome">Cartelas</div>
-    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-right:6px">v4.17</span>
+    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-right:6px">v4.18</span>
     <button class="btn btn-ghost btn-sm" onclick="voltarHub()">Sair</button>
   </div>
   <div class="c-body" id="cBody"></div>
@@ -608,23 +608,32 @@ function renderCartelasView(){
 
   body.innerHTML=`
     <div class="cartela-nav">
-      <button class="btn btn-ghost btn-icon" onclick="prevCartela()">&larr;</button>
+      <button class="btn btn-ghost btn-icon" id="btnPrevCartela">&larr;</button>
       <div class="cn-info">
         <div class="cn-id">${esc(c.id||'--')}</div>
         <div class="cn-pg">Cartela ${cartelaIdx+1} de ${cartelas.length}</div>
       </div>
-      <button class="btn btn-ghost btn-icon" onclick="nextCartela()">&rarr;</button>
-      <button class="btn btn-red btn-icon" onclick="if(confirm('Excluir cartela '+cartelas[cartelaIdx]?.id+'?'))delCartela()" title="Excluir">&#128465;</button>
+      <button class="btn btn-ghost btn-icon" id="btnNextCartela">&rarr;</button>
+      <button class="btn btn-red btn-icon" id="btnDelCartela" title="Excluir">&#128465;</button>
     </div>
     <div class="cartela-wrap" id="cartelaWrapEl">
       <div class="cartela-hdr">${hdrHtml}</div>
       <div class="cartela-grid">${cellsHtml}</div>
     </div>
     <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-      <button class="btn btn-acc btn-full" onclick="novaCartela()">+ Nova Cartela</button>
-      <button class="btn btn-ghost btn-full" onclick="irParaJogo()">&#9654; Ir para o Jogo</button>
+      <button class="btn btn-acc btn-full" id="btnNovaCartela">+ Nova Cartela</button>
+      <button class="btn btn-ghost btn-full" id="btnIrJogo">&#9654; Ir para o Jogo</button>
     </div>
   `;
+  $('btnPrevCartela')?.addEventListener('click', prevCartela);
+  $('btnNextCartela')?.addEventListener('click', nextCartela);
+  $('btnDelCartela')?.addEventListener('click', ()=>{
+    const cAtual=cartelas[cartelaIdx];
+    if(!cAtual)return;
+    if(confirm('Excluir cartela '+cAtual.id+'?')) delCartela();
+  });
+  $('btnNovaCartela')?.addEventListener('click', novaCartela);
+  $('btnIrJogo')?.addEventListener('click', irParaJogo);
   setupSwipe($('cartelaWrapEl'));
 }
 
@@ -658,11 +667,21 @@ window.prevCartela=function(){if(cartelaIdx>0){cartelaIdx--;renderCartelasView()
 window.nextCartela=function(){if(cartelaIdx<cartelas.length-1){cartelaIdx++;renderCartelasView();}};
 window.delCartela=async function(){
   const c=cartelas[cartelaIdx];if(!c)return;
-  // Se a cartela veio do banco, liberar de volta para outros jogadores
+  // Se a cartela veio do banco, liberar no Firebase PRIMEIRO
   if(c.origem==='banco'&&c.id){
-    try{await update(fb('bingo/eventos/'+evId+'/cartelas/'+c.id),{usada:false,playerId:null,jogador:null});}catch(e){}
+    try{
+      await update(fb('bingo/eventos/'+evId+'/cartelas/'+c.id),{usada:false,playerId:null,jogador:null,ts:null});
+    }catch(e){
+      showToast('Erro ao liberar cartela: '+e.message);
+      return; // nao remove localmente se falhou no Firebase
+    }
   }
-  cartelas.splice(cartelaIdx,1);cartelaIdx=Math.max(0,cartelaIdx-1);saveAllCartelas();if(cartelas.length>0)renderCartelasView();else showCriarCartela();showToast('Cartela excluida');};
+  cartelas.splice(cartelaIdx,1);
+  cartelaIdx=Math.max(0,cartelaIdx-1);
+  saveAllCartelas();
+  if(cartelas.length>0)renderCartelasView();else showCriarCartela();
+  showToast('Cartela excluida');
+};
 window.novaCartela=function(){const tipo=evData?.tipoCartela||'livre';if(tipo==='banco')abrirBanco();else abrirOcr();};
 window.voltarHub=function(){window.location.href='player.html';};
 window.voltarCartelas=function(){if(cartelas.length>0){showCartelasPaginacao();}else{showCriarCartela();}};

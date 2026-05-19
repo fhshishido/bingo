@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Cartelas v4.16 -->
+<!-- IBBI Bingo Cartelas v4.17 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>IBBI Cartelas v4.16</title>
+<title>IBBI Cartelas v4.17</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -92,7 +92,10 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .bc-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rsm);padding:10px;cursor:pointer;transition:all .2s}
 .bc-card:hover{border-color:var(--accent);transform:translateY(-2px)}
 .bc-card.ocupada{opacity:.4;cursor:not-allowed;border-color:var(--red)}
-.bc-card.minha{border-color:var(--green);box-shadow:0 0 20px rgba(0,223,168,.3)}
+.bc-card.disponivel{border-color:var(--green);box-shadow:0 0 12px rgba(0,223,168,.2);cursor:pointer}
+.bc-card.disponivel:hover{border-color:var(--green);transform:translateY(-2px);box-shadow:0 0 20px rgba(0,223,168,.35)}
+.bc-card.minha{border-color:var(--cN);box-shadow:0 0 14px rgba(245,200,0,.25);cursor:pointer}
+.bc-card.minha:hover{border-color:var(--cN);transform:translateY(-2px)}
 .bc-card.indisponivel{background:rgba(255,0,0,.03);border-color:rgba(255,0,0,.15);opacity:.6;cursor:not-allowed}
 .bc-card.indisponivel .bc-id{color:var(--text3)}
 .bc-card .bc-id{font-family:'Bebas Neue';font-size:.9rem;color:var(--accent);text-align:center}
@@ -192,7 +195,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
   .c-cell{min-height:48px;font-size:1.3rem}
 }
 </style>
-<meta name="app-version" content="v4.16">
+<meta name="app-version" content="v4.17">
 <base target="_blank">
 </head>
 <body>
@@ -214,7 +217,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
         <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px">Faca login no Hub para acessar suas cartelas.</div>
         <button class="btn btn-acc btn-full" onclick="window.location.href='player.html'">Ir para o Login &rarr;</button>
       </div>
-      <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v4.16</div>
+      <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v4.17</div>
     </div>
   </div>
 </div>
@@ -249,7 +252,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
     <div class="c-logo">B<span>I</span>NGO</div>
     <div style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase">IBBI</div>
     <div class="c-evname" id="cEvNome">Cartelas</div>
-    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-right:6px">v4.16</span>
+    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-right:6px">v4.17</span>
     <button class="btn btn-ghost btn-sm" onclick="voltarHub()">Sair</button>
   </div>
   <div class="c-body" id="cBody"></div>
@@ -267,8 +270,8 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
     <div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:2px;color:var(--accent);margin-bottom:8px">Escolher do Banco</div>
     <div style="font-size:.82rem;color:var(--text2);margin-bottom:16px">Toque na cartela para selecionar. Toque duas vezes para escolher rapido.</div>
     <div style="display:flex;gap:8px;margin-bottom:12px;justify-content:center;flex-wrap:wrap">
-      <span style="font-size:.65rem;padding:4px 10px;border-radius:20px;background:rgba(0,223,168,.12);color:var(--green);border:1px solid rgba(0,223,168,.3)">Disponivel</span>
-      <span style="font-size:.65rem;padding:4px 10px;border-radius:20px;background:rgba(245,200,0,.12);color:var(--cN);border:1px solid rgba(245,200,0,.3)">Minha</span>
+      <span style="font-size:.65rem;padding:4px 10px;border-radius:20px;background:rgba(0,223,168,.12);color:var(--green);border:1px solid rgba(0,223,168,.3)">&#9679; Disponivel</span>
+      <span style="font-size:.65rem;padding:4px 10px;border-radius:20px;background:rgba(245,200,0,.12);color:var(--cN);border:1px solid rgba(245,200,0,.3)">&#9679; Minha</span>
     </div>
     <div id="bancoGrid" class="banco-grid"></div>
     <div style="display:flex;gap:8px;margin-top:16px;justify-content:center">
@@ -723,10 +726,10 @@ function renderBancoGrid(){
   const grid=$('bancoGrid');
   const todosIds=Object.keys(bancoEvento);
   const meuId=currentUser?.uid;
-  // "Minha" = Firebase diz que é minha (NÃO depende do array local)
+  // Banco mostra: disponiveis (nao usadas) + minhas (usadas por MIM)
+  // Cartelas de OUTROS jogadores NAO aparecem aqui
   const disponiveis=todosIds.filter(cid=>{const e=bancoEvento[cid];return!e.usada;});
   const minhas=todosIds.filter(cid=>{const e=bancoEvento[cid];return e.usada&&e.playerId===meuId;});
-  // NÃO mostrar cartelas de outros jogadores
   const ids=[...disponiveis,...minhas].sort();
   if(!ids.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text3)">&#127881; Todas as cartelas foram escolhidas!</div>';$('bancoPg').textContent='0/0';$('btnBancoPrev').disabled=true;$('btnBancoNext').disabled=true;return;}
   const totalPages=Math.ceil(ids.length/BANCO_PER_PAGE);
@@ -734,10 +737,12 @@ function renderBancoGrid(){
   const start=(bancoPage-1)*BANCO_PER_PAGE;
   const pagIds=ids.slice(start,start+BANCO_PER_PAGE);
   grid.innerHTML=pagIds.map(cid=>{
-    const e=bancoEvento[cid];const isMinha=e.usada&&e.playerId===meuId;
-    const c=getCartelaLocal(cid);let cls='bc-card';if(isMinha)cls+=' minha';
+    const e=bancoEvento[cid];const isDisponivel=!e.usada;
+    const isMinha=e.usada&&e.playerId===meuId;
+    const c=getCartelaLocal(cid);let cls='bc-card';if(isMinha)cls+=' minha';else if(isDisponivel)cls+=' disponivel';
     let mini='';if(c){for(let r=0;r<5;r++){LETTERS.forEach(col=>{const n=c.numeros[col][r];const f=c.freeCenter&&col==='N'&&r===2;mini+=`<div class="bc-mc ${f?'free':'h'+col}">${f?'&#9733;':(n||'')}</div>`;});}}
-    return`<div class="${cls}" onclick="onBancoTap('${cid}')" ondblclick="selecionarBanco('${cid}')"><div class="bc-id">${cid}</div><div class="bc-mini">${mini}</div>${isMinha?'<div style="text-align:center;font-size:.6rem;color:var(--green);margin-top:4px">MINHA</div>':''}</div>`;
+    const labelBadge=isMinha?'<div style="text-align:center;font-size:.6rem;color:var(--cN);font-weight:900;margin-top:4px">&#9733; MINHA</div>':'<div style="text-align:center;font-size:.6rem;color:var(--green);font-weight:900;margin-top:4px">DISPONIVEL</div>';
+    return`<div class="${cls}" onclick="onBancoTap('${cid}')" ondblclick="${isDisponivel?`selecionarBanco('${cid}')`:''}"><div class="bc-id">${cid}</div><div class="bc-mini">${mini}</div>${labelBadge}</div>`;
   }).join('');
   $('bancoPg').textContent=bancoPage+'/'+totalPages;
   $('btnBancoPrev').disabled=bancoPage<=1;$('btnBancoNext').disabled=bancoPage>=totalPages;

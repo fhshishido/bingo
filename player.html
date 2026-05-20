@@ -1,11 +1,11 @@
-<!-- IBBI Bingo Player Hub v14.11 -->
+<!-- IBBI Bingo Player Hub v14.12 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Bingo v14.11</title>
+<title>IBBI Bingo v14.12</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#060608;--surface:#0f0f14;--surface2:#161620;--surface3:#1e1e2a;--border:#252535;--border2:#323248;--accent:#00b8f0;--accent2:#00dfa8;--red:#f06060;--green:#00dfa8;--text:#e4f2ff;--text2:#7090b0;--text3:#3a5068;--radius:12px;--rsm:8px}
@@ -114,7 +114,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 
 input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30px #161620 inset!important;-webkit-text-fill-color:#e4f2ff!important;transition:background-color 9999s ease-in-out 0s}
 </style>
-<meta name="app-version" content="v14.11">
+<meta name="app-version" content="v14.12">
 </head>
 <body>
 
@@ -137,7 +137,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
           <button class="btn btn-ghost btn-sm" id="btnIrCadastro">Cadastrar &rarr;</button>
         </div>
       </div>
-      <div class="vtag">v14.11</div>
+      <div class="vtag">v14.12</div>
     </div>
   </div>
 </div>
@@ -169,7 +169,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
         <button class="btn btn-acc btn-full" id="btnCadastrar" style="margin-top:8px">Criar Conta &rarr;</button>
         <div style="text-align:center;margin-top:12px"><button class="auth-link" id="btnIrLogin">&larr; Ja tenho conta</button></div>
       </div>
-      <div class="vtag">v14.11</div>
+      <div class="vtag">v14.12</div>
     </div>
   </div>
 </div>
@@ -211,7 +211,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
           <div class="loading-row"><div style="width:40px;height:40px;border-radius:var(--rsm);background:var(--surface3);flex-shrink:0"></div><div style="flex:1"><div style="height:14px;background:var(--surface3);border-radius:4px;width:55%;margin-bottom:6px"></div><div style="height:10px;background:var(--surface3);border-radius:4px;width:35%"></div></div></div>
         </div>
       </div>
-      <div class="vtag">v14.11</div>
+      <div class="vtag">v14.12</div>
     </div>
   </div>
 </div>
@@ -296,6 +296,7 @@ function badgeResultado(res, escolhidoFoi){
   if(!res||res==='pendente') return '';
   if(res==='dividido') return '<span style="font-size:.62rem;background:rgba(245,200,0,.12);color:#f5c800;padding:2px 7px;border-radius:4px;font-weight:700">&#128101; Dividido</span>';
   if(res==='ganhou_aposta') return '<span style="font-size:.62rem;background:rgba(0,223,168,.12);color:#00dfa8;padding:2px 7px;border-radius:4px;font-weight:700">&#127942; Ganhou Aposta</span>';
+  if(res==='rejeitado') return '<span style="font-size:.62rem;background:rgba(240,96,96,.12);color:var(--red);padding:2px 7px;border-radius:4px;font-weight:700">&#10060; Rejeitado</span>';
   if(res==='perdeu_aposta') return '<span style="font-size:.62rem;background:rgba(240,96,96,.12);color:#f06060;padding:2px 7px;border-radius:4px;font-weight:700">&#10060; Perdeu Aposta'+(escolhidoFoi?' — '+esc(escolhidoFoi):'')+'</span>';
   return '';
 }

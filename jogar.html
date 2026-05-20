@@ -260,13 +260,17 @@ const fb = p => ref(db, p);
 const $ = id => document.getElementById(id);
 
 // ============== NoSleep (manter tela acesa) ==============
-// Usa video MP4 em loop + Wake Lock API — funciona em iOS Safari, Android Chrome e Desktop
+// Funciona em iOS Safari, Android Chrome e Desktop
+// ESTRATEGIA: video em loop + WakeLock API + scroll keepalive
 // O video base64 e necessario porque iOS Safari NAO suporta Wake Lock API de forma confiavel.
-// O MP4 e um arquivo minusculo (1px, invisivel) que roda em loop silencioso — tecnica padrao
-// usada pela biblioteca nosleep.js. Sem ele, iPhone/iPad apaga a tela em 30-60s.
+// O MP4 e um arquivo minusculo (1px, invisivel) que roda em loop silencioso.
+// IMPORTANTE: o video SÓ pode ser iniciado dentro de um handler de toque do usuario.
+// Quando jogar.html e aberto via window.location.href do player.html, o iOS nao considera
+// a navegacao como "interacao do usuario". Por isso criamos o video no PRIMEIRO TOQUE.
 let _noSleepEnabled = false;
 let _noSleepVideo = null;
 let _wakeLock = null;
+let _noSleepKeepalive = null;
 
 const _NOSLEEP_MP4 = 'data:video/mp4;base64,AAAAIGZ0eXBtcDQyAAAAAG1wNDJtcDQxaXNvbWF2YzEAAATKbW9vdgAAAGxtdmhkAAAAAMXMHGfFzBxnAAAD6AAACu8AAQAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAA/UAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAACDXRyYWsAAABcdGtoZAAAAAfFzBxnxcwcZwAAAAEAAAAAAAAK7wAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAABAAAAAAGQAAABIAAAAAAAkZWR0cwAAABxlbHN0AAAAAAAAAAEAAArvAAAAAAABAAAAAAGFbWRpYQAAACBtZGhkAAAAAMXMHGfFzBxnAACAAAAJYABVxAAAAAAAMWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABDb3JlIE1lZGlhIFZpZGVvAAAAASxtaW5mAAAAFHZtaGQAAAABAAAAAAAAAAAAAAAkZGluZgAAABxkcmVmAAAAAAAAAAEAAAAMdXJsIAAAAAEAAADsc3RibAAAAJBzdHNkAAAAAAAAAAEAAACAYXZjMQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAGQASAASAAAAEgAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY//8AAAAuYXZjQwHkAB7/4QAVZ+QAHqzZQYECf+wEAAADAAQAAAMA8DxQqSAABGiW74BIAAAAGHN0dHMAAAAAAAAAAQAAAAEAAAAAAAAAFHN0c3MAAAAAAAAAAQAAAAEAAAAcc3RzYwAAAAAAAAABAAAAAQAAAAEAAAABAAAAFHN0c3oAAAAAAAAEegAAAAEAAAAUc3RjbwAAAAAAAAABAAACkQAAAGB1ZHRhAAAAWG1ldGEAAAAAAAAAIWhkbHIAAAAAAAAAAG1kaXJhcHBsAAAAAAAAAAAAAAAAK2lsc3QAAAAjqXRvbwAAABtkYXRhAAAAAQAAAABMYXZmNjAuMTYuMTAwAAACjm1kYXQAAAAhBgX//x3cRem95tlIt5Ys2CDZI+7vzL7eMUE2zr5JK+e8ABJDQAAGCY69r8sCAAA=';
 
@@ -285,7 +289,7 @@ function _criarNoSleepVideo() {
 }
 
 async function ativarWakeLock() {
-  // Se ja esta ativo e o video esta rodando (ou wakeLock existe), nao faz nada
+  // Se ja esta ativo, nao faz nada
   if (_noSleepEnabled && _wakeLock) return;
   if (_noSleepEnabled && _noSleepVideo && !_noSleepVideo.paused) return;
 
@@ -306,7 +310,7 @@ async function ativarWakeLock() {
     }
   }
 
-  // 2) Video em loop (iOS Safari obrigatorio, redundancia para outros)
+  // 2) Video em loop (iOS Safari obrigatorio)
   _criarNoSleepVideo();
   try {
     if (_noSleepVideo.paused) {
@@ -314,13 +318,43 @@ async function ativarWakeLock() {
       if (promise) await promise;
     }
     _noSleepEnabled = true;
+    // 3) Iniciar keepalive (scroll mínimo periódico) — iOS precisa disso
+    _iniciarNoSleepKeepalive();
   } catch (e) {
-    // precisa de gesture — retry no proximo toque
+    // Falhou — precisa de gesture na página. Retry no próximo toque.
+  }
+}
+
+function _iniciarNoSleepKeepalive() {
+  if (_noSleepKeepalive) return;
+  // iOS dorme mesmo com vídeo rodando após ~30s de inatividade.
+  // Um scroll mínimo a cada 15s mantém a tela ativa.
+  _noSleepKeepalive = setInterval(() => {
+    if (!_noSleepVideo || _noSleepVideo.paused) {
+      // Video parou — tentar reativar
+      ativarWakeLock();
+      return;
+    }
+    // Scroll mínimo para trick do iOS
+    try {
+      window.scrollBy(0, 1);
+      setTimeout(() => window.scrollBy(0, -1), 50);
+    } catch(e) {}
+    // Também tentar tocar o vídeo novamente (iOS pode ter pausado)
+    try { if (_noSleepVideo.paused) _noSleepVideo.play(); } catch(e) {}
+  }, 15000);
+}
+
+function _pararNoSleepKeepalive() {
+  if (_noSleepKeepalive) {
+    clearInterval(_noSleepKeepalive);
+    _noSleepKeepalive = null;
   }
 }
 
 async function desativarWakeLock() {
   _noSleepEnabled = false;
+  _pararNoSleepKeepalive();
   if (_wakeLock) {
     try { _wakeLock.removeEventListener('release', () => {}); await _wakeLock.release(); } catch (e) { }
     _wakeLock = null;
@@ -333,15 +367,24 @@ async function desativarWakeLock() {
 // Reativar ao voltar à aba (iOS libera wakeLock ao perder visibilidade)
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
-    _wakeLock = null; // foi liberado pelo iOS ao perder visibilidade
+    _wakeLock = null;
     _noSleepEnabled = false;
     ativarWakeLock();
   }
 });
 
-// Tentar ativar em CADA toque do usuário (iOS exige gesture e descarta após inatividade)
+// Handler de PRIMEIRO toque — aqui o iOS permite video.play()
+let _noSleepPrimeiroToque = false;
 function _noSleepTouchHandler() {
-  if (!_noSleepEnabled || !_noSleepVideo || _noSleepVideo.paused || !_wakeLock) {
+  if (!_noSleepPrimeiroToque) {
+    _noSleepPrimeiroToque = true;
+    // Primeiro toque do usuario na pagina — criar e tocar video aqui
+    _criarNoSleepVideo();
+    ativarWakeLock();
+    return;
+  }
+  // Toques subsequentes — verificar se o video ainda esta rodando
+  if (!_noSleepEnabled || !_noSleepVideo || _noSleepVideo.paused) {
     ativarWakeLock();
   }
 }

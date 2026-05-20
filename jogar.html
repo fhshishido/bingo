@@ -1,11 +1,11 @@
-<!-- IBBI Bingo Jogar v7.59 -->
+<!-- IBBI Bingo Jogar v7.60 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Jogar v7.59</title>
+<title>IBBI Jogar v7.60</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#060608;--surface:#0f0f14;--surface2:#161620;--surface3:#1e1e2a;--border:#252535;--border2:#323248;--accent:#00b8f0;--accent2:#00dfa8;--red:#f06060;--green:#00dfa8;--text:#e4f2ff;--text2:#7090b0;--text3:#3a5068;--radius:12px;--rsm:8px;--cB:#00b8f0;--cI:#00dfa8;--cN:#f5c800;--cG:#ff8c00;--cO:#c850ff}
@@ -136,7 +136,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface3);color:var(--text);padding:10px 20px;border-radius:var(--rsm);font-size:.82rem;font-weight:700;z-index:2000;opacity:0;transition:all .3s;white-space:nowrap;border:1px solid var(--border2)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
-<meta name="app-version" content="v7.59">
+<meta name="app-version" content="v7.60">
 </head>
 <body>
 
@@ -157,7 +157,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
         <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px">Faca login no Hub para jogar.</div>
         <button class="btn btn-acc btn-full" onclick="window.location.href='player.html'">Ir para o Login &rarr;</button>
       </div>
-      <div class="vtag">v7.59</div>
+      <div class="vtag">v7.60</div>
     </div>
   </div>
 </div>
@@ -182,7 +182,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       <div style="font-size:1.2rem;font-weight:800;color:var(--text2);margin-bottom:8px">Evento nao encontrado</div>
       <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px" id="nfMsg">Este evento nao existe.</div>
       <button class="btn btn-ghost btn-full" onclick="window.location.href='player.html'">Voltar ao Hub</button>
-      <div class="vtag">v7.59</div>
+      <div class="vtag">v7.60</div>
     </div>
   </div>
 </div>
@@ -194,7 +194,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="p-logo">B<span>I</span>NGO</div>
     <div style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase">IBBI</div>
     <div class="p-username" id="gameUserName"></div>
-    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-left:4px">v7.59</span>
+    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-left:4px">v7.60</span>
   </div>
   <!-- Barra do evento -->
   <div id="gameEvBar" class="ev-bar">&mdash;</div>
@@ -260,20 +260,39 @@ const $ = id => document.getElementById(id);
 
 // Wake Lock: manter tela acesa durante o jogo
 let _wakeLock = null;
+let _noSleepVideo = null;
 async function ativarWakeLock() {
-  if (!('wakeLock' in navigator)) return;
-  try {
-    _wakeLock = await navigator.wakeLock.request('screen');
-    _wakeLock.addEventListener('release', () => { _wakeLock = null; });
-  } catch (e) { /* permissão negada ou bateria fraca */ }
+  // 1) Wake Lock API (Safari iOS 16.4+, Chrome)
+  if ('wakeLock' in navigator) {
+    try {
+      _wakeLock = await navigator.wakeLock.request('screen');
+      _wakeLock.addEventListener('release', () => { _wakeLock = null; });
+      return;
+    } catch (e) { /* fallback abaixo */ }
+  }
+  // 2) Fallback iOS antigo: video invisível em loop
+  if (!_noSleepVideo) {
+    _noSleepVideo = document.createElement('video');
+    _noSleepVideo.setAttribute('muted', '');
+    _noSleepVideo.setAttribute('playsinline', '');
+    _noSleepVideo.setAttribute('loop', '');
+    _noSleepVideo.style.cssText = 'position:fixed;top:-1px;left:-1px;width:1px;height:1px;opacity:0;pointer-events:none';
+    // 1s de vídeo MP4 base64 (tiny black video)
+    _noSleepVideo.src = 'data:video/mp4;base64,AAAAHGZ0eXBpc29tAAACAGlzb21pc28ybXA0MQAAAAhmcmVlAAAGF21kYXTeBAAAbGliZmFhYyAxLjI4AABCAJMgBDIARwAAArEGBf//rdxF6b3m9UtXg7G7d3qSDcfdF1+IeZK+nzc/+jBZJUm6gM8K38vKVZpHQ0xQAAEqYQQABAAA';
+    document.body.appendChild(_noSleepVideo);
+  }
+  try { await _noSleepVideo.play(); } catch(e) {}
 }
 async function desativarWakeLock() {
   try { if (_wakeLock) { await _wakeLock.release(); _wakeLock = null; } } catch(e) {}
+  if (_noSleepVideo) { try { _noSleepVideo.pause(); } catch(e){} }
 }
-// Reativar wake lock quando a aba volta a ficar visível (iOS perde ao trocar de aba)
+// Reativar ao voltar à aba
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && !_wakeLock) ativarWakeLock();
+  if (document.visibilityState === 'visible') ativarWakeLock();
 });
+// Reativar no primeiro toque (iOS Safari exige gesture do usuário)
+document.addEventListener('touchstart', () => { if (!_wakeLock) ativarWakeLock(); }, { once: false, passive: true });
 const showView = id => { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); $(id)?.classList.add('active'); };
 const showToast = msg => { const t = $('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); };
 const esc = s => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -1119,6 +1138,8 @@ function _doCheckAutoBatida() {
     if (bateu) {
       // Cartela batida_ld já foi confirmada por ld — só mostrar aviso para prêmio cheia
       if (c.status === 'batida_ld' && p.regra !== 'cheia') continue;
+      // Se cartela já tem batida pendente no Firebase (batidaStatus=pendente), não duplicar
+      // Verificação via sessionStorage 'batida_' já filtra duplicatas
       algumaBateu = true;
       _cartelaQueBateu = c;
       const avisoKey = 'batida_' + c.id + '_p' + (p?.id || 'none');
@@ -1177,6 +1198,8 @@ function renderBatidaNav(p) {
   const navInfo = $('batidaNavInfo');
   if (navEl) navEl.style.display = total > 1 ? 'flex' : 'none';
   if (navInfo) navInfo.textContent = 'Cartela ' + (_batidaNavIdx + 1) + ' de ' + total;
+  // Atualizar texto do prêmio incluindo o ID da cartela atual
+  $('batidaPremio').textContent = 'Cartela ' + (c.id||'?') + ' — Premio: ' + (p?.nome || 'Bingo');
   // Navegar na paginação principal só se o modal NÃO estiver aberto
   if (!$('mBatida')?.classList.contains('open')) {
     const ativas = getAtivasParaPremio(p);
@@ -1398,6 +1421,14 @@ function setupListeners() {
       // Evitar disparar de novo se já tem premioGanho do mesmo prêmio
       const jaProcessado = cBatida?.premioGanho?.nome === pg?.nome && cBatida?.premioGanho?.regra === pg?.regra;
       if (podeConfirmar && !jaProcessado) {
+        // Limpar TODOS os avisoKeys dessa cartela para evitar re-aviso em outros prêmios
+        try {
+          Object.keys(sessionStorage)
+            .filter(k => k.startsWith('batida_' + cid + '_'))
+            .forEach(k => sessionStorage.removeItem(k));
+        } catch(e) {}
+        // Remover do array _cartelasBateram se ainda estiver lá
+        _cartelasBateram = _cartelasBateram.filter(x => x.id !== cid);
         const novoStatus = (pg?.regra === 'cheia') ? 'batida' : 'batida_ld';
         cBatida.status = novoStatus;
         cBatida.premioGanho = { nome: pg?.nome || 'Bingo', ordem: pg?.ordem || 1, regra: pg?.regra || 'ld', ts: Date.now(), bingoId: evData?.bingoAtivoId || null };

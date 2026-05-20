@@ -1,4 +1,4 @@
-<!-- IBBI Bingo Cartelas v4.23 -->
+<!-- IBBI Bingo Cartelas v4.28 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>IBBI Cartelas v4.23</title>
+<title>IBBI Cartelas v4.28</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -195,7 +195,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
   .c-cell{min-height:48px;font-size:1.3rem}
 }
 </style>
-<meta name="app-version" content="v4.23">
+<meta name="app-version" content="v4.28">
 <base target="_blank">
 </head>
 <body>
@@ -217,7 +217,7 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
         <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px">Faca login no Hub para acessar suas cartelas.</div>
         <button class="btn btn-acc btn-full" onclick="window.location.href='player.html'">Ir para o Login &rarr;</button>
       </div>
-      <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v4.23</div>
+      <div class="vtag" style="font-size:.6rem;font-weight:700;color:var(--text3);margin-top:12px">v4.28</div>
     </div>
   </div>
 </div>
@@ -252,8 +252,8 @@ input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30p
     <div class="c-logo">B<span>I</span>NGO</div>
     <div style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase">IBBI</div>
     <div class="c-evname" id="cEvNome">Cartelas</div>
-    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-right:6px">v4.23</span>
-    <button class="btn btn-ghost btn-sm" onclick="voltarHub()">Sair</button>
+    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-right:6px">v4.28</span>
+    <button class="btn btn-ghost btn-sm" onclick="voltarHub()">&#8592; Voltar</button>
   </div>
   <div class="c-body" id="cBody"></div>
 </div>
@@ -560,7 +560,8 @@ async function carregarCartelas(){
         const seen=new Map();
         novas.sort((a,b)=>(b.criadaEm||0)-(a.criadaEm||0));
         novas.forEach(c=>{if(!seen.has(c.id))seen.set(c.id,c);});
-        const dedup=Array.from(seen.values());
+        const numId=cid=>{const m=(cid||'').match(/(\d+)$/);return m?parseInt(m[1]):0;};
+        const dedup=Array.from(seen.values()).sort((a,b)=>numId(a.id)-numId(b.id));
         cartelas=dedup;
         cartelaIdx=0;
         // Se havia duplicatas, salvar versão limpa no Firebase
@@ -610,6 +611,7 @@ function renderCartelasView(){
   }
 
   const liberada=cartelaLiberada(c);
+  const eBatidaLd=c.status==='batida_ld';
   let hdrHtml='';LETTERS.forEach(l=>{hdrHtml+=`<div class="ch-cell l${l}">${l}</div>`;});
   let cellsHtml='';const nums=c.numeros||{};
   for(let row=0;row<5;row++){LETTERS.forEach((letter,col)=>{
@@ -621,13 +623,18 @@ function renderCartelasView(){
     cellsHtml+=`<div class="${cls}">${isFree?'&#9733;':(n||'')}</div>`;
   });}
 
-  const badgeStatus=exigeAp()
-    ?(liberada
+  let badgeStatus='';
+  if(eBatidaLd){
+    badgeStatus='<span style="font-size:.62rem;font-weight:900;padding:2px 8px;border-radius:20px;background:rgba(255,140,0,.15);color:#ff8c00;border:1px solid rgba(255,140,0,.4)">&#9733; So Cartela Cheia</span>';
+  } else if(exigeAp()){
+    badgeStatus=liberada
       ?'<span style="font-size:.62rem;font-weight:900;padding:2px 8px;border-radius:20px;background:rgba(0,223,168,.15);color:var(--green);border:1px solid rgba(0,223,168,.4)">&#10003; Liberada</span>'
-      :'<span style="font-size:.62rem;font-weight:900;padding:2px 8px;border-radius:20px;background:rgba(245,200,0,.15);color:var(--cN);border:1px solid rgba(245,200,0,.4)">&#128274; Aguard. aprovacao</span>')
-    :'';
-  const bannerBloqueio=(!liberada)
+      :'<span style="font-size:.62rem;font-weight:900;padding:2px 8px;border-radius:20px;background:rgba(245,200,0,.15);color:var(--cN);border:1px solid rgba(245,200,0,.4)">&#128274; Aguard. aprovacao</span>';
+  }
+  const bannerBloqueio=(!liberada&&!eBatidaLd)
     ?`<div style="background:rgba(245,200,0,.1);border:1.5px solid rgba(245,200,0,.4);border-radius:var(--rsm);padding:10px 12px;font-size:.82rem;color:var(--cN);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px">&#128274; Esta cartela aguarda aprovacao do gestor. Contate o organizador do evento.</div>`
+    :eBatidaLd
+    ?`<div style="background:rgba(255,140,0,.08);border:1.5px solid rgba(255,140,0,.4);border-radius:var(--rsm);padding:10px 12px;font-size:.82rem;color:#ff8c00;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px">&#9733; Premiada por Linha/Diagonal. Continue marcando — esta cartela ainda participa do premio Cartela Cheia.</div>`
     :'';
 
   body.innerHTML=`
@@ -647,7 +654,6 @@ function renderCartelasView(){
     </div>
     <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
       <button class="btn btn-acc btn-full" id="btnNovaCartela">+ Nova Cartela</button>
-      <button class="btn btn-ghost btn-full" id="btnIrJogo" ${!liberada?'disabled title="Cartela nao liberada"':''}>&#9654; Ir para o Jogo</button>
     </div>
   `;
   $('btnPrevCartela')?.addEventListener('click', prevCartela);
@@ -658,7 +664,6 @@ function renderCartelasView(){
     if(confirm('Excluir cartela '+cAtual.id+'?')) delCartela();
   });
   $('btnNovaCartela')?.addEventListener('click', novaCartela);
-  $('btnIrJogo')?.addEventListener('click', irParaJogo);
   setupSwipe($('cartelaWrapEl'));
 }
 

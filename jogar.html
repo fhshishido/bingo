@@ -1,11 +1,11 @@
-<!-- IBBI Bingo Jogar v7.40 -->
+<!-- IBBI Bingo Jogar v7.41 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Jogar v7.40</title>
+<title>IBBI Jogar v7.41</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#060608;--surface:#0f0f14;--surface2:#161620;--surface3:#1e1e2a;--border:#252535;--border2:#323248;--accent:#00b8f0;--accent2:#00dfa8;--red:#f06060;--green:#00dfa8;--text:#e4f2ff;--text2:#7090b0;--text3:#3a5068;--radius:12px;--rsm:8px;--cB:#00b8f0;--cI:#00dfa8;--cN:#f5c800;--cG:#ff8c00;--cO:#c850ff}
@@ -136,7 +136,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface3);color:var(--text);padding:10px 20px;border-radius:var(--rsm);font-size:.82rem;font-weight:700;z-index:2000;opacity:0;transition:all .3s;white-space:nowrap;border:1px solid var(--border2)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
-<meta name="app-version" content="v7.40">
+<meta name="app-version" content="v7.41">
 </head>
 <body>
 
@@ -157,7 +157,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
         <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px">Faca login no Hub para jogar.</div>
         <button class="btn btn-acc btn-full" onclick="window.location.href='player.html'">Ir para o Login &rarr;</button>
       </div>
-      <div class="vtag">v7.40</div>
+      <div class="vtag">v7.41</div>
     </div>
   </div>
 </div>
@@ -182,7 +182,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       <div style="font-size:1.2rem;font-weight:800;color:var(--text2);margin-bottom:8px">Evento nao encontrado</div>
       <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px" id="nfMsg">Este evento nao existe.</div>
       <button class="btn btn-ghost btn-full" onclick="window.location.href='player.html'">Voltar ao Hub</button>
-      <div class="vtag">v7.40</div>
+      <div class="vtag">v7.41</div>
     </div>
   </div>
 </div>
@@ -194,7 +194,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="p-logo">B<span>I</span>NGO</div>
     <div style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase">IBBI</div>
     <div class="p-username" id="gameUserName"></div>
-    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-left:4px">v7.40</span>
+    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-left:4px">v7.41</span>
   </div>
   <!-- Barra do evento -->
   <div id="gameEvBar" class="ev-bar">&mdash;</div>
@@ -578,8 +578,9 @@ async function verHistoricoPremios() {
 }
 let _meusPremiosData = [];
 window.verCartelaPremio = async function(idx, origem) {
-  // origem: 'ganhadores' ou 'premios' — para reabrir o modal correto ao fechar
+  // origem: 'premios' — para reabrir o modal correto ao fechar
   const p = _meusPremiosData[idx]; if (!p) return;
+  const isLdPremio = p.premioRegra !== 'cheia';
   // Buscar cartela do brincante no Firebase
   const cartSnap = await get(fb('bingo/eventos/' + evId + '/brincantes/' + currentUser.uid + '/cartelas'));
   const cartelasFb = cartSnap.val() || {};
@@ -591,8 +592,8 @@ window.verCartelaPremio = async function(idx, origem) {
   const drawn = new Set(bingo.drawn || []);
   const lastDrawn = bingo.lastDrawn;
   const mode = evData?.mode || 90;
-  // Enriquecer p com marcados da cartela local
-  if (!p.marcados) p.marcados = cData.marcados || [];
+  // linhaBatida já vem em p (gravado no histórico)
+  const linhaBatida = new Set(p.linhaBatida || []);
   // Renderizar cartela com conferencia
   const numeros = cData.numeros || {};
   const freeCenter = cData.freeCenter || false;
@@ -619,7 +620,9 @@ window.verCartelaPremio = async function(idx, origem) {
   }
   const corConf = faltando.length === 0 ? 'var(--green)' : faltando.length <= 3 ? 'var(--cN)' : 'var(--red)';
   html += '<span style="background:rgba(0,0,0,.3);border:1.5px solid ' + corConf + ';color:' + corConf + ';padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:800">' + confirmados.length + '/' + todosNums.length + ' números sorteados</span>';
-  if (faltando.length > 0) {
+  if (isLdPremio) {
+    html += '<span style="background:rgba(255,140,0,.1);border:1.5px solid rgba(255,140,0,.4);color:#ff8c00;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:800">&#9733; Premio por Linha/Diagonal</span>';
+  } else if (faltando.length > 0) {
     html += '<span style="background:rgba(240,96,96,.1);border:1.5px solid rgba(240,96,96,.4);color:var(--red);padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:800">&#9888; Faltam: ' + faltando.join(', ') + '</span>';
   } else {
     html += '<span style="background:rgba(0,223,168,.1);border:1.5px solid rgba(0,223,168,.4);color:var(--green);padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:800">&#9989; Todos os números saíram!</span>';
@@ -638,27 +641,31 @@ window.verCartelaPremio = async function(idx, origem) {
       const isLast = num != null && num === lastDrawn;
       const isDrawn = num != null && drawn.has(num);
       const missing = num != null && !drawn.has(num);
-      // Para prêmio ld: marcados = verde, não marcados = vermelho
-      const isMarcado = num != null && (p.marcados || []).includes(num);
+      const naLinha = isLdPremio && num != null && linhaBatida.has(num);
+      const isUltimo = naLinha && num === lastDrawn;
       let bg, color, border, extra = '';
       if (isFree) { bg = 'var(--surface3)'; color = 'var(--text2)'; border = '1.5px solid var(--border)'; }
-      else if (isLdPremio && isMarcado) { bg = COLORS[letter]; color = '#000'; border = '1.5px solid ' + COLORS[letter]; }
-      else if (isLdPremio && !isMarcado && num != null) { bg = 'rgba(60,60,60,.4)'; color = 'var(--text3)'; border = '1.5px solid var(--border)'; }
+      else if (isUltimo) { bg = COLORS[letter]; color = '#000'; border = '3px solid #fff'; extra = ' box-shadow:0 0 16px ' + COLORS[letter] + ';font-size:1.3rem;font-weight:900;'; }
+      else if (naLinha) { bg = COLORS[letter]; color = '#000'; border = '2px solid ' + COLORS[letter]; extra = ' box-shadow:0 0 10px rgba(' + RGBA[letter] + ',.6);'; }
       else if (isLast) { bg = '#fff'; color = '#000'; border = '2.5px solid #fff'; extra = ' box-shadow:0 0 12px rgba(255,255,255,.8);font-size:1.3rem;'; }
-      else if (isDrawn) { bg = COLORS[letter]; color = '#000'; border = '1.5px solid ' + COLORS[letter]; }
-      else if (missing) { bg = 'rgba(240,96,96,.12)'; color = 'var(--red)'; border = '1.5px solid rgba(240,96,96,.4)'; }
+      else if (isDrawn) { bg = 'rgba(' + RGBA[letter] + ',.25)'; color = COLORS[letter]; border = '1.5px solid rgba(' + RGBA[letter] + ',.4)'; }
+      else if (missing) { bg = 'var(--surface2)'; color = 'var(--text3)'; border = '1.5px solid var(--border)'; }
       else { bg = 'var(--surface2)'; color = 'var(--text3)'; border = '1.5px solid var(--border)'; }
       html += '<div style="aspect-ratio:1;min-height:44px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:Bebas Neue;font-size:1.2rem;background:' + bg + ';color:' + color + ';border:' + border + extra + ';box-sizing:border-box">' + (isFree ? '&#9733;' : (num != null ? num : '')) + '</div>';
     });
   }
   html += '</div></div>';
-  // Legenda
   html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;font-size:.65rem;font-weight:700">';
-  html += '<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:#fff;display:inline-block"></span>Última pedra</span>';
-  html += '<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:var(--green);display:inline-block"></span>Sorteado</span>';
-  html += '<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:rgba(240,96,96,.3);border:1px solid var(--red);display:inline-block"></span>Não saiu</span>';
+  if (isLdPremio) {
+    html += '<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:var(--green);display:inline-block"></span>Linha vencedora</span>';
+    html += '<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:rgba(255,255,255,.2);display:inline-block"></span>Demais sorteados</span>';
+  } else {
+    html += '<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:#fff;display:inline-block"></span>Última pedra</span>';
+    html += '<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:var(--green);display:inline-block"></span>Sorteado</span>';
+  }
   html += '</div>';
-  openModal('&#127921; Conferência de Cartela', html);
+  openModal('&#127921; Conferência de Cartela', html,
+    '<button class="btn btn-ghost" onclick="closeModal();verHistoricoPremios()">&#8592; Voltar</button>');
 };
 window.verMinhaCartela = async function(idx) {
   const batidas = getBatidas();

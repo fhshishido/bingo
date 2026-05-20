@@ -1,11 +1,11 @@
-<!-- IBBI Bingo Jogar v7.33 -->
+<!-- IBBI Bingo Jogar v7.34 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Jogar v7.33</title>
+<title>IBBI Jogar v7.34</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#060608;--surface:#0f0f14;--surface2:#161620;--surface3:#1e1e2a;--border:#252535;--border2:#323248;--accent:#00b8f0;--accent2:#00dfa8;--red:#f06060;--green:#00dfa8;--text:#e4f2ff;--text2:#7090b0;--text3:#3a5068;--radius:12px;--rsm:8px;--cB:#00b8f0;--cI:#00dfa8;--cN:#f5c800;--cG:#ff8c00;--cO:#c850ff}
@@ -57,10 +57,12 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .premio-box.todos{background:rgba(0,223,168,.06);border-color:rgba(0,223,168,.3)}
 .premio-box.todos .premio-box-nome{color:var(--green)}
 
-.ball-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px;margin-top:10px}
-.ball-hint{font-size:.62rem;font-weight:800;letter-spacing:2px;color:var(--text3);text-transform:uppercase}
-.pbig{width:80px;height:80px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;line-height:1}
-.pbig .pbl{font-size:1rem;opacity:.8}.pbig .pbn{font-size:2.4rem}
+.ball-wrap{display:flex;align-items:stretch;gap:0;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);margin-top:10px;overflow:hidden}
+.ball-col{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:12px 14px;border-right:1.5px solid var(--border);background:var(--surface2);cursor:pointer;flex-shrink:0}
+.ball-hint{font-size:.55rem;font-weight:900;letter-spacing:2px;color:var(--text3);text-transform:uppercase}
+.ball-premio-col{flex:1;display:flex;flex-direction:column;justify-content:center;padding:12px 14px;min-width:0}
+.pbig{width:72px;height:72px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;line-height:1}
+.pbig .pbl{font-size:.9rem;opacity:.8}.pbig .pbn{font-size:2.2rem}
 .pbig.lB{background:radial-gradient(circle at 32% 30%,#d8f6ff,#00b8f0 55%,#005a80);color:#000;box-shadow:0 0 24px rgba(0,184,240,.5)}
 .pbig.lI{background:radial-gradient(circle at 32% 30%,#ccfff0,#00dfa8 55%,#005040);color:#000;box-shadow:0 0 24px rgba(0,223,168,.5)}
 .pbig.lN{background:radial-gradient(circle at 32% 30%,#fffbe0,#f5c800 55%,#806000);color:#000;box-shadow:0 0 24px rgba(245,200,0,.5)}
@@ -134,7 +136,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface3);color:var(--text);padding:10px 20px;border-radius:var(--rsm);font-size:.82rem;font-weight:700;z-index:2000;opacity:0;transition:all .3s;white-space:nowrap;border:1px solid var(--border2)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
-<meta name="app-version" content="v7.33">
+<meta name="app-version" content="v7.34">
 </head>
 <body>
 
@@ -155,7 +157,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
         <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px">Faca login no Hub para jogar.</div>
         <button class="btn btn-acc btn-full" onclick="window.location.href='player.html'">Ir para o Login &rarr;</button>
       </div>
-      <div class="vtag">v7.33</div>
+      <div class="vtag">v7.34</div>
     </div>
   </div>
 </div>
@@ -180,7 +182,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       <div style="font-size:1.2rem;font-weight:800;color:var(--text2);margin-bottom:8px">Evento nao encontrado</div>
       <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px" id="nfMsg">Este evento nao existe.</div>
       <button class="btn btn-ghost btn-full" onclick="window.location.href='player.html'">Voltar ao Hub</button>
-      <div class="vtag">v7.33</div>
+      <div class="vtag">v7.34</div>
     </div>
   </div>
 </div>
@@ -192,7 +194,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="p-logo">B<span>I</span>NGO</div>
     <div style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase">IBBI</div>
     <div class="p-username" id="gameUserName"></div>
-    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-left:4px">v7.33</span>
+    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-left:4px">v7.34</span>
   </div>
   <!-- Barra do evento -->
   <div id="gameEvBar" class="ev-bar">&mdash;</div>
@@ -387,23 +389,22 @@ function buildUI() {
   const body = $('pBody');
   body.innerHTML = '';
 
-  // Bola (escondida inicialmente)
+  // Container bola + premio (lado a lado)
   const ballWrap = document.createElement('div');
   ballWrap.className = 'ball-wrap';
   ballWrap.id = 'ballWrap';
   ballWrap.style.display = 'none';
-  ballWrap.innerHTML = '<div class="ball-hint">Ultima pedra</div>' +
-    '<div class="pbig empty-ball" id="pBigBall"><span class="pbl" id="pBallL"></span><span class="pbn" id="pBallN">--</span></div>';
-  ballWrap.addEventListener('click', onTapLastBall);
+  ballWrap.innerHTML =
+    '<div class="ball-col" id="ballCol">' +
+      '<div class="ball-hint">Ultima</div>' +
+      '<div class="pbig empty-ball" id="pBigBall"><span class="pbl" id="pBallL"></span><span class="pbn" id="pBallN">--</span></div>' +
+    '</div>' +
+    '<div class="ball-premio-col" id="premioBox">' +
+      '<div class="premio-box-nome" id="premioBoxNome">--</div>' +
+      '<div class="premio-box-regra" id="premioBoxRegra"></div>' +
+    '</div>';
+  $('ballCol', ballWrap)?.addEventListener('click', onTapLastBall);
   body.appendChild(ballWrap);
-
-  // Box de prêmio destacado
-  const premioBox = document.createElement('div');
-  premioBox.id = 'premioBox';
-  premioBox.className = 'premio-box';
-  premioBox.style.display = 'none';
-  premioBox.innerHTML = '<div class="premio-box-nome" id="premioBoxNome">--</div><div class="premio-box-regra" id="premioBoxRegra"></div>';
-  body.appendChild(premioBox);
 
   // Nav cartelas
   const nav = document.createElement('div');
@@ -736,26 +737,25 @@ function updateStatusBar() {
   if (!bingoData || !jogoIniciado) {
     bar.className = 'status-bar waiting';
     if (txtW) txtW.style.display = 'block';
-    // Esconder premioBox enquanto aguarda
-    const pb = $('premioBox');
-    if (pb) pb.style.display = 'none';
+    const bw = $('ballWrap');
+    if (bw) bw.style.display = 'none';
     return;
   }
   // Em jogo: status-bar some, premioBox assume o destaque
   bar.className = 'status-bar playing';
   if (txtW) txtW.style.display = 'none';
+  const bw = $('ballWrap');
+  if (bw) bw.style.display = 'flex';
   const p = getCurrentPremio();
-  const pb = $('premioBox');
   const pbn = $('premioBoxNome');
   const pbr = $('premioBoxRegra');
-  if (pb && pbn && pbr) {
-    pb.style.display = 'block';
+  if (pbn && pbr) {
     if (p) {
-      pb.className = 'premio-box';
+      pbn.className = 'premio-box-nome';
       pbn.textContent = '#' + p.ordem + ' ' + (p.nome || '');
       pbr.textContent = p.regra === 'cheia' ? 'Cartela Cheia' : 'Linha / Coluna / Diagonal';
     } else {
-      pb.className = 'premio-box todos';
+      pbn.className = 'premio-box-nome todos';
       pbn.textContent = 'Todos os Premios Encerrados';
       pbr.textContent = '';
     }
@@ -878,22 +878,16 @@ function setupSwipe(el) {
 function renderBall() {
   if (!jogoIniciado) return;
   const wrap = $('ballWrap');
-  if (wrap) wrap.style.display = 'flex';
+  if (wrap && jogoIniciado) wrap.style.display = 'flex';
   const n = bingoData?.lastDrawn, mode = evData?.mode || 90;
   const ball = $('pBigBall');
-  // Mini bola no premioBox
-  const mini = $('premioMiniball');
-  const miniL = $('premioMiniL');
-  const miniN = $('premioMiniN');
   if (n) {
     const l = getLetter(n, mode);
     $('pBallL').textContent = l; $('pBallN').textContent = n;
     ball.className = 'pbig l' + l;
-    if (mini) { mini.className = 'pmini l' + l; miniL.textContent = l; miniN.textContent = n; }
   } else {
     $('pBallL').textContent = ''; $('pBallN').textContent = '--';
     ball.className = 'pbig empty-ball';
-    if (mini) { mini.className = 'pmini empty'; miniL.textContent = ''; miniN.textContent = '--'; }
   }
 }
 

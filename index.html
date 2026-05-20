@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v11.26 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
+<!-- IBBI Bingo v11.27 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
 
 <!DOCTYPE html>
 
@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v11.26</title>
+<title>IBBI Bingo v11.27</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -295,7 +295,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 .err-screen p{color:var(--text2);font-size:.95rem;margin-bottom:18px;max-width:480px;line-height:1.5}
 
 </style>
-  <meta name="app-version" content="v11.26">
+  <meta name="app-version" content="v11.27">
 </head>
 <body>
 
@@ -313,7 +313,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.26</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.27</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -591,7 +591,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <button class="btn btn-acc btn-sm" id="btnQRDownload">⬇ Baixar PNG</button>
       <button class="btn btn-ghost btn-sm" id="btnQRClose">Fechar</button>
     </div>
-    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.26</div>
+    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.27</div>
   </div>
 </div>
 
@@ -643,7 +643,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
       <span class="mode-badge" id="soMode">90 pedras</span>
-      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v11.26</span>
+      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v11.27</span>
     </div>
     <span class="conn off" id="soConnDot" style="margin-left:8px">&#11044; offline</span>
     <div class="s2-right">
@@ -728,6 +728,45 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
   </div>
 </div>
 
+<!-- MODAL: Fechar Premio -->
+<div class="mbk" id="mFecharPremio">
+  <div class="modal" style="max-width:360px;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:10px">&#128274;</div>
+    <h2 style="margin-bottom:6px">Fechar Prêmio?</h2>
+    <p id="mFecharPremioTxt" style="font-size:.88rem;color:var(--text2);margin-bottom:20px"></p>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnFecharPremioCancelar">Cancelar</button>
+      <button class="btn btn-red" id="btnFecharPremioOk">&#128274; Fechar Prêmio</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Encerrar Bingo -->
+<div class="mbk" id="mEncerrarBingo">
+  <div class="modal" style="max-width:360px;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:10px">&#9940;</div>
+    <h2 style="margin-bottom:6px">Encerrar Rodada?</h2>
+    <p style="font-size:.88rem;color:var(--text2);margin-bottom:20px">O histórico será preservado. Esta ação não pode ser desfeita.</p>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnEncerrarBingoCancelar">Cancelar</button>
+      <button class="btn btn-red" id="btnEncerrarBingoOk">&#9940; Encerrar Rodada</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Encerrar Evento -->
+<div class="mbk" id="mEncerrarEvento">
+  <div class="modal" style="max-width:360px;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:10px">&#128683;</div>
+    <h2 style="margin-bottom:6px">Encerrar Evento?</h2>
+    <p style="font-size:.88rem;color:var(--text2);margin-bottom:20px">Todos os jogadores serão redirecionados. O histórico será preservado.</p>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnEncerrarEventoCancelar">Cancelar</button>
+      <button class="btn btn-red" id="btnEncerrarEventoOk">&#128683; Encerrar Evento</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAIS DO SORTEIO -->
 <div class="mbk" id="mSoBatida">
   <div class="modal" style="max-width:420px">
@@ -766,7 +805,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v11.26';
+const APP_VERSION = 'v11.27';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -1295,9 +1334,33 @@ function soRemoveWinner(prizeId,idx){
   });
 }
 
+let _pendingFecharPrizeId = null;
+
+$('btnFecharPremioCancelar')?.addEventListener('click',()=>{ closeM('mFecharPremio'); _pendingFecharPrizeId=null; });
+$('btnFecharPremioOk')?.addEventListener('click',()=>{
+  closeM('mFecharPremio');
+  if(_pendingFecharPrizeId){ soFecharPremio(_pendingFecharPrizeId,true); _pendingFecharPrizeId=null; }
+});
+
+$('btnEncerrarBingoCancelar')?.addEventListener('click',()=>closeM('mEncerrarBingo'));
+$('btnEncerrarBingoOk')?.addEventListener('click',()=>{ closeM('mEncerrarBingo'); soEncerrarBingo(false); });
+
+$('btnEncerrarEventoCancelar')?.addEventListener('click',()=>closeM('mEncerrarEvento'));
+$('btnEncerrarEventoOk')?.addEventListener('click',()=>{
+  closeM('mEncerrarEvento');
+  if(!evData) return;
+  update(fb(`bingo/eventos/${evId}`),{status:'encerrado',encerradoEm:Date.now()})
+    .then(()=>showToast('Evento encerrado.'));
+});
+
 function soFecharPremio(prizeId,auto){
   const p=_soBingoData.premios[prizeId];if(!p)return;
-  if(!auto&&!confirm(`Fechar o prêmio "${p.nome}"? Não será mais possível sortear para este prêmio.`))return;
+  if(!auto){
+    $('mFecharPremioTxt').textContent = 'Fechar "'+p.nome+'"? Não será mais possível sortear para este prêmio.';
+    openM('mFecharPremio');
+    _pendingFecharPrizeId = prizeId;
+    return;
+  }
   _soBingoData.premios[prizeId].fechado=true;
   _soBingoData.premios[prizeId].fechadoEm=Date.now();
   // Resolver resultadoAposta para entradas que ainda estao 'pendente'
@@ -1433,7 +1496,7 @@ $('btnSoDraw')?.addEventListener('click',()=>{
   const newDrawn=[...(ev.drawn||[]),n];
   update(fb(`bingo/eventos/${evId}/bingos/${_soBingoId}`),{drawn:newDrawn,lastDrawn:n});
 });
-$('btnSoEncerrar')?.addEventListener('click',()=>{if(!confirm('Encerrar este bingo? O histórico será preservado.'))return;soEncerrarBingo(false);});
+$('btnSoEncerrar')?.addEventListener('click',()=>{ openM('mEncerrarBingo'); });
 $('btnSoGanhador')?.addEventListener('click',()=>{const cp=soSortP(_soBingoData.premios).find(p=>p.id===_soCurPrizeId);if(!cp)return;soRenderGanhadoresPremio(cp);openM('mSoWin');});
 $('btnSoCancelWin')?.addEventListener('click',()=>closeM('mSoWin'));
 $('btnSoBatidaConfirmar')?.addEventListener('click',()=>{if(_soPendingBatidaId&&_soPendingBatida){soConfirmarBatida(_soPendingBatidaId,_soPendingBatida);_soPendingBatidaId=null;_soPendingBatida=null;closeM('mSoBatida');}});
@@ -1770,15 +1833,7 @@ $('btnQRDownload')?.addEventListener('click',()=>{
 });
 
 // -------- ENCERRAR EVENTO --------
-$('btnS2Encerrar')?.addEventListener('click',()=>{
-  if(!evData) return;
-  if(!confirm('Encerrar este evento? O histórico será preservado.')) return;
-  update(fb(`bingo/eventos/${evId}`), {
-    status: 'encerrado',
-    encerradoEm: Date.now(),
-    bingoAtivoId: null
-  }).then(()=>showToast('Evento encerrado.'));
-});
+// encerrar evento: tratado pelo btnEncerrarEventoOk acima
 
 // -------- REINICIAR EVENTO --------
 $('btnS2Reiniciar')?.addEventListener('click',()=>{

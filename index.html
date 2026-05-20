@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v11.30 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
+<!-- IBBI Bingo v11.31 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
 
 <!DOCTYPE html>
 
@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v11.30</title>
+<title>IBBI Bingo v11.31</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -295,7 +295,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 .err-screen p{color:var(--text2);font-size:.95rem;margin-bottom:18px;max-width:480px;line-height:1.5}
 
 </style>
-  <meta name="app-version" content="v11.30">
+  <meta name="app-version" content="v11.31">
 </head>
 <body>
 
@@ -313,7 +313,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.30</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.31</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -591,7 +591,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <button class="btn btn-acc btn-sm" id="btnQRDownload">⬇ Baixar PNG</button>
       <button class="btn btn-ghost btn-sm" id="btnQRClose">Fechar</button>
     </div>
-    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.30</div>
+    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.31</div>
   </div>
 </div>
 
@@ -643,7 +643,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
       <span class="mode-badge" id="soMode">90 pedras</span>
-      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v11.30</span>
+      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v11.31</span>
     </div>
     <span class="conn off" id="soConnDot" style="margin-left:8px">&#11044; offline</span>
     <div class="s2-right">
@@ -668,7 +668,6 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
           <div id="soCpWinner" class="cpbox-empty">Sem ganhador registrado</div>
         </div>
         <div class="cpbox-btns" style="display:flex;flex-direction:column;gap:6px">
-          <button class="btn btn-green btn-sm" id="btnSoGanhador">&#127941; Ganhadores do Prêmio</button>
           <button class="btn btn-blue btn-sm" id="btnSoGanhadorTodos">&#127942; Todos os Ganhadores</button>
         </div>
       </div>
@@ -778,17 +777,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
     </div>
   </div>
 </div>
-<div class="mbk" id="mSoWin">
-  <div class="modal" style="max-width:460px;max-height:80vh;display:flex;flex-direction:column">
-    <h2>&#127941; Ganhadores do Prêmio</h2>
-    <p style="font-size:.82rem;color:var(--text2);margin-bottom:14px" id="mSoWinPrize"></p>
-    <div id="mSoWinList" style="flex:1;overflow-y:auto;margin-bottom:14px;max-height:50vh"></div>
-    <div id="mSoWinActions" style="display:none;margin-bottom:14px"></div>
-    <div class="mfoot">
-      <button class="btn btn-ghost" id="btnSoCancelWin">Fechar</button>
-    </div>
-  </div>
-</div>
+
 <div class="mbk" id="mSoWinTodos">
   <div class="modal" style="max-width:520px;max-height:85vh;display:flex;flex-direction:column">
     <h2>&#127942; Todos os Ganhadores</h2>
@@ -805,7 +794,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v11.30';
+const APP_VERSION = 'v11.31';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -1031,7 +1020,7 @@ function limparSorteio(){
   if(_soUnsubBatidas){_soUnsubBatidas();_soUnsubBatidas=null;}
   if(_soUnsubEventoSorteio){_soUnsubEventoSorteio();_soUnsubEventoSorteio=null;}
   _soBingoId=null;_soBingoData=null;_soCurPrizeId=null;_soPendingBatidaId=null;_soPendingBatida=null;
-  closeM('mSoBatida');closeM('mSoWin');closeM('mSoWinTodos');
+  closeM('mSoBatida');closeM('mSoWinTodos');
 }
 
 async function iniciarSorteio(bingoId){
@@ -1538,8 +1527,7 @@ $('btnSoDraw')?.addEventListener('click',()=>{
   update(fb(`bingo/eventos/${evId}/bingos/${_soBingoId}`),{drawn:newDrawn,lastDrawn:n});
 });
 $('btnSoEncerrar')?.addEventListener('click',()=>{ openM('mEncerrarBingo'); });
-$('btnSoGanhador')?.addEventListener('click',()=>{const cp=soSortP(_soBingoData.premios).find(p=>p.id===_soCurPrizeId);if(!cp)return;soRenderGanhadoresPremio(cp);openM('mSoWin');});
-$('btnSoCancelWin')?.addEventListener('click',()=>closeM('mSoWin'));
+
 $('btnSoBatidaConfirmar')?.addEventListener('click',()=>{if(_soPendingBatidaId&&_soPendingBatida){soConfirmarBatida(_soPendingBatidaId,_soPendingBatida);_soPendingBatidaId=null;_soPendingBatida=null;closeM('mSoBatida');}});
 $('btnSoBatidaRejeitar')?.addEventListener('click',()=>{if(_soPendingBatidaId){soRejeitarBatida(_soPendingBatidaId);_soPendingBatidaId=null;_soPendingBatida=null;closeM('mSoBatida');}});
 $('btnSoGanhadorTodos')?.addEventListener('click',()=>{
@@ -1555,7 +1543,21 @@ $('btnSoGanhadorTodos')?.addEventListener('click',()=>{
     btn.addEventListener('click',()=>{
       const pi2=parseInt(btn.dataset.soPi);const gi2=parseInt(btn.dataset.soGi);
       const prem=premios[pi2];
-      if(prem&&prem.ganhadores[gi2]){const ganh2=prem.ganhadores[gi2];if(ganh2.cartela)soMostrarCartelaBatida(ganh2.cartela,ganh2.nome,{cartelaId:ganh2.cartelaId,premioFechado:true,playerNome:ganh2.nome,premioNome:prem.nome,premioOrdem:prem.ordem,premioFechado:prem.fechado,ganhadoresCount:prem.ganhadores?.length||1,eventoNome:evData?.nome,bingoNome:_soBingoData?.nome});}
+      if(prem&&prem.ganhadores[gi2]){
+        const ganh2=prem.ganhadores[gi2];
+        // Buscar linhaBatida do historico
+        get(fb('bingo/eventos/'+evId+'/historico')).then(hs=>{
+          const histArr=Object.values(hs.val()||{});
+          const hEntry=histArr.find(h=>h.premioId===prem.id&&h.cartelaId===ganh2.cartelaId);
+          if(ganh2.cartela) soMostrarCartelaBatida(ganh2.cartela,ganh2.nome,{
+            cartelaId:ganh2.cartelaId,premioFechado:prem.fechado,playerNome:ganh2.nome,
+            premioNome:prem.nome,premioOrdem:prem.ordem,
+            ganhadoresCount:prem.ganhadores?.length||1,
+            eventoNome:evData?.nome,bingoNome:_soBingoData?.nome,
+            regra:prem.regra,linhaBatida:hEntry?.linhaBatida||[]
+          });
+        });
+      }
     });
   });
   openM('mSoWinTodos');

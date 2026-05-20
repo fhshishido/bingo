@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v11.28 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
+<!-- IBBI Bingo v11.30 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
 
 <!DOCTYPE html>
 
@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v11.28</title>
+<title>IBBI Bingo v11.30</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -295,7 +295,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 .err-screen p{color:var(--text2);font-size:.95rem;margin-bottom:18px;max-width:480px;line-height:1.5}
 
 </style>
-  <meta name="app-version" content="v11.28">
+  <meta name="app-version" content="v11.30">
 </head>
 <body>
 
@@ -313,7 +313,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.28</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.30</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -591,7 +591,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <button class="btn btn-acc btn-sm" id="btnQRDownload">⬇ Baixar PNG</button>
       <button class="btn btn-ghost btn-sm" id="btnQRClose">Fechar</button>
     </div>
-    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.28</div>
+    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.30</div>
   </div>
 </div>
 
@@ -643,7 +643,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
       <span class="mode-badge" id="soMode">90 pedras</span>
-      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v11.28</span>
+      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v11.30</span>
     </div>
     <span class="conn off" id="soConnDot" style="margin-left:8px">&#11044; offline</span>
     <div class="s2-right">
@@ -805,7 +805,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v11.28';
+const APP_VERSION = 'v11.30';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -1216,9 +1216,35 @@ function soRenderBatidas(batidas){
     card.querySelector('[data-so-conf]').addEventListener('click',()=>soConfirmarBatida(bid,b));
     card.querySelector('[data-so-rej]').addEventListener('click',()=>soRejeitarBatida(bid));
     const btnVer=card.querySelector('[data-so-ver]');
-    if(btnVer)btnVer.addEventListener('click',()=>{const cp2=_soCurPrizeId&&_soBingoData.premios[_soCurPrizeId]?_soBingoData.premios[_soCurPrizeId]:null;soMostrarCartelaBatida(b.cartela,b.playerNome,{cartelaId:b.cartelaId,pendente:true,playerNome:b.playerNome,premioNome:cp2?.nome,premioOrdem:cp2?.ordem,premioFechado:false,ganhadoresCount:cp2?.ganhadores?.length||0,eventoNome:evData?.nome,bingoNome:_soBingoData?.nome});});
+    if(btnVer)btnVer.addEventListener('click',()=>{const cp2=_soCurPrizeId&&_soBingoData.premios[_soCurPrizeId]?_soBingoData.premios[_soCurPrizeId]:null;soMostrarCartelaBatida(b.cartela,b.playerNome,{cartelaId:b.cartelaId,pendente:true,playerNome:b.playerNome,premioNome:cp2?.nome,premioOrdem:cp2?.ordem,premioFechado:false,ganhadoresCount:cp2?.ganhadores?.length||0,eventoNome:evData?.nome,bingoNome:_soBingoData?.nome,regra:cp2?.regra,linhaBatida:b.cartela?.linhaBatida||[]});});
     list.appendChild(card);
   });
+}
+
+// Encontra os numeros da linha/diagonal/vertical vencedora
+function findLinhaBatida(cartela, marcadosArr, mode){
+  const marcados = new Set(marcadosArr||[]);
+  const LETS=['B','I','N','G','O'];
+  const fc = cartela.freeCenter||false;
+  const getN = (l,r) => { if(fc&&r===2&&LETS.indexOf(l)===2) return -1; return (cartela.numeros[l]||[])[r]; };
+  // Linhas horizontais
+  for(let row=0;row<5;row++){
+    const nums=LETS.map(l=>getN(l,row));
+    if(nums.every(n=>n===-1||marcados.has(n))) return nums.filter(n=>n!==-1);
+  }
+  // Colunas verticais
+  for(let col=0;col<5;col++){
+    const l=LETS[col];
+    const nums=(cartela.numeros[l]||[]).map((n,r)=>fc&&r===2&&col===2?-1:n);
+    if(nums.every(n=>n===null||n===-1||(n!=null&&marcados.has(n)))) return nums.filter(n=>n!=null&&n!==-1);
+  }
+  // Diagonais
+  const d1=[[0,0],[1,1],[2,2],[3,3],[4,4]],d2=[[0,4],[1,3],[2,2],[3,1],[4,0]];
+  for(const d of[d1,d2]){
+    const nums=d.map(([r,c])=>getN(LETS[c],r));
+    if(nums.every(n=>n===-1||marcados.has(n))) return nums.filter(n=>n!==-1);
+  }
+  return [];
 }
 
 function soConfirmarBatida(bid,b){
@@ -1233,7 +1259,11 @@ function soConfirmarBatida(bid,b){
   const brincantePath=`bingo/eventos/${evId}/brincantes/${b.playerId||b.uid||'anon'}`;
   const prizeId=_soCurPrizeId;
   const histKey=`${_soBingoId}_${prizeId}_${Date.now()}`;
-  const histData={bingoId:_soBingoId,bingoNome:_soBingoData?.nome||'',bingoOrdem:_soBingoData?.ordem||'',premioId:prizeId,premioNome:cp.nome,premioOrdem:cp.ordem,premioRegra:cp.regra||'cheia',playerId:b.playerId||'',playerNome:b.playerNome||'',cartelaId:b.cartelaId||'',ts:Date.now(),resultadoAposta:'pendente'};
+  // Calcular linha vencedora para prêmio ld
+  const linhaBatida = (cp.regra !== 'cheia' && b.cartela?.numeros)
+    ? findLinhaBatida(b.cartela, b.cartela?.marcados||[], evData?.mode||90)
+    : [];
+  const histData={bingoId:_soBingoId,bingoNome:_soBingoData?.nome||'',bingoOrdem:_soBingoData?.ordem||'',premioId:prizeId,premioNome:cp.nome,premioOrdem:cp.ordem,premioRegra:cp.regra||'cheia',playerId:b.playerId||'',playerNome:b.playerNome||'',cartelaId:b.cartelaId||'',ts:Date.now(),resultadoAposta:'pendente',linhaBatida};
   // Determinar status da cartela: se prêmio é ld → batida_ld (pode ainda ganhar cheia)
   // se prêmio é cheia → batida (definitivo)
   const cartelaStatusPos = cp.regra === 'cheia' ? 'batida' : 'batida_ld';
@@ -1263,6 +1293,8 @@ function soMostrarCartelaBatida(cartelaData,playerNome,info){
   const drawnSet=new Set(_soBingoData?.drawn||[]);
   const lastDrawn=_soBingoData?.lastDrawn;
   const regra=info.regra||(_soCurPrizeId&&_soBingoData?.premios?.[_soCurPrizeId]?.regra)||'ld';
+  const isLdRegra = regra !== 'cheia';
+  const marcadosSet = new Set(cartelaData.marcados||[]);
   const todosNums=[];
   LETTERS.forEach(l=>{(numeros[l]||[]).forEach(n=>{if(n!=null)todosNums.push(n);});});
   const confirmados=todosNums.filter(n=>drawnSet.has(n));
@@ -1297,11 +1329,16 @@ function soMostrarCartelaBatida(cartelaData,playerNome,info){
       const isLast=num!=null&&num===lastDrawn;
       const isDrawn=num!=null&&drawnSet.has(num);
       const missing=num!=null&&!drawnSet.has(num);
+      const linhaBatidaSet=new Set(info.linhaBatida||[]);
+      const naLinhaI=isLdRegra&&num!=null&&linhaBatidaSet.has(num);
+      const isUltimoI=naLinhaI&&num===lastDrawn;
       let bg,color,border,extra='';
       if(isFree){bg='var(--surface3)';color='var(--text2)';border='1.5px solid var(--border)';}
+      else if(isUltimoI){bg=COLORS[letter];color='#000';border='3px solid #fff';extra=' box-shadow:0 0 16px '+COLORS[letter]+';font-size:1.3rem;font-weight:900;';}
+      else if(naLinhaI){bg=COLORS[letter];color='#000';border='2px solid '+COLORS[letter];extra=' box-shadow:0 0 10px rgba('+RGBA[letter]+',.6);';}
       else if(isLast){bg='#fff';color='#000';border='2.5px solid #fff';extra=' box-shadow:0 0 12px rgba(255,255,255,.8);font-size:1.3rem;';}
-      else if(isDrawn){bg=COLORS[letter];color='#000';border='1.5px solid '+COLORS[letter];}
-      else if(missing){bg='rgba(240,96,96,.12)';color='var(--red)';border='1.5px solid rgba(240,96,96,.4)';}
+      else if(isDrawn){bg='rgba('+RGBA[letter]+',.25)';color=COLORS[letter];border='1.5px solid rgba('+RGBA[letter]+',.4)';}
+      else if(missing){bg='var(--surface2)';color='var(--text3)';border='1.5px solid var(--border)';}
       else{bg='var(--surface2)';color='var(--text3)';border='1.5px solid var(--border)';}
       html+='<div style="aspect-ratio:1;min-height:44px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:Bebas Neue;font-size:1.2rem;background:'+bg+';color:'+color+';border:'+border+extra+';box-sizing:border-box">'+(isFree?'&#9733;':(num!=null?num:''))+'</div>';
     });

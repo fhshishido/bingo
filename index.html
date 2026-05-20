@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v11.32 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
+<!-- IBBI Bingo v11.33 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
 
 <!DOCTYPE html>
 
@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v11.32</title>
+<title>IBBI Bingo v11.33</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -295,7 +295,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 .err-screen p{color:var(--text2);font-size:.95rem;margin-bottom:18px;max-width:480px;line-height:1.5}
 
 </style>
-  <meta name="app-version" content="v11.32">
+  <meta name="app-version" content="v11.33">
 </head>
 <body>
 
@@ -313,7 +313,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.32</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.33</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -591,7 +591,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <button class="btn btn-acc btn-sm" id="btnQRDownload">⬇ Baixar PNG</button>
       <button class="btn btn-ghost btn-sm" id="btnQRClose">Fechar</button>
     </div>
-    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.32</div>
+    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.33</div>
   </div>
 </div>
 
@@ -643,7 +643,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
       <span class="mode-badge" id="soMode">90 pedras</span>
-      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v11.32</span>
+      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v11.33</span>
     </div>
     <span class="conn off" id="soConnDot" style="margin-left:8px">&#11044; offline</span>
     <div class="s2-right">
@@ -655,10 +655,6 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="prizes-panel">
         <div class="pp-head"><div class="sec-lbl">&#127942; Prêmios deste Bingo</div></div>
         <div class="prizes-scroll" id="soPrizesScroll"></div>
-      </div>
-      <div class="batidas-panel" id="soBatidasPanel">
-        <div class="sec-lbl" style="margin-bottom:10px">&#128276; Batidas Recebidas</div>
-        <div id="soBatidasList"></div>
       </div>
       <div class="cpbox">
         <div>
@@ -675,6 +671,10 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
         <h3>&#127942; Ganhadores Confirmados</h3>
         <div class="winners-list" id="soWinnersList"></div>
         <div class="winners-actions" id="soWinnersActions"></div>
+      </div>
+      <div class="batidas-panel" id="soBatidasPanel">
+        <div class="sec-lbl" style="margin-bottom:10px;display:flex;align-items:center;gap:8px">&#128276; Batidas Recebidas <span id="batidaCount" style="background:rgba(245,200,0,.2);color:var(--cN);border:1px solid rgba(245,200,0,.4);border-radius:20px;font-size:.65rem;font-weight:900;padding:1px 8px"></span></div>
+        <div id="soBatidasList"></div>
       </div>
       <div class="ball-area">
         <div class="ball-lbl">Pedra sorteada</div>
@@ -794,7 +794,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v11.32';
+const APP_VERSION = 'v11.33';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -1197,6 +1197,7 @@ function soRenderBatidas(batidas){
   const list=$('soBatidasList'),panel=$('soBatidasPanel');
   if(!pend.length){panel.classList.remove('show');list.innerHTML='';return;}
   panel.classList.add('show');
+  const bc=$('batidaCount');if(bc)bc.textContent=pend.length+' pendente'+(pend.length>1?'s':'');
   list.innerHTML='';
   pend.forEach(([bid,b])=>{
     const card=document.createElement('div');card.className='batida-card';

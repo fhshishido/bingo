@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v11.33 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
+<!-- IBBI Bingo v11.34 - 2026-05-21 - Botao desfazer confirmacao, correcao estilos botoes -->
 
 <!DOCTYPE html>
 
@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v11.33</title>
+<title>IBBI Bingo v11.34</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -295,7 +295,8 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 .err-screen p{color:var(--text2);font-size:.95rem;margin-bottom:18px;max-width:480px;line-height:1.5}
 
 </style>
-  <meta name="app-version" content="v11.33">
+  <meta name="app-version" content="v11.34">
+<base target="_blank">
 </head>
 <body>
 
@@ -313,7 +314,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <div class="ibbi-badge">IBBI</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.33</span>
+      <span style="font-size:.62rem;font-weight:700;letter-spacing:1px;color:var(--text3)">v11.34</span>
       <span class="conn off" id="connDot">⬤ offline</span>
     </div>
   </div>
@@ -591,7 +592,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
       <button class="btn btn-acc btn-sm" id="btnQRDownload">⬇ Baixar PNG</button>
       <button class="btn btn-ghost btn-sm" id="btnQRClose">Fechar</button>
     </div>
-    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.33</div>
+    <div style="text-align:center;margin-top:10px;font-size:.6rem;color:var(--text3);letter-spacing:1px">v11.34</div>
   </div>
 </div>
 
@@ -643,7 +644,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
       <span class="mode-badge" id="soMode">90 pedras</span>
-      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v11.33</span>
+      <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px">v11.34</span>
     </div>
     <span class="conn off" id="soConnDot" style="margin-left:8px">&#11044; offline</span>
     <div class="s2-right">
@@ -794,7 +795,7 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, remove, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const APP_VERSION = 'v11.33';
+const APP_VERSION = 'v11.34';
 
 const db = getDatabase(initializeApp({
   apiKey: "AIzaSyCHfgD-FDgAW-MSnz_QnaeQXkc15ohjm1I",
@@ -1374,6 +1375,64 @@ function soRemoveWinner(prizeId,idx){
   });
 }
 
+// Desfazer confirmacao de batida: volta o ganhador para pendente, reativa a batida e limpa o brincante
+function soDesfazerConfirmacao(prizeId, ganhadorIdx){
+  const pri=_soBingoData.premios[prizeId];
+  if(!pri||!pri.ganhadores?.length)return;
+  const ganhador=pri.ganhadores[ganhadorIdx];
+  if(!ganhador)return;
+  if(!confirm(`Desfazer confirmacao de "${ganhador.nome}" (${ganhador.cartelaId})?\n\nA batida voltará para "pendente" e você poderá decidir novamente.`))return;
+
+  const cartelaId=ganhador.cartelaId;
+  const updates={};
+  const premioPath=`bingo/eventos/${evId}/bingos/${_soBingoId}/premios/${prizeId}`;
+
+  // 1) Remover ganhador do array no prêmio
+  const novosGanhadores=[...pri.ganhadores];
+  novosGanhadores.splice(ganhadorIdx,1);
+  updates[premioPath+'/ganhadores']=novosGanhadores.length?novosGanhadores:null;
+  if(!novosGanhadores.length)updates[premioPath+'/ganhoEm']=null;
+
+  Promise.all([
+    // Atualizar prêmio (remove ganhador)
+    update(fb('/'),updates),
+    // Buscar batida confirmada e reativar para pendente + limpar brincante
+    get(fb(`bingo/eventos/${evId}/bingos/${_soBingoId}/batidas`)).then(snap=>{
+      const batidas=snap.val()||{};
+      const tasks=[];
+      Object.entries(batidas).forEach(([bid,b])=>{
+        if(b.status==='confirmada'&&b.cartelaId===cartelaId){
+          tasks.push(update(fb(`bingo/eventos/${evId}/bingos/${_soBingoId}/batidas/${bid}`),{status:'pendente'}));
+          if(b.playerId){
+            tasks.push(update(fb(`bingo/eventos/${evId}/brincantes/${b.playerId}`),{
+              bingoConfirmado:false,
+              premioGanho:null,
+              cartelaStatusPos:null
+            }));
+          }
+        }
+      });
+      return Promise.all(tasks);
+    }),
+    // Remover entrada do histórico se ainda pendente
+    get(fb('bingo/eventos/'+evId+'/historico')).then(hs=>{
+      const hist=hs.val()||{};
+      const tasks=[];
+      Object.entries(hist).forEach(([hKey,h])=>{
+        if(h.premioId===prizeId&&h.cartelaId===cartelaId&&(!h.resultadoAposta||h.resultadoAposta==='pendente')){
+          tasks.push(remove(fb('bingo/eventos/'+evId+'/historico/'+hKey)));
+        }
+      });
+      return Promise.all(tasks);
+    })
+  ]).then(()=>{
+    showToast(`Confirmacao desfeita para "${ganhador.nome}". A batida voltou para pendente.`);
+  }).catch(e=>{
+    console.error('Erro ao desfazer confirmacao:',e);
+    alert('Erro ao desfazer: '+e.message);
+  });
+}
+
 let _pendingFecharPrizeId = null;
 
 $('btnFecharPremioCancelar')?.addEventListener('click',()=>{ closeM('mFecharPremio'); _pendingFecharPrizeId=null; });
@@ -1547,7 +1606,7 @@ $('btnSoGanhadorTodos')?.addEventListener('click',()=>{
   listEl.innerHTML=premios.map((p,pi)=>{
     const ganh=p.ganhadores||[];
     const isDividido=ganh.length>1;
-    return `<div style="background:var(--surface2);border-radius:var(--rsm);padding:10px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-weight:800;color:var(--accent);font-size:.95rem">#${p.ordem} - ${esc(p.nome)}</span>${isDividido?'<span style="font-size:.65rem;background:rgba(245,200,0,.12);color:var(--cN);padding:2px 7px;border-radius:4px;font-weight:700">&#128101; Dividido ('+ganh.length+')</span>':ganh.length?'<span style="font-size:.65rem;background:rgba(0,223,168,.1);color:var(--green);padding:2px 7px;border-radius:4px;font-weight:700">&#127942; Unico</span>':''}</div><div style="font-size:.72rem;color:var(--text3);margin-top:2px">${p.regra==='cheia'?'Cartela Cheia':'Linha/Coluna/Diagonal'}${p.fechado?' • &#128274; Fechado':''}</div>${ganh.length?ganh.map((g,gi)=>`<div style="margin-top:6px;font-size:.85rem;color:var(--green);display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span>&#127942; ${esc(g.nome)} (${esc(g.cartelaId||'-')})</span>${g.cartela&&g.cartela.numeros?`<button class="btn btn-blue btn-sm btn-so-ver-g" data-so-pi="${pi}" data-so-gi="${gi}" style="padding:4px 8px;font-size:.72rem">&#127921; Ver Cartela</button>`:''}</div>`).join(''):'<div style="margin-top:6px;font-size:.8rem;color:var(--text3)">Sem ganhador</div>'}</div>`;
+    return `<div style="background:var(--surface2);border-radius:var(--rsm);padding:10px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-weight:800;color:var(--accent);font-size:.95rem">#${p.ordem} - ${esc(p.nome)}</span>${isDividido?'<span style="font-size:.65rem;background:rgba(245,200,0,.12);color:var(--cN);padding:2px 7px;border-radius:4px;font-weight:700">&#128101; Dividido ('+ganh.length+')</span>':ganh.length?'<span style="font-size:.65rem;background:rgba(0,223,168,.1);color:var(--green);padding:2px 7px;border-radius:4px;font-weight:700">&#127942; Unico</span>':''}</div><div style="font-size:.72rem;color:var(--text3);margin-top:2px">${p.regra==='cheia'?'Cartela Cheia':'Linha/Coluna/Diagonal'}${p.fechado?' • &#128274; Fechado':''}</div>${ganh.length?ganh.map((g,gi)=>`<div style="margin-top:6px;font-size:.85rem;color:var(--green);display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span>&#127942; ${esc(g.nome)} (${esc(g.cartelaId||'-')})</span>${g.cartela&&g.cartela.numeros?`<button class="btn btn-blue btn-sm btn-so-ver-g" data-so-pi="${pi}" data-so-gi="${gi}" style="padding:4px 8px;font-size:.72rem">&#127921; Ver Cartela</button>`:''}${!p.fechado?`<button class="btn btn-yellow btn-sm btn-so-desfazer-g" data-so-prize="${p.id}" data-so-gi="${gi}" style="padding:4px 8px;font-size:.72rem">&#8617; Desfazer</button>`:''}</div>`).join(''):'<div style="margin-top:6px;font-size:.8rem;color:var(--text3)">Sem ganhador</div>'}</div>`;
   }).join('');
   listEl.querySelectorAll('.btn-so-ver-g').forEach(btn=>{
     btn.addEventListener('click',()=>{
@@ -1568,6 +1627,14 @@ $('btnSoGanhadorTodos')?.addEventListener('click',()=>{
           });
         });
       }
+    });
+  });
+  // Listeners para botao Desfazer confirmacao
+  listEl.querySelectorAll('.btn-so-desfazer-g').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const prizeId=btn.dataset.soPrize;
+      const gi2=parseInt(btn.dataset.soGi);
+      if(prizeId) soDesfazerConfirmacao(prizeId,gi2);
     });
   });
   openM('mSoWinTodos');

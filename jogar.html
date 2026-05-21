@@ -1,11 +1,11 @@
-<!-- IBBI Bingo Jogar v7.69 - 2026-05-20 - Fix NoSleep: ordem de carregamento, visibilitychange invertido, heartbeat e mais eventos -->
+<!-- IBBI Bingo Jogar v7.70 - 2026-05-20 - Fix NoSleep: ordem de carregamento, visibilitychange invertido, heartbeat e mais eventos -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IBBI Jogar v7.69</title>
+<title>IBBI Jogar v7.70</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#060608;--surface:#0f0f14;--surface2:#161620;--surface3:#1e1e2a;--border:#252535;--border2:#323248;--accent:#00b8f0;--accent2:#00dfa8;--red:#f06060;--green:#00dfa8;--text:#e4f2ff;--text2:#7090b0;--text3:#3a5068;--radius:12px;--rsm:8px;--cB:#00b8f0;--cI:#00dfa8;--cN:#f5c800;--cG:#ff8c00;--cO:#c850ff}
@@ -136,7 +136,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface3);color:var(--text);padding:10px 20px;border-radius:var(--rsm);font-size:.82rem;font-weight:700;z-index:2000;opacity:0;transition:all .3s;white-space:nowrap;border:1px solid var(--border2)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
-<meta name="app-version" content="v7.69">
+<meta name="app-version" content="v7.70">
 <base target="_blank">
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/nosleep/0.12.0/NoSleep.min.js"></script>
 </head>
@@ -159,7 +159,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
         <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px">Faca login no Hub para jogar.</div>
         <button class="btn btn-acc btn-full" onclick="window.location.href='player.html'">Ir para o Login &rarr;</button>
       </div>
-      <div class="vtag">v7.69</div>
+      <div class="vtag">v7.70</div>
     </div>
   </div>
 </div>
@@ -184,7 +184,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
       <div style="font-size:1.2rem;font-weight:800;color:var(--text2);margin-bottom:8px">Evento nao encontrado</div>
       <div style="font-size:.85rem;color:var(--text3);margin-bottom:16px" id="nfMsg">Este evento nao existe.</div>
       <button class="btn btn-ghost btn-full" onclick="window.location.href='player.html'">Voltar ao Hub</button>
-      <div class="vtag">v7.69</div>
+      <div class="vtag">v7.70</div>
     </div>
   </div>
 </div>
@@ -196,7 +196,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
     <div class="p-logo">B<span>I</span>NGO</div>
     <div style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#060608;font-size:.55rem;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:4px;text-transform:uppercase">IBBI</div>
     <div class="p-username" id="gameUserName"></div>
-    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-left:4px">v7.69</span>
+    <span style="background:var(--surface2);border:1.5px solid var(--border);color:var(--accent);font-size:.58rem;font-weight:900;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-left:4px">v7.70</span>
   </div>
   <!-- Barra do evento -->
   <div id="gameEvBar" class="ev-bar">&mdash;</div>
@@ -1777,5 +1777,48 @@ window.voltarCartelas = async function () {
 };
 
 </script>
+
+<!-- ===== HELP: jogar.html ===== -->
+<style>
+/* ===== HELP FAB + MODAL ===== */
+.help-fab{position:fixed;bottom:22px;right:18px;z-index:9000;width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#0090c8);color:#000;font-size:1.3rem;font-weight:900;border:none;cursor:pointer;box-shadow:0 4px 18px rgba(0,184,240,.45);display:flex;align-items:center;justify-content:center;transition:transform .15s;font-family:'Barlow',sans-serif;}
+.help-fab:active{transform:scale(.9);}
+.help-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,2,.93);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:9100;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;}
+.help-overlay.open{display:flex;}
+.help-box{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);width:100%;max-width:480px;padding:0;overflow:hidden;animation:helpIn .22s cubic-bezier(.2,1.4,.4,1) both;margin:auto;}
+@keyframes helpIn{from{transform:scale(.88);opacity:0;}}
+.help-hdr{background:linear-gradient(135deg,rgba(0,184,240,.13),rgba(0,223,168,.06));border-bottom:1.5px solid var(--border2);padding:18px 20px 14px;display:flex;align-items:center;gap:10px;}
+.help-hdr-icon{font-size:2rem;line-height:1;flex-shrink:0;}
+.help-hdr-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:2px;color:var(--accent);line-height:1;}
+.help-hdr-sub{font-size:.68rem;font-weight:700;color:var(--text2);letter-spacing:.5px;margin-top:3px;}
+.help-close{margin-left:auto;background:var(--surface2);border:1.5px solid var(--border);color:var(--text2);border-radius:50%;width:32px;height:32px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Barlow',sans-serif;}
+.help-body{padding:18px 20px 24px;}
+.help-section{margin-bottom:18px;}
+.help-section:last-child{margin-bottom:0;}
+.help-section-title{font-size:.6rem;font-weight:900;letter-spacing:2.5px;color:var(--accent);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.help-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;}
+.help-item:last-child{margin-bottom:0;}
+.help-item-icon{font-size:1.1rem;width:24px;flex-shrink:0;text-align:center;margin-top:1px;}
+.help-item-label{font-size:.82rem;font-weight:800;color:var(--text);line-height:1.2;}
+.help-item-desc{font-size:.75rem;color:var(--text2);margin-top:2px;line-height:1.45;}
+.help-tip{background:rgba(245,200,0,.07);border:1px solid rgba(245,200,0,.22);border-radius:var(--rsm);padding:10px 13px;margin-top:14px;display:flex;gap:9px;align-items:flex-start;}
+.help-tip-icon{font-size:1rem;flex-shrink:0;margin-top:1px;}
+.help-tip-text{font-size:.75rem;color:var(--text2);line-height:1.45;}
+</style>
+<button class="help-fab" onclick="document.getElementById('helpOverlay').classList.add('open')" title="Ajuda">?</button>
+<div class="help-overlay" id="helpOverlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="help-box">
+    <div class="help-hdr">
+      <div class="help-hdr-icon">🎱</div>
+      <div><div class="help-hdr-title">Jogar Bingo</div><div class="help-hdr-sub">Jogador · jogar.html · v7.70</div></div>
+      <button class="help-close" onclick="document.getElementById('helpOverlay').classList.remove('open')">&#10005;</button>
+    </div>
+    <div class="help-body">
+      <div class="help-section"><div class="help-section-title">O que é esta tela</div><div class="help-item"><div class="help-item-icon">🎯</div><div><div class="help-item-label">Tela de Jogo</div><div class="help-item-desc">Interface principal do jogador durante a partida. Exibe a pedra sorteada, histórico de pedras e sua(s) cartela(s) com marcação automática.</div></div></div></div><div class="help-section"><div class="help-section-title">Durante o jogo</div><div class="help-item"><div class="help-item-icon">🔵</div><div><div class="help-item-label">Pedra Atual</div><div class="help-item-desc">A bola grande no topo mostra a última pedra sorteada (letra + número). Toque nela para ver o histórico completo.</div></div></div><div class="help-item"><div class="help-item-icon">🎴</div><div><div class="help-item-label">Suas Cartelas</div><div class="help-item-desc">Role para baixo para ver suas cartelas. Use '‹ ›' para navegar entre múltiplas cartelas.</div></div></div><div class="help-item"><div class="help-item-icon">✅</div><div><div class="help-item-label">Marcação Automática</div><div class="help-item-desc">Os números já sorteados ficam marcados automaticamente na sua cartela.</div></div></div><div class="help-item"><div class="help-item-icon">🏆</div><div><div class="help-item-label">Declarar Bingo</div><div class="help-item-desc">Quando completar o padrão do prêmio atual, o botão 'BINGO' pulsa. Toque para declarar e aguarde confirmação do organizador.</div></div></div><div class="help-item"><div class="help-item-icon">📜</div><div><div class="help-item-label">Histórico</div><div class="help-item-desc">As bolinhas abaixo da pedra atual mostram todas as pedras já sorteadas. As que estão na sua cartela têm destaque verde.</div></div></div></div><div class="help-section"><div class="help-section-title">Estados da tela</div><div class="help-item"><div class="help-item-icon">⏳</div><div><div class="help-item-label">Aguardando</div><div class="help-item-desc">O organizador ainda não iniciou o bingo. Aguarde na tela.</div></div></div><div class="help-item"><div class="help-item-icon">🎱</div><div><div class="help-item-label">Em Jogo</div><div class="help-item-desc">Bingo em andamento — acompanhe os sorteios em tempo real.</div></div></div><div class="help-item"><div class="help-item-icon">🔒</div><div><div class="help-item-label">Aprovação Pendente</div><div class="help-item-desc">Se o evento exige aprovação, aguarde o organizador liberar sua cartela.</div></div></div></div>
+      <div class="help-tip"><div class="help-tip-icon">💡</div><div class="help-tip-text">A tela permanece acesa durante o jogo (NoSleep ativo). Não feche o app para não perder sorteios.</div></div><div class="help-tip"><div class="help-tip-icon">📶</div><div class="help-tip-text">Conexão ruim? A marcação é local — seus números marcados ficam salvos mesmo sem internet.</div></div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

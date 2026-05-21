@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v11.34 - 2026-05-20 - Botao Desfazer por cartela ganhadora (volta batida para pendente) -->
+<!-- IBBI Bingo v11.35 - 2026-05-20 - Desfazer reabre o bingo automaticamente se estiver encerrado -->
 
 <!DOCTYPE html>
 
@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v11.34</title>
+<title>IBBI Bingo v11.35</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -1459,7 +1459,9 @@ function soDesfazerPremioCartelaExec(prizeId,idx){
   const ganhadorRemovido=p.ganhadores[idx];
   const novosGanhadores=p.ganhadores.filter((_,i)=>i!==idx);
   const eraFechado=p.fechado===true;
+  const bingoEncerrado=_soBingoData.status==='encerrado';
   const basePath=`bingo/eventos/${evId}/bingos/${_soBingoId}/premios/${prizeId}`;
+  const bingoPath=`bingo/eventos/${evId}/bingos/${_soBingoId}`;
   // Buscar batidas para localizar o playerId desta cartela e a propria batida confirmada
   get(fb(`bingo/eventos/${evId}/bingos/${_soBingoId}/batidas`)).then(snap=>{
     const batidas=snap.val()||{};
@@ -1488,6 +1490,12 @@ function soDesfazerPremioCartelaExec(prizeId,idx){
     if(batidaPlayerId){
       tasks.push(update(fb(`bingo/eventos/${evId}/brincantes/${batidaPlayerId}`),{bingoConfirmado:false,premioGanho:null}));
     }
+    // 5.1) Se o bingo estava encerrado, reabrir como andamento e reativar
+    if(bingoEncerrado){
+      tasks.push(set(fb(bingoPath+'/status'),'andamento'));
+      tasks.push(set(fb(bingoPath+'/encerradoEm'),null));
+      tasks.push(set(fb(`bingo/eventos/${evId}/bingoAtivoId`),_soBingoId));
+    }
     // 6) Atualizar histórico: cartela removida volta para 'pendente'
     get(fb('bingo/eventos/'+evId+'/historico')).then(hs=>{
       const hist=hs.val()||{};
@@ -1513,10 +1521,11 @@ function soDesfazerPremioCartelaExec(prizeId,idx){
         if(novosGanhadores.length){_soBingoData.premios[prizeId].ganhadores=novosGanhadores;}
         else{delete _soBingoData.premios[prizeId].ganhadores;_soBingoData.premios[prizeId].ganhoEm=null;}
         if(eraFechado){_soBingoData.premios[prizeId].fechado=false;_soBingoData.premios[prizeId].fechadoEm=null;}
+        if(bingoEncerrado){_soBingoData.status='andamento';_soBingoData.encerradoEm=null;if(evData)evData.bingoAtivoId=_soBingoId;}
         // Reativar este prêmio como atual
         _soCurPrizeId=prizeId;
         soRender(false);
-        showToast('Premiação desfeita. Batida voltou para pendentes.');
+        showToast(bingoEncerrado?'Premiação desfeita. Bingo reaberto.':'Premiação desfeita. Batida voltou para pendentes.');
       }).catch(e=>{console.error('Erro ao desfazer premiação:',e);alert('Erro ao desfazer: '+e.message);});
     });
   });

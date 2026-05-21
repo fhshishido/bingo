@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v11.35 - 2026-05-20 - Desfazer reabre o bingo automaticamente se estiver encerrado -->
+<!-- IBBI Bingo v11.37 - 2026-05-20 - Modais estilizados para Dividir Premio e Escolher Um (sem confirm/prompt nativos) -->
 
 <!DOCTYPE html>
 
@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v11.35</title>
+<title>IBBI Bingo v11.37</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -780,6 +780,49 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
   </div>
 </div>
 
+<!-- MODAL: Dividir Premio -->
+<div class="mbk" id="mDividirPremio">
+  <div class="modal" style="max-width:380px;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:10px">&#129309;</div>
+    <h2 style="margin-bottom:6px">Dividir Prêmio?</h2>
+    <p id="mDividirPremioTxt" style="font-size:.88rem;color:var(--text2);margin-bottom:8px"></p>
+    <p style="font-size:.78rem;color:var(--text3);margin-bottom:20px">O prêmio será dividido igualmente e fechado em seguida.</p>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnDividirPremioCancelar">Cancelar</button>
+      <button class="btn btn-green" id="btnDividirPremioOk">&#129309; Dividir Prêmio</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Escolher Um - lista de candidatos -->
+<div class="mbk" id="mEscolherUm">
+  <div class="modal" style="max-width:420px">
+    <div style="text-align:center;margin-bottom:14px">
+      <div style="font-size:2.5rem;margin-bottom:6px">&#127942;</div>
+      <h2 style="margin-bottom:4px">Escolher Vencedor</h2>
+      <p style="font-size:.78rem;color:var(--text3)">Toque no ganhador escolhido para esta premiação</p>
+    </div>
+    <div id="mEscolherUmLista" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;max-height:50vh;overflow-y:auto"></div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnEscolherUmCancelar" style="width:100%">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Escolher Um - confirmacao final -->
+<div class="mbk" id="mEscolherUmConfirma">
+  <div class="modal" style="max-width:380px;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:10px">&#127942;</div>
+    <h2 style="margin-bottom:6px">Confirmar Vencedor?</h2>
+    <p id="mEscolherUmConfirmaTxt" style="font-size:.88rem;color:var(--text2);margin-bottom:8px"></p>
+    <p style="font-size:.78rem;color:var(--text3);margin-bottom:20px">Os demais ganhadores serão marcados como perdedores da escolha. O prêmio será fechado em seguida.</p>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnEscolherUmConfirmaCancelar">Cancelar</button>
+      <button class="btn btn-yellow" id="btnEscolherUmConfirmaOk">&#127942; Confirmar Vencedor</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAIS DO SORTEIO -->
 <div class="mbk" id="mSoBatida">
   <div class="modal" style="max-width:420px">
@@ -1401,11 +1444,20 @@ $('btnEncerrarBingoCancelar')?.addEventListener('click',()=>closeM('mEncerrarBin
 $('btnEncerrarBingoOk')?.addEventListener('click',()=>{ closeM('mEncerrarBingo'); soEncerrarBingo(false); });
 
 $('btnEncerrarEventoCancelar')?.addEventListener('click',()=>closeM('mEncerrarEvento'));
+$('btnS2Encerrar')?.addEventListener('click',()=>{
+  if(!evId||!evData) return;
+  if(evData.status==='encerrado'){ showToast('Evento já está encerrado.'); return; }
+  openM('mEncerrarEvento');
+});
 $('btnEncerrarEventoOk')?.addEventListener('click',()=>{
   closeM('mEncerrarEvento');
-  if(!evData) return;
+  if(!evId||!evData) return;
   update(fb(`bingo/eventos/${evId}`),{status:'encerrado',encerradoEm:Date.now()})
-    .then(()=>showToast('Evento encerrado.'));
+    .then(()=>{
+      if(evData) evData.status='encerrado';
+      showToast('Evento encerrado.');
+    })
+    .catch(e=>{console.error('Erro ao encerrar evento:',e);alert('Erro ao encerrar evento: '+e.message);});
 });
 
 function soFecharPremio(prizeId,auto){
@@ -1439,11 +1491,26 @@ function soFecharPremio(prizeId,auto){
 }
 
 let _pendingDesfazer = null; // {prizeId, idx}
+let _pendingDividir = null; // prizeId
+let _pendingEscolherUm = null; // {prizeId, idx}
 
 $('btnDesfazerPremioCancelar')?.addEventListener('click',()=>{ closeM('mDesfazerPremio'); _pendingDesfazer=null; });
 $('btnDesfazerPremioOk')?.addEventListener('click',()=>{
   closeM('mDesfazerPremio');
   if(_pendingDesfazer){ const {prizeId,idx}=_pendingDesfazer; _pendingDesfazer=null; soDesfazerPremioCartelaExec(prizeId,idx); }
+});
+
+$('btnDividirPremioCancelar')?.addEventListener('click',()=>{ closeM('mDividirPremio'); _pendingDividir=null; });
+$('btnDividirPremioOk')?.addEventListener('click',()=>{
+  closeM('mDividirPremio');
+  if(_pendingDividir){ const pid=_pendingDividir; _pendingDividir=null; soDividirPremioExec(pid); }
+});
+
+$('btnEscolherUmCancelar')?.addEventListener('click',()=>{ closeM('mEscolherUm'); });
+$('btnEscolherUmConfirmaCancelar')?.addEventListener('click',()=>{ closeM('mEscolherUmConfirma'); _pendingEscolherUm=null; });
+$('btnEscolherUmConfirmaOk')?.addEventListener('click',()=>{
+  closeM('mEscolherUmConfirma');
+  if(_pendingEscolherUm){ const {prizeId,idx}=_pendingEscolherUm; _pendingEscolherUm=null; soEscolherVencedorExec(prizeId,idx); }
 });
 
 function soDesfazerPremioCartela(prizeId,idx){
@@ -1532,9 +1599,17 @@ function soDesfazerPremioCartelaExec(prizeId,idx){
 }
 
 function soDividirPremio(prizeId){
-  const g=_soBingoData.premios[prizeId].ganhadores;
+  const g=_soBingoData.premios[prizeId]?.ganhadores;
   if(!g?.length)return;
-  if(!confirm(`Dividir prêmio entre ${g.length} ganhador(es)?`))return;
+  const p=_soBingoData.premios[prizeId];
+  $('mDividirPremioTxt').textContent='Dividir "'+p.nome+'" entre '+g.length+' ganhador(es)?';
+  _pendingDividir=prizeId;
+  openM('mDividirPremio');
+}
+
+function soDividirPremioExec(prizeId){
+  const g=_soBingoData.premios[prizeId]?.ganhadores;
+  if(!g?.length)return;
   const nomes=g.map(w=>w.nome);
   get(fb(`bingo/eventos/${evId}/bingos/${_soBingoId}/batidas`)).then(snap=>{
     const batidas=snap.val()||{};
@@ -1560,15 +1635,53 @@ function soDividirPremio(prizeId){
 }
 
 function soEscolherVencedor(prizeId){
-  const g=_soBingoData.premios[prizeId].ganhadores;
+  const g=_soBingoData.premios[prizeId]?.ganhadores;
   if(!g?.length)return;
-  const nomes=g.map((w,i)=>`${i+1}) ${w.nome} (${w.cartelaId})`).join('\n');
-  const idx=prompt(`Escolher um vencedor:\n\n${nomes}\n\nDigite o número:`);
-  const n=parseInt(idx);
-  if(isNaN(n)||n<1||n>g.length)return;
-  const escolhido=g[n-1];
-  const perdedores=g.filter((_,i)=>i!==n-1);
-  if(!confirm(`Confirmar: "${escolhido.nome}" como único vencedor?`))return;
+  const lista=$('mEscolherUmLista');
+  lista.innerHTML='';
+  g.forEach((ganhador,i)=>{
+    const btn=document.createElement('button');
+    btn.className='btn';
+    btn.style.cssText='display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--rsm);text-align:left;cursor:pointer;width:100%';
+    const ordem=document.createElement('span');
+    ordem.style.cssText='display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;background:var(--accent);color:#000;border-radius:50%;font-weight:900;font-size:.85rem;flex-shrink:0';
+    ordem.textContent=i+1;
+    const info=document.createElement('div');
+    info.style.cssText='flex:1;min-width:0';
+    const nome=document.createElement('div');
+    nome.style.cssText='font-weight:800;font-size:.95rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
+    nome.textContent=ganhador.nome||'Anônimo';
+    const cart=document.createElement('div');
+    cart.style.cssText='font-size:.72rem;color:var(--text3);margin-top:2px';
+    cart.textContent='Cartela: '+(ganhador.cartelaId||'-');
+    info.appendChild(nome);info.appendChild(cart);
+    const seta=document.createElement('span');
+    seta.style.cssText='color:var(--cN);font-size:1.1rem;flex-shrink:0';
+    seta.innerHTML='&#9656;';
+    btn.appendChild(ordem);btn.appendChild(info);btn.appendChild(seta);
+    btn.addEventListener('click',()=>{
+      closeM('mEscolherUm');
+      soEscolherVencedorConfirma(prizeId,i);
+    });
+    lista.appendChild(btn);
+  });
+  openM('mEscolherUm');
+}
+
+function soEscolherVencedorConfirma(prizeId,idx){
+  const g=_soBingoData.premios[prizeId]?.ganhadores;
+  if(!g||!g[idx])return;
+  const escolhido=g[idx];
+  $('mEscolherUmConfirmaTxt').textContent='Confirmar "'+escolhido.nome+'" (Cartela: '+(escolhido.cartelaId||'-')+') como único vencedor?';
+  _pendingEscolherUm={prizeId,idx};
+  openM('mEscolherUmConfirma');
+}
+
+function soEscolherVencedorExec(prizeId,idx){
+  const g=_soBingoData.premios[prizeId]?.ganhadores;
+  if(!g||!g[idx])return;
+  const escolhido=g[idx];
+  const perdedores=g.filter((_,i)=>i!==idx);
   _soBingoData.premios[prizeId].ganhadores=[escolhido];
   _soBingoData.premios[prizeId].ganhoEm=Date.now();
   const basePath=`bingo/eventos/${evId}/bingos/${_soBingoId}/premios/${prizeId}`;

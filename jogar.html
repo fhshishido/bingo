@@ -139,6 +139,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 <meta name="app-version" content="v7.70">
 <base target="_blank">
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/nosleep/0.12.0/NoSleep.min.js"></script>
+<base target="_blank">
 </head>
 <body>
 
@@ -1785,7 +1786,7 @@ window.voltarCartelas = async function () {
 .help-fab:active{transform:scale(.9);}
 .help-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,2,.93);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:9100;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;}
 .help-overlay.open{display:flex;}
-.help-box{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);width:100%;max-width:480px;padding:0;overflow:hidden;animation:helpIn .22s cubic-bezier(.2,1.4,.4,1) both;margin:auto;}
+.help-box{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);width:100%;max-width:520px;padding:0;overflow:hidden;animation:helpIn .22s cubic-bezier(.2,1.4,.4,1) both;margin:auto;}
 @keyframes helpIn{from{transform:scale(.88);opacity:0;}}
 .help-hdr{background:linear-gradient(135deg,rgba(0,184,240,.13),rgba(0,223,168,.06));border-bottom:1.5px solid var(--border2);padding:18px 20px 14px;display:flex;align-items:center;gap:10px;}
 .help-hdr-icon{font-size:2rem;line-height:1;flex-shrink:0;}
@@ -1793,6 +1794,8 @@ window.voltarCartelas = async function () {
 .help-hdr-sub{font-size:.68rem;font-weight:700;color:var(--text2);letter-spacing:.5px;margin-top:3px;}
 .help-close{margin-left:auto;background:var(--surface2);border:1.5px solid var(--border);color:var(--text2);border-radius:50%;width:32px;height:32px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Barlow',sans-serif;}
 .help-body{padding:18px 20px 24px;}
+.help-ctx{display:none;}
+.help-ctx.active{display:block;animation:helpIn .18s cubic-bezier(.2,1.4,.4,1) both;}
 .help-section{margin-bottom:18px;}
 .help-section:last-child{margin-bottom:0;}
 .help-section-title{font-size:.6rem;font-weight:900;letter-spacing:2.5px;color:var(--accent);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
@@ -1804,21 +1807,121 @@ window.voltarCartelas = async function () {
 .help-tip{background:rgba(245,200,0,.07);border:1px solid rgba(245,200,0,.22);border-radius:var(--rsm);padding:10px 13px;margin-top:14px;display:flex;gap:9px;align-items:flex-start;}
 .help-tip-icon{font-size:1rem;flex-shrink:0;margin-top:1px;}
 .help-tip-text{font-size:.75rem;color:var(--text2);line-height:1.45;}
+.help-badge{display:inline-block;font-size:.58rem;font-weight:900;padding:1px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:1px;margin-left:4px;vertical-align:middle;}
+.help-badge.green{background:rgba(0,223,168,.12);color:var(--green);border:1px solid rgba(0,223,168,.3);}
+.help-badge.blue{background:rgba(0,184,240,.12);color:var(--accent);border:1px solid rgba(0,184,240,.3);}
+.help-badge.red{background:rgba(240,96,96,.12);color:var(--red);border:1px solid rgba(240,96,96,.3);}
+.help-badge.gray{background:rgba(58,80,104,.12);color:var(--text3);border:1px solid var(--border);}
+.help-badge.yellow{background:rgba(245,200,0,.12);color:var(--yellow);border:1px solid rgba(245,200,0,.3);}
+.help-badge.purple{background:rgba(184,90,220,.12);color:var(--purple);border:1px solid rgba(184,90,220,.3);}
 </style>
-<button class="help-fab" onclick="document.getElementById('helpOverlay').classList.add('open')" title="Ajuda">?</button>
+<button class="help-fab" onclick="openHelp()" title="Ajuda">?</button>
 <div class="help-overlay" id="helpOverlay" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="help-box">
     <div class="help-hdr">
-      <div class="help-hdr-icon">🎱</div>
-      <div><div class="help-hdr-title">Jogar Bingo</div><div class="help-hdr-sub">Jogador · jogar.html · v7.70</div></div>
+      <div class="help-hdr-icon" id="helpIcon">🎮</div>
+      <div><div class="help-hdr-title" id="helpTitle">Jogar Bingo</div><div class="help-hdr-sub" id="helpSub">Brincante · jogar.html</div></div>
       <button class="help-close" onclick="document.getElementById('helpOverlay').classList.remove('open')">&#10005;</button>
     </div>
-    <div class="help-body">
-      <div class="help-section"><div class="help-section-title">O que é esta tela</div><div class="help-item"><div class="help-item-icon">🎯</div><div><div class="help-item-label">Tela de Jogo</div><div class="help-item-desc">Interface principal do jogador durante a partida. Exibe a pedra sorteada, histórico de pedras e sua(s) cartela(s) com marcação automática.</div></div></div></div><div class="help-section"><div class="help-section-title">Durante o jogo</div><div class="help-item"><div class="help-item-icon">🔵</div><div><div class="help-item-label">Pedra Atual</div><div class="help-item-desc">A bola grande no topo mostra a última pedra sorteada (letra + número). Toque nela para ver o histórico completo.</div></div></div><div class="help-item"><div class="help-item-icon">🎴</div><div><div class="help-item-label">Suas Cartelas</div><div class="help-item-desc">Role para baixo para ver suas cartelas. Use '‹ ›' para navegar entre múltiplas cartelas.</div></div></div><div class="help-item"><div class="help-item-icon">✅</div><div><div class="help-item-label">Marcação Automática</div><div class="help-item-desc">Os números já sorteados ficam marcados automaticamente na sua cartela.</div></div></div><div class="help-item"><div class="help-item-icon">🏆</div><div><div class="help-item-label">Declarar Bingo</div><div class="help-item-desc">Quando completar o padrão do prêmio atual, o botão 'BINGO' pulsa. Toque para declarar e aguarde confirmação do organizador.</div></div></div><div class="help-item"><div class="help-item-icon">📜</div><div><div class="help-item-label">Histórico</div><div class="help-item-desc">As bolinhas abaixo da pedra atual mostram todas as pedras já sorteadas. As que estão na sua cartela têm destaque verde.</div></div></div></div><div class="help-section"><div class="help-section-title">Estados da tela</div><div class="help-item"><div class="help-item-icon">⏳</div><div><div class="help-item-label">Aguardando</div><div class="help-item-desc">O organizador ainda não iniciou o bingo. Aguarde na tela.</div></div></div><div class="help-item"><div class="help-item-icon">🎱</div><div><div class="help-item-label">Em Jogo</div><div class="help-item-desc">Bingo em andamento — acompanhe os sorteios em tempo real.</div></div></div><div class="help-item"><div class="help-item-icon">🔒</div><div><div class="help-item-label">Aprovação Pendente</div><div class="help-item-desc">Se o evento exige aprovação, aguarde o organizador liberar sua cartela.</div></div></div></div>
-      <div class="help-tip"><div class="help-tip-icon">💡</div><div class="help-tip-text">A tela permanece acesa durante o jogo (NoSleep ativo). Não feche o app para não perder sorteios.</div></div><div class="help-tip"><div class="help-tip-icon">📶</div><div class="help-tip-text">Conexão ruim? A marcação é local — seus números marcados ficam salvos mesmo sem internet.</div></div>
-    </div>
+    <div class="help-body" id="helpBody">
+
+<!-- ===== CONTEXTO: Login/Carregando ===== -->
+<div class="help-ctx" data-ctx="vRedirect">
+  <div class="help-section"><div class="help-section-title">⏳ Carregando</div>
+    <div class="help-item"><div class="help-item-icon">⏳</div><div><div class="help-item-label">Identificando Usuário</div><div class="help-item-desc">O sistema está verificando seu cadastro e vinculando ao evento e à rodada de bingo. Aguarde alguns instantes.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🔑</div><div><div class="help-item-label">Senha do Evento</div><div class="help-item-desc">Se o evento exigir senha, digite-a para prosseguir.</div></div></div>
+  </div>
+  <div class="help-tip"><div class="help-tip-icon">💡</div><div class="help-tip-text">Se ficar preso nesta tela, verifique se o link está correto ou se o evento/rodada já foi encerrado.</div></div>
+</div>
+
+<!-- ===== CONTEXTO: Aguardando Aprovação ===== -->
+<div class="help-ctx" data-ctx="vAguardando">
+  <div class="help-section"><div class="help-section-title">⏳ Aguardando Aprovação</div>
+    <div class="help-item"><div class="help-item-icon">⏳</div><div><div class="help-item-label">Aprovação do Organizador</div><div class="help-item-desc">Seu acesso ao evento está pendente de aprovação. Aguarde o organizador liberar sua participação.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🔔</div><div><div class="help-item-label">Notificação</div><div class="help-item-desc">Assim que aprovado, esta tela atualiza automaticamente e você poderá jogar.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🔄</div><div><div class="help-item-label">Verificar</div><div class="help-item-desc">Use o botão <b>🔄 Verificar</b> para forçar uma verificação manual do status.</div></div></div>
+  </div>
+  <div class="help-tip"><div class="help-tip-icon">💡</div><div class="help-tip-text">Se demorar muito, contate o organizador. Você pode ter sido rejeitado.</div></div>
+</div>
+
+<!-- ===== CONTEXTO: Evento Não Encontrado ===== -->
+<div class="help-ctx" data-ctx="vNotFound">
+  <div class="help-section"><div class="help-section-title">❌ Evento Não Encontrado</div>
+    <div class="help-item"><div class="help-item-icon">❌</div><div><div class="help-item-label">Link Inválido ou Encerrado</div><div class="help-item-desc">O evento ou rodada pode ter sido excluído, encerrado ou o link está incorreto.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🔗</div><div><div class="help-item-label">Verificar Link</div><div class="help-item-desc">Confirme com o organizador se o link está correto e se o evento ainda está ativo.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">↩</div><div><div class="help-item-label">Voltar ao Hub</div><div class="help-item-desc">Retorna ao hub do brincante para ver seus eventos disponíveis.</div></div></div>
   </div>
 </div>
 
-</body>
+<!-- ===== CONTEXTO: Tela do Jogo ===== -->
+<div class="help-ctx" data-ctx="vJogo">
+  <div class="help-section"><div class="help-section-title">🎮 Tela do Jogo</div>
+    <div class="help-item"><div class="help-item-icon">🎮</div><div><div class="help-item-label">Bingo em Tempo Real</div><div class="help-item-desc">Acompanhe o sorteio ao vivo. Veja a última pedra sorteada, marque seus números e declare bingo quando completar um prêmio.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">📊</div><div><div class="help-item-label">Status da Rodada</div><div class="help-item-desc">Badge no topo mostra o estado. <span class="help-badge green">ATIVO</span> = sorteando, <span class="help-badge gray">ENCERRADO</span> = finalizado.</div></div></div>
+  </div>
+  <div class="help-section"><div class="help-section-title">Cartelas e Marcações</div>
+    <div class="help-item"><div class="help-item-icon">🎫</div><div><div class="help-item-label">Minhas Cartelas</div><div class="help-item-desc">Veja suas cartelas na parte inferior. Toque em uma para expandir e ver os números.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🎯</div><div><div class="help-item-label">Marcar Números</div><div class="help-item-desc">Toque nos números sorteados na sua cartela para marcá-los. Toque novamente para desmarcar.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">✅</div><div><div class="help-item-label">Verificação Automática</div><div class="help-item-desc">Números sorteados são destacados automaticamente. O sistema verifica se você completou algum prêmio.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🎤</div><div><div class="help-item-label">Assistente de Voz</div><div class="help-item-desc">Ative a narração por voz para ouvir as pedras sorteadas automaticamente.</div></div></div>
+  </div>
+  <div class="help-section"><div class="help-section-title">Ações</div>
+    <div class="help-item"><div class="help-item-icon">🎱</div><div><div class="help-item-label">Última Pedra</div><div class="help-item-desc">Mostra o número mais recente sorteado pelo organizador. Toque na bola para repetir o anúncio.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🎰</div><div><div class="help-item-label">BINGO!</div><div class="help-item-desc">Quando completar um prêmio (linha, diagonal, cartela cheia...), clique em <b>🎰 BINGO</b> para declarar. O organizador será notificado.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🏆</div><div><div class="help-item-label">Prêmios</div><div class="help-item-desc">Veja quais prêmios estão disponíveis, quem já ganhou e o status de cada um.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">👁</div><div><div class="help-item-label">Ver Cartela</div><div class="help-item-desc">Abre a cartela selecionada em tela cheia para melhor visualização.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">➕</div><div><div class="help-item-label">Nova Cartela</div><div class="help-item-desc">Crie cartelas adicionais para esta rodada (se ainda não atingiu o limite).</div></div></div>
+    <div class="help-item"><div class="help-item-icon">📋</div><div><div class="help-item-label">Minhas Cartelas</div><div class="help-item-desc">Acesse a lista completa de suas cartelas neste evento.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">↩</div><div><div class="help-item-label">Voltar</div><div class="help-item-desc">Retorna à lista de eventos ou cartelas.</div></div></div>
+  </div>
+  <div class="help-section"><div class="help-section-title">Grid de Pedras</div>
+    <div class="help-item"><div class="help-item-icon">📊</div><div><div class="help-item-label">Tabela BINGO</div><div class="help-item-desc">Grid colorido mostra todas as pedras já sorteadas. Cores: B=azul, I=verde, N=amarelo, G=laranja, O=roxo.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🔍</div><div><div class="help-item-label">Buscar Pedra</div><div class="help-item-desc">Use a busca para encontrar um número específico no grid.</div></div></div>
+  </div>
+  <div class="help-section"><div class="help-section-title">Bingo Ouro</div>
+    <div class="help-item"><div class="help-item-icon">🏅</div><div><div class="help-item-label">O que é</div><div class="help-item-desc">Ocorre quando um jogador fecha a cartela cheia em poucas pedras sorteadas. Ganha um prêmio especial!</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🎉</div><div><div class="help-item-label">Notificação</div><div class="help-item-desc">Aparece automaticamente quando alguém atinge o bingo ouro. Mostra detalhes e parabéns.</div></div></div>
+  </div>
+  <div class="help-section"><div class="help-section-title">Sorteio / LD</div>
+    <div class="help-item"><div class="help-item-icon">🎲</div><div><div class="help-item-label">Sorteio Automático</div><div class="help-item-desc">Se ativado pelo organizador, o sorteio acontece em intervalos automáticos.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🎊</div><div><div class="help-item-label">LD Confirmado</div><div class="help-item-desc">"Lá e De volta" — quando o jogo volta para um prêmio anterior. Confirme para continuar.</div></div></div>
+  </div>
+  <div class="help-tip"><div class="help-tip-icon">⚡</div><div class="help-tip-text">Marque seus números rápido! Se outro jogador declarar bingo antes, o prêmio pode ser fechado.</div></div>
+</div>
+
+    </div>
+  </div>
+</div>
+<script>
+function openHelp(){
+  const overlay=document.getElementById('helpOverlay');
+  const body=document.getElementById('helpBody');
+  const icon=document.getElementById('helpIcon');
+  const title=document.getElementById('helpTitle');
+  const sub=document.getElementById('helpSub');
+  // Detecta qual view está visível
+  let ctx='vJogo';
+  const vAguardando=document.getElementById('vAguardando');
+  const vNotFound=document.getElementById('vNotFound');
+  const vJogo=document.getElementById('vJogo');
+  if(vAguardando && vAguardando.style.display!=='none') ctx='vAguardando';
+  else if(vNotFound && vNotFound.style.display!=='none') ctx='vNotFound';
+  else if(vJogo && vJogo.style.display!=='none') ctx='vJogo';
+  else ctx='vRedirect';
+  const titles={
+    vRedirect:['⏳','Carregando'],
+    vAguardando:['⏳','Aguardando Aprovação'],
+    vNotFound:['❌','Evento Não Encontrado'],
+    vJogo:['🎮','Tela do Jogo']
+  };
+  const t=titles[ctx]||titles.vJogo;
+  icon.textContent=t[0];title.textContent=t[1];sub.textContent='Brincante · jogar.html · '+t[1];
+  body.querySelectorAll('.help-ctx').forEach(c=>c.classList.remove('active'));
+  const activeCtx=body.querySelector('[data-ctx="'+ctx+'"]');
+  if(activeCtx)activeCtx.classList.add('active');
+  overlay.classList.add('open');
+}
+</script>
+
+</body></body>
 </html>

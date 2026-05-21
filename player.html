@@ -115,6 +115,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30px #161620 inset!important;-webkit-text-fill-color:#e4f2ff!important;transition:background-color 9999s ease-in-out 0s}
 </style>
 <meta name="app-version" content="v14.13">
+<base target="_blank">
 </head>
 <body>
 
@@ -716,7 +717,7 @@ $('btnSairHub')?.addEventListener('click', async () => { await signOut(auth); })
 .help-fab:active{transform:scale(.9);}
 .help-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,2,.93);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:9100;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;}
 .help-overlay.open{display:flex;}
-.help-box{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);width:100%;max-width:480px;padding:0;overflow:hidden;animation:helpIn .22s cubic-bezier(.2,1.4,.4,1) both;margin:auto;}
+.help-box{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);width:100%;max-width:520px;padding:0;overflow:hidden;animation:helpIn .22s cubic-bezier(.2,1.4,.4,1) both;margin:auto;}
 @keyframes helpIn{from{transform:scale(.88);opacity:0;}}
 .help-hdr{background:linear-gradient(135deg,rgba(0,184,240,.13),rgba(0,223,168,.06));border-bottom:1.5px solid var(--border2);padding:18px 20px 14px;display:flex;align-items:center;gap:10px;}
 .help-hdr-icon{font-size:2rem;line-height:1;flex-shrink:0;}
@@ -724,6 +725,8 @@ $('btnSairHub')?.addEventListener('click', async () => { await signOut(auth); })
 .help-hdr-sub{font-size:.68rem;font-weight:700;color:var(--text2);letter-spacing:.5px;margin-top:3px;}
 .help-close{margin-left:auto;background:var(--surface2);border:1.5px solid var(--border);color:var(--text2);border-radius:50%;width:32px;height:32px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Barlow',sans-serif;}
 .help-body{padding:18px 20px 24px;}
+.help-ctx{display:none;}
+.help-ctx.active{display:block;animation:helpIn .18s cubic-bezier(.2,1.4,.4,1) both;}
 .help-section{margin-bottom:18px;}
 .help-section:last-child{margin-bottom:0;}
 .help-section-title{font-size:.6rem;font-weight:900;letter-spacing:2.5px;color:var(--accent);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
@@ -735,21 +738,186 @@ $('btnSairHub')?.addEventListener('click', async () => { await signOut(auth); })
 .help-tip{background:rgba(245,200,0,.07);border:1px solid rgba(245,200,0,.22);border-radius:var(--rsm);padding:10px 13px;margin-top:14px;display:flex;gap:9px;align-items:flex-start;}
 .help-tip-icon{font-size:1rem;flex-shrink:0;margin-top:1px;}
 .help-tip-text{font-size:.75rem;color:var(--text2);line-height:1.45;}
+.help-badge{display:inline-block;font-size:.58rem;font-weight:900;padding:1px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:1px;margin-left:4px;vertical-align:middle;}
+.help-badge.green{background:rgba(0,223,168,.12);color:var(--green);border:1px solid rgba(0,223,168,.3);}
+.help-badge.blue{background:rgba(0,184,240,.12);color:var(--accent);border:1px solid rgba(0,184,240,.3);}
+.help-badge.red{background:rgba(240,96,96,.12);color:var(--red);border:1px solid rgba(240,96,96,.3);}
+.help-badge.gray{background:rgba(58,80,104,.12);color:var(--text3);border:1px solid var(--border);}
+.help-badge.yellow{background:rgba(245,200,0,.12);color:var(--yellow);border:1px solid rgba(245,200,0,.3);}
 </style>
-<button class="help-fab" onclick="document.getElementById('helpOverlay').classList.add('open')" title="Ajuda">?</button>
+<button class="help-fab" onclick="openHelp()" title="Ajuda">?</button>
 <div class="help-overlay" id="helpOverlay" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="help-box">
     <div class="help-hdr">
-      <div class="help-hdr-icon">🎴</div>
-      <div><div class="help-hdr-title">Player Hub</div><div class="help-hdr-sub">Jogador · player.html · v14.13</div></div>
+      <div class="help-hdr-icon" id="helpIcon">🎮</div>
+      <div><div class="help-hdr-title" id="helpTitle">Hub do Brincante</div><div class="help-hdr-sub" id="helpSub">Brincante · player.html</div></div>
       <button class="help-close" onclick="document.getElementById('helpOverlay').classList.remove('open')">&#10005;</button>
     </div>
-    <div class="help-body">
-      <div class="help-section"><div class="help-section-title">O que é esta tela</div><div class="help-item"><div class="help-item-icon">🏠</div><div><div class="help-item-label">Hub do Jogador</div><div class="help-item-desc">Ponto de entrada para os jogadores. Faça login, cadastre-se e acesse os eventos disponíveis.</div></div></div></div><div class="help-section"><div class="help-section-title">Como usar</div><div class="help-item"><div class="help-item-icon">1️⃣</div><div><div class="help-item-label">Login / Cadastro</div><div class="help-item-desc">Informe e-mail e senha. Se não tiver conta, clique em 'Cadastrar' e preencha nome, apelido e celular.</div></div></div><div class="help-item"><div class="help-item-icon">2️⃣</div><div><div class="help-item-label">Meus Eventos</div><div class="help-item-desc">Exibe eventos em que você já está participando. Clique em um card para entrar.</div></div></div><div class="help-item"><div class="help-item-icon">3️⃣</div><div><div class="help-item-label">Disponíveis</div><div class="help-item-desc">Lista eventos abertos. Clique em um evento para ingressar e receber suas cartelas.</div></div></div><div class="help-item"><div class="help-item-icon">4️⃣</div><div><div class="help-item-label">Entrar no Jogo</div><div class="help-item-desc">Após selecionar o evento, clique em '🎱 Jogar' para acessar a tela de jogo (jogar.html).</div></div></div><div class="help-item"><div class="help-item-icon">5️⃣</div><div><div class="help-item-label">Ver Cartelas</div><div class="help-item-desc">Clique em '🎴 Cartelas' para gerenciar, visualizar ou adicionar cartelas ao evento.</div></div></div></div><div class="help-section"><div class="help-section-title">Conta</div><div class="help-item"><div class="help-item-icon">🔑</div><div><div class="help-item-label">Esqueci a Senha</div><div class="help-item-desc">Clique em 'Esqueci minha senha' para receber o e-mail de recuperação.</div></div></div><div class="help-item"><div class="help-item-icon">🚪</div><div><div class="help-item-label">Sair</div><div class="help-item-desc">Botão 'Sair' no topo do Hub encerra sua sessão.</div></div></div></div>
-      <div class="help-tip"><div class="help-tip-icon">💡</div><div class="help-tip-text">Após o cadastro, aguarde o organizador liberar sua participação se o evento exigir aprovação.</div></div>
-    </div>
+    <div class="help-body" id="helpBody">
+
+<!-- ===== CONTEXTO: Login ===== -->
+<div class="help-ctx" data-ctx="vLogin">
+  <div class="help-section"><div class="help-section-title">🔐 Login</div>
+    <div class="help-item"><div class="help-item-icon">🔐</div><div><div class="help-item-label">Acessar sua Conta</div><div class="help-item-desc">Digite seu CPF e senha para acessar seus eventos e cartelas. Seus dados são salvos neste dispositivo.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">📝</div><div><div class="help-item-label">Primeiro Acesso?</div><div class="help-item-desc">Clique em <b>"Quero me cadastrar"</b> para criar uma conta nova. É rápido e gratuito.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">💾</div><div><div class="help-item-label">Salvar Acesso</div><div class="help-item-desc">Se marcar "Salvar", seus dados ficarão memorizados para login automático.</div></div></div>
   </div>
 </div>
 
-</body>
+<!-- ===== CONTEXTO: Cadastro ===== -->
+<div class="help-ctx" data-ctx="vCadastro">
+  <div class="help-section"><div class="help-section-title">📝 Cadastro</div>
+    <div class="help-item"><div class="help-item-icon">📝</div><div><div class="help-item-label">Criar Conta</div><div class="help-item-desc">Preencha seu nome e CPF para criar uma conta. O CPF é seu identificador único nos eventos.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">👤</div><div><div class="help-item-label">Nome</div><div class="help-item-desc">Seu nome como será exibido para o organizador e outros jogadores.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🪪</div><div><div class="help-item-label">CPF</div><div class="help-item-desc">Digite um CPF válido (11 dígitos). Será usado para login e identificação nos eventos.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">💾</div><div><div class="help-item-label">Salvar Dados</div><div class="help-item-desc">Seus dados ficam salvos apenas neste dispositivo. Não é necessário senha.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">↩</div><div><div class="help-item-label">Já tenho conta</div><div class="help-item-desc">Clique para voltar à tela de login se já possui cadastro.</div></div></div>
+  </div>
+  <div class="help-tip"><div class="help-tip-icon">💡</div><div class="help-tip-text">Use um CPF válido. O sistema valida o formato e dígitos verificadores automaticamente.</div></div>
+</div>
+
+<!-- ===== CONTEXTO: Hub — Meus Eventos ===== -->
+<div class="help-ctx" data-ctx="tab-meus">
+  <div class="help-section"><div class="help-section-title">📋 Meus Eventos</div>
+    <div class="help-item"><div class="help-item-icon">📋</div><div><div class="help-item-label">Eventos que Participo</div><div class="help-item-desc">Lista todos os eventos onde você já entrou. Acesse para criar cartelas, jogar ou ver resultados.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🎫</div><div><div class="help-item-label">Cartelas</div><div class="help-item-desc">Clique em <b>Cartelas</b> para gerenciar suas cartelas do evento ou criar novas.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🎮</div><div><div class="help-item-label">Jogar</div><div class="help-item-desc">Entra na tela de jogo ao vivo para acompanhar o sorteio e marcar números.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🏆</div><div><div class="help-item-label">Prêmios</div><div class="help-item-desc">Veja os prêmios que você ganhou neste evento.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🔗</div><div><div class="help-item-label">Copiar Link</div><div class="help-item-desc">Copia o link do evento para compartilhar com outras pessoas.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">⬆</div><div><div class="help-item-label">Compartilhar</div><div class="help-item-desc">Usa o recurso nativo do celular para compartilhar o link (WhatsApp, etc).</div></div></div>
+  </div>
+  <div class="help-section"><div class="help-section-title">Status dos Eventos</div>
+    <div class="help-item"><div class="help-item-icon">🟢</div><div><div class="help-item-label">Ativo</div><div class="help-item-desc">Evento em andamento. Você pode criar cartelas e jogar normalmente.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🔵</div><div><div class="help-item-label">Novo</div><div class="help-item-desc">Evento criado recentemente, aguardando início dos jogos.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">⚪</div><div><div class="help-item-label">Encerrado</div><div class="help-item-desc">Evento finalizado. Você pode ver resultados mas não jogar mais.</div></div></div>
+  </div>
+</div>
+
+<!-- ===== CONTEXTO: Hub — Eventos Disponíveis ===== -->
+<div class="help-ctx" data-ctx="tab-disponiveis">
+  <div class="help-section"><div class="help-section-title">🌐 Eventos Disponíveis</div>
+    <div class="help-item"><div class="help-item-icon">🌐</div><div><div class="help-item-label">Eventos Públicos</div><div class="help-item-desc">Veja eventos ativos disponíveis para participar. Aqui você pode encontrar novos bingos para jogar.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🎟</div><div><div class="help-item-label">Participar</div><div class="help-item-desc">Clique em <b>Participar</b> para entrar no evento. Pode ser necessário senha ou aprovação do organizador.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">📅</div><div><div class="help-item-label">Data</div><div class="help-item-desc">Verifique a data do evento para saber quando ocorrerá o sorteio.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">📍</div><div><div class="help-item-label">Local</div><div class="help-item-desc">Informações sobre o local ou link do evento.</div></div></div>
+  </div>
+  <div class="help-tip"><div class="help-tip-icon">💡</div><div class="help-tip-text">Ao participar de um evento, ele passa para a aba <b>"Meus Eventos"</b> automaticamente.</div></div>
+</div>
+
+<!-- ===== CONTEXTO: Hub — Abas ===== -->
+<div class="help-ctx" data-ctx="vHub">
+  <div class="help-section"><div class="help-section-title">🏠 Hub do Brincante</div>
+    <div class="help-item"><div class="help-item-icon">🏠</div><div><div class="help-item-label">Central do Jogador</div><div class="help-item-desc">Este é seu painel principal. Acesse seus eventos, descubra novos bingos e gerencie suas cartelas.</div></div></div>
+  </div>
+  <div class="help-section"><div class="help-section-title">Abas de navegação</div>
+    <div class="help-item"><div class="help-item-icon">📋</div><div><div class="help-item-label">Meus Eventos</div><div class="help-item-desc">Eventos onde você já está participando. Acesse cartelas, jogo e prêmios.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🌐</div><div><div class="help-item-label">Disponíveis</div><div class="help-item-desc">Descubra novos eventos públicos para participar.</div></div></div>
+  </div>
+  <div class="help-section"><div class="help-section-title">Menu lateral</div>
+    <div class="help-item"><div class="help-item-icon">🏠</div><div><div class="help-item-label">Início</div><div class="help-item-desc">Volta para o hub principal.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🏆</div><div><div class="help-item-label">Prêmios</div><div class="help-item-desc">Veja todos os prêmios que você já ganhou em todos os eventos.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">👤</div><div><div class="help-item-label">Perfil</div><div class="help-item-desc">Edite seu nome e veja seus dados cadastrais.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">📋</div><div><div class="help-item-label">Termos</div><div class="help-item-desc">Leia os termos de uso do aplicativo.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">❓</div><div><div class="help-item-label">Ajuda</div><div class="help-item-desc">Abre esta tela de ajuda contextual.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🚪</div><div><div class="help-item-label">Sair</div><div class="help-item-desc">Desconecta sua conta deste dispositivo.</div></div></div>
+  </div>
+</div>
+
+<!-- ===== CONTEXTO: Modal Selecionar Evento ===== -->
+<div class="help-ctx" data-ctx="modal-selecionar">
+  <div class="help-section"><div class="help-section-title">🎟 Selecionar Evento</div>
+    <div class="help-item"><div class="help-item-icon">🎟</div><div><div class="help-item-label">Escolher Evento</div><div class="help-item-desc">Selecione um evento da lista para visualizar detalhes e opções de participação.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">✅</div><div><div class="help-item-label">Confirmar</div><div class="help-item-desc">Confirma a seleção e prossegue para entrar no evento.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">❌</div><div><div class="help-item-label">Cancelar</div><div class="help-item-desc">Fecha sem selecionar nenhum evento.</div></div></div>
+  </div>
+</div>
+
+<!-- ===== CONTEXTO: Modal Entrar no Evento ===== -->
+<div class="help-ctx" data-ctx="modal-entrar">
+  <div class="help-section"><div class="help-section-title">🔑 Entrar no Evento</div>
+    <div class="help-item"><div class="help-item-icon">🔑</div><div><div class="help-item-label">Senha do Evento</div><div class="help-item-desc">Se o evento exigir senha, digite-a aqui para obter acesso. A senha é fornecida pelo organizador.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">📱</div><div><div class="help-item-label">QR Code</div><div class="help-item-desc">Em alguns eventos, você pode escanear um QR Code em vez de digitar a senha.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">✅</div><div><div class="help-item-label">Entrar</div><div class="help-item-desc">Confirma e entra no evento. Você será redirecionado para a tela de cartelas ou aguardar aprovação.</div></div></div>
+  </div>
+</div>
+
+<!-- ===== CONTEXTO: Modal Meus Prêmios ===== -->
+<div class="help-ctx" data-ctx="modal-premios">
+  <div class="help-section"><div class="help-section-title">🏆 Meus Prêmios</div>
+    <div class="help-item"><div class="help-item-icon">🏆</div><div><div class="help-item-label">Prêmios Ganhos</div><div class="help-item-desc">Veja todos os prêmios que você ganhou neste evento: tipo de prêmio, rodada e data.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">📊</div><div><div class="help-item-label">Estatísticas</div><div class="help-item-desc">Total de prêmios, bingos ouros e histórico completo de vitórias.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">✕</div><div><div class="help-item-label">Fechar</div><div class="help-item-desc">Fecha a janela de prêmios.</div></div></div>
+  </div>
+</div>
+
+<!-- ===== CONTEXTO: Modal Ver Cartela ===== -->
+<div class="help-ctx" data-ctx="modal-vercartela">
+  <div class="help-section"><div class="help-section-title">🎫 Ver Cartela</div>
+    <div class="help-item"><div class="help-item-icon">🎫</div><div><div class="help-item-label">Visualização</div><div class="help-item-desc">Veja a cartela completa em tamanho maior. Útil para conferir números durante o jogo.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🖨</div><div><div class="help-item-label">Imprimir</div><div class="help-item-desc">Gera versão otimizada para impressão desta cartela.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">✕</div><div><div class="help-item-label">Fechar</div><div class="help-item-desc">Fecha a visualização.</div></div></div>
+  </div>
+</div>
+
+    </div>
+  </div>
+</div>
+<script>
+function openHelp(){
+  const overlay=document.getElementById('helpOverlay');
+  const body=document.getElementById('helpBody');
+  const icon=document.getElementById('helpIcon');
+  const title=document.getElementById('helpTitle');
+  const sub=document.getElementById('helpSub');
+  // Detecta contexto ativo
+  let ctx='vLogin';
+  let extra='';
+  // Verifica views
+  const vCadastro=document.getElementById('vCadastro');
+  const vHub=document.getElementById('vHub');
+  if(vCadastro && vCadastro.style.display!=='none' && !vCadastro.classList.contains('hidden')) ctx='vCadastro';
+  else if(vHub && vHub.style.display!=='none' && !vHub.classList.contains('hidden')){
+    // No hub, verifica qual tab está ativa
+    const tabMeus=document.getElementById('tabMeus');
+    const tabDisp=document.getElementById('tabDisp');
+    if(tabMeus && tabMeus.classList.contains('active')){ctx='tab-meus';extra=' · Aba: Meus Eventos';}
+    else if(tabDisp && tabDisp.classList.contains('active')){ctx='tab-disponiveis';extra=' · Aba: Disponíveis';}
+    else{ctx='vHub';extra=' · Hub';}
+  }
+  // Verifica modais abertos
+  const modais=['mSelecionar','mEntrar','mMeusPremios','mVerCartela'];
+  const modalNames={'mSelecionar':'modal-selecionar','mEntrar':'modal-entrar','mMeusPremios':'modal-premios','mVerCartela':'modal-vercartela'};
+  let openModal=null;
+  for(const m of modais){
+    const el=document.getElementById(m);
+    if(el && (el.style.display==='block' || el.style.display==='flex' || el.classList.contains('open'))){openModal=modalNames[m];break;}
+  }
+  const titles={
+    vLogin:['🔐','Login'],
+    vCadastro:['📝','Cadastro'],
+    vHub:['🏠','Hub do Brincante'],
+    'tab-meus':['📋','Meus Eventos'],
+    'tab-disponiveis':['🌐','Eventos Disponíveis'],
+    'modal-selecionar':['🎟','Selecionar Evento'],
+    'modal-entrar':['🔑','Entrar no Evento'],
+    'modal-premios':['🏆','Meus Prêmios'],
+    'modal-vercartela':['🎫','Ver Cartela']
+  };
+  const t=titles[openModal||ctx]||titles.vLogin;
+  icon.textContent=t[0];title.textContent=t[1];sub.textContent='Brincante · player.html · '+t[1]+extra;
+  body.querySelectorAll('.help-ctx').forEach(c=>c.classList.remove('active'));
+  // Mostra contexto principal
+  const mainCtx=body.querySelector('[data-ctx="'+ctx+'"]');
+  if(mainCtx)mainCtx.classList.add('active');
+  // Se modal aberto, mostra help do modal também
+  if(openModal){
+    const modalCtx=body.querySelector('[data-ctx="'+openModal+'"]');
+    if(modalCtx)modalCtx.classList.add('active');
+    sub.textContent+=' + Janela';
+  }
+  overlay.classList.add('open');
+}
+</script>
+
+</body></body>
 </html>

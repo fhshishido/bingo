@@ -1782,8 +1782,10 @@ window.voltarCartelas = async function () {
 <!-- ===== HELP: jogar.html ===== -->
 <style>
 /* ===== HELP FAB + MODAL ===== */
-.help-fab{position:fixed;bottom:22px;right:18px;z-index:9000;width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#0090c8);color:#000;font-size:1.3rem;font-weight:900;border:none;cursor:pointer;box-shadow:0 4px 18px rgba(0,184,240,.45);display:flex;align-items:center;justify-content:center;transition:transform .15s;font-family:'Barlow',sans-serif;}
-.help-fab:active{transform:scale(.9);}
+.help-fab-wrap{text-align:center;padding:16px 0 8px;margin-top:8px;border-top:1.5px solid var(--border);background:transparent;}
+.help-fab{background:linear-gradient(135deg,var(--accent),#0090c8);color:#000;font-size:1rem;font-weight:900;border:none;border-radius:var(--rsm);padding:8px 22px;cursor:pointer;box-shadow:0 2px 10px rgba(0,184,240,.35);font-family:'Barlow',sans-serif;transition:transform .15s,box-shadow .15s;display:inline-flex;align-items:center;gap:6px;}
+.help-fab:active{transform:scale(.95);}
+.help-fab:hover{box-shadow:0 4px 16px rgba(0,184,240,.5);}
 .help-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,2,.93);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:9100;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;}
 .help-overlay.open{display:flex;}
 .help-box{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);width:100%;max-width:520px;padding:0;overflow:hidden;animation:helpIn .22s cubic-bezier(.2,1.4,.4,1) both;margin:auto;}
@@ -1815,7 +1817,7 @@ window.voltarCartelas = async function () {
 .help-badge.yellow{background:rgba(245,200,0,.12);color:var(--yellow);border:1px solid rgba(245,200,0,.3);}
 .help-badge.purple{background:rgba(184,90,220,.12);color:var(--purple);border:1px solid rgba(184,90,220,.3);}
 </style>
-<button class="help-fab" onclick="openHelp()" title="Ajuda">?</button>
+<div class="help-fab-wrap"><button class="help-fab" onclick="openHelp()" title="Ajuda">❓ Ajuda</button></div>
 <div class="help-overlay" id="helpOverlay" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="help-box">
     <div class="help-hdr">
@@ -1923,5 +1925,5 @@ function openHelp(){
 }
 </script>
 
-</body></body>
+</body>
 </html>

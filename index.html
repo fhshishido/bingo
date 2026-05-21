@@ -1,4 +1,4 @@
-<!-- IBBI Bingo v11.33 - 2026-05-18 - Cartela ganhadora sai da paginacao, historico de premios no gestor -->
+<!-- IBBI Bingo v11.34 - 2026-05-20 - Botao Desfazer por cartela ganhadora (volta batida para pendente) -->
 
 <!DOCTYPE html>
 
@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBBI Bingo v11.33</title>
+<title>IBBI Bingo v11.34</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -740,6 +740,20 @@ win-inp{width:100%;background:var(--surface2);border:2px solid var(--green);colo
   </div>
 </div>
 
+<!-- MODAL: Desfazer Premiacao por cartela -->
+<div class="mbk" id="mDesfazerPremio">
+  <div class="modal" style="max-width:380px;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:10px">&#8617;&#65039;</div>
+    <h2 style="margin-bottom:6px">Desfazer Premiação?</h2>
+    <p id="mDesfazerPremioTxt" style="font-size:.88rem;color:var(--text2);margin-bottom:8px"></p>
+    <p style="font-size:.78rem;color:var(--text3);margin-bottom:20px">A batida voltará para a lista de pendentes para reanálise. Se o prêmio estiver fechado, será reaberto.</p>
+    <div class="mfoot">
+      <button class="btn btn-ghost" id="btnDesfazerPremioCancelar">Cancelar</button>
+      <button class="btn btn-yellow" id="btnDesfazerPremioOk">&#8617;&#65039; Desfazer</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: Encerrar Bingo -->
 <div class="mbk" id="mEncerrarBingo">
   <div class="modal" style="max-width:360px;text-align:center">
@@ -1127,8 +1141,9 @@ function soRender(animated){
     else{cw.className='cpbox-empty';cw.textContent='Sem ganhador registrado';}
     if(cp.ganhadores?.length>0){
       $('soWinnersCard').style.display='block';
-      $('soWinnersList').innerHTML=cp.ganhadores.map((g,i)=>`<div class="winner-item"><span class="wi-id">${esc(g.cartelaId||'-')}</span><span class="wi-name">${esc(g.nome)}</span><button class="wi-rm" data-so-idx="${i}" title="Remover">&#10005;</button></div>`).join('');
+      $('soWinnersList').innerHTML=cp.ganhadores.map((g,i)=>`<div class="winner-item"><span class="wi-id">${esc(g.cartelaId||'-')}</span><span class="wi-name">${esc(g.nome)}</span><button class="wi-undo" data-so-undo="${i}" title="Desfazer premiação desta cartela" style="background:rgba(255,200,0,.15);color:#f5c800;border:1.5px solid rgba(255,200,0,.35);border-radius:6px;padding:4px 8px;font-size:.72rem;cursor:pointer;margin-right:4px">&#8617;&#65039; Desfazer</button><button class="wi-rm" data-so-idx="${i}" title="Remover">&#10005;</button></div>`).join('');
       $('soWinnersList').querySelectorAll('.wi-rm').forEach(btn=>{btn.addEventListener('click',()=>soRemoveWinner(cp.id,parseInt(btn.dataset.soIdx)));});
+      $('soWinnersList').querySelectorAll('.wi-undo').forEach(btn=>{btn.addEventListener('click',()=>soDesfazerPremioCartela(cp.id,parseInt(btn.dataset.soUndo)));});
       $('soWinnersActions').innerHTML=`<button class="btn btn-red btn-sm" id="btnSoFecharPremio">&#9989; Fechar Prêmio</button><button class="btn btn-green btn-sm" id="btnSoDividir">&#129309; Dividir Prêmio</button><button class="btn btn-yellow btn-sm" id="btnSoEscolher">&#127942; Escolher Um</button>`;
       $('soWinnersActions').querySelector('#btnSoFecharPremio')?.addEventListener('click',()=>soFecharPremio(cp.id));
       $('soWinnersActions').querySelector('#btnSoDividir')?.addEventListener('click',()=>soDividirPremio(cp.id));
@@ -1420,6 +1435,90 @@ function soFecharPremio(prizeId,auto){
       if(proximo){_soCurPrizeId=proximo.id;soRender(false);showToast(`Prêmio "${p.nome}" fechado. Próximo: #${proximo.ordem} ${proximo.nome}`);}
       else{const aindaAtivo=premios.find(pr=>!pr.fechado);if(aindaAtivo){_soCurPrizeId=aindaAtivo.id;soRender(false);showToast(`Prêmio "${p.nome}" fechado.`);}else{_soCurPrizeId=null;soRender(false);soEncerrarBingo(true);}}
     }).catch(e=>{console.error('Erro ao fechar premio:',e);_soBingoData.premios[prizeId].fechado=false;alert('Erro ao fechar prêmio: '+e.message);});
+  });
+}
+
+let _pendingDesfazer = null; // {prizeId, idx}
+
+$('btnDesfazerPremioCancelar')?.addEventListener('click',()=>{ closeM('mDesfazerPremio'); _pendingDesfazer=null; });
+$('btnDesfazerPremioOk')?.addEventListener('click',()=>{
+  closeM('mDesfazerPremio');
+  if(_pendingDesfazer){ const {prizeId,idx}=_pendingDesfazer; _pendingDesfazer=null; soDesfazerPremioCartelaExec(prizeId,idx); }
+});
+
+function soDesfazerPremioCartela(prizeId,idx){
+  const p=_soBingoData.premios[prizeId];if(!p||!p.ganhadores||!p.ganhadores[idx])return;
+  const g=p.ganhadores[idx];
+  $('mDesfazerPremioTxt').textContent='Desfazer premiação de "'+g.nome+'" (Cartela: '+(g.cartelaId||'-')+') no prêmio "'+p.nome+'"?';
+  _pendingDesfazer={prizeId,idx};
+  openM('mDesfazerPremio');
+}
+
+function soDesfazerPremioCartelaExec(prizeId,idx){
+  const p=_soBingoData.premios[prizeId];if(!p||!p.ganhadores||!p.ganhadores[idx])return;
+  const ganhadorRemovido=p.ganhadores[idx];
+  const novosGanhadores=p.ganhadores.filter((_,i)=>i!==idx);
+  const eraFechado=p.fechado===true;
+  const basePath=`bingo/eventos/${evId}/bingos/${_soBingoId}/premios/${prizeId}`;
+  // Buscar batidas para localizar o playerId desta cartela e a propria batida confirmada
+  get(fb(`bingo/eventos/${evId}/bingos/${_soBingoId}/batidas`)).then(snap=>{
+    const batidas=snap.val()||{};
+    const tasks=[];
+    // 1) Achar a batida confirmada desta cartela e voltar para 'pendente'
+    let batidaPlayerId=null;
+    Object.keys(batidas).forEach(bid=>{
+      const b=batidas[bid];
+      if(b.cartelaId===ganhadorRemovido.cartelaId && b.status==='confirmada'){
+        batidaPlayerId=b.playerId||null;
+        tasks.push(update(fb(`bingo/eventos/${evId}/bingos/${_soBingoId}/batidas/${bid}`),{status:'pendente',confirmadaEm:null,premioId:null}));
+      }
+    });
+    // 2) Atualizar ganhadores no premio (remover este)
+    tasks.push(set(fb(basePath+'/ganhadores'),novosGanhadores.length?novosGanhadores:null));
+    // 3) Se prêmio estava fechado, reabrir
+    if(eraFechado){
+      tasks.push(set(fb(basePath+'/fechado'),false));
+      tasks.push(set(fb(basePath+'/fechadoEm'),null));
+    }
+    // 4) Se não sobrou ninguém, limpar ganhoEm
+    if(!novosGanhadores.length){
+      tasks.push(set(fb(basePath+'/ganhoEm'),null));
+    }
+    // 5) Limpar dados do brincante removido
+    if(batidaPlayerId){
+      tasks.push(update(fb(`bingo/eventos/${evId}/brincantes/${batidaPlayerId}`),{bingoConfirmado:false,premioGanho:null}));
+    }
+    // 6) Atualizar histórico: cartela removida volta para 'pendente'
+    get(fb('bingo/eventos/'+evId+'/historico')).then(hs=>{
+      const hist=hs.val()||{};
+      const hKey=Object.keys(hist).find(k=>hist[k].premioId===prizeId&&hist[k].cartelaId===ganhadorRemovido.cartelaId);
+      if(hKey) tasks.push(update(fb('bingo/eventos/'+evId+'/historico/'+hKey),{resultadoAposta:'pendente'}));
+      // 7) Se sobrou apenas 1 ganhador, atualizar resultadoAposta dos que ficaram (dividido -> unico se houver fechamento; aqui apenas se reaberto, deixamos 'pendente' até refechar)
+      if(eraFechado){
+        novosGanhadores.forEach(gg=>{
+          const hk=Object.keys(hist).find(k=>hist[k].premioId===prizeId&&hist[k].cartelaId===gg.cartelaId);
+          if(hk) tasks.push(update(fb('bingo/eventos/'+evId+'/historico/'+hk),{resultadoAposta:'pendente'}));
+        });
+        // Limpar divididoCom dos brincantes restantes (sera recalculado se redividirem)
+        const confirmadas=Object.values(batidas).filter(b=>b.status==='confirmada');
+        novosGanhadores.forEach(gg=>{
+          const batidaGG=confirmadas.find(b=>b.cartelaId===gg.cartelaId);
+          if(batidaGG?.playerId){
+            tasks.push(update(fb(`bingo/eventos/${evId}/brincantes/${batidaGG.playerId}/premioGanho`),{divididoCom:null,divididoEm:null}));
+          }
+        });
+      }
+      Promise.all(tasks).then(()=>{
+        // Estado local
+        if(novosGanhadores.length){_soBingoData.premios[prizeId].ganhadores=novosGanhadores;}
+        else{delete _soBingoData.premios[prizeId].ganhadores;_soBingoData.premios[prizeId].ganhoEm=null;}
+        if(eraFechado){_soBingoData.premios[prizeId].fechado=false;_soBingoData.premios[prizeId].fechadoEm=null;}
+        // Reativar este prêmio como atual
+        _soCurPrizeId=prizeId;
+        soRender(false);
+        showToast('Premiação desfeita. Batida voltou para pendentes.');
+      }).catch(e=>{console.error('Erro ao desfazer premiação:',e);alert('Erro ao desfazer: '+e.message);});
+    });
   });
 }
 

@@ -147,6 +147,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
 .fb-status.ok{color:var(--green)}.fb-status.err{color:var(--red)}
 </style>
 <meta name="app-version" content="v4.1">
+<base target="_blank">
 </head>
 <body>
 
@@ -623,7 +624,7 @@ loadFromFb();
 .help-fab:active{transform:scale(.9);}
 .help-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,2,.93);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:9100;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;}
 .help-overlay.open{display:flex;}
-.help-box{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);width:100%;max-width:480px;padding:0;overflow:hidden;animation:helpIn .22s cubic-bezier(.2,1.4,.4,1) both;margin:auto;}
+.help-box{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);width:100%;max-width:520px;padding:0;overflow:hidden;animation:helpIn .22s cubic-bezier(.2,1.4,.4,1) both;margin:auto;}
 @keyframes helpIn{from{transform:scale(.88);opacity:0;}}
 .help-hdr{background:linear-gradient(135deg,rgba(0,184,240,.13),rgba(0,223,168,.06));border-bottom:1.5px solid var(--border2);padding:18px 20px 14px;display:flex;align-items:center;gap:10px;}
 .help-hdr-icon{font-size:2rem;line-height:1;flex-shrink:0;}
@@ -631,6 +632,8 @@ loadFromFb();
 .help-hdr-sub{font-size:.68rem;font-weight:700;color:var(--text2);letter-spacing:.5px;margin-top:3px;}
 .help-close{margin-left:auto;background:var(--surface2);border:1.5px solid var(--border);color:var(--text2);border-radius:50%;width:32px;height:32px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Barlow',sans-serif;}
 .help-body{padding:18px 20px 24px;}
+.help-ctx{display:none;}
+.help-ctx.active{display:block;animation:helpIn .18s cubic-bezier(.2,1.4,.4,1) both;}
 .help-section{margin-bottom:18px;}
 .help-section:last-child{margin-bottom:0;}
 .help-section-title{font-size:.6rem;font-weight:900;letter-spacing:2.5px;color:var(--accent);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
@@ -642,21 +645,77 @@ loadFromFb();
 .help-tip{background:rgba(245,200,0,.07);border:1px solid rgba(245,200,0,.22);border-radius:var(--rsm);padding:10px 13px;margin-top:14px;display:flex;gap:9px;align-items:flex-start;}
 .help-tip-icon{font-size:1rem;flex-shrink:0;margin-top:1px;}
 .help-tip-text{font-size:.75rem;color:var(--text2);line-height:1.45;}
+.help-badge{display:inline-block;font-size:.58rem;font-weight:900;padding:1px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:1px;margin-left:4px;vertical-align:middle;}
+.help-badge.green{background:rgba(0,223,168,.12);color:var(--green);border:1px solid rgba(0,223,168,.3);}
+.help-badge.blue{background:rgba(0,184,240,.12);color:var(--accent);border:1px solid rgba(0,184,240,.3);}
+.help-badge.red{background:rgba(240,96,96,.12);color:var(--red);border:1px solid rgba(240,96,96,.3);}
+.help-badge.gray{background:rgba(58,80,104,.12);color:var(--text3);border:1px solid var(--border);}
 </style>
-<button class="help-fab" onclick="document.getElementById('helpOverlay').classList.add('open')" title="Ajuda">?</button>
+<button class="help-fab" onclick="openHelp()" title="Ajuda">?</button>
 <div class="help-overlay" id="helpOverlay" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="help-box">
     <div class="help-hdr">
-      <div class="help-hdr-icon">⚙️</div>
-      <div><div class="help-hdr-title">Gerador de Cartelas</div><div class="help-hdr-sub">Organizador · gerador-cartelas.html · v4.1</div></div>
+      <div class="help-hdr-icon" id="helpIcon">🎰</div>
+      <div><div class="help-hdr-title" id="helpTitle">Gerador de Cartelas</div><div class="help-hdr-sub" id="helpSub">Utilitário · gerador-cartelas.html</div></div>
       <button class="help-close" onclick="document.getElementById('helpOverlay').classList.remove('open')">&#10005;</button>
     </div>
-    <div class="help-body">
-      <div class="help-section"><div class="help-section-title">O que é esta tela</div><div class="help-item"><div class="help-item-icon">⚙️</div><div><div class="help-item-label">Ferramenta do Organizador</div><div class="help-item-desc">Gera e armazena o banco de cartelas que os jogadores usarão quando o evento for do tipo 'Banco de Cartelas'.</div></div></div></div><div class="help-section"><div class="help-section-title">Como usar</div><div class="help-item"><div class="help-item-icon">1️⃣</div><div><div class="help-item-label">Escolher Modo</div><div class="help-item-desc">Selecione G90 (90 pedras, cartela 5×9) ou G75 (75 pedras, cartela 5×5 com estrela livre).</div></div></div><div class="help-item"><div class="help-item-icon">2️⃣</div><div><div class="help-item-label">Gerar Cartelas</div><div class="help-item-desc">Informe a quantidade desejada e clique em 'Gerar'. O sistema evita cartelas duplicadas ou muito semelhantes.</div></div></div><div class="help-item"><div class="help-item-icon">3️⃣</div><div><div class="help-item-label">Visualizar</div><div class="help-item-desc">Role a lista para conferir as cartelas geradas. Clique em uma para ver os detalhes ou excluí-la individualmente.</div></div></div><div class="help-item"><div class="help-item-icon">4️⃣</div><div><div class="help-item-label">Exportar</div><div class="help-item-desc">Use o botão 'Exportar' para baixar as cartelas em formato imprimível (PDF/JSON).</div></div></div><div class="help-item"><div class="help-item-icon">🗑️</div><div><div class="help-item-label">Limpar Banco</div><div class="help-item-desc">'Limpar G90' ou 'Limpar G75' apaga todas as cartelas daquele modo. Irreversível.</div></div></div></div><div class="help-section"><div class="help-section-title">Navegação</div><div class="help-item"><div class="help-item-icon">‹ ›</div><div><div class="help-item-label">Paginação</div><div class="help-item-desc">Use os botões 'Ant / Próx' para navegar entre as páginas de cartelas.</div></div></div><div class="help-item"><div class="help-item-icon">📊</div><div><div class="help-item-label">Contador</div><div class="help-item-desc">O topo mostra quantas cartelas estão armazenadas em cada modo.</div></div></div></div>
-      <div class="help-tip"><div class="help-tip-icon">💡</div><div class="help-tip-text">Gere cartelas antes de criar o evento. O banco fica salvo no Firebase e aparece automaticamente para os jogadores.</div></div><div class="help-tip"><div class="help-tip-icon">⚠️</div><div class="help-tip-text">Cartelas com números muito parecidos são automaticamente descartadas para garantir equilíbrio na partida.</div></div>
-    </div>
+    <div class="help-body" id="helpBody">
+
+<!-- ===== CONTEXTO: Tela Principal ===== -->
+<div class="help-ctx active" data-ctx="main">
+  <div class="help-section"><div class="help-section-title">🎰 Gerador de Cartelas de Bingo</div>
+    <div class="help-item"><div class="help-item-icon">🎰</div><div><div class="help-item-label">O que é</div><div class="help-item-desc">Ferramenta para criar e gerenciar um banco de cartelas de bingo. As cartelas geradas podem ser usadas em eventos do tipo "Banco".</div></div></div>
+  </div>
+  <div class="help-section"><div class="help-section-title">Painel Esquerdo — Geração</div>
+    <div class="help-item"><div class="help-item-icon">🎱</div><div><div class="help-item-label">Modo 90 ou 75</div><div class="help-item-desc">Selecione o modo de jogo. Define o range de números e a estrutura das cartelas (90=9x3, 75=5x5).</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🔢</div><div><div class="help-item-label">Quantidade</div><div class="help-item-desc">Digite quantas cartelas deseja gerar de uma vez. Pode gerar em lotes.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🎨</div><div><div class="help-item-label">Estilo</div><div class="help-item-desc">Escolha o estilo visual das cartelas: Clássico, Moderno ou Colorido.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">⚡</div><div><div class="help-item-label">Gerar Cartelas</div><div class="help-item-desc">Clique para criar o lote. As cartelas são validadas automaticamente (sem duplicatas exatas).</div></div></div>
+    <div class="help-item"><div class="help-item-icon">💾</div><div><div class="help-item-label">Exportar</div><div class="help-item-desc">Salva o banco completo em arquivo JSON para backup ou importação em outro dispositivo.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">📂</div><div><div class="help-item-label">Importar</div><div class="help-item-desc">Carrega um banco de cartelas previamente exportado (arquivo JSON).</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🗑</div><div><div class="help-item-label">Limpar Tudo</div><div class="help-item-desc">Remove TODAS as cartelas do banco. <b>Ação irreversível.</b></div></div></div>
+  </div>
+  <div class="help-section"><div class="help-section-title">Painel Direito — Lista</div>
+    <div class="help-item"><div class="help-item-icon">📋</div><div><div class="help-item-label">Cartelas Geradas</div><div class="help-item-desc">Lista todas as cartelas do banco com ID e status. Use a busca para encontrar cartelas específicas.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">📄</div><div><div class="help-item-label">Paginação</div><div class="help-item-desc">Navegue entre páginas usando os controles no topo e na base da lista.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">📊</div><div><div class="help-item-label">Estatísticas</div><div class="help-item-desc">Veja totais: cartelas no banco, usadas em eventos e disponíveis.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">👁</div><div><div class="help-item-label">Visualizar</div><div class="help-item-desc">Clique no ícone de olho em uma cartela para vê-la em detalhes.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🗑</div><div><div class="help-item-label">Excluir</div><div class="help-item-desc">Remove uma cartela específica do banco.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🖨</div><div><div class="help-item-label">Imprimir</div><div class="help-item-desc">Gera uma versão para impressão de todas as cartelas ou da seleção atual.</div></div></div>
   </div>
 </div>
 
-</body>
+<!-- ===== CONTEXTO: Visualizar Cartela (Modal) ===== -->
+<div class="help-ctx" data-ctx="modal-cartela">
+  <div class="help-section"><div class="help-section-title">👁 Visualizar Cartela</div>
+    <div class="help-item"><div class="help-item-icon">👁</div><div><div class="help-item-label">Detalhes da Cartela</div><div class="help-item-desc">Veja a cartela completa com todos os números organizados por colunas.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">🖨</div><div><div class="help-item-label">Imprimir</div><div class="help-item-desc">Gera versão otimizada para impressão desta cartela específica.</div></div></div>
+    <div class="help-item"><div class="help-item-icon">✕</div><div><div class="help-item-label">Fechar</div><div class="help-item-desc">Clique no X ou fora da janela para voltar à lista.</div></div></div>
+  </div>
+</div>
+
+    </div>
+  </div>
+</div>
+<script>
+function openHelp(){
+  const overlay=document.getElementById('helpOverlay');
+  const body=document.getElementById('helpBody');
+  const icon=document.getElementById('helpIcon');
+  const title=document.getElementById('helpTitle');
+  const sub=document.getElementById('helpSub');
+  // Detecta se modal de cartela está aberto
+  const modalOpen=document.getElementById('mCartela')?.style.display==='block';
+  const ctx=modalOpen?'modal-cartela':'main';
+  const titles={main:['🎰','Tela Principal'],'modal-cartela':['👁','Visualizar Cartela']};
+  const t=titles[ctx];
+  icon.textContent=t[0];title.textContent=t[1];sub.textContent='Utilitário · gerador-cartelas.html · '+t[1];
+  body.querySelectorAll('.help-ctx').forEach(c=>c.classList.remove('active'));
+  const activeCtx=body.querySelector('[data-ctx="'+ctx+'"]');
+  if(activeCtx)activeCtx.classList.add('active');
+  overlay.classList.add('open');
+}
+</script>
+
+</body></body>
 </html>
